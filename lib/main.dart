@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      darkTheme: ThemeData.dark().copyWith(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF899CCC)),
-      ),
+      darkTheme: darkTheme,
       themeMode: ThemeMode.dark,
       home: const LoginPage(),
     );
