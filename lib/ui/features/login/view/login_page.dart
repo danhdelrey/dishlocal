@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class LoginPage extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              color: Theme.of(context).colorScheme.primary,
+              decoration: const BoxDecoration(gradient: primaryGradient),
               width: 200,
               height: 200,
             ),
