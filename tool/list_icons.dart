@@ -102,7 +102,7 @@ String generateEnumName(String originalFileName) {
 }
 
 void main() async {
-  final iconsDirPath = 'assets/icons/'; // Đảm bảo đường dẫn này đúng
+  const iconsDirPath = 'assets/icons/'; // Đảm bảo đường dẫn này đúng
   final iconsDir = Directory(iconsDirPath);
 
   if (!await iconsDir.exists()) {
@@ -146,7 +146,7 @@ void main() async {
         String uniqueEnumMemberName = enumMemberName;
         int count = 1;
         while (generatedEnumNames.contains(uniqueEnumMemberName)) {
-          uniqueEnumMemberName = '${enumMemberName}${count++}';
+          uniqueEnumMemberName = '$enumMemberName${count++}';
         }
         generatedEnumNames.add(uniqueEnumMemberName);
 

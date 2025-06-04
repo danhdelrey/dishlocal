@@ -1,6 +1,5 @@
 import 'package:dishlocal/app/config/router.dart';
 import 'package:dishlocal/app/theme/theme.dart';
-import 'package:dishlocal/ui/features/login/view/login_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {

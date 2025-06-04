@@ -1,7 +1,6 @@
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
@@ -15,47 +14,48 @@ class LoginPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 100,
-                left: 100,
-                right: 100,
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    padding: const EdgeInsets.all(15),
-                    decoration: const BoxDecoration(
-                      gradient: primaryGradient,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(28),
-                      ),
+            const SizedBox(
+              height: 200,
+            ),
+            Column(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  padding: const EdgeInsets.all(15),
+                  decoration: const BoxDecoration(
+                    gradient: primaryGradient,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(28),
                     ),
-                    // Màu nền để dễ thấy
-                    child: AppIcons.app.toSvg(),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'DishLocal',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineLarge!
-                        .copyWith(fontWeight: FontWeight.w800),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'Chia sẻ & Khám phá trực tiếp ẩm thực quanh bạn',
-                    style: Theme.of(context).textTheme.titleLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+                  // Màu nền để dễ thấy
+                  child: AppIcons.app.toSvg(),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'DishLocal',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineLarge!
+                      .copyWith(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Chia sẻ & Khám phá trực tiếp',
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  'ẩm thực quanh bạn',
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
             const Expanded(child: SizedBox()),
             FilledButton.icon(
