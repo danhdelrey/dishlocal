@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -58,7 +59,9 @@ class LoginPage extends StatelessWidget {
             ),
             const Expanded(child: SizedBox()),
             FilledButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                context.go('/update_profile_page');
+              },
               label: const Text('Đăng nhập bằng tài khoản Google'),
               icon: AppIcons.google.toSvg(
                 width: 20,
