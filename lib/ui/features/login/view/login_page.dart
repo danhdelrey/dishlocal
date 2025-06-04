@@ -1,5 +1,7 @@
 import 'package:dishlocal/app/theme/custom_colors.dart';
+import 'package:dishlocal/app/theme/icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -11,9 +13,10 @@ class LoginPage extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              decoration: const BoxDecoration(gradient: primaryGradient),
-              width: 200,
-              height: 200,
+              width: 100,
+              height: 100,
+              color: Colors.amber, // Màu nền để dễ thấy
+              child: AppIcons.appIcon.toSvg(),
             ),
             Text(
               """Lorem ipsum dolor sit amet, consectetur adipiscing elit. In a neque luctus lacus sagittis condimentum eu sit amet nulla. Nam sem ex, iaculis non cursus eget, ullamcorper in mi. Maecenas laoreet leo nec libero suscipit, quis venenatis odio varius. Quisque diam mi, imperdiet vitae porta sed, mollis commodo sem. Nulla convallis ante vitae feugiat blandit. Donec id posuere eros. Vivamus sed elit eget magna porttitor vehicula nec pulvinar elit. Aliquam elit libero, congue vitae eros vel, auctor gravida nisi. Sed nisi erat, cursus quis pellentesque non, pulvinar ac nisl.
