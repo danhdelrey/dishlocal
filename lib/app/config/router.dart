@@ -1,3 +1,5 @@
+import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
 import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
@@ -22,18 +24,57 @@ GoRouter router = GoRouter(
         return PersistentTabView.router(
           tabs: [
             PersistentRouterTabConfig(
-              item: ItemConfig(icon: const Icon(Icons.home), title: "Home"),
-            ),
-            PersistentRouterTabConfig(
-              item: ItemConfig(icon: const Icon(Icons.list), title: "Products"),
+              item: ItemConfig(
+                icon: AppIcons.home4.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                inactiveIcon: AppIcons.home41.toSvg(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
             ),
             PersistentRouterTabConfig(
               item: ItemConfig(
-                  icon: const Icon(Icons.settings), title: "Settings"),
+                icon: AppIcons.rocketFill.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                inactiveIcon: AppIcons.rocketLine.toSvg(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+            ),
+            PersistentRouterTabConfig(
+              item: ItemConfig(
+                icon: AppIcons.fabGradient.toSvg(),
+                activeForegroundColor: Colors.transparent,
+              ),
+            ),
+            PersistentRouterTabConfig(
+              item: ItemConfig(
+                icon: AppIcons.mail.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                inactiveIcon: AppIcons.mail1.toSvg(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+            ),
+            PersistentRouterTabConfig(
+              item: ItemConfig(
+                icon: AppIcons.user3.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                inactiveIcon: AppIcons.user31.toSvg(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
             ),
           ],
-          navBarBuilder: (navBarConfig) => Style1BottomNavBar(
+          navBarBuilder: (navBarConfig) => Style6BottomNavBar(
             navBarConfig: navBarConfig,
+            navBarDecoration: NavBarDecoration(
+              color: Theme.of(context).colorScheme.surface,
+            ),
           ),
           navigationShell: navigationShell,
         );
@@ -59,6 +100,22 @@ GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/sdggf',
+              builder: (context, state) => const HomePage(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/rterter',
+              builder: (context, state) => const HomePage(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/bcvbv',
               builder: (context, state) => const HomePage(),
             ),
           ],
