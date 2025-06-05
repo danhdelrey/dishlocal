@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 class CustomBadge extends StatelessWidget {
   const CustomBadge({
     super.key,
-    required this.child,
+    required this.child, required this.showBadge,
   });
 
   final Widget child;
+  final bool showBadge;
 
   @override
   Widget build(BuildContext context) {
     return badges.Badge(
+      showBadge: showBadge,
       badgeAnimation: const badges.BadgeAnimation.scale(),
       badgeContent: Container(
         decoration: BoxDecoration(

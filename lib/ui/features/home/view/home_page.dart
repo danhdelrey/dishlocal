@@ -49,6 +49,7 @@ class HomePage extends StatelessWidget {
                     IconButton.filledTonal(
                       onPressed: () {},
                       icon: CustomBadge(
+                        showBadge: false,
                         child: AppIcons.notification1.toSvg(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),

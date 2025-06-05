@@ -24,6 +24,7 @@ GoRouter router = GoRouter(
       builder: (context, state, navigationShell) {
         // UI "khung" chứa PersistentTabView.router
         return PersistentTabView.router(
+          
           tabs: [
             PersistentRouterTabConfig(
               item: ItemConfig(
@@ -57,6 +58,7 @@ GoRouter router = GoRouter(
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 inactiveIcon: CustomBadge(
+                  showBadge: false,
                   child: AppIcons.mail1.toSvg(
                     color: Theme.of(context).colorScheme.outline,
                   ),
