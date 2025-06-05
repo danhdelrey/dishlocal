@@ -4,6 +4,7 @@ import 'package:dishlocal/app/config/router.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -81,20 +82,11 @@ class HomePage extends StatelessWidget {
               ),
             ];
           },
-          body: TabBarView(
+          body: const TabBarView(
             children: [
-              ListView.builder(
-                itemBuilder: (context, index) => const TwoPostsRow(),
-                itemCount: 20, // Tăng số lượng item để dễ cuộn
-              ),
-              ListView.builder(
-                itemBuilder: (context, index) => const TwoPostsRow(),
-                itemCount: 5,
-              ),
-              ListView.builder(
-                itemBuilder: (context, index) => const TwoPostsRow(),
-                itemCount: 10,
-              ),
+              GridViewPosts(),
+              GridViewPosts(),
+              GridViewPosts(),
             ],
           ),
         ),
@@ -103,22 +95,26 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class TwoPostsRow extends StatelessWidget {
-  const TwoPostsRow({super.key});
+class GridViewPosts extends StatelessWidget {
+  const GridViewPosts({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-      child: Row(
-        children: [
-          Post(),
-          SizedBox(
-            width: 20,
-          ),
-          Post(),
-        ],
+    return MasonryGridView.builder(
+      itemCount: 10,
+      mainAxisSpacing: 20,
+      crossAxisSpacing: 20,
+      padding: const EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
       ),
+      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+      ),
+      itemBuilder: (context, index) => const Post(),
     );
   }
 }
