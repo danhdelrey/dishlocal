@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,38 +12,87 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('data'),
-          bottom: const TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            tabs: [
-              Tab(
-                text: 'Dành cho bạn',
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                surfaceTintColor: Colors.transparent,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                title: Row(
+                  children: [
+                    AppIcons.appIconGradient.toSvg(
+                      width: 24,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    const Text(
+                      'DishLocal',
+                      style: TextStyle(
+                        fontFamily: 'SFProDisplay',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton.filledTonal(
+                      onPressed: () {},
+                      icon: AppIcons.search.toSvg(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.surfaceContainerLow,
+                      ),
+                    ),
+                    IconButton.filledTonal(
+                      onPressed: () {},
+                      icon: AppIcons.notification1.toSvg(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.surfaceContainerLow,
+                      ),
+                    ),
+                  ],
+                ),
+                pinned: true,
+                floating: true,
+                snap: true,
+                bottom: const TabBar(
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  tabs: [
+                    Tab(
+                      text: 'Dành cho bạn',
+                    ),
+                    Tab(
+                      text: 'Đang theo dõi',
+                    ),
+                    Tab(
+                      text: 'Xu hướng',
+                    ),
+                  ],
+                ),
               ),
-              Tab(
-                text: 'Đang theo dõi',
+            ];
+          },
+          body: TabBarView(
+            children: [
+              ListView.builder(
+                itemBuilder: (context, index) => const TwoPostsRow(),
+                itemCount: 20, // Tăng số lượng item để dễ cuộn
               ),
-              Tab(
-                text: 'Xu hướng',
+              ListView.builder(
+                itemBuilder: (context, index) => const TwoPostsRow(),
+                itemCount: 5,
+              ),
+              ListView.builder(
+                itemBuilder: (context, index) => const TwoPostsRow(),
+                itemCount: 10,
               ),
             ],
           ),
-        ),
-        body: TabBarView(
-          children: [
-            ListView.builder(
-              itemBuilder: (context, index) => const TwoPostsRow(),
-              itemCount: 10,
-            ),
-            ListView.builder(
-              itemBuilder: (context, index) => const TwoPostsRow(),
-              itemCount: 2,
-            ),
-            ListView.builder(
-              itemBuilder: (context, index) => const TwoPostsRow(),
-              itemCount: 1,
-            ),
-          ],
         ),
       ),
     );
