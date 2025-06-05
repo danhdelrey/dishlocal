@@ -4,6 +4,7 @@ import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dar
 import 'package:go_router/go_router.dart';
 
 GoRouter router = GoRouter(
+  initialLocation: '/home_page',
   routes: [
     GoRoute(
       path: '/',
