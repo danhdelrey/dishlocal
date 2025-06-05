@@ -1,6 +1,6 @@
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
-import 'package:dishlocal/ui/features/update_profile/view/update_profile_page.dart';
+import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter router = GoRouter(
@@ -15,7 +15,7 @@ GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/update_profile_page',
-      builder: (context, state) => const UpdateProfilePage(),
+      builder: (context, state) => const AccountSetupPage(),
     )
   ],
 );

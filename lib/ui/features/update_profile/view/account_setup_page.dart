@@ -3,8 +3,8 @@ import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class UpdateProfilePage extends StatelessWidget {
-  const UpdateProfilePage({super.key});
+class AccountSetupPage extends StatelessWidget {
+  const AccountSetupPage({super.key});
 
   @override
   Widget build(BuildContext context) {
