@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:dishlocal/app/config/router.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/ui/widgets/custom_badge.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -46,8 +48,10 @@ class HomePage extends StatelessWidget {
                     ),
                     IconButton.filledTonal(
                       onPressed: () {},
-                      icon: AppIcons.notification1.toSvg(
-                        color: Theme.of(context).colorScheme.onSurface,
+                      icon: CustomBadge(
+                        child: AppIcons.notification1.toSvg(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                       style: IconButton.styleFrom(
                         backgroundColor:

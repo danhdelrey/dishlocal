@@ -3,9 +3,11 @@ import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
 import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
+import 'package:dishlocal/ui/widgets/custom_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+import 'package:badges/badges.dart' as badges;
 
 GoRouter router = GoRouter(
   initialLocation: '/home',
@@ -54,8 +56,10 @@ GoRouter router = GoRouter(
                 icon: AppIcons.mail.toSvg(
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                inactiveIcon: AppIcons.mail1.toSvg(
-                  color: Theme.of(context).colorScheme.outline,
+                inactiveIcon: CustomBadge(
+                  child: AppIcons.mail1.toSvg(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
               ),
             ),
@@ -99,7 +103,7 @@ GoRouter router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/sdggf',
+              path: '/rtertgfer',
               builder: (context, state) => const HomePage(),
             ),
           ],
