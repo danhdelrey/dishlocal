@@ -9,33 +9,38 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            Row(
-              children: [
-                Post(),
-                SizedBox(
-                  width: 20,
-                ),
-                Post(),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                Post(),
-                SizedBox(
-                  width: 20,
-                ),
-                Post(),
-              ],
-            ),
+            TwoPostsRow(),
+            TwoPostsRow(),
+            TwoPostsRow(),
+            TwoPostsRow(),
+            TwoPostsRow(),
+            TwoPostsRow(),
+            TwoPostsRow(),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class TwoPostsRow extends StatelessWidget {
+  const TwoPostsRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+      child: Row(
+        children: [
+          Post(),
+          SizedBox(
+            width: 20,
+          ),
+          Post(),
+        ],
       ),
     );
   }
@@ -53,7 +58,7 @@ class Post extends StatelessWidget {
           children: [
             Text(
               'Cơm tấm sườn bì chả',
-              style: Theme.of(context).textTheme.labelLarge,
+              style: Theme.of(context).textTheme.labelMedium,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -78,21 +83,21 @@ class Post extends StatelessWidget {
                         children: [
                           BlurredPill(
                             icon: AppIcons.location1.toSvg(
-                              width: 14,
+                              width: 12,
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
                             label: '2 km',
                           ),
                           BlurredPill(
                             icon: AppIcons.wallet4.toSvg(
-                              width: 14,
+                              width: 12,
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
                             label: '70.000đ',
                           ),
                           BlurredPill(
                             icon: AppIcons.time.toSvg(
-                              width: 14,
+                              width: 12,
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
                             label: '4:00-23:00',
@@ -104,7 +109,7 @@ class Post extends StatelessWidget {
                 ),
                 Positioned.fill(
                   child: Align(
-                    alignment: Alignment.bottomCenter,
+                    alignment: Alignment.bottomLeft,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(12),
@@ -123,13 +128,17 @@ class Post extends StatelessWidget {
                               left: 10,
                               right: 10,
                             ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Row(
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: Wrap(
+                                alignment: WrapAlignment.center,
+                                spacing: 5,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       AppIcons.heart1.toSvg(
-                                        width: 14,
+                                        width: 12,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .onSurface,
@@ -137,24 +146,19 @@ class Post extends StatelessWidget {
                                       const SizedBox(
                                         width: 2,
                                       ),
-                                      Expanded(
-                                        child: Text(
-                                          '1.234',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelMedium,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                      Text(
+                                        '1.234',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall,
                                       ),
                                     ],
                                   ),
-                                ),
-                                Expanded(
-                                  child: Row(
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       AppIcons.locationCheck.toSvg(
-                                        width: 14,
+                                        width: 12,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .onSurface,
@@ -162,24 +166,19 @@ class Post extends StatelessWidget {
                                       const SizedBox(
                                         width: 2,
                                       ),
-                                      Expanded(
-                                        child: Text(
-                                          '123',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelMedium,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                      Text(
+                                        '678',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall,
                                       ),
                                     ],
                                   ),
-                                ),
-                                Expanded(
-                                  child: Row(
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       AppIcons.bookmark1.toSvg(
-                                        width: 14,
+                                        width: 12,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .onSurface,
@@ -187,20 +186,16 @@ class Post extends StatelessWidget {
                                       const SizedBox(
                                         width: 2,
                                       ),
-                                      Expanded(
-                                        child: Text(
-                                          '323',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelMedium,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                      Text(
+                                        '323',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall,
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -227,7 +222,7 @@ class Post extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'danhdelreyrererererererere',
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: Theme.of(context).textTheme.labelSmall,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -237,7 +232,7 @@ class Post extends StatelessWidget {
                 ),
                 Text(
                   '4 giờ',
-                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
                 ),
@@ -282,7 +277,7 @@ class BlurredPill extends StatelessWidget {
                 ),
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.labelMedium,
+                  style: Theme.of(context).textTheme.labelSmall,
                 ),
               ],
             ),
