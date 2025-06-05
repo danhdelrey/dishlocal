@@ -8,17 +8,40 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('data'),
+          bottom: const TabBar(
+            indicatorSize: TabBarIndicatorSize.tab,
+            tabs: [
+              Tab(
+                text: 'Dành cho bạn',
+              ),
+              Tab(
+                text: 'Đang theo dõi',
+              ),
+              Tab(
+                text: 'Xu hướng',
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
           children: [
-            TwoPostsRow(),
-            TwoPostsRow(),
-            TwoPostsRow(),
-            TwoPostsRow(),
-            TwoPostsRow(),
-            TwoPostsRow(),
-            TwoPostsRow(),
+            ListView.builder(
+              itemBuilder: (context, index) => const TwoPostsRow(),
+              itemCount: 10,
+            ),
+            ListView.builder(
+              itemBuilder: (context, index) => const TwoPostsRow(),
+              itemCount: 2,
+            ),
+            ListView.builder(
+              itemBuilder: (context, index) => const TwoPostsRow(),
+              itemCount: 1,
+            ),
           ],
         ),
       ),
