@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
