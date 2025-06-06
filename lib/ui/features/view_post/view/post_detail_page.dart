@@ -66,25 +66,13 @@ class PostDetailPage extends StatelessWidget {
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Row(
-                            children: [
-                              AppIcons.locationCheckFilled.toSvg(
-                                width: 16,
-                                color: Colors.blue,
-                              ),
-                              const SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                '13:45 25/05/2025',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge!
-                                    .copyWith(
-                                      color: Colors.blue,
-                                    ),
-                              )
-                            ],
+                          CustomIconWithLabel(
+                            icon: AppIcons.locationCheckFilled.toSvg(
+                              color: Colors.blue,
+                              width: 16,
+                            ),
+                            label: '13:45 25/05/2025',
+                            labelColor: Colors.blue,
                           ),
                         ],
                       ),
@@ -101,7 +89,7 @@ class PostDetailPage extends StatelessWidget {
                   ],
                 ),
                 const ReviewSection(
-                  category: 'Đồ ăn',
+                  category: 'Đồ ăn:',
                   comment:
                       'Mới vừa ăn một dĩa cơm tấm ở Quán Hoàng Sang... Ôi trời ơi, ngon xỉu up xỉu down luôn mọi người ơi! 🤤 Miếng sườn nướng thấm vị, nước mắm đỉnh cao, ăn xong chỉ muốn order thêm dĩa nữa. Highly recommend cho team mê cơm tấm nha! ❤️',
                 ),
@@ -109,7 +97,7 @@ class PostDetailPage extends StatelessWidget {
                   height: 10,
                 ),
                 const ReviewSection(
-                  category: 'Không gian',
+                  category: 'Không gian:',
                   comment:
                       'Quán tuy nhỏ, nằm trong hẻm nhưng rất sạch sẽ, gọn gàng từ khu vực bếp đến bàn ăn. Điều này làm tôi cảm thấy rất yên tâm khi thưởng thức.',
                 ),
@@ -117,7 +105,7 @@ class PostDetailPage extends StatelessWidget {
                   height: 10,
                 ),
                 const ReviewSection(
-                  category: 'Phục vụ',
+                  category: 'Phục vụ:',
                   comment:
                       'Cô chú chủ quán cực kỳ thân thiện, nhiệt tình, luôn nở nụ cười và hỏi han khách. Tạo cảm giác như đang ăn cơm nhà vậy, rất thoải mái.',
                 ),
@@ -125,7 +113,7 @@ class PostDetailPage extends StatelessWidget {
                   height: 10,
                 ),
                 const ReviewSection(
-                  category: 'Giá cả',
+                  category: 'Giá cả:',
                   comment:
                       'Với chất lượng món ăn và dịch vụ nhận được, mức giá từ 45k-75k/phần là hoàn toàn hợp lý, thậm chí là rẻ cho một đĩa cơm tấm "đỉnh của chóp" như vậy ở khu vực trung tâm.',
                 ),
@@ -135,6 +123,9 @@ class PostDetailPage extends StatelessWidget {
                 Text(
                   'Cơm tấm sườn bì chả',
                   style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
                 LayoutBuilder(builder: (context, constraints) {
                   return CroppedImage(
@@ -147,6 +138,37 @@ class PostDetailPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CustomIconWithLabel extends StatelessWidget {
+  const CustomIconWithLabel({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.labelColor,
+  });
+
+  final Widget icon;
+  final String label;
+  final Color? labelColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        icon,
+        const SizedBox(
+          width: 2,
+        ),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                color: labelColor,
+              ),
+        )
+      ],
     );
   }
 }
