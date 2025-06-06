@@ -20,10 +20,12 @@ class HomePage extends StatelessWidget {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverAppBar(
-                surfaceTintColor: Colors.transparent,
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                title: Row(
+                automaticallyImplyLeading: false,
+                leading: Row(
                   children: [
+                    const SizedBox(
+                      width: 10,
+                    ),
                     AppIcons.appIconGradient.toSvg(
                       width: 24,
                     ),
@@ -38,32 +40,39 @@ class HomePage extends StatelessWidget {
                         fontSize: 18,
                       ),
                     ),
-                    const Spacer(),
-                    IconButton.filledTonal(
-                      onPressed: () {},
-                      icon: AppIcons.search.toSvg(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      style: IconButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.surfaceContainerLow,
-                      ),
-                    ),
-                    IconButton.filledTonal(
-                      onPressed: () {},
-                      icon: CustomBadge(
-                        showBadge: false,
-                        child: AppIcons.notification1.toSvg(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                      style: IconButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.surfaceContainerLow,
-                      ),
-                    ),
                   ],
                 ),
+                leadingWidth: 150,
+                surfaceTintColor: Colors.transparent,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                actions: [
+                  IconButton.filledTonal(
+                    onPressed: () {},
+                    icon: AppIcons.search.toSvg(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).colorScheme.surfaceContainerLow,
+                    ),
+                  ),
+                  IconButton.filledTonal(
+                    onPressed: () {},
+                    icon: CustomBadge(
+                      showBadge: false,
+                      child: AppIcons.notification1.toSvg(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).colorScheme.surfaceContainerLow,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                ],
                 pinned: true,
                 floating: true,
                 snap: true,
