@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:flutter/gestures.dart';
@@ -29,7 +30,6 @@ class ProfilePage extends StatelessWidget {
                 actions: [
                   IconButton(
                     onPressed: () {},
-                    
                     icon: AppIcons.userSettingLine.toSvg(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
@@ -39,8 +39,6 @@ class ProfilePage extends StatelessWidget {
                 pinned: true,
                 // Để AppBar hiện ra ngay khi cuộn xuống dù đang ở giữa list
                 floating: true,
-                // Quan trọng: forceElevated giúp tạo bóng đổ khi nội dung cuộn bên dưới
-                forceElevated: innerBoxIsScrolled,
               ),
 
               // SliverToBoxAdapter để bọc các widget không phải là Sliver
@@ -68,65 +66,11 @@ class ProfilePage extends StatelessWidget {
                                 'Đỗ Lan Anh',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
-                              RichText(
-                                text: TextSpan(
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
-                                  children: [
-                                    TextSpan(
-                                      text: '125 N',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge!
-                                          .copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {},
-                                      children: [
-                                        TextSpan(
-                                          text: ' người theo dõi • ',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelLarge!
-                                              .copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .outline,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                    TextSpan(
-                                      text: '96',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge!
-                                          .copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {},
-                                      children: [
-                                        TextSpan(
-                                          text: ' đang theo dõi',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelLarge!
-                                              .copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .outline,
-                                              ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
+                              const CustomRichText(
+                                label1: '12.4 N',
+                                description1: ' người theo dõi • ',
+                                label2: '245',
+                                description2: ' đang theo dõi',
                               ),
                             ],
                           ),
