@@ -3,6 +3,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
+import 'package:dishlocal/ui/features/profile/view/profile_page.dart';
 import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
@@ -172,7 +173,7 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: '/explore', // Đặt tên route rõ ràng
               builder: (context, state) =>
-                  const HomePage(), // Dùng page tương ứng
+                  const SizedBox(), // Dùng page tương ứng
             ),
           ],
         ),
@@ -182,7 +183,7 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/messages',
-              builder: (context, state) => const HomePage(),
+              builder: (context, state) => const SizedBox(),
             ),
           ],
         ),
@@ -191,7 +192,7 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/profile',
-              builder: (context, state) => const HomePage(),
+              builder: (context, state) => const ProfilePage(),
             ),
           ],
         ),
