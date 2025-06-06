@@ -4,6 +4,7 @@ import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
 import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
+import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -137,8 +138,8 @@ final GoRouter router = GoRouter(
   routes: [
     // Route này nằm ngoài ShellRoute, nên nó sẽ che toàn bộ màn hình
     GoRoute(
-      path: '/create',
-      builder: (context, state) => const HomePage(),
+      path: '/post_detail',
+      builder: (context, state) => const PostDetailPage(),
     ),
     GoRoute(
       path: '/login',

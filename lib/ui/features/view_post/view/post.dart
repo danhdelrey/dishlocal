@@ -4,202 +4,213 @@ import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/widgets/blurred_pill.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class Post extends StatelessWidget {
   const Post({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: LayoutBuilder(builder: (context, constraints) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Cơm tấm sườn bì chả',
-              style: Theme.of(context).textTheme.labelMedium,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Stack(
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () => context.push('/post_detail'),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Expanded(
+          child: LayoutBuilder(builder: (context, constraints) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                CroppedImage(
-                  height: constraints.maxWidth,
-                  borderRadius: 12,
-                  path: 'assets/images/com-tam-suon-bi-cha-2.jpg',
+                Text(
+                  'Cơm tấm sườn bì chả',
+                  style: Theme.of(context).textTheme.labelMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Wrap(
-                        spacing: 5,
-                        runSpacing: 5,
-                        children: [
-                          BlurredPill(
-                            icon: AppIcons.location1.toSvg(
-                              width: 12,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                            label: '2 km',
+                const SizedBox(
+                  height: 5,
+                ),
+                Stack(
+                  children: [
+                    CroppedImage(
+                      height: constraints.maxWidth,
+                      borderRadius: 12,
+                      path: 'assets/images/com-tam-suon-bi-cha-2.jpg',
+                    ),
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Wrap(
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: [
+                              BlurredPill(
+                                icon: AppIcons.location1.toSvg(
+                                  width: 12,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                                label: '2 km',
+                              ),
+                              BlurredPill(
+                                icon: AppIcons.wallet4.toSvg(
+                                  width: 12,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                                label: '70.000đ',
+                              ),
+                              BlurredPill(
+                                icon: AppIcons.time.toSvg(
+                                  width: 12,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                                label: '4:00-23:00',
+                              ),
+                            ],
                           ),
-                          BlurredPill(
-                            icon: AppIcons.wallet4.toSvg(
-                              width: 12,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                            label: '70.000đ',
-                          ),
-                          BlurredPill(
-                            icon: AppIcons.time.toSvg(
-                              width: 12,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                            label: '4:00-23:00',
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.3),
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(12),
+                            bottomRight: Radius.circular(12),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              top: 5,
-                              bottom: 5,
-                              left: 10,
-                              right: 10,
-                            ),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: Wrap(
-                                alignment: WrapAlignment.center,
-                                spacing: 5,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.3),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 5,
+                                  bottom: 5,
+                                  left: 10,
+                                  right: 10,
+                                ),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Wrap(
+                                    alignment: WrapAlignment.center,
+                                    spacing: 5,
                                     children: [
-                                      AppIcons.heart1.toSvg(
-                                        width: 12,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          AppIcons.heart1.toSvg(
+                                            width: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                          const SizedBox(
+                                            width: 2,
+                                          ),
+                                          Text(
+                                            '1.234',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelSmall,
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(
-                                        width: 2,
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          AppIcons.locationCheck.toSvg(
+                                            width: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                          const SizedBox(
+                                            width: 2,
+                                          ),
+                                          Text(
+                                            '678',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelSmall,
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        '1.234',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall,
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          AppIcons.bookmark1.toSvg(
+                                            width: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                          const SizedBox(
+                                            width: 2,
+                                          ),
+                                          Text(
+                                            '323',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelSmall,
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      AppIcons.locationCheck.toSvg(
-                                        width: 12,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                      Text(
-                                        '678',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall,
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      AppIcons.bookmark1.toSvg(
-                                        width: 12,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                      Text(
-                                        '323',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall,
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  children: [
+                    const CroppedImage(
+                      borderRadius: 1000,
+                      width: 16,
+                      height: 16,
+                      path: 'assets/images/com-tam-suon-bi-cha-2.jpg',
                     ),
-                  ),
+                    const SizedBox(
+                      width: 2,
+                    ),
+                    Expanded(
+                      child: Text(
+                        'danhdelreyrererererererere',
+                        style: Theme.of(context).textTheme.labelSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      '4 giờ',
+                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                    ),
+                  ],
                 )
               ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                const CroppedImage(
-                  borderRadius: 1000,
-                  width: 16,
-                  height: 16,
-                  path: 'assets/images/com-tam-suon-bi-cha-2.jpg',
-                ),
-                const SizedBox(
-                  width: 2,
-                ),
-                Expanded(
-                  child: Text(
-                    'danhdelreyrererererererere',
-                    style: Theme.of(context).textTheme.labelSmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  '4 giờ',
-                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                ),
-              ],
-            )
-          ],
-        );
-      }),
+            );
+          }),
+        ),
+      ),
     );
   }
 }
