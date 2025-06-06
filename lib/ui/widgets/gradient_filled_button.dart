@@ -6,14 +6,19 @@ import 'package:go_router/go_router.dart';
 class GradientFilledButton extends StatelessWidget {
   const GradientFilledButton({
     super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.maxWidth,
   });
-
+  final Widget icon;
+  final String label;
+  final Function() onTap;
+  final bool? maxWidth;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        context.go("/home_page");
-      },
+      onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Ink(
         decoration: BoxDecoration(
@@ -28,21 +33,19 @@ class GradientFilledButton extends StatelessWidget {
             bottom: 10,
           ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize:
+                maxWidth == true ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AppIcons.rocketFill.toSvg(
-                width: 18,
-                color: Colors.white,
-              ),
+              icon,
               const SizedBox(
                 width: 5,
               ),
               Text(
-                'Bắt đầu khám phá',
-                style:
-                    Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: Colors.white,
-                        ),
+                label,
+                style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      color: Colors.white,
+                    ),
               ),
             ],
           ),

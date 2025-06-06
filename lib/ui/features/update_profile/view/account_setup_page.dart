@@ -90,7 +90,16 @@ class AccountSetupPage extends StatelessWidget {
               const SizedBox(
                 height: 30,
               ),
-              GradientFilledButton()
+              GradientFilledButton(
+                icon: AppIcons.rocketFill.toSvg(
+                  width: 16,
+                  color: Colors.white,
+                ),
+                label: 'Bắt đầu khám phá',
+                onTap: () {
+                  context.go('/home');
+                },
+              ),
             ],
           ),
         ),

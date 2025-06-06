@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
+import 'package:dishlocal/ui/widgets/gradient_filled_button.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -33,8 +34,8 @@ class PostDetailPage extends StatelessWidget {
                     const CroppedImage(
                       borderRadius: 1000,
                       path: 'assets/images/Lana.jpg',
-                      width: 44,
-                      height: 44,
+                      width: 36,
+                      height: 36,
                     ),
                     const SizedBox(
                       width: 10,
@@ -120,19 +121,127 @@ class PostDetailPage extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                Text(
-                  'Cơm tấm sườn bì chả',
-                  style: Theme.of(context).textTheme.titleLarge,
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    'Cơm tấm sườn bì chả',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                LayoutBuilder(builder: (context, constraints) {
-                  return CroppedImage(
-                      borderRadius: 12,
-                      height: constraints.maxWidth,
-                      path: 'assets/images/com-tam-suon-bi-cha-2.jpg');
-                }),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return CroppedImage(
+                        borderRadius: 12,
+                        height: constraints.maxWidth,
+                        path: 'assets/images/com-tam-suon-bi-cha-2.jpg');
+                  },
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                CustomIconWithLabel(
+                  icon: AppIcons.location.toSvg(
+                    width: 16,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  label: '2 km',
+                ),
+                Text(
+                  'Cơm tấm Hoàng Sang',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                Text(
+                  '75/36 Võ Trường Toản, phường An Hòa, quận Ninh Kiều, tp. Cần Thơ',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                CustomIconWithLabel(
+                  icon: AppIcons.time.toSvg(
+                    width: 16,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  label: 'Giờ mở cửa: Từ 8:00 đến 23:00',
+                ),
+                CustomIconWithLabel(
+                  icon: AppIcons.wallet4.toSvg(
+                    width: 16,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  label: 'Giá: 100.000đ',
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomIconWithLabel(
+                  icon: AppIcons.location.toSvg(
+                    width: 16,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  label: '323 đã đến',
+                ),
+                CustomIconWithLabel(
+                  icon: AppIcons.locationCheckFilled.toSvg(
+                    color: Colors.blue,
+                    width: 16,
+                  ),
+                  label: 'Bạn đã đến đây vào ngày 01/06/2025 lúc 10:23',
+                  labelColor: Colors.blue,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                GradientFilledButton(
+                  maxWidth: true,
+                  icon: AppIcons.location.toSvg(
+                    width: 16,
+                    color: Colors.white,
+                  ),
+                  label: 'Xem trên bản đồ',
+                  onTap: () {},
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomIconWithLabel(
+                      icon: AppIcons.heart1.toSvg(
+                        width: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      label: '12.4 N',
+                    ),
+                    CustomIconWithLabel(
+                      icon: AppIcons.comment2.toSvg(
+                        width: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      label: '12.4 N',
+                    ),
+                    CustomIconWithLabel(
+                      icon: AppIcons.bookmark1.toSvg(
+                        width: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      label: '12.4 N',
+                    ),
+                    CustomIconWithLabel(
+                      icon: AppIcons.shareForward.toSvg(
+                        width: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      label: '12.4 N',
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Divider(),
               ],
             ),
           ),
@@ -190,7 +299,7 @@ class ReviewSection extends StatelessWidget {
       children: [
         Text(
           category,
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
                 color: Theme.of(context).colorScheme.outline,
               ),
         ),
@@ -236,6 +345,9 @@ class ReviewSection extends StatelessWidget {
               width: 16,
               color: Theme.of(context).colorScheme.secondary,
             ),
+            const SizedBox(
+              width: 10,
+            ),
             Text(
               '10/10',
               style: Theme.of(context).textTheme.labelLarge!.copyWith(
@@ -246,7 +358,7 @@ class ReviewSection extends StatelessWidget {
         ),
         Text(
           comment,
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
       ],
     );
