@@ -176,13 +176,6 @@ class PostDetailPage extends StatelessWidget {
                   height: 20,
                 ),
                 CustomIconWithLabel(
-                  icon: AppIcons.location.toSvg(
-                    width: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  label: '323 đã đến',
-                ),
-                CustomIconWithLabel(
                   icon: AppIcons.locationCheckFilled.toSvg(
                     color: Colors.blue,
                     width: 16,
@@ -220,21 +213,28 @@ class PostDetailPage extends StatelessWidget {
                         width: 16,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
-                      label: '12.4 N',
+                      label: '345',
+                    ),
+                    CustomIconWithLabel(
+                      icon: AppIcons.locationCheck.toSvg(
+                        width: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      label: '345',
                     ),
                     CustomIconWithLabel(
                       icon: AppIcons.bookmark1.toSvg(
                         width: 16,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
-                      label: '12.4 N',
+                      label: '1.567',
                     ),
                     CustomIconWithLabel(
                       icon: AppIcons.shareForward.toSvg(
                         width: 16,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
-                      label: '12.4 N',
+                      label: '101',
                     ),
                   ],
                 ),
