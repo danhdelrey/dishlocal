@@ -273,7 +273,7 @@ class CustomIconWithLabel extends StatelessWidget {
         ),
         Text(
           label,
-          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: labelColor,
               ),
         )

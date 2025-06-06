@@ -83,87 +83,84 @@ class Post extends StatelessWidget {
                             bottomLeft: Radius.circular(12),
                             bottomRight: Radius.circular(12),
                           ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.3),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.3),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                top: 5,
+                                bottom: 5,
+                                left: 10,
+                                right: 10,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 5,
-                                  bottom: 5,
-                                  left: 10,
-                                  right: 10,
-                                ),
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: Wrap(
-                                    alignment: WrapAlignment.center,
-                                    spacing: 5,
-                                    children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          AppIcons.heart1.toSvg(
-                                            width: 12,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                          const SizedBox(
-                                            width: 2,
-                                          ),
-                                          Text(
-                                            '1.234',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelSmall,
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          AppIcons.locationCheck.toSvg(
-                                            width: 12,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                          const SizedBox(
-                                            width: 2,
-                                          ),
-                                          Text(
-                                            '678',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelSmall,
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          AppIcons.bookmark1.toSvg(
-                                            width: 12,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                          const SizedBox(
-                                            width: 2,
-                                          ),
-                                          Text(
-                                            '323',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelSmall,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 5,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        AppIcons.heart1.toSvg(
+                                          width: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                        const SizedBox(
+                                          width: 2,
+                                        ),
+                                        Text(
+                                          '1.234',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        AppIcons.locationCheck.toSvg(
+                                          width: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                        const SizedBox(
+                                          width: 2,
+                                        ),
+                                        Text(
+                                          '678',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        AppIcons.bookmark1.toSvg(
+                                          width: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                        const SizedBox(
+                                          width: 2,
+                                        ),
+                                        Text(
+                                          '323',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
