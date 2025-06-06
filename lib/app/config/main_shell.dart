@@ -33,11 +33,11 @@ class MainShell extends StatelessWidget {
 
       // 3. BottomAppBar thay thế cho PersistentTabView
       bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(), // Tạo "vết lõm" cho FAB
-        notchMargin: 8.0,
+        height: kBottomNavigationBarHeight + 10,
+        color: Theme.of(context).colorScheme.surface,
         child: Row(
           // Chia các item ra các bên của vết lõm
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             // Item 0
             _buildTabItem(
@@ -102,9 +102,6 @@ class MainShell extends StatelessWidget {
     required int index,
   }) {
     final bool isSelected = navigationShell.currentIndex == index;
-    final color = isSelected
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.outline;
 
     return AnimatedScale(
       // 1. Điều khiển tỷ lệ phóng to/thu nhỏ
@@ -117,10 +114,16 @@ class MainShell extends StatelessWidget {
       curve: Curves.easeIn,
 
       // 4. Widget con chính là IconButton của bạn
-      child: IconButton(
-        icon: isSelected ? activeIcon : icon,
-        color: color,
-        onPressed: () => _onTap(context, index),
+      // child: IconButton(
+      //   icon: isSelected ? activeIcon : icon,
+      //   color: color,
+      //   onPressed: () => _onTap(context, index),
+      // ),
+      child: GestureDetector(
+        onTap: () {
+          _onTap(context, index);
+        },
+        child: isSelected ? activeIcon : icon,
       ),
     );
   }
