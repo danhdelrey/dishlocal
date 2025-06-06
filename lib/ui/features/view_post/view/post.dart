@@ -23,7 +23,7 @@ class Post extends StatelessWidget {
               children: [
                 Text(
                   'Cơm tấm sườn bì chả',
-                  style: Theme.of(context).textTheme.labelMedium,
+                  style: Theme.of(context).textTheme.labelLarge,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -182,15 +182,15 @@ class Post extends StatelessWidget {
                       borderRadius: 1000,
                       width: 16,
                       height: 16,
-                      path: 'assets/images/com-tam-suon-bi-cha-2.jpg',
+                      path: 'assets/images/Lana.jpg',
                     ),
                     const SizedBox(
                       width: 2,
                     ),
                     Expanded(
                       child: Text(
-                        'danhdelreyrererererererere',
-                        style: Theme.of(context).textTheme.labelSmall,
+                        'danhdelrey',
+                        style: Theme.of(context).textTheme.labelMedium,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

@@ -1,27 +1,47 @@
+import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/view_post/view/post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class GridViewPosts extends StatelessWidget {
-  const GridViewPosts({
-    super.key,
-  });
+  const GridViewPosts({super.key, this.header});
+
+  final SliverToBoxAdapter? header;
 
   @override
   Widget build(BuildContext context) {
-    return MasonryGridView.builder(
-      itemCount: 10,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      padding: const EdgeInsets.only(
-        left: 10,
-        right: 10,
-        top: 10,
-      ),
-      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
-      itemBuilder: (context, index) => const Post(),
+    return CustomScrollView(
+      slivers: [
+        if (header != null) header!,
+
+        // Lưới dạng Masonry
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          sliver: SliverMasonryGrid.count(
+            crossAxisCount: 2,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            childCount: 10,
+            itemBuilder: (context, index) => const Post(),
+          ),
+        ),
+
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Container(
+              width: double.infinity,
+              alignment: Alignment.center,
+              child: Text(
+                'Đã xem hết bài đăng',
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

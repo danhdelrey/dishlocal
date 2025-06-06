@@ -66,6 +66,9 @@ class ProfilePage extends StatelessWidget {
                                 'Đỗ Lan Anh',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
+                              const SizedBox(
+                                height: 5,
+                              ),
                               const CustomRichText(
                                 label1: '12.4 N',
                                 description1: ' người theo dõi • ',
@@ -110,11 +113,28 @@ class ProfilePage extends StatelessWidget {
             ];
           },
           // 2. body: chứa nội dung chính có thể cuộn (TabBarView)
-          body: const TabBarView(
+          body: TabBarView(
             children: [
-              GridViewPosts(),
-              GridViewPosts(),
-              GridViewPosts(),
+              GridViewPosts(
+                header: SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 10),
+                    child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      child: Text(
+                        '23 bài đăng • 26.3 N lượt thích',
+                        style:
+                            Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  color: Theme.of(context).colorScheme.outline,
+                                ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const GridViewPosts(),
+              const GridViewPosts(),
             ],
           ),
         ),
