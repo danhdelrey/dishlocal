@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
 import 'package:dishlocal/ui/features/view_post/view/review_section.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
@@ -89,6 +90,7 @@ class PostDetailPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const ReviewSection(
                       category: 'Đồ ăn:',
@@ -249,116 +251,9 @@ class PostDetailPage extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              const Comment(),
-              const Comment(),
-              const Comment(),
+              const CommentSection(),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class Comment extends StatelessWidget {
-  const Comment({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CroppedImage(
-              borderRadius: 1000,
-              path: 'assets/images/Lana.jpg',
-              width: 36,
-              height: 36,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      text: 'lanadelrey',
-                      style: Theme.of(context).textTheme.labelLarge,
-                      children: [
-                        TextSpan(
-                          text: ' • Tác giả',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium!
-                              .copyWith(
-                                color: Theme.of(context).colorScheme.tertiary,
-                              ),
-                          recognizer: TapGestureRecognizer()..onTap = () {},
-                        )
-                      ],
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  CustomIconWithLabel(
-                    icon: AppIcons.locationCheckFilled.toSvg(
-                      color: Colors.blue,
-                      width: 14,
-                    ),
-                    label: '13:45 25/05/2025',
-                    labelStyle:
-                        Theme.of(context).textTheme.labelMedium!.copyWith(
-                              color: Colors.blue,
-                            ),
-                  ),
-                  Text(
-                    'Mình vừa check lại, hình như quán còn có cả món cơm tấm sườn nướng mật ong nữa đó cả nhà, ai thích ngọt ngọt thì thử nha! Đỉnh của chóp!',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        '4 giờ',
-                        style:
-                            Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.outline,
-                                ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Trả lời',
-                        style:
-                            Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                      ),
-                      const Spacer(),
-                      CustomIconWithLabel(
-                        icon: AppIcons.heart1.toSvg(
-                          color: Theme.of(context).colorScheme.outline,
-                          width: 14,
-                        ),
-                        label: '123',
-                        labelStyle:
-                            Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.outline,
-                                ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
