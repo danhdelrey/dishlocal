@@ -77,7 +77,7 @@ class AppTextField extends StatelessWidget {
                   ],
                 ),
               Expanded(
-                child: TextFormField(
+                child: TextField(
                   maxLength: maxLength,
                   style: Theme.of(context).textTheme.bodyLarge,
                   decoration: InputDecoration.collapsed(
@@ -98,7 +98,9 @@ class AppTextField extends StatelessWidget {
                                 .labelSmall!
                                 .copyWith(
                                   color: isFocused == false
-                                      ? Theme.of(context).colorScheme.outline
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .outlineVariant
                                       : Theme.of(context).colorScheme.onSurface,
                                 ),
                           )

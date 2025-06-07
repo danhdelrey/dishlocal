@@ -1,4 +1,8 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/ui/features/new_post/view/app_rating_text_field.dart';
+import 'package:dishlocal/ui/features/new_post/view/dining_location_info_input_section.dart';
+import 'package:dishlocal/ui/features/new_post/view/food_info_input_section.dart';
+import 'package:dishlocal/ui/features/new_post/view/rating_input_section.dart';
 import 'package:dishlocal/ui/widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/max_width_with_height_constraint_cropped_image.dart';
 import 'package:flutter/material.dart';
@@ -37,35 +41,43 @@ class NewPostPage extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          Text(
-            '8:30 25/05/2025',
-            style: Theme.of(context).textTheme.titleMedium,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  '8:30 25/05/2025',
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const MaxWidthWithHeightConstraintCroppedImage(
+                  imagePath: 'assets/images/com-tam-suon-bi-cha-2.jpg',
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const FoodInfoInputSection(),
+                const SizedBox(
+                  height: 20,
+                ),
+                const DiningLocationInfoInputSection(),
+                const SizedBox(
+                  height: 20,
+                ),
+                const RatingInputSection(),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
           ),
-          const MaxWidthWithHeightConstraintCroppedImage(
-            imagePath: 'assets/images/com-tam-suon-bi-cha-2.jpg',
-          ),
-          Text(
-            'Thông tin món ăn',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const AppTextField(
-            title: 'Tên món ăn*',
-            hintText: 'Nhập tên món ăn...',
-            showSupportingText: false,
-          ),
-          const Divider(
-            indent: 15,
-            endIndent: 15,
-          ),
-          AppTextField(
-            title: 'Giá',
-            hintText: 'Nhập giá của món ăn...',
-            showSupportingText: false,
-            leadingIcon: AppIcons.wallet4.toSvg(),
-          ),
-        ],
+        ),
       ),
     );
   }
