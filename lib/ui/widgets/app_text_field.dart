@@ -62,10 +62,23 @@ class AppTextField extends StatelessWidget {
             maxLength: 10,
             style: Theme.of(context).textTheme.bodyLarge,
             decoration: InputDecoration.collapsed(
-                hintText: hintText,
-                hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.outlineVariant,
-                    )),
+              hintText: hintText,
+              hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+            ),
+            buildCounter: (context,
+                    {required currentLength,
+                    required isFocused,
+                    required maxLength}) =>
+                Text(
+              '$currentLength/$maxLength',
+              style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                    color: isFocused == false
+                        ? Theme.of(context).colorScheme.outline
+                        : Theme.of(context).colorScheme.onSurface,
+                  ),
+            ),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/ui/widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/max_width_with_height_constraint_cropped_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -45,6 +46,14 @@ class NewPostPage extends StatelessWidget {
           const MaxWidthWithHeightConstraintCroppedImage(
             imagePath: 'assets/images/com-tam-suon-bi-cha-2.jpg',
           ),
+          Text(
+            'Thông tin món ăn',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const AppTextField(
+              title: 'Tên món ăn*',
+              hintText: 'Nhập tên món ăn...',
+              showSupportingText: false),
         ],
       ),
     );
