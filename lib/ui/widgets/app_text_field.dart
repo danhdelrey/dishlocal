@@ -53,10 +53,10 @@ class AppTextField extends StatelessWidget {
                   minLines: 1,
                   maxLines: 5,
                   maxLength: maxLength,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.bodyMedium,
                   decoration: InputDecoration.collapsed(
                     hintText: hintText,
-                    hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
                           color: Theme.of(context).colorScheme.outlineVariant,
                         ),
                   ),

@@ -135,10 +135,10 @@ class AppRatingTextField extends StatelessWidget {
           ),
           TextField(
             maxLength: maxLength,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(context).textTheme.bodyMedium,
             decoration: InputDecoration.collapsed(
               hintText: hintText,
-              hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.outlineVariant,
                   ),
             ),
