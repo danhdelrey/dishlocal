@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/gradient_filled_button.dart';
+import 'package:dishlocal/ui/widgets/max_width_with_height_constraint_cropped_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -132,13 +133,8 @@ class PostDetailPage extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return CroppedImage(
-                        borderRadius: 12,
-                        height: constraints.maxWidth,
-                        path: 'assets/images/com-tam-suon-bi-cha-2.jpg');
-                  },
+                const MaxWidthWithHeightConstraintCroppedImage(
+                  imagePath: 'assets/images/com-tam-suon-bi-cha-2.jpg',
                 ),
                 const SizedBox(
                   height: 10,
