@@ -64,9 +64,6 @@ class Comment extends StatelessWidget {
                         color: Colors.blue,
                       ),
                 ),
-                const SizedBox(
-                  height: 5,
-                ),
                 Text(
                   'Mình vừa check lại, hình như quán còn có cả món cơm tấm sườn nướng mật ong nữa đó cả nhà, ai thích ngọt ngọt thì thử nha! Đỉnh của chóp!',
                   style: Theme.of(context).textTheme.bodyMedium,

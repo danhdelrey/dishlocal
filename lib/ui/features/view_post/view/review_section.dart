@@ -19,7 +19,7 @@ class ReviewSection extends StatelessWidget {
         Text(
           category,
           style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                color: Theme.of(context).colorScheme.outline,
+                color: Theme.of(context).colorScheme.secondary,
               ),
         ),
         Row(
@@ -65,7 +65,7 @@ class ReviewSection extends StatelessWidget {
               color: Theme.of(context).colorScheme.secondary,
             ),
             const SizedBox(
-              width: 10,
+              width: 5,
             ),
             Text(
               '10/10',

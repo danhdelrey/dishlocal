@@ -1,4 +1,6 @@
+import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/comment/view/comment.dart';
+import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
 import 'package:flutter/material.dart';
 
 class CommentSection extends StatelessWidget {
@@ -8,25 +10,40 @@ class CommentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(
+    return Padding(
+      padding: const EdgeInsets.symmetric(
         horizontal: 10,
       ),
       child: Column(
         children: [
-          Comment(),
-          Comment(),
-          Comment(
+          Row(
+            children: [
+              Text(
+                'Tất cả bình luận',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const Comment(),
+          const Comment(),
+          const Comment(
             subComment: Comment(
               avatarSize: 24,
             ),
           ),
-          Comment(),
-          Comment(),
-          SizedBox(
+          const Comment(),
+          const Comment(),
+          const SizedBox(
             height: 50,
           ),
-          SizedBox(
+          const SizedBox(
             width: 20,
             height: 20,
             child: CircularProgressIndicator(
