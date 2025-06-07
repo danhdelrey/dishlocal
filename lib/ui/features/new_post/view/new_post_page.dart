@@ -51,9 +51,19 @@ class NewPostPage extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const AppTextField(
-              title: 'Tên món ăn*',
-              hintText: 'Nhập tên món ăn...',
-              showSupportingText: false),
+            title: 'Tên món ăn*',
+            hintText: 'Nhập tên món ăn...',
+            showSupportingText: false,
+          ),
+          const Divider(
+            indent: 15,
+            endIndent: 15,
+          ),
+          const AppTextField(
+            title: 'Tên món ăn*',
+            hintText: 'Nhập tên món ăn...',
+            showSupportingText: false,
+          ),
         ],
       ),
     );

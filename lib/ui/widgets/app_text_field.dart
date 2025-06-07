@@ -7,11 +7,16 @@ class AppTextField extends StatelessWidget {
     required this.title,
     required this.hintText,
     required this.showSupportingText,
+    this.showLeadingIcon = false,
+    this.maxLength,
   });
 
   final String title;
   final String hintText;
   final bool showSupportingText;
+  final bool showLeadingIcon;
+
+  final int? maxLength;
 
   @override
   Widget build(BuildContext context) {
@@ -58,27 +63,48 @@ class AppTextField extends StatelessWidget {
           const SizedBox(
             height: 5,
           ),
-          TextFormField(
-            maxLength: 10,
-            style: Theme.of(context).textTheme.bodyLarge,
-            decoration: InputDecoration.collapsed(
-              hintText: hintText,
-              hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.outlineVariant,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (showLeadingIcon)
+                Row(
+                  children: [
+                    AppIcons.wallet4.toSvg(),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                  ],
+                ),
+              Expanded(
+                child: TextFormField(
+                  maxLength: maxLength,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  decoration: InputDecoration.collapsed(
+                    hintText: hintText,
+                    hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
                   ),
-            ),
-            buildCounter: (context,
-                    {required currentLength,
-                    required isFocused,
-                    required maxLength}) =>
-                Text(
-              '$currentLength/$maxLength',
-              style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                    color: isFocused == false
-                        ? Theme.of(context).colorScheme.outline
-                        : Theme.of(context).colorScheme.onSurface,
-                  ),
-            ),
+                  buildCounter: maxLength != null
+                      ? (context,
+                              {required currentLength,
+                              required isFocused,
+                              required maxLength}) =>
+                          Text(
+                            '$currentLength/$maxLength',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall!
+                                .copyWith(
+                                  color: isFocused == false
+                                      ? Theme.of(context).colorScheme.outline
+                                      : Theme.of(context).colorScheme.onSurface,
+                                ),
+                          )
+                      : null,
+                ),
+              ),
+            ],
           ),
         ],
       ),
