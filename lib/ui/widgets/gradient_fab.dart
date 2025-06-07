@@ -9,7 +9,7 @@ class GradientFab extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.push("/account_setup");
+        context.push("/new_post");
       },
       borderRadius: BorderRadius.circular(1000),
       child: Ink(

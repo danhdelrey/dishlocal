@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/config/main_shell.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
+import 'package:dishlocal/ui/features/new_post/view/new_post_page.dart';
 import 'package:dishlocal/ui/features/profile/view/profile_page.dart';
 import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
@@ -134,16 +135,20 @@ final GoRouter router = GoRouter(
   routes: [
     // Route này nằm ngoài ShellRoute, nên nó sẽ che toàn bộ màn hình
     GoRoute(
-      path: '/post_detail',
-      builder: (context, state) => const PostDetailPage(),
-    ),
-    GoRoute(
       path: '/login',
       builder: (context, state) => const LoginPage(),
     ),
     GoRoute(
       path: '/account_setup',
       builder: (context, state) => const AccountSetupPage(),
+    ),
+    GoRoute(
+      path: '/post_detail',
+      builder: (context, state) => const PostDetailPage(),
+    ),
+    GoRoute(
+      path: '/new_post',
+      builder: (context, state) => const NewPostPage(),
     ),
 
     // Sử dụng MainShell thay vì PersistentTabView.router

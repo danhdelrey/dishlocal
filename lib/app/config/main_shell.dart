@@ -37,7 +37,7 @@ class MainShell extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         child: Row(
           // Chia các item ra các bên của vết lõm
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
           children: <Widget>[
             // Item 0
             _buildTabItem(
@@ -103,27 +103,25 @@ class MainShell extends StatelessWidget {
   }) {
     final bool isSelected = navigationShell.currentIndex == index;
 
-    return AnimatedScale(
-      // 1. Điều khiển tỷ lệ phóng to/thu nhỏ
-      scale: isSelected ? 1.25 : 1.0,
-
-      // 2. Thời gian diễn ra animation
-      duration: const Duration(milliseconds: 200),
-
-      // 3. Kiểu đường cong animation (tùy chọn, để mượt hơn)
-      curve: Curves.easeIn,
-
-      // 4. Widget con chính là IconButton của bạn
-      // child: IconButton(
-      //   icon: isSelected ? activeIcon : icon,
-      //   color: color,
-      //   onPressed: () => _onTap(context, index),
-      // ),
-      child: GestureDetector(
+    return Expanded(
+      child: InkWell(
         onTap: () {
           _onTap(context, index);
         },
-        child: isSelected ? activeIcon : icon,
+        child: AnimatedScale(
+          // 1. Điều khiển tỷ lệ phóng to/thu nhỏ
+          scale: isSelected ? 1.25 : 1.0,
+
+          // 2. Thời gian diễn ra animation
+          duration: const Duration(milliseconds: 200),
+
+          // 3. Kiểu đường cong animation (tùy chọn, để mượt hơn)
+          curve: Curves.easeIn,
+          child: Align(
+            alignment: Alignment.center,
+            child: isSelected ? activeIcon : icon,
+          ),
+        ),
       ),
     );
   }
