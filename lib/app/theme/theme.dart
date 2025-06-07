@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 final darkTheme = ThemeData.dark().copyWith(
-  colorScheme: colorScheme,
-  textTheme: textTheme,
-  appBarTheme: ThemeData.dark().appBarTheme.copyWith(
-        systemOverlayStyle: mySystemTheme,
-      ),
-);
+    colorScheme: colorScheme,
+    textTheme: textTheme,
+    appBarTheme: ThemeData.dark().appBarTheme.copyWith(
+          systemOverlayStyle: mySystemTheme,
+        ),
+    pageTransitionsTheme: const PageTransitionsTheme(builders: {
+      TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+    }));
 
 final colorScheme = ColorScheme.fromSeed(
   seedColor: const Color(0xFF899CCC),
