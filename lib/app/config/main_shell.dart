@@ -104,7 +104,8 @@ class MainShell extends StatelessWidget {
     final bool isSelected = navigationShell.currentIndex == index;
 
     return Expanded(
-      child: InkWell(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
           _onTap(context, index);
         },

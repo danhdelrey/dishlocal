@@ -7,19 +7,26 @@ class GradientFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        context.push("/new_post");
-      },
-      borderRadius: BorderRadius.circular(1000),
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: primaryGradient,
-          borderRadius: BorderRadius.circular(1000),
-        ),
-        width: 40,
-        height: 40,
-        child: const Icon(Icons.add),
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: () {
+              context.push("/new_post");
+            },
+            borderRadius: BorderRadius.circular(1000),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: primaryGradient,
+                borderRadius: BorderRadius.circular(1000),
+              ),
+              width: 40,
+              height: 40,
+              child: const Icon(Icons.add),
+            ),
+          ),
+        ],
       ),
     );
   }
