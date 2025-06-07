@@ -16,233 +16,349 @@ class PostDetailPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      context.pop();
+                    },
+                    icon: AppIcons.left.toSvg(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const CroppedImage(
+                    borderRadius: 1000,
+                    path: 'assets/images/Lana.jpg',
+                    width: 36,
+                    height: 36,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            text: 'lanadelrey',
+                            style: Theme.of(context).textTheme.titleMedium,
+                            children: [
+                              TextSpan(
+                                text: ' • Theo dõi',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {},
+                              )
+                            ],
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        CustomIconWithLabel(
+                          icon: AppIcons.locationCheckFilled.toSvg(
+                            color: Colors.blue,
+                            width: 16,
+                          ),
+                          label: '13:45 25/05/2025',
+                          labelColor: Colors.blue,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.more_horiz,
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        context.pop();
-                      },
-                      icon: AppIcons.left.toSvg(
+                    const ReviewSection(
+                      category: 'Đồ ăn:',
+                      comment:
+                          'Mới vừa ăn một dĩa cơm tấm ở Quán Hoàng Sang... Ôi trời ơi, ngon xỉu up xỉu down luôn mọi người ơi! 🤤 Miếng sườn nướng thấm vị, nước mắm đỉnh cao, ăn xong chỉ muốn order thêm dĩa nữa. Highly recommend cho team mê cơm tấm nha! ❤️',
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const ReviewSection(
+                      category: 'Không gian:',
+                      comment:
+                          'Quán tuy nhỏ, nằm trong hẻm nhưng rất sạch sẽ, gọn gàng từ khu vực bếp đến bàn ăn. Điều này làm tôi cảm thấy rất yên tâm khi thưởng thức.',
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const ReviewSection(
+                      category: 'Phục vụ:',
+                      comment:
+                          'Cô chú chủ quán cực kỳ thân thiện, nhiệt tình, luôn nở nụ cười và hỏi han khách. Tạo cảm giác như đang ăn cơm nhà vậy, rất thoải mái.',
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const ReviewSection(
+                      category: 'Giá cả:',
+                      comment:
+                          'Với chất lượng món ăn và dịch vụ nhận được, mức giá từ 45k-75k/phần là hoàn toàn hợp lý, thậm chí là rẻ cho một đĩa cơm tấm "đỉnh của chóp" như vậy ở khu vực trung tâm.',
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        'Cơm tấm sườn bì chả',
+                        style: Theme.of(context).textTheme.titleMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const MaxWidthWithHeightConstraintCroppedImage(
+                      imagePath: 'assets/images/com-tam-suon-bi-cha-2.jpg',
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    CustomIconWithLabel(
+                      icon: AppIcons.location.toSvg(
+                        width: 16,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
+                      label: '2 km',
                     ),
-                    const CroppedImage(
-                      borderRadius: 1000,
-                      path: 'assets/images/Lana.jpg',
-                      width: 36,
-                      height: 36,
+                    Text(
+                      'Cơm tấm Hoàng Sang',
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    Text(
+                      '75/36 Võ Trường Toản, phường An Hòa, quận Ninh Kiều, tp. Cần Thơ',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    CustomIconWithLabel(
+                      icon: AppIcons.time.toSvg(
+                        width: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      label: 'Giờ mở cửa: Từ 8:00 đến 23:00',
+                    ),
+                    CustomIconWithLabel(
+                      icon: AppIcons.wallet4.toSvg(
+                        width: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      label: 'Giá: 100.000đ',
                     ),
                     const SizedBox(
-                      width: 10,
+                      height: 20,
                     ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              text: 'lanadelrey',
-                              style: Theme.of(context).textTheme.titleMedium,
-                              children: [
-                                TextSpan(
-                                  text: ' • Theo dõi',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge!
-                                      .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {},
-                                )
-                              ],
-                            ),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          CustomIconWithLabel(
-                            icon: AppIcons.locationCheckFilled.toSvg(
-                              color: Colors.blue,
-                              width: 16,
-                            ),
-                            label: '13:45 25/05/2025',
-                            labelColor: Colors.blue,
-                          ),
-                        ],
+                    CustomIconWithLabel(
+                      icon: AppIcons.locationCheckFilled.toSvg(
+                        color: Colors.blue,
+                        width: 16,
                       ),
+                      label: 'Bạn đã đến đây vào ngày 01/06/2025 lúc 10:23',
+                      labelColor: Colors.blue,
                     ),
                     const SizedBox(
-                      width: 20,
+                      height: 20,
                     ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.more_horiz,
+                    GradientFilledButton(
+                      maxWidth: true,
+                      icon: AppIcons.location.toSvg(
+                        width: 16,
+                        color: Colors.white,
                       ),
+                      label: 'Xem trên bản đồ',
+                      onTap: () {},
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomIconWithLabel(
+                          icon: AppIcons.heart1.toSvg(
+                            width: 16,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          label: '12.4 N',
+                          labelColor: Theme.of(context).colorScheme.outline,
+                        ),
+                        CustomIconWithLabel(
+                          icon: AppIcons.comment2.toSvg(
+                            width: 16,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          labelColor: Theme.of(context).colorScheme.outline,
+                          label: '345',
+                        ),
+                        CustomIconWithLabel(
+                          icon: AppIcons.locationCheck.toSvg(
+                            width: 16,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          labelColor: Theme.of(context).colorScheme.outline,
+                          label: '345',
+                        ),
+                        CustomIconWithLabel(
+                          icon: AppIcons.bookmark1.toSvg(
+                            width: 16,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          labelColor: Theme.of(context).colorScheme.outline,
+                          label: '1.567',
+                        ),
+                        CustomIconWithLabel(
+                          icon: AppIcons.shareForward.toSvg(
+                            width: 16,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          labelColor: Theme.of(context).colorScheme.outline,
+                          label: '101',
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const ReviewSection(
-                  category: 'Đồ ăn:',
-                  comment:
-                      'Mới vừa ăn một dĩa cơm tấm ở Quán Hoàng Sang... Ôi trời ơi, ngon xỉu up xỉu down luôn mọi người ơi! 🤤 Miếng sườn nướng thấm vị, nước mắm đỉnh cao, ăn xong chỉ muốn order thêm dĩa nữa. Highly recommend cho team mê cơm tấm nha! ❤️',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const ReviewSection(
-                  category: 'Không gian:',
-                  comment:
-                      'Quán tuy nhỏ, nằm trong hẻm nhưng rất sạch sẽ, gọn gàng từ khu vực bếp đến bàn ăn. Điều này làm tôi cảm thấy rất yên tâm khi thưởng thức.',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const ReviewSection(
-                  category: 'Phục vụ:',
-                  comment:
-                      'Cô chú chủ quán cực kỳ thân thiện, nhiệt tình, luôn nở nụ cười và hỏi han khách. Tạo cảm giác như đang ăn cơm nhà vậy, rất thoải mái.',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const ReviewSection(
-                  category: 'Giá cả:',
-                  comment:
-                      'Với chất lượng món ăn và dịch vụ nhận được, mức giá từ 45k-75k/phần là hoàn toàn hợp lý, thậm chí là rẻ cho một đĩa cơm tấm "đỉnh của chóp" như vậy ở khu vực trung tâm.',
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    'Cơm tấm sườn bì chả',
-                    style: Theme.of(context).textTheme.titleMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const MaxWidthWithHeightConstraintCroppedImage(
-                  imagePath: 'assets/images/com-tam-suon-bi-cha-2.jpg',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CustomIconWithLabel(
-                  icon: AppIcons.location.toSvg(
-                    width: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  label: '2 km',
-                ),
-                Text(
-                  'Cơm tấm Hoàng Sang',
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-                Text(
-                  '75/36 Võ Trường Toản, phường An Hòa, quận Ninh Kiều, tp. Cần Thơ',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                CustomIconWithLabel(
-                  icon: AppIcons.time.toSvg(
-                    width: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  label: 'Giờ mở cửa: Từ 8:00 đến 23:00',
-                ),
-                CustomIconWithLabel(
-                  icon: AppIcons.wallet4.toSvg(
-                    width: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  label: 'Giá: 100.000đ',
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomIconWithLabel(
-                  icon: AppIcons.locationCheckFilled.toSvg(
-                    color: Colors.blue,
-                    width: 16,
-                  ),
-                  label: 'Bạn đã đến đây vào ngày 01/06/2025 lúc 10:23',
-                  labelColor: Colors.blue,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                GradientFilledButton(
-                  maxWidth: true,
-                  icon: AppIcons.location.toSvg(
-                    width: 16,
-                    color: Colors.white,
-                  ),
-                  label: 'Xem trên bản đồ',
-                  onTap: () {},
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CustomIconWithLabel(
-                      icon: AppIcons.heart1.toSvg(
-                        width: 16,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      label: '12.4 N',
-                    ),
-                    CustomIconWithLabel(
-                      icon: AppIcons.comment2.toSvg(
-                        width: 16,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      label: '345',
-                    ),
-                    CustomIconWithLabel(
-                      icon: AppIcons.locationCheck.toSvg(
-                        width: 16,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      label: '345',
-                    ),
-                    CustomIconWithLabel(
-                      icon: AppIcons.bookmark1.toSvg(
-                        width: 16,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      label: '1.567',
-                    ),
-                    CustomIconWithLabel(
-                      icon: AppIcons.shareForward.toSvg(
-                        width: 16,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      label: '101',
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Divider(),
-              ],
-            ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Divider(),
+              const SizedBox(
+                height: 10,
+              ),
+              const Comment(),
+              const Comment(),
+              const Comment(),
+            ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class Comment extends StatelessWidget {
+  const Comment({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {},
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const CroppedImage(
+              borderRadius: 1000,
+              path: 'assets/images/Lana.jpg',
+              width: 36,
+              height: 36,
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      text: 'lanadelrey',
+                      style: Theme.of(context).textTheme.labelLarge,
+                      children: [
+                        TextSpan(
+                          text: ' • Tác giả',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.tertiary,
+                              ),
+                          recognizer: TapGestureRecognizer()..onTap = () {},
+                        )
+                      ],
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  CustomIconWithLabel(
+                    icon: AppIcons.locationCheckFilled.toSvg(
+                      color: Colors.blue,
+                      width: 14,
+                    ),
+                    label: '13:45 25/05/2025',
+                    labelStyle:
+                        Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Colors.blue,
+                            ),
+                  ),
+                  Text(
+                    'Mình vừa check lại, hình như quán còn có cả món cơm tấm sườn nướng mật ong nữa đó cả nhà, ai thích ngọt ngọt thì thử nha! Đỉnh của chóp!',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        '4 giờ',
+                        style:
+                            Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  color: Theme.of(context).colorScheme.outline,
+                                ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Trả lời',
+                        style:
+                            Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                      ),
+                      const Spacer(),
+                      CustomIconWithLabel(
+                        icon: AppIcons.heart1.toSvg(
+                          color: Theme.of(context).colorScheme.outline,
+                          width: 14,
+                        ),
+                        label: '123',
+                        labelStyle:
+                            Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  color: Theme.of(context).colorScheme.outline,
+                                ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
