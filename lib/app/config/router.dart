@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/config/main_shell.dart';
+import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
 import 'package:dishlocal/ui/features/new_post/view/new_post_page.dart';
@@ -23,7 +24,7 @@ import 'package:go_router/go_router.dart';
 //       builder: (context, state, navigationShell) {
 //         // UI "khung" chứa PersistentTabView.router
 //         return PersistentTabView.router(
-          
+
 //           tabs: [
 //             PersistentRouterTabConfig(
 //               item: ItemConfig(
@@ -147,6 +148,10 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const PostDetailPage(),
     ),
     GoRoute(
+      path: '/camera',
+      builder: (context, state) => const CameraPage(),
+    ),
+    GoRoute(
       path: '/new_post',
       builder: (context, state) => const NewPostPage(),
     ),
@@ -177,7 +182,7 @@ final GoRouter router = GoRouter(
             ),
           ],
         ),
-        
+
         // Branch 2: Tin nhắn
         StatefulShellBranch(
           routes: [

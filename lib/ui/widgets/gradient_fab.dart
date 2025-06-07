@@ -13,7 +13,7 @@ class GradientFab extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              context.push("/new_post");
+              context.push("/camera");
             },
             borderRadius: BorderRadius.circular(1000),
             child: Ink(
