@@ -1,10 +1,11 @@
 import 'package:dishlocal/app/config/router.dart';
+import 'package:dishlocal/app/config/set_up_locators.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await setUpLocators();
   runApp(const MyApp());
 }
 
