@@ -117,6 +117,22 @@ class HomePage extends StatelessWidget {
                             width: 20,
                           ),
                           FilterItem(),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          FilterItem(),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          FilterItem(),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          FilterItem(),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          FilterItem(),
                         ],
                       ),
                     ),

@@ -1,5 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/ui/features/view_post/view/review_section.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
+import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/gradient_filled_button.dart';
 import 'package:dishlocal/ui/widgets/max_width_with_height_constraint_cropped_image.dart';
 import 'package:flutter/gestures.dart';
@@ -243,120 +245,6 @@ class PostDetailPage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class CustomIconWithLabel extends StatelessWidget {
-  const CustomIconWithLabel({
-    super.key,
-    required this.icon,
-    required this.label,
-    this.labelColor,
-  });
-
-  final Widget icon;
-  final String label;
-  final Color? labelColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        icon,
-        const SizedBox(
-          width: 2,
-        ),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: labelColor,
-              ),
-        )
-      ],
-    );
-  }
-}
-
-class ReviewSection extends StatelessWidget {
-  const ReviewSection({
-    super.key,
-    required this.category,
-    required this.comment,
-  });
-
-  final String category;
-  final String comment;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          category,
-          style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                color: Theme.of(context).colorScheme.outline,
-              ),
-        ),
-        Row(
-          children: [
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            AppIcons.starFill.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              '10/10',
-              style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-            ),
-          ],
-        ),
-        Text(
-          comment,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
     );
   }
 }
