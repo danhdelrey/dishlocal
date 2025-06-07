@@ -1,6 +1,6 @@
-
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
+import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
 import 'package:flutter/material.dart';
 
@@ -91,13 +91,73 @@ class HomePage extends StatelessWidget {
           },
           body: const TabBarView(
             children: [
-              GridViewPosts(),
+              GridViewPosts(
+                header: SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        bottom: 10, left: 15, right: 15, top: 20),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          FilterItem(),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          FilterItem(),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          FilterItem(),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          FilterItem(),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          FilterItem(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               GridViewPosts(),
               GridViewPosts(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class FilterItem extends StatelessWidget {
+  const FilterItem({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const CroppedImage(
+          borderRadius: 1000,
+          width: 50,
+          height: 50,
+          path: 'assets/images/com-tam-suon-bi-cha-2.jpg',
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          'Cơm',
+          style: Theme.of(context).textTheme.labelMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

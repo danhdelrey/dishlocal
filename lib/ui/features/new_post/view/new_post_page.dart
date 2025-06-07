@@ -36,7 +36,6 @@ class NewPostPage extends StatelessWidget {
             onPressed: () {},
             child: const Text(
               'Đăng',
-              //style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
         ],
