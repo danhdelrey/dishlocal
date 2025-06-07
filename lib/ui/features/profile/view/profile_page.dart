@@ -2,7 +2,6 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatelessWidget {

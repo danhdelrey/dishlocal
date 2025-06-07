@@ -1,16 +1,11 @@
 import 'package:dishlocal/app/config/main_shell.dart';
-import 'package:dishlocal/app/theme/app_icons.dart';
-import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
 import 'package:dishlocal/ui/features/profile/view/profile_page.dart';
 import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
-import 'package:dishlocal/ui/widgets/custom_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
-import 'package:badges/badges.dart' as badges;
 
 // GoRouter router = GoRouter(
 //   initialLocation: '/home',

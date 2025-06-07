@@ -1,12 +1,8 @@
-import 'dart:ui';
 
-import 'package:dishlocal/app/config/router.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
-import 'package:dishlocal/ui/features/view_post/view/post.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

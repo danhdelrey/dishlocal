@@ -1,6 +1,4 @@
-import 'dart:ui';
 import 'package:dishlocal/app/theme/app_icons.dart';
-import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/widgets/blurred_pill.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:flutter/material.dart';

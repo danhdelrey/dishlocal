@@ -1,4 +1,3 @@
-import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/view_post/view/post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
