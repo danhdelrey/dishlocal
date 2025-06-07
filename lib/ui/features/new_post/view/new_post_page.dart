@@ -59,10 +59,11 @@ class NewPostPage extends StatelessWidget {
             indent: 15,
             endIndent: 15,
           ),
-          const AppTextField(
-            title: 'Tên món ăn*',
-            hintText: 'Nhập tên món ăn...',
+          AppTextField(
+            title: 'Giá',
+            hintText: 'Nhập giá của món ăn...',
             showSupportingText: false,
+            leadingIcon: AppIcons.wallet4.toSvg(),
           ),
         ],
       ),

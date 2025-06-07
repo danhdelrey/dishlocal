@@ -7,14 +7,16 @@ class AppTextField extends StatelessWidget {
     required this.title,
     required this.hintText,
     required this.showSupportingText,
-    this.showLeadingIcon = false,
+    this.leadingIcon,
+    this.trailingIcon,
     this.maxLength,
   });
 
   final String title;
   final String hintText;
   final bool showSupportingText;
-  final bool showLeadingIcon;
+  final Widget? leadingIcon;
+  final Widget? trailingIcon;
 
   final int? maxLength;
 
@@ -64,12 +66,11 @@ class AppTextField extends StatelessWidget {
             height: 5,
           ),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (showLeadingIcon)
+              if (leadingIcon != null)
                 Row(
                   children: [
-                    AppIcons.wallet4.toSvg(),
+                    leadingIcon!,
                     const SizedBox(
                       width: 10,
                     ),
@@ -104,6 +105,15 @@ class AppTextField extends StatelessWidget {
                       : null,
                 ),
               ),
+              if (trailingIcon != null)
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    trailingIcon!,
+                  ],
+                ),
             ],
           ),
         ],
