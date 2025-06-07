@@ -105,10 +105,14 @@ class Comment extends StatelessWidget {
                     ),
                   ],
                 ),
-                subComment ??
-                    const SizedBox(
-                      height: 10,
-                    ),
+                if (subComment != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: subComment!,
+                  ),
+                const SizedBox(
+                  height: 10,
+                ),
                 Text(
                   'Xem 120 trả lời...',
                   style: Theme.of(context).textTheme.labelMedium!.copyWith(
