@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
-    required this.title,
+    this.title,
     required this.hintText,
-    required this.showSupportingText,
+    this.showSupportingText = false,
     this.leadingIcon,
     this.trailingIcon,
     this.maxLength,
   });
 
-  final String title;
+  final String? title;
   final String hintText;
   final bool showSupportingText;
   final Widget? leadingIcon;
@@ -31,37 +31,7 @@ class AppTextField extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-              ),
-              const Expanded(
-                child: SizedBox(),
-              ),
-              if (showSupportingText)
-                Row(
-                  children: [
-                    AppIcons.informationLine.toSvg(
-                      width: 14,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    const SizedBox(
-                      width: 2,
-                    ),
-                    Text(
-                      'supporting text',
-                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                    ),
-                  ],
-                ),
-            ],
-          ),
+          if (title != null) _buildTitle(context),
           const SizedBox(
             height: 5,
           ),
@@ -120,6 +90,40 @@ class AppTextField extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Row _buildTitle(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          title!,
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                color: Theme.of(context).colorScheme.outline,
+              ),
+        ),
+        const Expanded(
+          child: SizedBox(),
+        ),
+        if (showSupportingText)
+          Row(
+            children: [
+              AppIcons.informationLine.toSvg(
+                width: 14,
+                color: Theme.of(context).colorScheme.outline,
+              ),
+              const SizedBox(
+                width: 2,
+              ),
+              Text(
+                'supporting text',
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+              ),
+            ],
+          ),
+      ],
     );
   }
 }

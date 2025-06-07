@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
 import 'package:dishlocal/ui/features/view_post/view/review_section.dart';
+import 'package:dishlocal/ui/widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/gradient_filled_button.dart';
@@ -19,18 +20,15 @@ class PostDetailPage extends StatelessWidget {
         child: Stack(
           children: [
             _buildMainContent(context),
-            const Align(
-              alignment: Alignment.bottomCenter,
-              child: Row(
-                children: [
-                  CroppedImage(
-                    borderRadius: 1000,
-                    path: 'assets/images/Lana.jpg',
-                    width: 44,
-                    height: 44,
-                  ),
-                  
-                ],
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.amber,
+                ),
+                child: const AppTextField(hintText: 'hintText'),
               ),
             ),
           ],
@@ -278,4 +276,41 @@ class PostDetailPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildCommentTextField(double height) {
+  return Container(
+    height: height,
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.3),
+          spreadRadius: 2,
+          blurRadius: 5,
+          offset: const Offset(0, -3), // changes position of shadow
+        ),
+      ],
+    ),
+    child: Row(
+      children: <Widget>[
+        const Expanded(
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Viết bình luận...',
+              border: InputBorder.none,
+            ),
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.send),
+          onPressed: () {
+            // Xử lý gửi comment
+          },
+          color: Colors.blue,
+        ),
+      ],
+    ),
+  );
 }
