@@ -32,9 +32,10 @@ class AppTextField extends StatelessWidget {
       child: Column(
         children: [
           if (title != null) _buildTitle(context),
-          const SizedBox(
-            height: 5,
-          ),
+          if (title != null)
+            const SizedBox(
+              height: 5,
+            ),
           Row(
             children: [
               if (leadingIcon != null)
@@ -48,6 +49,9 @@ class AppTextField extends StatelessWidget {
                 ),
               Expanded(
                 child: TextField(
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: 5,
                   maxLength: maxLength,
                   style: Theme.of(context).textTheme.bodyLarge,
                   decoration: InputDecoration.collapsed(

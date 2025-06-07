@@ -1,5 +1,4 @@
 import 'package:dishlocal/ui/features/comment/view/comment.dart';
-import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:flutter/material.dart';
 
 class CommentSection extends StatelessWidget {
@@ -25,7 +24,7 @@ class CommentSection extends StatelessWidget {
           Comment(),
           Comment(),
           SizedBox(
-            height: 20,
+            height: 50,
           ),
           SizedBox(
             width: 20,
@@ -33,9 +32,6 @@ class CommentSection extends StatelessWidget {
             child: CircularProgressIndicator(
               strokeWidth: 2,
             ),
-          ),
-          SizedBox(
-            height: 20,
           ),
         ],
       ),

@@ -1,9 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
-import 'package:dishlocal/ui/features/new_post/view/app_rating_text_field.dart';
 import 'package:dishlocal/ui/features/new_post/view/dining_location_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/food_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/rating_input_section.dart';
-import 'package:dishlocal/ui/widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/max_width_with_height_constraint_cropped_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

@@ -1,7 +1,6 @@
 import 'package:dishlocal/app/config/router.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
