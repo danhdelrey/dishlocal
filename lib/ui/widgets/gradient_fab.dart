@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class GradientFab extends StatelessWidget {
-  const GradientFab({super.key});
+  const GradientFab({super.key, required this.icon, required this.onTap, this.size});
+
+  final Widget icon;
+  final void Function() onTap;
+  final double? size;
 
   @override
   Widget build(BuildContext context) {
@@ -12,18 +16,16 @@ class GradientFab extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           InkWell(
-            onTap: () {
-              context.push("/camera");
-            },
+            onTap: onTap,
             borderRadius: BorderRadius.circular(1000),
             child: Ink(
               decoration: BoxDecoration(
                 gradient: primaryGradient,
                 borderRadius: BorderRadius.circular(1000),
               ),
-              width: 40,
-              height: 40,
-              child: const Icon(Icons.add),
+              width: size ?? 40,
+              height: size ?? 40,
+              child: icon,
             ),
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:dishlocal/app/config/set_up_locators.dart';
+import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
@@ -49,7 +50,24 @@ class _CameraPageState extends State<CameraPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Take a picture')),
+      appBar: AppBar(
+        title: Text(
+          'Bài đăng mới',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            context.pop();
+          },
+          icon: AppIcons.left.toSvg(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ),
       // You must wait until the controller is initialized before displaying the
       // camera preview. Use a FutureBuilder to display a loading spinner until the
       // controller has finished initializing.
