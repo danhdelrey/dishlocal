@@ -50,7 +50,53 @@ class _CameraPageState extends State<CameraPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
-            return CameraPreview(_controller);
+            final screenWidth = MediaQuery.of(context).size.width;
+            final cameraAspectRatio = _controller.value.aspectRatio;
+            final squareSize = screenWidth;
+
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                // Widget để định nghĩa vùng vuông và crop
+                SizedBox(
+                  width: squareSize,
+                  height: squareSize, // Đảm bảo đây là hình vuông
+                  child: ClipRect(
+                    // Cắt những gì tràn ra ngoài SizedBox vuông
+                    child: FittedBox(
+                      fit: BoxFit.cover, // Lấp đầy và crop, giữ tỷ lệ
+                      child: SizedBox(
+                        // Kích thước này quan trọng để FittedBox biết
+                        // tỷ lệ gốc của CameraPreview.
+                        // CameraPreview tự nó sẽ cố gắng hiển thị đúng tỷ lệ của nó.
+                        // Nếu previewSize.width là chiều dài thực sự của preview
+                        // (có thể đã xoay), thì width/height của SizedBox này phải khớp.
+                        // Thông thường, CameraPreview là landscape, nên width > height.
+                        // Nếu camera.previewSize là (1920, 1080)
+                        // width: 1920, height: 1080 (hoặc ngược lại nếu đã xoay)
+                        // FittedBox sẽ dùng tỷ lệ này để scale.
+                        width: _controller.value.previewSize!
+                            .height, // Thường là chiều rộng sau khi xoay
+                        height: _controller.value.previewSize!
+                            .width, // Thường là chiều cao sau khi xoay
+                        child: CameraPreview(_controller),
+                      ),
+                    ),
+                  ),
+                ),
+                // (Tùy chọn) Thêm một lớp phủ (overlay) để người dùng thấy rõ vùng crop
+                Container(
+                  width: squareSize,
+                  height: squareSize,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.7),
+                      width: 2.0,
+                    ),
+                  ),
+                ),
+              ],
+            );
           } else {
             // Otherwise, display a loading indicator.
             return const Center(child: CircularProgressIndicator());
@@ -93,3 +139,4 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 }
+
