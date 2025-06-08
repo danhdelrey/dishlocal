@@ -5,6 +5,7 @@ import 'package:dishlocal/ui/features/new_post/view/dining_location_info_input_s
 import 'package:dishlocal/ui/features/new_post/view/food_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/rating_input_section.dart';
 import 'package:dishlocal/ui/widgets/max_width_with_height_constraint_cropped_image.dart';
+import 'package:dishlocal/ui/widgets/rounded_square_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -57,12 +58,7 @@ class NewPostPage extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                //  MaxWidthWithHeightConstraintCroppedImage(
-                //   imagePath: imagep,
-                // ),
-                Image.file(
-                  File(imagePath),
-                ),
+                RoundedSquareImage(imagePath: imagePath),
                 const SizedBox(
                   height: 20,
                 ),
