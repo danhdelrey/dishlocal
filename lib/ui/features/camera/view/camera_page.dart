@@ -82,7 +82,7 @@ class _CameraPageState extends State<CameraPage> {
             final squareSize = screenWidth;
 
             return Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(15.0),
               child: Column(
                 children: [
                   // Widget để định nghĩa vùng vuông và crop
@@ -143,7 +143,7 @@ class _CameraPageState extends State<CameraPage> {
                         if (!context.mounted) return;
 
                         if (_imageFile != null) {
-                          context.push('/new_post', extra: _imageFile!.path);
+                          context.push('/camera/new_post', extra: _imageFile!.path);
                         }
                       } catch (e) {
                         // If an error occurs, log the error to the console.
