@@ -24,7 +24,7 @@ class _CameraPageState extends State<CameraPage> {
       // Get a specific camera from the list of available cameras.
       locator<CameraDescription>(),
       // Define the resolution to use.
-      ResolutionPreset.medium,
+      ResolutionPreset.veryHigh,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -82,7 +82,7 @@ class _CameraPageState extends State<CameraPage> {
             //     ),
             //   ),
             // );
-            context.pop();
+            context.push('/new_post', extra: image.path);
           } catch (e) {
             // If an error occurs, log the error to the console.
             Logger().e(e);
