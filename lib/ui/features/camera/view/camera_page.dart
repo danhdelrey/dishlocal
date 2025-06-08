@@ -25,6 +25,7 @@ class _CameraPageState extends State<CameraPage> {
       locator<CameraDescription>(),
       // Define the resolution to use.
       ResolutionPreset.veryHigh,
+      enableAudio: false,
     );
 
     // Next, initialize the controller. This returns a Future.
