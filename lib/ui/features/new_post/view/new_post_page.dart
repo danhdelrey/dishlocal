@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/new_post/view/dining_location_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/food_info_input_section.dart';
@@ -7,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class NewPostPage extends StatelessWidget {
-  const NewPostPage({super.key});
+  const NewPostPage({super.key, required this.imagePath});
+
+  final String imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +57,11 @@ class NewPostPage extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                const MaxWidthWithHeightConstraintCroppedImage(
-                  imagePath: 'assets/images/com-tam-suon-bi-cha-2.jpg',
+                //  MaxWidthWithHeightConstraintCroppedImage(
+                //   imagePath: imagep,
+                // ),
+                Image.file(
+                  File(imagePath),
                 ),
                 const SizedBox(
                   height: 20,

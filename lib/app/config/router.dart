@@ -153,7 +153,10 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/new_post',
-      builder: (context, state) => const NewPostPage(),
+      builder: (context, state) {
+        final String imagePath = state.extra as String;
+        return NewPostPage(imagePath: imagePath);
+      },
     ),
 
     // Sử dụng MainShell thay vì PersistentTabView.router
