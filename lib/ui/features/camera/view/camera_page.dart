@@ -19,6 +19,8 @@ class _CameraPageState extends State<CameraPage> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
 
+  XFile? _imageFile;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +41,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void dispose() {
     // Dispose of the controller when the widget is disposed.
+    ImageProcessor.deleteTempImageFile(_imageFile);
     _controller.dispose();
     super.dispose();
   }
@@ -56,7 +59,7 @@ class _CameraPageState extends State<CameraPage> {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
             final screenWidth = MediaQuery.of(context).size.width;
-            final cameraAspectRatio = _controller.value.aspectRatio;
+
             final squareSize = screenWidth;
 
             return Padding(
@@ -110,11 +113,15 @@ class _CameraPageState extends State<CameraPage> {
 
             // Attempt to take a picture and get the file `image`
             // where it was saved.
-            final image = await _controller.takePicture();
-            final croppedImageFilePath = await ImageProcessor.cropSquare(image.path, image.path, false);
+            _imageFile = await _controller.takePicture();
+            if (_imageFile != null) {
+              await ImageProcessor.cropSquare(_imageFile!.path, _imageFile!.path, false);
+            }
             if (!context.mounted) return;
 
-            context.push('/new_post', extra: croppedImageFilePath);
+            if (_imageFile != null) {
+              context.push('/new_post', extra: _imageFile!.path);
+            }
           } catch (e) {
             // If an error occurs, log the error to the console.
             Logger().e(e);
@@ -147,7 +154,7 @@ class ImageProcessor {
   }
 
   // Hàm chuyên để xóa file ảnh tạm
-  static Future<void> _deleteTempImageFile(XFile? imageFile) async {
+  static Future<void> deleteTempImageFile(XFile? imageFile) async {
     if (imageFile != null) {
       try {
         final file = File(imageFile.path);
