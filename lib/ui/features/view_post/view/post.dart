@@ -1,7 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/widgets/blurred_pill.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
-import 'package:dishlocal/ui/widgets/max_width_with_height_constraint_cropped_image.dart';
+import 'package:dishlocal/ui/widgets/rounded_square_image_asset.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -30,8 +30,7 @@ class Post extends StatelessWidget {
               ),
               Stack(
                 children: [
-                  const MaxWidthWithHeightConstraintCroppedImage(
-                      imagePath: 'assets/images/com-tam-suon-bi-cha-2.jpg'),
+                  const RoundedSquareImageAsset(assetPath: 'assets/images/com-tam-suon-bi-cha-2.jpg'),
                   Positioned.fill(
                     child: Align(
                       alignment: Alignment.topLeft,
@@ -97,18 +96,14 @@ class Post extends StatelessWidget {
                                     children: [
                                       AppIcons.heart1.toSvg(
                                         width: 12,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
+                                        color: Theme.of(context).colorScheme.onSurface,
                                       ),
                                       const SizedBox(
                                         width: 2,
                                       ),
                                       Text(
                                         '1.234',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall,
+                                        style: Theme.of(context).textTheme.labelSmall,
                                       ),
                                     ],
                                   ),
@@ -117,18 +112,14 @@ class Post extends StatelessWidget {
                                     children: [
                                       AppIcons.locationCheck.toSvg(
                                         width: 12,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
+                                        color: Theme.of(context).colorScheme.onSurface,
                                       ),
                                       const SizedBox(
                                         width: 2,
                                       ),
                                       Text(
                                         '678',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall,
+                                        style: Theme.of(context).textTheme.labelSmall,
                                       ),
                                     ],
                                   ),
@@ -137,18 +128,14 @@ class Post extends StatelessWidget {
                                     children: [
                                       AppIcons.bookmark1.toSvg(
                                         width: 12,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
+                                        color: Theme.of(context).colorScheme.onSurface,
                                       ),
                                       const SizedBox(
                                         width: 2,
                                       ),
                                       Text(
                                         '323',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall,
+                                        style: Theme.of(context).textTheme.labelSmall,
                                       ),
                                     ],
                                   ),

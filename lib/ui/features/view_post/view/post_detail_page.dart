@@ -5,7 +5,7 @@ import 'package:dishlocal/ui/features/view_post/view/review_section.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/gradient_filled_button.dart';
-import 'package:dishlocal/ui/widgets/max_width_with_height_constraint_cropped_image.dart';
+import 'package:dishlocal/ui/widgets/rounded_square_image_asset.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -69,12 +69,8 @@ class PostDetailPage extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: ' • Theo dõi',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge!
-                                  .copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                               recognizer: TapGestureRecognizer()..onTap = () {},
                             )
@@ -112,32 +108,28 @@ class PostDetailPage extends StatelessWidget {
                 children: [
                   const ReviewSection(
                     category: 'Đồ ăn:',
-                    comment:
-                        'Mới vừa ăn một dĩa cơm tấm ở Quán Hoàng Sang... Ôi trời ơi, ngon xỉu up xỉu down luôn mọi người ơi! 🤤 Miếng sườn nướng thấm vị, nước mắm đỉnh cao, ăn xong chỉ muốn order thêm dĩa nữa. Highly recommend cho team mê cơm tấm nha! ❤️',
+                    comment: 'Mới vừa ăn một dĩa cơm tấm ở Quán Hoàng Sang... Ôi trời ơi, ngon xỉu up xỉu down luôn mọi người ơi! 🤤 Miếng sườn nướng thấm vị, nước mắm đỉnh cao, ăn xong chỉ muốn order thêm dĩa nữa. Highly recommend cho team mê cơm tấm nha! ❤️',
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   const ReviewSection(
                     category: 'Không gian:',
-                    comment:
-                        'Quán tuy nhỏ, nằm trong hẻm nhưng rất sạch sẽ, gọn gàng từ khu vực bếp đến bàn ăn. Điều này làm tôi cảm thấy rất yên tâm khi thưởng thức.',
+                    comment: 'Quán tuy nhỏ, nằm trong hẻm nhưng rất sạch sẽ, gọn gàng từ khu vực bếp đến bàn ăn. Điều này làm tôi cảm thấy rất yên tâm khi thưởng thức.',
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   const ReviewSection(
                     category: 'Phục vụ:',
-                    comment:
-                        'Cô chú chủ quán cực kỳ thân thiện, nhiệt tình, luôn nở nụ cười và hỏi han khách. Tạo cảm giác như đang ăn cơm nhà vậy, rất thoải mái.',
+                    comment: 'Cô chú chủ quán cực kỳ thân thiện, nhiệt tình, luôn nở nụ cười và hỏi han khách. Tạo cảm giác như đang ăn cơm nhà vậy, rất thoải mái.',
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   const ReviewSection(
                     category: 'Giá cả:',
-                    comment:
-                        'Với chất lượng món ăn và dịch vụ nhận được, mức giá từ 45k-75k/phần là hoàn toàn hợp lý, thậm chí là rẻ cho một đĩa cơm tấm "đỉnh của chóp" như vậy ở khu vực trung tâm.',
+                    comment: 'Với chất lượng món ăn và dịch vụ nhận được, mức giá từ 45k-75k/phần là hoàn toàn hợp lý, thậm chí là rẻ cho một đĩa cơm tấm "đỉnh của chóp" như vậy ở khu vực trung tâm.',
                   ),
                   const SizedBox(
                     height: 20,
@@ -153,9 +145,7 @@ class PostDetailPage extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  const MaxWidthWithHeightConstraintCroppedImage(
-                    imagePath: 'assets/images/com-tam-suon-bi-cha-2.jpg',
-                  ),
+                  const RoundedSquareImageAsset(assetPath: 'assets/images/com-tam-suon-bi-cha-2.jpg'),
                   const SizedBox(
                     height: 10,
                   ),
