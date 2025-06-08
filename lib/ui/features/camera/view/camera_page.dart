@@ -81,14 +81,14 @@ class _CameraPageState extends State<CameraPage> {
 
             final squareSize = screenWidth;
 
-            return Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: [
-                  // Widget để định nghĩa vùng vuông và crop
-                  SizedBox(
-                    width: squareSize,
-                    height: squareSize, // Đảm bảo đây là hình vuông
+            return Column(
+              children: [
+                // Widget để định nghĩa vùng vuông và crop
+                SizedBox(
+                  width: squareSize,
+                  height: squareSize, // Đảm bảo đây là hình vuông
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       // Cắt những gì tràn ra ngoài SizedBox vuông
@@ -111,48 +111,48 @@ class _CameraPageState extends State<CameraPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Hãy đưa đồ ăn vào khung hình',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+
+                const Spacer(),
+                GradientFab(
+                  size: 80,
+                  icon: const Icon(
+                    Icons.camera_alt,
+                    size: 40,
+                    color: Colors.white,
                   ),
-                  Text(
-                    'Hãy đưa đồ ăn vào khung hình',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  onTap: () async {
+                    // Take the Picture in a try / catch block. If anything goes wrong,
+                    // catch the error.
+                    try {
+                      // Ensure that the camera is initialized.
+                      await _initializeControllerFuture;
 
-                  const Spacer(),
-                  GradientFab(
-                    size: 80,
-                    icon: const Icon(
-                      Icons.camera_alt,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                    onTap: () async {
-                      // Take the Picture in a try / catch block. If anything goes wrong,
-                      // catch the error.
-                      try {
-                        // Ensure that the camera is initialized.
-                        await _initializeControllerFuture;
-
-                        // Attempt to take a picture and get the file `image`
-                        // where it was saved.
-                        _imageFile = await _controller.takePicture();
-                        if (_imageFile != null) {
-                          await ImageProcessor.cropSquare(_imageFile!.path, _imageFile!.path, false);
-                        }
-                        if (!context.mounted) return;
-
-                        if (_imageFile != null) {
-                          context.push('/camera/new_post', extra: _imageFile!.path);
-                        }
-                      } catch (e) {
-                        // If an error occurs, log the error to the console.
-                        Logger().e(e);
+                      // Attempt to take a picture and get the file `image`
+                      // where it was saved.
+                      _imageFile = await _controller.takePicture();
+                      if (_imageFile != null) {
+                        await ImageProcessor.cropSquare(_imageFile!.path, _imageFile!.path, false);
                       }
-                    },
-                  ),
-                ],
-              ),
+                      if (!context.mounted) return;
+
+                      if (_imageFile != null) {
+                        context.push('/camera/new_post', extra: _imageFile!.path);
+                      }
+                    } catch (e) {
+                      // If an error occurs, log the error to the console.
+                      Logger().e(e);
+                    }
+                  },
+                ),
+              ],
             );
           } else {
             // Otherwise, display a loading indicator.
