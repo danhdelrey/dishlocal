@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:dishlocal/app/config/set_up_locators.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/ui/widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
@@ -82,8 +83,7 @@ class _CameraPageState extends State<CameraPage> {
 
             return Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Stack(
-                alignment: Alignment.center,
+              child: Column(
                 children: [
                   // Widget để định nghĩa vùng vuông và crop
                   SizedBox(
@@ -111,6 +111,46 @@ class _CameraPageState extends State<CameraPage> {
                       ),
                     ),
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'Hãy đưa đồ ăn vào khung hình',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+
+                  const Spacer(),
+                  GradientFab(
+                    size: 80,
+                    icon: const Icon(
+                      Icons.camera_alt,
+                      size: 40,
+                      color: Colors.white,
+                    ),
+                    onTap: () async {
+                      // Take the Picture in a try / catch block. If anything goes wrong,
+                      // catch the error.
+                      try {
+                        // Ensure that the camera is initialized.
+                        await _initializeControllerFuture;
+
+                        // Attempt to take a picture and get the file `image`
+                        // where it was saved.
+                        _imageFile = await _controller.takePicture();
+                        if (_imageFile != null) {
+                          await ImageProcessor.cropSquare(_imageFile!.path, _imageFile!.path, false);
+                        }
+                        if (!context.mounted) return;
+
+                        if (_imageFile != null) {
+                          context.push('/new_post', extra: _imageFile!.path);
+                        }
+                      } catch (e) {
+                        // If an error occurs, log the error to the console.
+                        Logger().e(e);
+                      }
+                    },
+                  ),
                 ],
               ),
             );
@@ -119,33 +159,6 @@ class _CameraPageState extends State<CameraPage> {
             return const Center(child: CircularProgressIndicator());
           }
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        // Provide an onPressed callback.
-        onPressed: () async {
-          // Take the Picture in a try / catch block. If anything goes wrong,
-          // catch the error.
-          try {
-            // Ensure that the camera is initialized.
-            await _initializeControllerFuture;
-
-            // Attempt to take a picture and get the file `image`
-            // where it was saved.
-            _imageFile = await _controller.takePicture();
-            if (_imageFile != null) {
-              await ImageProcessor.cropSquare(_imageFile!.path, _imageFile!.path, false);
-            }
-            if (!context.mounted) return;
-
-            if (_imageFile != null) {
-              context.push('/new_post', extra: _imageFile!.path);
-            }
-          } catch (e) {
-            // If an error occurs, log the error to the console.
-            Logger().e(e);
-          }
-        },
-        child: const Icon(Icons.camera_alt),
       ),
     );
   }
