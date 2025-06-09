@@ -1,7 +1,10 @@
 part of 'camera_bloc.dart';
 
 @immutable
-sealed class CameraState {}
+sealed class CameraState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
 //khởi tạo
 final class CameraInitial extends CameraState {}

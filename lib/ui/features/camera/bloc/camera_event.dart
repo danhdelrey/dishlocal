@@ -1,7 +1,11 @@
 part of 'camera_bloc.dart';
 
 @immutable
-sealed class CameraEvent {}
+sealed class CameraEvent extends Equatable {
+  
+  @override
+  List<Object?> get props => [];
+}
 
 //camera
 class CameraInitialized extends CameraEvent {}

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 part 'camera_event.dart';
