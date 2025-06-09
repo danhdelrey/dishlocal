@@ -1,6 +1,5 @@
 part of 'camera_bloc.dart';
 
-
 sealed class CameraState extends Equatable {
   @override
   List<Object?> get props => [];
@@ -12,15 +11,13 @@ final class CameraInitial extends CameraState {}
 final class CameraInitializationInProgress extends CameraState {}
 
 final class CameraReady extends CameraState {
-  final double previewSizeWidth;
-  final double previewSizeHeight;
+  final CameraController cameraController;
 
-  CameraReady({required this.previewSizeWidth, required this.previewSizeHeight});
+  CameraReady({required this.cameraController});
 
-  
 
   @override
-  List<Object?> get props => [previewSizeWidth, previewSizeHeight];
+  List<Object?> get props => [cameraController];
 }
 
 final class CameraFailure extends CameraState {
