@@ -8,8 +8,10 @@ part 'camera_state.dart';
 
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
   CameraBloc() : super(CameraInitial()) {
-    on<CameraEvent>((event, emit) {
-      // TODO: implement event handler
+    on<CameraInitialized>((event, emit) {
+      emit(CameraLoading());
+      
     });
+    
   }
 }
