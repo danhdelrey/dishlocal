@@ -151,10 +151,7 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/camera',
-      builder: (context, state) => BlocProvider<CameraBloc>(
-        create: (context) => CameraBloc()..add(CameraInitialized()),
-        child: const CameraPage(),
-      ),
+      builder: (context, state) => const CameraPage(),
       routes: [
         GoRoute(
           path: 'new_post',
