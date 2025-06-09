@@ -22,7 +22,6 @@ class NewPostPage extends StatefulWidget {
 class _NewPostPageState extends State<NewPostPage> {
   @override
   void dispose() {
-    
     super.dispose();
 
     getIt<ImageProcessor>().deleteTempImageFile(widget.imagePath);
@@ -50,7 +49,14 @@ class _NewPostPageState extends State<NewPostPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+                if (context.canPop()) {
+                  context.pop();
+                }
+              }
+            },
             child: const Text(
               'Đăng',
             ),
@@ -77,17 +83,17 @@ class _NewPostPageState extends State<NewPostPage> {
                   height: 20,
                 ),
                 const FoodInfoInputSection(),
-                const SizedBox(
-                  height: 20,
-                ),
-                const DiningLocationInfoInputSection(),
-                const SizedBox(
-                  height: 20,
-                ),
-                const RatingInputSection(),
-                const SizedBox(
-                  height: 20,
-                ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // const DiningLocationInfoInputSection(),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // const RatingInputSection(),
+                // const SizedBox(
+                //   height: 20,
+                // ),
               ],
             ),
           ),

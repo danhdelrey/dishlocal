@@ -35,18 +35,18 @@ class FoodInfoInputSection extends StatelessWidget {
             showSupportingText: false,
             maxLength: 100,
           ),
-          const Divider(
-            indent: 15,
-            endIndent: 15,
-          ),
-          AppTextField(
-            title: 'Giá*',
-            hintText: 'Nhập giá của món ăn...',
-            showSupportingText: false,
-            leadingIcon: AppIcons.wallet4.toSvg(
-              width: 20,
-            ),
-          ),
+          // const Divider(
+          //   indent: 15,
+          //   endIndent: 15,
+          // ),
+          // AppTextField(
+          //   title: 'Giá*',
+          //   hintText: 'Nhập giá của món ăn...',
+          //   showSupportingText: false,
+          //   leadingIcon: AppIcons.wallet4.toSvg(
+          //     width: 20,
+          //   ),
+          // ),
           const SizedBox(
             height: 10,
           ),

@@ -150,20 +150,21 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const PostDetailPage(),
     ),
     GoRoute(
-        path: '/camera',
-        builder: (context, state) => BlocProvider<CameraBloc>(
-              create: (context) => CameraBloc()..add(CameraInitialized()),
-              child: const CameraPage(),
-            ),
-        routes: [
-          GoRoute(
-            path: 'new_post',
-            builder: (context, state) {
-              final String imagePath = state.extra as String;
-              return NewPostPage(imagePath: imagePath);
-            },
-          ),
-        ]),
+      path: '/camera',
+      builder: (context, state) => BlocProvider<CameraBloc>(
+        create: (context) => CameraBloc()..add(CameraInitialized()),
+        child: const CameraPage(),
+      ),
+      routes: [
+        GoRoute(
+          path: 'new_post',
+          builder: (context, state) {
+            final String imagePath = state.extra as String;
+            return NewPostPage(imagePath: imagePath);
+          },
+        ),
+      ],
+    ),
 
     // Sử dụng MainShell thay vì PersistentTabView.router
     StatefulShellRoute.indexedStack(
