@@ -20,16 +20,6 @@ class CameraPage extends StatefulWidget {
 
 class _CameraPageState extends State<CameraPage> {
   
-
-
-  @override
-  void dispose() {
-    // Dispose of the controller when the widget is disposed.
-    ImageProcessor.deleteTempImageFile(_imageFile);
-    _controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,36 +94,16 @@ class _CameraPageState extends State<CameraPage> {
 
                 const Spacer(),
                 GradientFab(
-                  size: 80,
-                  icon: const Icon(
-                    Icons.camera_alt,
-                    size: 40,
-                    color: Colors.white,
-                  ),
-                  onTap: () async {
-                    // Take the Picture in a try / catch block. If anything goes wrong,
-                    // catch the error.
-                    try {
-                      // Ensure that the camera is initialized.
-                      await _initializeControllerFuture;
-
-                      // Attempt to take a picture and get the file `image`
-                      // where it was saved.
-                      _imageFile = await _controller.takePicture();
-                      if (_imageFile != null) {
-                        await ImageProcessor.cropSquare(_imageFile!.path, _imageFile!.path, false);
-                      }
-                      if (!context.mounted) return;
-
-                      if (_imageFile != null) {
-                        context.push('/camera/new_post', extra: _imageFile!.path);
-                      }
-                    } catch (e) {
-                      // If an error occurs, log the error to the console.
-                      Logger().e(e);
-                    }
-                  },
-                ),
+                    size: 80,
+                    icon: const Icon(
+                      Icons.camera_alt,
+                      size: 40,
+                      color: Colors.white,
+                    ),
+                    onTap: () async {
+                      // Take the Picture in a try / catch block. If anything goes wrong,
+                      // catch the error.
+                    }),
               ],
             );
           } else {

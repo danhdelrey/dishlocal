@@ -4,7 +4,6 @@ import 'package:dishlocal/app/config/set_up_dependencies.dart';
 import 'package:dishlocal/utils/image_processor.dart';
 import 'package:equatable/equatable.dart';
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 
 part 'camera_event.dart';
 part 'camera_state.dart';
@@ -57,7 +56,12 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       // BƯỚC 4: EMIT TRẠNG THÁI READY
       // Chỉ emit khi tất cả các bước trên thành công
-      emit(CameraReady());
+      emit(
+        CameraReady(
+          previewSizeWidth: _controller!.value.previewSize!.width,
+          previewSizeHeight: _controller!.value.previewSize!.height,
+        ),
+      );
     } on CameraException catch (e, stackTrace) {
       // Bắt lỗi cụ thể từ package camera
       _log.severe(
@@ -144,11 +148,21 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       _log.severe('Lỗi CameraException khi chụp ảnh: ${e.code} - ${e.description}', e, stackTrace);
       emit(CameraCaptureFailure(failureMessage: 'Không thể chụp ảnh. Lỗi: ${e.description}'));
       // Sau khi báo lỗi, có thể quay lại trạng thái Ready để người dùng thử lại
-      emit(CameraReady());
+      emit(
+        CameraReady(
+          previewSizeWidth: _controller!.value.previewSize!.width,
+          previewSizeHeight: _controller!.value.previewSize!.height,
+        ),
+      );
     } catch (e, stackTrace) {
       _log.severe('Lỗi không xác định khi chụp ảnh: $e', e, stackTrace);
       emit(CameraCaptureFailure(failureMessage: 'Đã xảy ra lỗi không mong muốn khi xử lý ảnh.'));
-      emit(CameraReady());
+      emit(
+        CameraReady(
+          previewSizeWidth: _controller!.value.previewSize!.width,
+          previewSizeHeight: _controller!.value.previewSize!.height,
+        ),
+      );
     }
   }
 
