@@ -1,13 +1,12 @@
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class GradientFab extends StatelessWidget {
-  const GradientFab({super.key, required this.icon, required this.onTap, this.size});
+  const GradientFab({super.key, this.onTap, this.size, this.iconSize});
 
-  final Widget icon;
-  final void Function() onTap;
+  final void Function()? onTap;
   final double? size;
+  final double? iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +18,22 @@ class GradientFab extends StatelessWidget {
             onTap: onTap,
             borderRadius: BorderRadius.circular(1000),
             child: Ink(
-              decoration: BoxDecoration(
-                gradient: primaryGradient,
-                borderRadius: BorderRadius.circular(1000),
-              ),
+              decoration: onTap != null
+                  ? BoxDecoration(
+                      gradient: primaryGradient,
+                      borderRadius: BorderRadius.circular(1000),
+                    )
+                  : BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(1000),
+                    ),
               width: size ?? 40,
               height: size ?? 40,
-              child: icon,
+              child: Icon(
+                Icons.camera_alt,
+                size: iconSize ?? 24,
+                color: onTap != null ? Colors.white : Theme.of(context).colorScheme.outlineVariant,
+              ),
             ),
           ),
         ],
