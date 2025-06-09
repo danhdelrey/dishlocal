@@ -29,17 +29,17 @@ class MyApp extends StatelessWidget {
 }
 
 void _setupLogging() {
-  // Không cần kiểm tra kDebugMode nữa vì log() đã tự xử lý
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
-    // 2. Thay thế print() bằng log()
-    log(
-      // Message chính
-      '${record.loggerName}: ${record.message}',
+    // Tự thêm record.time vào chuỗi message chính
+    final message = '[${record.level.name}] '
+        '${record.time.toIso8601String().substring(11, 23)} ----- ' // Định dạng giờ:phút:giây.mili
+        '${record.message} -----';
 
-      // Các tham số tùy chọn của hàm log()
-      time: record.time,
-      level: record.level.value, // Level được biểu thị bằng số nguyên
+    log(
+      message, // Message đã được định dạng đầy đủ
+      time: record.time, // Vẫn gửi time để DevTools hiển thị đúng
+      level: record.level.value,
       name: record.loggerName,
       error: record.error,
       stackTrace: record.stackTrace,

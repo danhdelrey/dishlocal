@@ -62,11 +62,14 @@ class MainShell extends StatelessWidget {
               index: 1,
             ),
             // FAB
-             GradientFab(
+            GradientFab(
               onTap: () {
                 context.push("/camera");
               },
-              icon: const Icon(Icons.add),
+              icon: const Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+              ),
             ),
             // Item 3
             _buildTabItem(
