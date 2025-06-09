@@ -1,58 +1,65 @@
 import 'package:camera/camera.dart';
-import 'package:dishlocal/app/config/set_up_locators.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/widgets/gradient_fab.dart';
-import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
-import 'dart:io';
-import 'dart:math';
-import 'package:flutter/rendering.dart';
-import 'package:image/image.dart' as img;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CameraPage extends StatelessWidget {
   const CameraPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Bài đăng mới',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: AppIcons.left.toSvg(
-            color: Theme.of(context).colorScheme.onSurface,
+    final screenWidth = MediaQuery.of(context).size.width;
+    final squareSize = screenWidth;
+
+    return BlocProvider(
+      create: (context) => CameraBloc()..add(CameraInitialized()),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Bài đăng mới',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              context.pop();
+            },
+            icon: AppIcons.left.toSvg(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
-      ),
-      // You must wait until the controller is initialized before displaying the
-      // camera preview. Use a FutureBuilder to display a loading spinner until the
-      // controller has finished initializing.
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If the Future is complete, display the preview.
-            final screenWidth = MediaQuery.of(context).size.width;
-
-            final squareSize = screenWidth;
-
-            return _buildCameraPreview(squareSize, context);
-          } else {
-            // Otherwise, display a loading indicator.
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+        // You must wait until the controller is initialized before displaying the
+        // camera preview. Use a FutureBuilder to display a loading spinner until the
+        // controller has finished initializing.
+        body: BlocConsumer<CameraBloc, CameraState>(
+          listener: (context, state) {
+            if (state is CameraCaptureSuccess) {
+              context.push('/camera/new_post', extra: state.imagePath);
+            }
+          },
+          builder: (context, state) {
+            return switch (state) {
+              CameraInitial() => const CircularProgressIndicator(),
+              CameraInitializationInProgress() => const CircularProgressIndicator(),
+              CameraReady(cameraController: final cameraController) => _buildCameraPreview(
+                  squareSize: squareSize,
+                  context: context,
+                  cameraController: cameraController,
+                ),
+              CameraFailure(failureMessage: final failureMessage) => Text(failureMessage),
+              CameraCaptureInProgress() => const CircularProgressIndicator(),
+              CameraCaptureSuccess() => const SizedBox(),
+              CameraCaptureFailure(failureMessage: final failureMessage) => Text(failureMessage),
+            };
+          },
+        ),
       ),
     );
   }
@@ -112,6 +119,7 @@ class CameraPage extends StatelessWidget {
           onTap: () async {
             // Take the Picture in a try / catch block. If anything goes wrong,
             // catch the error.
+            context.read<CameraBloc>().add(CameraCaptureRequested());
           },
         ),
       ],
