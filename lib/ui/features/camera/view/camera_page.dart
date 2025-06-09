@@ -14,52 +14,49 @@ class CameraPage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final squareSize = screenWidth;
 
-    return BlocProvider(
-      create: (context) => CameraBloc()..add(CameraInitialized()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Bài đăng mới',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            onPressed: () {
-              context.pop();
-            },
-            icon: AppIcons.left.toSvg(
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Bài đăng mới',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            context.pop();
+          },
+          icon: AppIcons.left.toSvg(
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        // You must wait until the controller is initialized before displaying the
-        // camera preview. Use a FutureBuilder to display a loading spinner until the
-        // controller has finished initializing.
-        body: BlocConsumer<CameraBloc, CameraState>(
-          listener: (context, state) {
-            if (state is CameraCaptureSuccess) {
-              context.push('/camera/new_post', extra: state.imagePath);
-            }
-          },
-          builder: (context, state) {
-            return switch (state) {
-              CameraInitial() => const CircularProgressIndicator(),
-              CameraInitializationInProgress() => const CircularProgressIndicator(),
-              CameraReady(cameraController: final cameraController) => _buildCameraPreview(
-                  squareSize: squareSize,
-                  context: context,
-                  cameraController: cameraController,
-                ),
-              CameraFailure(failureMessage: final failureMessage) => Text(failureMessage),
-              CameraCaptureInProgress() => const CircularProgressIndicator(),
-              CameraCaptureSuccess() => const SizedBox(),
-              CameraCaptureFailure(failureMessage: final failureMessage) => Text(failureMessage),
-            };
-          },
-        ),
+      ),
+      // You must wait until the controller is initialized before displaying the
+      // camera preview. Use a FutureBuilder to display a loading spinner until the
+      // controller has finished initializing.
+      body: BlocConsumer<CameraBloc, CameraState>(
+        listener: (context, state) {
+          if (state is CameraCaptureSuccess) {
+            context.push('/camera/new_post', extra: state.imagePath);
+          }
+        },
+        builder: (context, state) {
+          return switch (state) {
+            CameraInitial() => const CircularProgressIndicator(),
+            CameraInitializationInProgress() => const CircularProgressIndicator(),
+            CameraReady(cameraController: final cameraController) => _buildCameraPreview(
+                squareSize: squareSize,
+                context: context,
+                cameraController: cameraController,
+              ),
+            CameraFailure(failureMessage: final failureMessage) => Text(failureMessage),
+            CameraCaptureInProgress() => const CircularProgressIndicator(),
+            CameraCaptureSuccess() => const SizedBox(),
+            CameraCaptureFailure(failureMessage: final failureMessage) => Text(failureMessage),
+          };
+        },
       ),
     );
   }

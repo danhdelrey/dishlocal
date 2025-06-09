@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/config/main_shell.dart';
+import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
@@ -7,6 +8,7 @@ import 'package:dishlocal/ui/features/profile/view/profile_page.dart';
 import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 // GoRouter router = GoRouter(
@@ -148,19 +150,20 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const PostDetailPage(),
     ),
     GoRoute(
-      path: '/camera',
-      builder: (context, state) => const CameraPage(),
-      routes: [
-        GoRoute(
-        path: 'new_post',
-        builder: (context, state) {
-          final String imagePath = state.extra as String;
-          return NewPostPage(imagePath: imagePath);
-        },
-      ),
-      ]
-    ),
-    
+        path: '/camera',
+        builder: (context, state) => BlocProvider<CameraBloc>(
+              create: (context) => CameraBloc()..add(CameraInitialized()),
+              child: const CameraPage(),
+            ),
+        routes: [
+          GoRoute(
+            path: 'new_post',
+            builder: (context, state) {
+              final String imagePath = state.extra as String;
+              return NewPostPage(imagePath: imagePath);
+            },
+          ),
+        ]),
 
     // Sử dụng MainShell thay vì PersistentTabView.router
     StatefulShellRoute.indexedStack(
@@ -183,8 +186,7 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/explore', // Đặt tên route rõ ràng
-              builder: (context, state) =>
-                  const SizedBox(), // Dùng page tương ứng
+              builder: (context, state) => const SizedBox(), // Dùng page tương ứng
             ),
           ],
         ),
