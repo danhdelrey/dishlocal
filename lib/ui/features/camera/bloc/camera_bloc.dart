@@ -139,6 +139,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       // 5. Emit trạng thái thành công với đường dẫn ảnh
       // UI sẽ lắng nghe state này và thực hiện điều hướng
       emit(CameraCaptureSuccess(imagePath: imageFile.path));
+
+      emit(CameraReady(cameraController: _controller!));
     } on CameraException catch (e, stackTrace) {
       _log.severe('Lỗi CameraException khi chụp ảnh: ${e.code} - ${e.description}', e, stackTrace);
       emit(CameraCaptureFailure(failureMessage: 'Không thể chụp ảnh. Lỗi: ${e.description}'));
