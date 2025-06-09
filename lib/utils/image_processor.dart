@@ -26,18 +26,16 @@ class ImageProcessor {
   }
 
   // Hàm chuyên để xóa file ảnh tạm
-  Future<void> deleteTempImageFile(XFile? imageFile) async {
-    if (imageFile != null) {
-      try {
-        final file = File(imageFile.path);
-        // Kiểm tra xem file có tồn tại không trước khi xóa
-        if (await file.exists()) {
-          await file.delete();
-          _log.info('Đã xóa file tạm: ${imageFile.path}');
-        }
-      } catch (e) {
-        _log.severe('Lỗi khi xóa file: $e');
+  Future<void> deleteTempImageFile(String imagePath) async {
+    try {
+      final file = File(imagePath);
+      // Kiểm tra xem file có tồn tại không trước khi xóa
+      if (await file.exists()) {
+        await file.delete();
+        _log.info('Đã xóa file tạm: $imagePath');
       }
+    } catch (e) {
+      _log.severe('Lỗi khi xóa file: $e');
     }
   }
 }

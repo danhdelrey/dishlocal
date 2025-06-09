@@ -1,17 +1,32 @@
 import 'dart:io';
 
+import 'package:dishlocal/app/config/set_up_dependencies.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/new_post/view/dining_location_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/food_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/rating_input_section.dart';
 import 'package:dishlocal/ui/widgets/rounded_square_image.dart';
+import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class NewPostPage extends StatelessWidget {
+class NewPostPage extends StatefulWidget {
   const NewPostPage({super.key, required this.imagePath});
 
   final String imagePath;
+
+  @override
+  State<NewPostPage> createState() => _NewPostPageState();
+}
+
+class _NewPostPageState extends State<NewPostPage> {
+  @override
+  void dispose() {
+    
+    super.dispose();
+
+    getIt<ImageProcessor>().deleteTempImageFile(widget.imagePath);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +72,7 @@ class NewPostPage extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                RoundedSquareImage(imagePath: imagePath),
+                RoundedSquareImage(imagePath: widget.imagePath),
                 const SizedBox(
                   height: 20,
                 ),

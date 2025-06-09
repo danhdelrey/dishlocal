@@ -117,8 +117,6 @@ class CameraPage extends StatelessWidget {
             color: Colors.white,
           ),
           onTap: () async {
-            // Take the Picture in a try / catch block. If anything goes wrong,
-            // catch the error.
             context.read<CameraBloc>().add(CameraCaptureRequested());
           },
         ),
