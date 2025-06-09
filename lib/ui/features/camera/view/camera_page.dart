@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:dishlocal/app/config/set_up_locators.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/widgets/gradient_fab.dart';
+import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
@@ -18,27 +19,8 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+  
 
-  XFile? _imageFile;
-
-  @override
-  void initState() {
-    super.initState();
-    // To display the current output from the Camera,
-    // create a CameraController.
-    _controller = CameraController(
-      // Get a specific camera from the list of available cameras.
-      locator<CameraDescription>(),
-      // Define the resolution to use.
-      ResolutionPreset.veryHigh,
-      enableAudio: false,
-    );
-
-    // Next, initialize the controller. This returns a Future.
-    _initializeControllerFuture = _controller.initialize();
-  }
 
   @override
   void dispose() {
@@ -161,42 +143,5 @@ class _CameraPageState extends State<CameraPage> {
         },
       ),
     );
-  }
-}
-
-class ImageProcessor {
-  static Future<String> cropSquare(String srcFilePath, String destFilePath, bool flip) async {
-    var bytes = await File(srcFilePath).readAsBytes();
-    img.Image src = img.decodeImage(bytes)!;
-
-    var cropSize = min(src.width, src.height);
-    int offsetX = (src.width - min(src.width, src.height)) ~/ 2;
-    int offsetY = (src.height - min(src.width, src.height)) ~/ 2;
-
-    img.Image destImage = img.copyCrop(src, x: offsetX, y: offsetY, width: cropSize, height: cropSize);
-
-    if (flip) {
-      destImage = img.flipVertical(destImage);
-    }
-
-    var jpg = img.encodeJpg(destImage);
-    await File(destFilePath).writeAsBytes(jpg);
-    return destFilePath;
-  }
-
-  // Hàm chuyên để xóa file ảnh tạm
-  static Future<void> deleteTempImageFile(XFile? imageFile) async {
-    if (imageFile != null) {
-      try {
-        final file = File(imageFile.path);
-        // Kiểm tra xem file có tồn tại không trước khi xóa
-        if (await file.exists()) {
-          await file.delete();
-          Logger().i('Đã xóa file tạm: ${imageFile.path}');
-        }
-      } catch (e) {
-        Logger().e('Lỗi khi xóa file: $e');
-      }
-    }
   }
 }

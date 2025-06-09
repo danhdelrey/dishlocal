@@ -9,20 +9,37 @@ sealed class CameraState extends Equatable {
 //khởi tạo
 final class CameraInitial extends CameraState {}
 
-final class CameraLoading extends CameraState {}
+final class CameraInitializationInProgress extends CameraState {}
 
 final class CameraReady extends CameraState {}
 
-final class CameraFailure extends CameraState {}
+final class CameraFailure extends CameraState {
+  final String failureMessage;
+
+  CameraFailure({required this.failureMessage});
+
+  @override
+  List<Object?> get props => [failureMessage];
+}
 
 //tính năng chụp ảnh
 
 final class CameraCaptureInProgress extends CameraState {}
 
 final class CameraCaptureSuccess extends CameraState {
-  final XFile imageFile;
+  final String imagePath;
 
-  CameraCaptureSuccess({required this.imageFile});
+  CameraCaptureSuccess({required this.imagePath});
+
+  @override
+  List<Object?> get props => [imagePath];
 }
 
-final class CameraCaptureFailure extends CameraState {}
+final class CameraCaptureFailure extends CameraState {
+  final String failureMessage;
+
+  CameraCaptureFailure({required this.failureMessage});
+
+  @override
+  List<Object?> get props => [failureMessage];
+}
