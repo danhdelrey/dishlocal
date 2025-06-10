@@ -64,7 +64,7 @@ class CameraPage extends StatelessWidget {
                         if (state is CameraCaptureSuccess) {
                           context.push('/camera/new_post', extra: {
                             'imagePath': state.imagePath,
-                            'currentPosition': position,
+                            'currentLocationAndress': position.toString(),
                           });
                         }
                         if (state is CameraCaptureInProgress) {
@@ -85,7 +85,7 @@ class CameraPage extends StatelessWidget {
                                   style: Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
-                                  '75/36 Võ Trường Toản, phường An Hòa, quận Ninh Kiều, tp. Cần Thơ',
+                                  position.toString(),
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   textAlign: TextAlign.center,
                                 ),

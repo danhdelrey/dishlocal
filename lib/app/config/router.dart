@@ -159,10 +159,10 @@ final GoRouter router = GoRouter(
           builder: (context, state) {
             final extraMap = state.extra as Map<String, dynamic>;
             final String imagePath = extraMap['imagePath'];
-            final Position currentPosition = extraMap['currentPosition'];
+            final String currentLocationAndress = extraMap['currentLocationAndress'];
             return NewPostPage(
               imagePath: imagePath,
-              currentPosition: currentPosition,
+              currentLocationAndress: currentLocationAndress,
             );
           },
         ),
