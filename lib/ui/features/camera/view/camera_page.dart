@@ -71,7 +71,7 @@ class CameraPage extends StatelessWidget {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 50),
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                         child: Column(
                           children: [
                             Text(
@@ -173,24 +173,34 @@ class CameraPage extends StatelessWidget {
       height: squareSize, // Đảm bảo đây là hình vuông
       child: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          // Cắt những gì tràn ra ngoài SizedBox vuông
-          child: FittedBox(
-            fit: BoxFit.cover, // Lấp đầy và crop, giữ tỷ lệ
-            child: SizedBox(
-              // Kích thước này quan trọng để FittedBox biết
-              // tỷ lệ gốc của CameraPreview.
-              // CameraPreview tự nó sẽ cố gắng hiển thị đúng tỷ lệ của nó.
-              // Nếu previewSize.width là chiều dài thực sự của preview
-              // (có thể đã xoay), thì width/height của SizedBox này phải khớp.
-              // Thông thường, CameraPreview là landscape, nên width > height.
-              // Nếu camera.previewSize là (1920, 1080)
-              // width: 1920, height: 1080 (hoặc ngược lại nếu đã xoay)
-              // FittedBox sẽ dùng tỷ lệ này để scale.
-              width: cameraController.value.previewSize!.height, // Thường là chiều rộng sau khi xoay
-              height: cameraController.value.previewSize!.width, // Thường là chiều cao sau khi xoay
-              child: CameraPreview(cameraController),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.8),
+              width: 2,
+              strokeAlign: BorderSide.strokeAlignOutside,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            // Cắt những gì tràn ra ngoài SizedBox vuông
+            child: FittedBox(
+              fit: BoxFit.cover, // Lấp đầy và crop, giữ tỷ lệ
+              child: SizedBox(
+                // Kích thước này quan trọng để FittedBox biết
+                // tỷ lệ gốc của CameraPreview.
+                // CameraPreview tự nó sẽ cố gắng hiển thị đúng tỷ lệ của nó.
+                // Nếu previewSize.width là chiều dài thực sự của preview
+                // (có thể đã xoay), thì width/height của SizedBox này phải khớp.
+                // Thông thường, CameraPreview là landscape, nên width > height.
+                // Nếu camera.previewSize là (1920, 1080)
+                // width: 1920, height: 1080 (hoặc ngược lại nếu đã xoay)
+                // FittedBox sẽ dùng tỷ lệ này để scale.
+                width: cameraController.value.previewSize!.height, // Thường là chiều rộng sau khi xoay
+                height: cameraController.value.previewSize!.width, // Thường là chiều cao sau khi xoay
+                child: CameraPreview(cameraController),
+              ),
             ),
           ),
         ),
