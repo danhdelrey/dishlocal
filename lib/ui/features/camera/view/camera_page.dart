@@ -3,7 +3,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/get_current_location/view/current_location_builder.dart';
-import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_handler.dart';
+import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_builder.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_disconnected_info.dart';
 import 'package:dishlocal/ui/features/location_service/view/location_service_disabled_info.dart';
 import 'package:dishlocal/ui/features/location_service/view/location_service_status_builder.dart';
@@ -48,14 +48,11 @@ class CameraPage extends StatelessWidget {
               ),
             ),
           ),
-          body: InternetConnectionHandler(
-            initialChild: const Center(
-              child: CustomLoadingIndicator(
-                indicatorSize: 40,
-                indicatorText: 'Đang kiểm tra kết nối...',
-              ),
-            ),
-            childWhenConnected: LocationServiceStatusBuilder(
+          body: InternetConnectionBuilder(builder: (hasInternetAccess) {
+            if (!hasInternetAccess) {
+              return const InternetConnectionDisconnectedInfo();
+            }
+            return LocationServiceStatusBuilder(
               builder: (enabled) {
                 if (enabled == false) {
                   return const LocationServiceDisabledInfo();
@@ -166,9 +163,8 @@ class CameraPage extends StatelessWidget {
                   },
                 );
               },
-            ),
-            childWhenDisconnected: const InternetConnectionDisconnectedInfo(),
-          ),
+            );
+          }),
         ),
       ),
     );
