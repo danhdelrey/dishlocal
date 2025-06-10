@@ -76,7 +76,7 @@ class CameraPage extends StatelessWidget {
                                 SizedBox(
                                   width: 40,
                                   child: LoadingIndicator(
-                                    indicatorType: Indicator.ballPulse,
+                                    indicatorType: Indicator.ballBeat,
                                     colors: [
                                       Theme.of(context).colorScheme.primary,
                                     ],
@@ -115,7 +115,7 @@ class CameraPage extends StatelessWidget {
                               SizedBox(
                                 width: 40,
                                 child: LoadingIndicator(
-                                  indicatorType: Indicator.ballPulse,
+                                  indicatorType: Indicator.ballBeat,
                                   colors: [
                                     Theme.of(context).colorScheme.primary,
                                   ],
