@@ -4,24 +4,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 
 class CurrentLocationRender extends StatelessWidget {
-  const CurrentLocationRender({super.key, required this.child, required this.onCurrentLocationSuccess});
+  const CurrentLocationRender({
+    super.key,
+    required this.builder,
+  });
 
-  final Widget child;
-  final Function(Position position) onCurrentLocationSuccess;
+  final Widget Function(Position position) builder;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => CurrentLocationBloc()..add(CurrentLocationRequested()),
-      child: BlocConsumer<CurrentLocationBloc, CurrentLocationState>(
-        listener: (context, state) {
-          if (state is CurrentLocationSuccess) {
-            onCurrentLocationSuccess(state.position);
-          }
-        },
+      child: BlocBuilder<CurrentLocationBloc, CurrentLocationState>(
         builder: (context, state) {
           if (state is CurrentLocationSuccess) {
-            return child;
+            return builder(state.position);
           }
           return const CircularProgressIndicator();
         },
