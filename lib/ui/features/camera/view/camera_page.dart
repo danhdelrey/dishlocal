@@ -107,7 +107,6 @@ class CameraPage extends StatelessWidget {
                                       ),
                                       child: const CustomLoadingIndicator(
                                         indicatorSize: 40,
-                                        indicatorText: 'Đang khởi tạo máy ảnh...',
                                       ),
                                     ),
                                   ),
@@ -132,7 +131,6 @@ class CameraPage extends StatelessWidget {
                                     ),
                                     child: const CustomLoadingIndicator(
                                       indicatorSize: 40,
-                                      indicatorText: 'Đang xử lý ảnh...',
                                     ),
                                   ),
                                 ),

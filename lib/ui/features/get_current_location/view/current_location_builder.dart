@@ -24,7 +24,6 @@ class CurrentLocationBuilder extends StatelessWidget {
           return const Center(
             child: CustomLoadingIndicator(
               indicatorSize: 40,
-              indicatorText: 'Đang tìm kiếm vị trí...',
             ),
           );
         },
