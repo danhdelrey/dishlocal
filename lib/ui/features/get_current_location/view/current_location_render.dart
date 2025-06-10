@@ -1,4 +1,5 @@
 import 'package:dishlocal/ui/features/get_current_location/bloc/current_location_bloc.dart';
+import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,7 +21,12 @@ class CurrentLocationRender extends StatelessWidget {
           if (state is CurrentLocationSuccess) {
             return builder(state.position);
           }
-          return const CircularProgressIndicator();
+          return const Center(
+            child: CustomLoadingIndicator(
+              indicatorSize: 40,
+              indicatorText: 'Đang tìm kiếm vị trí...',
+            ),
+          );
         },
       ),
     );
