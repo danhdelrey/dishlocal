@@ -70,6 +70,22 @@ class CameraPage extends StatelessWidget {
                   },
                   child: Column(
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 50),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Vị trí hiện tại',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            Text(
+                              '75/36 Võ Trường Toản, phường An Hòa, quận Ninh Kiều, tp. Cần Thơ',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
                       BlocBuilder<CameraBloc, CameraState>(
                         builder: (context, state) {
                           if (state is CameraInitializationInProgress) {
@@ -115,20 +131,6 @@ class CameraPage extends StatelessWidget {
                               ),
                             ),
                           );
-                        },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      BlocBuilder<CameraBloc, CameraState>(
-                        builder: (context, state) {
-                          if (state is CameraReady) {
-                            return Text(
-                              'Hãy đưa món ăn vào khung hình',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            );
-                          }
-                          return const SizedBox();
                         },
                       ),
                       const Spacer(),
