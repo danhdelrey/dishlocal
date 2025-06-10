@@ -9,6 +9,7 @@ import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dar
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
 // GoRouter router = GoRouter(
@@ -156,8 +157,13 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: 'new_post',
           builder: (context, state) {
-            final String imagePath = state.extra as String;
-            return NewPostPage(imagePath: imagePath);
+            final extraMap = state.extra as Map<String, dynamic>;
+            final String imagePath = extraMap['imagePath'];
+            final Position currentPosition = extraMap['currentPosition'];
+            return NewPostPage(
+              imagePath: imagePath,
+              currentPosition: currentPosition,
+            );
           },
         ),
       ],

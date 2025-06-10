@@ -4,6 +4,7 @@ import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/get_current_location/view/current_location_render.dart';
 import 'package:dishlocal/ui/widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -16,39 +17,46 @@ class CameraPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final squareSize = screenWidth;
+    Position? _position;
 
-    return CurrentLocationRender(
-      child: BlocProvider(
-        create: (context) => CameraBloc()..add(CameraInitialized()),
-        child: LoaderOverlay(
-          overlayColor: Colors.transparent,
-          overlayWidgetBuilder: (progress) => const SizedBox(),
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'Bài đăng mới',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              surfaceTintColor: Colors.transparent,
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              centerTitle: true,
-              automaticallyImplyLeading: false,
-              leading: IconButton(
-                onPressed: () {
-                  context.pop();
-                },
-                icon: AppIcons.left.toSvg(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+    return BlocProvider(
+      create: (context) => CameraBloc()..add(CameraInitialized()),
+      child: LoaderOverlay(
+        overlayColor: Colors.transparent,
+        overlayWidgetBuilder: (progress) => const SizedBox(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Bài đăng mới',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            centerTitle: true,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              onPressed: () {
+                context.pop();
+              },
+              icon: AppIcons.left.toSvg(
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            // You must wait until the controller is initialized before displaying the
-            // camera preview. Use a FutureBuilder to display a loading spinner until the
-            // controller has finished initializing.
-            body: BlocListener<CameraBloc, CameraState>(
+          ),
+          // You must wait until the controller is initialized before displaying the
+          // camera preview. Use a FutureBuilder to display a loading spinner until the
+          // controller has finished initializing.
+          body: CurrentLocationRender(
+            onCurrentLocationSuccess: (position) {
+              _position = position;
+            },
+            child: BlocListener<CameraBloc, CameraState>(
               listener: (context, state) {
                 if (state is CameraCaptureSuccess) {
-                  context.push('/camera/new_post', extra: state.imagePath);
+                  context.push('/camera/new_post', extra: {
+                    'imagePath' : state.imagePath,
+                    'currentPosition' : _position,
+                  });
                 }
                 if (state is CameraCaptureInProgress) {
                   context.loaderOverlay.show();

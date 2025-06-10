@@ -8,12 +8,14 @@ import 'package:dishlocal/ui/features/new_post/view/rating_input_section.dart';
 import 'package:dishlocal/ui/widgets/rounded_square_image.dart';
 import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
 class NewPostPage extends StatefulWidget {
-  const NewPostPage({super.key, required this.imagePath});
+  const NewPostPage({super.key, required this.imagePath, required this.currentPosition});
 
   final String imagePath;
+  final Position currentPosition;
 
   @override
   State<NewPostPage> createState() => _NewPostPageState();
@@ -70,7 +72,7 @@ class _NewPostPageState extends State<NewPostPage> {
             child: Column(
               children: [
                 Text(
-                  '8:30 25/05/2025',
+                  '8:30 25/05/2025 + ${widget.currentPosition.latitude}  ${widget.currentPosition.longitude}',
                   style: Theme.of(context).textTheme.labelLarge!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
