@@ -4,11 +4,12 @@ import 'package:loading_indicator/loading_indicator.dart';
 class CustomLoadingIndicator extends StatelessWidget {
   const CustomLoadingIndicator({
     super.key,
-    required this.indicatorSize, required this.indicatorText,
+    required this.indicatorSize,
+    required this.indicatorText,
   });
 
   final double indicatorSize;
-  final String indicatorText;
+  final String? indicatorText;
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +25,11 @@ class CustomLoadingIndicator extends StatelessWidget {
             ],
           ),
         ),
-        Text(
-          indicatorText,
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
+        if (indicatorText != null)
+          Text(
+            indicatorText!,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
       ],
     );
   }

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 
-class CurrentLocationRender extends StatelessWidget {
-  const CurrentLocationRender({
+class CurrentLocationBuilder extends StatelessWidget {
+  const CurrentLocationBuilder({
     super.key,
     required this.builder,
   });
