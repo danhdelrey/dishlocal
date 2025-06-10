@@ -1,3 +1,4 @@
+import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -14,7 +15,9 @@ class LocationServiceStatusBuilder extends StatelessWidget {
       builder: (context, futureSnapshot) {
         // Nếu chưa lấy xong trạng thái ban đầu -> loading
         if (futureSnapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CustomLoadingIndicator(indicatorSize: 40),
+          );
         }
 
         // Lấy trạng thái ban đầu từ future

@@ -5,7 +5,7 @@ class CustomLoadingIndicator extends StatelessWidget {
   const CustomLoadingIndicator({
     super.key,
     required this.indicatorSize,
-    required this.indicatorText,
+     this.indicatorText,
   });
 
   final double indicatorSize;
