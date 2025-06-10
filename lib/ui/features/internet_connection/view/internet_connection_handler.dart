@@ -2,8 +2,8 @@ import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
-class InternetConnectionAvailability extends StatelessWidget {
-  const InternetConnectionAvailability({
+class InternetConnectionHandler extends StatelessWidget {
+  const InternetConnectionHandler({
     super.key,
     required this.childWhenConnected,
     required this.childWhenDisconnected,
