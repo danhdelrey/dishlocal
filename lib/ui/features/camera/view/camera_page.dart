@@ -2,7 +2,8 @@ import 'package:camera/camera.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/get_current_location/view/current_location_builder.dart';
-import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_builder.dart';
+import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_availability.dart';
+import 'package:dishlocal/ui/features/internet_connection/view/internet_disconnected.dart';
 import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
@@ -43,95 +44,35 @@ class CameraPage extends StatelessWidget {
               ),
             ),
           ),
-          body: InternetConnectionBuilder(
-            defaultChild: const Center(
+          body: InternetConnectionAvailability(
+            initialChild: const Center(
               child: CustomLoadingIndicator(
                 indicatorSize: 40,
                 indicatorText: 'Đang kiểm tra kết nối...',
               ),
             ),
-            builder: (isInternetAvailable) {
-              if (!isInternetAvailable) {
-                return Center(
+            childWhenConnected: CurrentLocationBuilder(
+              builder: (position) {
+                return BlocListener<CameraBloc, CameraState>(
+                  listener: (context, state) {
+                    if (state is CameraCaptureSuccess) {
+                      context.push('/camera/new_post', extra: {
+                        'imagePath': state.imagePath,
+                        'currentPosition': position,
+                      });
+                    }
+                    if (state is CameraCaptureInProgress) {
+                      context.loaderOverlay.show();
+                    }
+                    if (state is CameraCaptureSuccess) {
+                      context.loaderOverlay.hide();
+                    }
+                  },
                   child: Column(
-                    // Canh giữa các thành phần theo chiều dọc và ngang
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.wifi_off_rounded, // Icon trực quan
-                        size: 80,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(height: 16), // Khoảng cách giữa icon và chữ
-                      Text(
-                        'Không có kết nối Internet',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Vui lòng kiểm tra lại kết nối của bạn.',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                );
-              }
-              return CurrentLocationBuilder(
-                builder: (position) {
-                  return BlocListener<CameraBloc, CameraState>(
-                    listener: (context, state) {
-                      if (state is CameraCaptureSuccess) {
-                        context.push('/camera/new_post', extra: {
-                          'imagePath': state.imagePath,
-                          'currentPosition': position,
-                        });
-                      }
-                      if (state is CameraCaptureInProgress) {
-                        context.loaderOverlay.show();
-                      }
-                      if (state is CameraCaptureSuccess) {
-                        context.loaderOverlay.hide();
-                      }
-                    },
-                    child: Column(
-                      children: [
-                        BlocBuilder<CameraBloc, CameraState>(
-                          builder: (context, state) {
-                            if (state is CameraInitializationInProgress) {
-                              return SizedBox(
-                                width: squareSize,
-                                height: squareSize,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.surfaceContainerLow,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: const CustomLoadingIndicator(
-                                      indicatorSize: 40,
-                                      indicatorText: 'Đang khởi tạo máy ảnh...',
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
-                            if (state is CameraReady) {
-                              return _buildCameraPreview(
-                                squareSize: squareSize,
-                                context: context,
-                                cameraController: state.cameraController,
-                              );
-                            }
+                      BlocBuilder<CameraBloc, CameraState>(
+                        builder: (context, state) {
+                          if (state is CameraInitializationInProgress) {
                             return SizedBox(
                               width: squareSize,
                               height: squareSize,
@@ -144,51 +85,76 @@ class CameraPage extends StatelessWidget {
                                   ),
                                   child: const CustomLoadingIndicator(
                                     indicatorSize: 40,
-                                    indicatorText: 'Đang xử lý ảnh...',
+                                    indicatorText: 'Đang khởi tạo máy ảnh...',
                                   ),
                                 ),
                               ),
                             );
-                          },
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        BlocBuilder<CameraBloc, CameraState>(
-                          builder: (context, state) {
-                            if (state is CameraReady) {
-                              return Text(
-                                'Hãy đưa món ăn vào khung hình',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              );
-                            }
-                            return const SizedBox();
-                          },
-                        ),
-                        const Spacer(),
-                        BlocBuilder<CameraBloc, CameraState>(
-                          builder: (context, state) {
-                            if (state is CameraReady) {
-                              return GradientFab(
-                                size: 80,
-                                iconSize: 40,
-                                onTap: () async {
-                                  context.read<CameraBloc>().add(CameraCaptureRequested());
-                                },
-                              );
-                            }
-                            return const GradientFab(
+                          }
+                          if (state is CameraReady) {
+                            return _buildCameraPreview(
+                              squareSize: squareSize,
+                              context: context,
+                              cameraController: state.cameraController,
+                            );
+                          }
+                          return SizedBox(
+                            width: squareSize,
+                            height: squareSize,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const CustomLoadingIndicator(
+                                  indicatorSize: 40,
+                                  indicatorText: 'Đang xử lý ảnh...',
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      BlocBuilder<CameraBloc, CameraState>(
+                        builder: (context, state) {
+                          if (state is CameraReady) {
+                            return Text(
+                              'Hãy đưa món ăn vào khung hình',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                      const Spacer(),
+                      BlocBuilder<CameraBloc, CameraState>(
+                        builder: (context, state) {
+                          if (state is CameraReady) {
+                            return GradientFab(
                               size: 80,
                               iconSize: 40,
+                              onTap: () async {
+                                context.read<CameraBloc>().add(CameraCaptureRequested());
+                              },
                             );
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
+                          }
+                          return const GradientFab(
+                            size: 80,
+                            iconSize: 40,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            childWhenDisconnected: const InternetDisconnected(),
           ),
         ),
       ),
