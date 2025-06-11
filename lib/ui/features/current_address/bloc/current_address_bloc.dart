@@ -4,25 +4,25 @@ import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:logging/logging.dart';
 
-part 'current_location_event.dart';
-part 'current_location_state.dart';
+part 'current_address_event.dart';
+part 'current_address_state.dart';
 
-class CurrentLocationBloc extends Bloc<CurrentLocationEvent, CurrentLocationState> {
+class CurrentAddressBloc extends Bloc<CurrentAddressEvent, CurrentAddressState> {
   // 1. Khởi tạo Logger
   final _log = Logger('CurrentLocationBloc');
 
-  CurrentLocationBloc() : super(CurrentLocationInitial()) {
-    on<CurrentLocationRequested>(_onCurrentLocationRequested);
+  CurrentAddressBloc() : super(CurrentAddressInitial()) {
+    on<CurrentAddressRequested>(_onCurrentLocationRequested);
   }
 
   Future<void> _onCurrentLocationRequested(
-    CurrentLocationRequested event,
-    Emitter<CurrentLocationState> emit,
+    CurrentAddressRequested event,
+    Emitter<CurrentAddressState> emit,
   ) async {
     _log.info('Event CurrentLocationRequested: Bắt đầu lấy vị trí hiện tại...');
 
     // 2. Emit trạng thái Loading ngay lập tức
-    emit(CurrentLocationLoading());
+    emit(CurrentAddressLoading());
 
     try {
       // BƯỚC 1: KIỂM TRA DỊCH VỤ VỊ TRÍ
@@ -69,11 +69,11 @@ class CurrentLocationBloc extends Bloc<CurrentLocationEvent, CurrentLocationStat
       _log.info('Lấy vị trí thành công: Lat ${position.latitude}, Lon ${position.longitude}');
 
       // 4. Emit trạng thái thành công
-      emit(CurrentLocationSuccess(position: position));
+      emit(CurrentAddressSuccess(position: position));
     } catch (e, stackTrace) {
       // 5. Bắt các lỗi không lường trước được
       _log.severe('Lỗi không xác định khi lấy vị trí: $e', e, stackTrace);
-      emit(CurrentLocationFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
+      emit(CurrentAddressFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
     }
   }
 }

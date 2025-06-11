@@ -1,11 +1,11 @@
-import 'package:dishlocal/ui/features/get_current_location/bloc/current_location_bloc.dart';
+import 'package:dishlocal/ui/features/current_address/bloc/current_address_bloc.dart';
 import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 
-class CurrentLocationBuilder extends StatelessWidget {
-  const CurrentLocationBuilder({
+class CurrentAddressBuilder extends StatelessWidget {
+  const CurrentAddressBuilder({
     super.key,
     required this.builder,
   });
@@ -15,10 +15,10 @@ class CurrentLocationBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CurrentLocationBloc()..add(CurrentLocationRequested()),
-      child: BlocBuilder<CurrentLocationBloc, CurrentLocationState>(
+      create: (context) => CurrentAddressBloc()..add(CurrentAddressRequested()),
+      child: BlocBuilder<CurrentAddressBloc, CurrentAddressState>(
         builder: (context, state) {
-          if (state is CurrentLocationSuccess) {
+          if (state is CurrentAddressSuccess) {
             return builder(state.position);
           }
           return const Center(

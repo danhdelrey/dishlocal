@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
-import 'package:dishlocal/ui/features/get_current_location/view/current_location_builder.dart';
+import 'package:dishlocal/ui/features/current_address/view/current_address_builder.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_builder.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_disconnected_info.dart';
 import 'package:dishlocal/ui/features/location_service/view/location_service_disabled_info.dart';
@@ -57,7 +57,7 @@ class CameraPage extends StatelessWidget {
                 if (enabled == false) {
                   return const LocationServiceDisabledInfo();
                 }
-                return CurrentLocationBuilder(
+                return CurrentAddressBuilder(
                   builder: (position) {
                     return BlocListener<CameraBloc, CameraState>(
                       listener: (context, state) {
