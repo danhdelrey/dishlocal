@@ -12,10 +12,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
 class NewPostPage extends StatefulWidget {
-  const NewPostPage({super.key, required this.imagePath, required this.currentLocationAndress});
+  const NewPostPage({super.key, required this.imagePath, required this.currentAddress});
 
   final String imagePath;
-  final String currentLocationAndress;
+  final String currentAddress;
 
   @override
   State<NewPostPage> createState() => _NewPostPageState();
@@ -72,7 +72,7 @@ class _NewPostPageState extends State<NewPostPage> {
             child: Column(
               children: [
                 Text(
-                  '8:30 25/05/2025 + ${widget.currentLocationAndress}',
+                  '8:30 25/05/2025 + ${widget.currentAddress}',
                   style: Theme.of(context).textTheme.labelLarge!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),

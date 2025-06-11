@@ -12,12 +12,12 @@ final class CurrentAddressInitial extends CurrentAddressState {}
 final class CurrentAddressLoading extends CurrentAddressState {}
 
 final class CurrentAddressSuccess extends CurrentAddressState {
-  final Position position;
+  final Address address;
 
-  const CurrentAddressSuccess({required this.position});
+  const CurrentAddressSuccess({required this.address});
 
   @override
-  List<Object> get props => [position];
+  List<Object> get props => [address];
 }
 
 // State lỗi chung
