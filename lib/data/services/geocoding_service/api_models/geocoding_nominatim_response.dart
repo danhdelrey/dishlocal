@@ -35,6 +35,28 @@ class GeocodingNominatimResponse {
       boundingbox: json['boundingbox'] != null ? List<String>.from(json['boundingbox']) : null,
     );
   }
+  @override
+  String toString() {
+    final buffer = StringBuffer();
+    buffer.writeln('GeocodingNominatimResponse {');
+    buffer.writeln('  placeId: ${placeId ?? 'N/A'},');
+    buffer.writeln('  displayName: ${displayName ?? 'N/A'},');
+    buffer.writeln('  lat: ${lat ?? 'N/A'}, lon: ${lon ?? 'N/A'},');
+    // In đối tượng address lồng nhau
+    if (address != null) {
+      // Thụt lề cho toàn bộ chuỗi của đối tượng address
+      final indentedAddress = address.toString().split('\n').map((line) => '  $line').join('\n');
+      buffer.writeln('  address:\n$indentedAddress,');
+    } else {
+      buffer.writeln('  address: N/A,');
+    }
+    buffer.writeln('  boundingbox: ${boundingbox?.toString() ?? 'N/A'},');
+    buffer.writeln('  osmType: ${osmType ?? 'N/A'},');
+    buffer.writeln('  osmId: ${osmId ?? 'N/A'},');
+    buffer.writeln('  licence: ${licence ?? 'N/A'}');
+    buffer.write('}');
+    return buffer.toString();
+  }
 }
 
 class GeocodingNominatimAddress {
@@ -66,5 +88,19 @@ class GeocodingNominatimAddress {
       country: json['country'],
       countryCode: json['country_code'],
     );
+  }
+  @override
+  String toString() {
+    final buffer = StringBuffer();
+    buffer.writeln('GeocodingNominatimAddress {');
+    buffer.writeln('  road: ${road ?? 'N/A'},');
+    buffer.writeln('  village: ${village ?? 'N/A'},');
+    buffer.writeln('  stateDistrict: ${stateDistrict ?? 'N/A'},');
+    buffer.writeln('  state: ${state ?? 'N/A'},');
+    buffer.writeln('  postcode: ${postcode ?? 'N/A'},');
+    buffer.writeln('  country: ${country ?? 'N/A'},');
+    buffer.writeln('  countryCode: ${countryCode ?? 'N/A'}');
+    buffer.write('}');
+    return buffer.toString();
   }
 }

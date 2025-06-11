@@ -48,7 +48,7 @@ class GeocodingServiceNominatimImpl implements GeocodingService {
       final nominatimResponse = GeocodingNominatimResponse.fromJson(response.data);
       final address = nominatimResponse.displayName ?? 'Không tìm thấy địa chỉ';
 
-      _log.fine('Lấy địa chỉ thành công: $address');
+      _log.fine('Lấy địa chỉ thành công: $nominatimResponse');
       return address;
     } on DioException catch (e) {
       // Xử lý lỗi từ Dio một cách chi tiết hơn
