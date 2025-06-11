@@ -1,6 +1,6 @@
-import 'package:dishlocal/core/error/failure.dart';
+import 'package:dishlocal/data/error/repository_failure.dart';
 
-sealed class AddressFailure extends Failure {
+sealed class AddressFailure extends RepositoryFailure {
   const AddressFailure(super.message);
 }
 
