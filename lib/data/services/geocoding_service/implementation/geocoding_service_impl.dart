@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
-@LazySingleton(as: GeocodingService)
+
 class GeocodingServiceImpl implements GeocodingService {
   final _log = Logger('GeocodingServiceImpl');
 
