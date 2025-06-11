@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/new_post/view/dining_location_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/food_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/rating_input_section.dart';
@@ -12,10 +13,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
 class NewPostPage extends StatefulWidget {
-  const NewPostPage({super.key, required this.imagePath, required this.currentAddress});
+  const NewPostPage({super.key, required this.imagePath, required this.address});
 
   final String imagePath;
-  final String currentAddress;
+  final Address address;
 
   @override
   State<NewPostPage> createState() => _NewPostPageState();
@@ -72,7 +73,7 @@ class _NewPostPageState extends State<NewPostPage> {
             child: Column(
               children: [
                 Text(
-                  '8:30 25/05/2025 + ${widget.currentAddress}',
+                  '8:30 25/05/2025 ${widget.address.displayName}',
                   style: Theme.of(context).textTheme.labelLarge!.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),

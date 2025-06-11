@@ -25,6 +25,7 @@ class CurrentAddressBuilder extends StatelessWidget {
           return const Center(
             child: CustomLoadingIndicator(
               indicatorSize: 40,
+              indicatorText: 'Đang lấy vị trí...',
             ),
           );
         },

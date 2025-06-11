@@ -41,7 +41,7 @@ class AddressRepositoryImpl implements AddressRepository {
       final address = Address(
         latitude: position.latitude,
         longitude: position.longitude,
-        address: addressString, // Dùng địa chỉ thật, không phải chuỗi cứng
+        displayName: addressString, // Dùng địa chỉ thật, không phải chuỗi cứng
       );
       return Right(address);
 

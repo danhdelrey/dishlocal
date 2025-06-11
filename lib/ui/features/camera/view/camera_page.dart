@@ -57,13 +57,13 @@ class CameraPage extends StatelessWidget {
                   return const LocationServiceDisabledInfo();
                 }
                 return CurrentAddressBuilder(
-                  builder: (currentAddress) {
+                  builder: (address) {
                     return BlocListener<CameraBloc, CameraState>(
                       listener: (context, state) {
                         if (state is CameraCaptureSuccess) {
                           context.push('/camera/new_post', extra: {
                             'imagePath': state.imagePath,
-                            'currentAddress': currentAddress.address,
+                            'address': address,
                           });
                         }
                         if (state is CameraCaptureInProgress) {
@@ -84,7 +84,7 @@ class CameraPage extends StatelessWidget {
                                   style: Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
-                                  currentAddress.address,
+                                  address.displayName,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   textAlign: TextAlign.center,
                                 ),

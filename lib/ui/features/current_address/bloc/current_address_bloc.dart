@@ -45,7 +45,7 @@ class CurrentAddressBloc extends Bloc<CurrentAddressEvent, CurrentAddressState> 
         emit(_mapFailureToState(failure));
       },
       (address) {
-        _log.info('Lấy địa chỉ thành công: ${address.address}');
+        _log.info('Lấy địa chỉ thành công: ${address.displayName}');
         emit(CurrentAddressSuccess(address: address));
       },
     );

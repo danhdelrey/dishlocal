@@ -1,11 +1,11 @@
 class Address {
   final double latitude;
   final double longitude;
-  final String address;
+  final String displayName;
 
   Address({
     required this.latitude,
     required this.longitude,
-    required this.address,
+    required this.displayName,
   });
 }

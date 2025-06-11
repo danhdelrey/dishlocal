@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/config/main_shell.dart';
+import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
@@ -159,10 +160,10 @@ final GoRouter router = GoRouter(
           builder: (context, state) {
             final extraMap = state.extra as Map<String, dynamic>;
             final String imagePath = extraMap['imagePath'];
-            final String currentAddress = extraMap['currentAddress'];
+            final Address address = extraMap['address'];
             return NewPostPage(
               imagePath: imagePath,
-              currentAddress: currentAddress,
+              address: address,
             );
           },
         ),
