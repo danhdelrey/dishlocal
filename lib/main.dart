@@ -1,14 +1,14 @@
 import 'dart:developer';
 
 import 'package:dishlocal/app/config/router.dart';
-import 'package:dishlocal/app/config/set_up_dependencies.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await setUpDependencies();
+  configureDependencies();
   _setupLogging();
   runApp(const MyApp());
 }

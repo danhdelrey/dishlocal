@@ -1,13 +1,15 @@
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
-import 'package:dishlocal/app/config/set_up_dependencies.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/utils/image_processor.dart';
 import 'package:equatable/equatable.dart';
+import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
 part 'camera_event.dart';
 part 'camera_state.dart';
 
+@injectable
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
   // 1. Tạo một Logger instance cho class này
   // Đặt tên logger theo tên class giúp dễ dàng lọc log sau này

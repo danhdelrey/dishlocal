@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
+import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
+@lazySingleton
 class ImageProcessor {
   final _log = Logger('ImageProcessor');
   Future<String> cropSquare(String srcFilePath, String destFilePath, bool flip) async {

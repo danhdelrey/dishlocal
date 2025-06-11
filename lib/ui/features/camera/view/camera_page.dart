@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/current_address/view/current_address_builder.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_builder.dart';
@@ -10,11 +11,9 @@ import 'package:dishlocal/ui/features/location_service/view/location_service_sta
 import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 
 class CameraPage extends StatelessWidget {
   const CameraPage({super.key});
@@ -25,7 +24,7 @@ class CameraPage extends StatelessWidget {
     final squareSize = screenWidth;
 
     return BlocProvider(
-      create: (context) => CameraBloc()..add(CameraInitialized()),
+      create: (context) => getIt<CameraBloc>()..add(CameraInitialized()),
       child: LoaderOverlay(
         overlayColor: Colors.transparent,
         overlayWidgetBuilder: (progress) => const SizedBox(),

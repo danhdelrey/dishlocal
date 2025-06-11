@@ -1,3 +1,4 @@
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/current_address/bloc/current_address_bloc.dart';
 import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
@@ -15,7 +16,7 @@ class CurrentAddressBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CurrentAddressBloc()..add(CurrentAddressRequested()),
+      create: (context) => getIt<CurrentAddressBloc>()..add(CurrentAddressRequested()),
       child: BlocBuilder<CurrentAddressBloc, CurrentAddressState>(
         builder: (context, state) {
           if (state is CurrentAddressSuccess) {

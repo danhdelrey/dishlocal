@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:dishlocal/app/config/set_up_dependencies.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/new_post/view/dining_location_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/food_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/rating_input_section.dart';

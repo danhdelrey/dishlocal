@@ -16,6 +16,10 @@ class PermissionPermanentlyDeniedFailure extends AddressFailure {
   const PermissionPermanentlyDeniedFailure() : super('Quyền truy cập vị trí đã bị tắt vĩnh viễn');
 }
 
+class GeocodingFailure extends AddressFailure {
+  const GeocodingFailure(super.message);
+}
+
 class UnknownFailure extends AddressFailure {
   const UnknownFailure() : super('Lỗi không xác định khi lấy vị trí');
 }
