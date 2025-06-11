@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/error/repository_failure.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
-import 'package:dishlocal/data/categories/address/repository/address_repository.dart';
+import 'package:dishlocal/data/categories/address/repository/interface/address_repository.dart';
 
 class AddressRepositoryImpl implements AddressRepository {
   @override
