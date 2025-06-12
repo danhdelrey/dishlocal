@@ -6,8 +6,6 @@ import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/current_address/view/current_address_builder.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_builder.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_disconnected_info.dart';
-import 'package:dishlocal/ui/features/location_service/view/location_service_disabled_info.dart';
-import 'package:dishlocal/ui/features/location_service/view/location_service_status_builder.dart';
 import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
@@ -50,150 +48,143 @@ class CameraPage extends StatelessWidget {
             if (!hasInternetAccess) {
               return const InternetConnectionDisconnectedInfo();
             }
-            return LocationServiceStatusBuilder(
-              builder: (enabled) {
-                if (enabled == false) {
-                  return const LocationServiceDisabledInfo();
-                }
-                return CurrentAddressBuilder(
-                  builder: (address) {
-                    return BlocProvider(
-                      create: (context) => getIt<CameraBloc>()..add(CameraInitialized()),
-                      child: BlocListener<CameraBloc, CameraState>(
-                        listener: (context, state) {
-                          if (state is CameraCaptureSuccess) {
-                            context.pushReplacement('/camera/new_post', extra: {
-                              'imagePath': state.imagePath,
-                              'address': address,
-                            });
-                          }
-                          if (state is CameraCaptureInProgress) {
-                            context.loaderOverlay.show();
-                          }
-                          if (state is CameraCaptureSuccess) {
-                            context.loaderOverlay.hide();
-                          }
-                        },
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                              child: Column(
-                                children: [
-                                  AppIcons.location1.toSvg(
-                                    color: appColorScheme(context).onSurface,
-                                  ),
-                                  Text(
-                                    'Vị trí hiện tại',
-                                    style: Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                  Text(
-                                    address.displayName,
-                                    style: Theme.of(context).textTheme.bodyMedium,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
+            return CurrentAddressBuilder(
+              builder: (address) {
+                return BlocProvider(
+                  create: (context) => getIt<CameraBloc>()..add(CameraInitialized()),
+                  child: BlocListener<CameraBloc, CameraState>(
+                    listener: (context, state) {
+                      if (state is CameraCaptureSuccess) {
+                        context.pushReplacement('/camera/new_post', extra: {
+                          'imagePath': state.imagePath,
+                          'address': address,
+                        });
+                      }
+                      if (state is CameraCaptureInProgress) {
+                        context.loaderOverlay.show();
+                      }
+                      if (state is CameraCaptureSuccess) {
+                        context.loaderOverlay.hide();
+                      }
+                    },
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                          child: Column(
+                            children: [
+                              AppIcons.location1.toSvg(
+                                color: appColorScheme(context).onSurface,
                               ),
-                            ),
-                            BlocBuilder<CameraBloc, CameraState>(
-                              builder: (context, state) {
-                                if (state is CameraInitializationInProgress) {
-                                  return SizedBox(
-                                    width: squareSize,
-                                    height: squareSize,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).colorScheme.surfaceContainerLow,
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child: const CustomLoadingIndicator(
-                                          indicatorSize: 40,
-                                        ),
-                                      ),
+                              Text(
+                                'Vị trí hiện tại',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              Text(
+                                address.displayName,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                        BlocBuilder<CameraBloc, CameraState>(
+                          builder: (context, state) {
+                            if (state is CameraInitializationInProgress) {
+                              return SizedBox(
+                                width: squareSize,
+                                height: squareSize,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                  );
-                                }
-                                if (state is CameraReady) {
-                                  return _buildCameraPreview(
-                                    squareSize: squareSize,
-                                    context: context,
-                                    cameraController: state.cameraController,
-                                  );
-                                }
-                                if (state is CameraFailure) {
-                                  return SizedBox(
-                                    width: squareSize,
-                                    height: squareSize,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).colorScheme.surfaceContainerLow,
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child: Center(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              const Icon(Icons.warning_amber_rounded),
-                                              Text(
-                                                'Không thể truy cập máy ảnh',
-                                                style: appTextTheme(context).titleMedium,
-                                              ),
-                                              Text(
-                                                'Vui lòng kiểm tra lại thiết bị hoặc quyền truy cập.',
-                                                style: appTextTheme(context).labelLarge,
-                                              ),
-                                            ],
+                                    child: const CustomLoadingIndicator(
+                                      indicatorSize: 40,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            if (state is CameraReady) {
+                              return _buildCameraPreview(
+                                squareSize: squareSize,
+                                context: context,
+                                cameraController: state.cameraController,
+                              );
+                            }
+                            if (state is CameraFailure) {
+                              return SizedBox(
+                                width: squareSize,
+                                height: squareSize,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.warning_amber_rounded),
+                                          Text(
+                                            'Không thể truy cập máy ảnh',
+                                            style: appTextTheme(context).titleMedium,
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return SizedBox(
-                                  width: squareSize,
-                                  height: squareSize,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(15),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).colorScheme.surfaceContainerLow,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: const CustomLoadingIndicator(
-                                        indicatorSize: 40,
+                                          Text(
+                                            'Vui lòng kiểm tra lại thiết bị hoặc quyền truy cập.',
+                                            style: appTextTheme(context).labelLarge,
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                );
-                              },
-                            ),
-                            const Spacer(),
-                            BlocBuilder<CameraBloc, CameraState>(
-                              builder: (context, state) {
-                                if (state is CameraReady) {
-                                  return GradientFab(
-                                    size: 80,
-                                    iconSize: 40,
-                                    onTap: () async {
-                                      context.read<CameraBloc>().add(CameraCaptureRequested());
-                                    },
-                                  );
-                                }
-                                return const GradientFab(
-                                  size: 80,
-                                  iconSize: 40,
-                                );
-                              },
-                            ),
-                          ],
+                                ),
+                              );
+                            }
+                            return SizedBox(
+                              width: squareSize,
+                              height: squareSize,
+                              child: Padding(
+                                padding: const EdgeInsets.all(15),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.surfaceContainerLow,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const CustomLoadingIndicator(
+                                    indicatorSize: 40,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      ),
-                    );
-                  },
+                        const Spacer(),
+                        BlocBuilder<CameraBloc, CameraState>(
+                          builder: (context, state) {
+                            if (state is CameraReady) {
+                              return GradientFab(
+                                size: 80,
+                                iconSize: 40,
+                                onTap: () async {
+                                  context.read<CameraBloc>().add(CameraCaptureRequested());
+                                },
+                              );
+                            }
+                            return const GradientFab(
+                              size: 80,
+                              iconSize: 40,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             );
