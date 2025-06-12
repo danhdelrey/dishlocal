@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,13 @@ part 'dining_info_input_state.dart';
 class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputState> {
   DiningInfoInputBloc({
     required FocusNode dishNameFocusNode,
-  }) : super(DiningInfoInputState(dishNameFocusNode: dishNameFocusNode)) {
-    
-
+    required String imagePath,
+    required Address address,
+  }) : super(DiningInfoInputState(
+          dishNameFocusNode: dishNameFocusNode,
+          imagePath: imagePath,
+          address: address,
+        )) {
     on<DishNameInputChanged>((event, emit) {
       final dishNameInput = DishNameInput.dirty(value: event.dishName);
       emit(
