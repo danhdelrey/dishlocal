@@ -13,8 +13,8 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
       emit(
         state.copyWith(
           dishNameInput: dishNameInput,
-          
-          formzSubmissionStatus: Formz.validate( // BONUS: Kiểm tra luôn xem toàn bộ form có hợp lệ không, nếu có nhiều thì [name, email, password,...]
+          formzSubmissionStatus: Formz.validate(
+            // BONUS: Kiểm tra luôn xem toàn bộ form có hợp lệ không, nếu có nhiều thì [name, email, password,...]
             [
               dishNameInput,
             ],
@@ -23,6 +23,18 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
               : FormzSubmissionStatus.failure,
         ),
       );
+    });
+
+    on<DiningInfoInputSubmitted>((event, emit) async {
+      if(state.formzSubmissionStatus.isSuccess){
+        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.inProgress));
+        try{
+          await Future.delayed(const Duration(seconds: 5));
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
+        }catch(_){
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+        }
+      }
     });
   }
 }

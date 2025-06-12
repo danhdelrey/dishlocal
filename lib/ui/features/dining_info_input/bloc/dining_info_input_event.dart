@@ -7,6 +7,8 @@ sealed class DiningInfoInputEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class DiningInfoInputSubmitted extends DiningInfoInputEvent{}
+
 final class DishNameInputChanged extends DiningInfoInputEvent {
   final String dishName;
 
