@@ -21,8 +21,18 @@ class NewPostPage extends StatefulWidget {
 }
 
 class _NewPostPageState extends State<NewPostPage> {
+  late final FocusNode _dishNameFocusNode;
+
+  @override
+  void initState() {
+    _dishNameFocusNode = FocusNode();
+    super.initState();
+  }
+
   @override
   void dispose() {
+    _dishNameFocusNode.dispose();
+
     super.dispose();
 
     getIt<ImageProcessor>().deleteTempImageFile(widget.imagePath);
@@ -31,7 +41,9 @@ class _NewPostPageState extends State<NewPostPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => DiningInfoInputBloc(),
+      create: (context) => DiningInfoInputBloc(
+        dishNameFocusNode: _dishNameFocusNode,
+      ),
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -67,46 +79,53 @@ class _NewPostPageState extends State<NewPostPage> {
             ),
           ],
         ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Text(
-                    '8:30 25/05/2025 ${widget.address.displayName}',
-                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  RoundedSquareImage(imagePath: widget.imagePath),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  BlocBuilder<DiningInfoInputBloc, DiningInfoInputState>(
-                    builder: (context, state) {
-                      return Column(
-                        children: [
-                          AppTextField(
-                            title: 'Tên món ăn*',
-                            hintText: 'Nhập tên món ăn...',
-                            maxLength: 100,
-                            backgroundColor: appColorScheme(context).surfaceContainerLow,
-                            onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
-                            errorText: state.dishNameInput.isPure
-                                ? null
-                                : state.dishNameInput.isValid
-                                    ? null
-                                    : 'Tên món ăn không được để trống',
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                child: Column(
+                  children: [
+                    Text(
+                      '8:30 25/05/2025 ${widget.address.displayName}',
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    RoundedSquareImage(imagePath: widget.imagePath),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    BlocBuilder<DiningInfoInputBloc, DiningInfoInputState>(
+                      builder: (context, state) {
+                        return Column(
+                          children: [
+                            AppTextField(
+                              autoFocus: true,
+                              title: 'Tên món ăn*',
+                              hintText: 'Nhập tên món ăn...',
+                              maxLength: 100,
+                              backgroundColor: appColorScheme(context).surfaceContainerLow,
+                              onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
+                              errorText: state.dishNameInput.isPure
+                                  ? null
+                                  : state.dishNameInput.isValid
+                                      ? null
+                                      : 'Tên món ăn không được để trống',
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

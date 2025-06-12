@@ -16,6 +16,7 @@ class AppTextField extends StatelessWidget {
     this.errorText,
     this.enabled,
     this.backgroundColor,
+    this.autoFocus = false,
   });
 
   final String? title;
@@ -30,6 +31,7 @@ class AppTextField extends StatelessWidget {
   final String? errorText;
   final bool? enabled;
   final Color? backgroundColor;
+  final bool autoFocus;
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +77,7 @@ class AppTextField extends StatelessWidget {
                   ),
                 Expanded(
                   child: TextFormField(
+                    autofocus: autoFocus,
                     enabled: enabled,
                     initialValue: initialValue,
                     onChanged: onChanged,

@@ -8,7 +8,11 @@ part 'dining_info_input_event.dart';
 part 'dining_info_input_state.dart';
 
 class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputState> {
-  DiningInfoInputBloc() : super(const DiningInfoInputState()) {
+  DiningInfoInputBloc({
+    required FocusNode dishNameFocusNode,
+  }) : super(DiningInfoInputState(dishNameFocusNode: dishNameFocusNode)) {
+    
+
     on<DishNameInputChanged>((event, emit) {
       final dishNameInput = DishNameInput.dirty(value: event.dishName);
       emit(
@@ -27,14 +31,38 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     });
 
     on<DiningInfoInputSubmitted>((event, emit) async {
+      // 1. Mark all fields as dirty to show errors if they are empty
+      final dishNameInput = DishNameInput.dirty(value: state.dishNameInput.value);
+      // ... mark other required fields as dirty ...
+
+      // 2. Emit the new state with dirty fields
+      emit(state.copyWith(
+        dishNameInput: dishNameInput,
+        formzSubmissionStatus: Formz.validate([
+          dishNameInput,
+        ])
+            ? FormzSubmissionStatus.success
+            : FormzSubmissionStatus.failure,
+      ));
+
+      // 3. Check the updated state
       if (state.formzSubmissionStatus.isSuccess) {
+        // It's valid, proceed to submit (call API, etc.)
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.inProgress));
-        try {
-          await Future.delayed(const Duration(seconds: 5));
-          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
-        } catch (_) {
-          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+        // ... await API call ...
+      } else {
+        // It's invalid. Find the first error and focus it.
+        if (state.dishNameInput.isNotValid) {
+          // state.nameFocusNode is the FocusNode we received from the UI.
+          // It's guaranteed to not be null because we required it in the constructor.
+          state.dishNameFocusNode!.requestFocus(); // Gọi requestFocus()
+          return; // Stop after focusing on the first error.
         }
+        // if (state.location.isInvalid) {
+        //   state.locationFocusNode!.requestFocus();
+        //   return;
+        // }
+        // ... check other fields ...
       }
     });
   }
