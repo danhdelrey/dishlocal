@@ -22,6 +22,8 @@ import '../../data/services/geocoding_service/interface/geocoding_service.dart'
     as _i766;
 import '../../data/services/location_service/implementation/geolocator_service_impl.dart'
     as _i437;
+import '../../data/services/location_service/implementation/geolocator_wrapper.dart'
+    as _i258;
 import '../../data/services/location_service/interface/location_service.dart'
     as _i473;
 import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
@@ -40,11 +42,13 @@ _i174.GetIt init(
     environment,
     environmentFilter,
   );
+  gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
   gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc());
   gh.lazySingleton<_i1028.ImageProcessor>(() => _i1028.ImageProcessor());
-  gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl());
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());
+  gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
+      geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
         locationService: gh<_i473.LocationService>(),
         geocodingService: gh<_i766.GeocodingService>(),
