@@ -4,11 +4,13 @@ import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_inp
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
+import 'package:logging/logging.dart';
 
 part 'dining_info_input_event.dart';
 part 'dining_info_input_state.dart';
 
 class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputState> {
+  final _log = Logger('DiningInfoInputBloc');
   DiningInfoInputBloc({
     required FocusNode dishNameFocusNode,
     required String imagePath,
