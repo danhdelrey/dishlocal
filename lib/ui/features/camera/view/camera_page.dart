@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/current_address/view/current_address_builder.dart';
@@ -116,6 +117,36 @@ class CameraPage extends StatelessWidget {
                                     squareSize: squareSize,
                                     context: context,
                                     cameraController: state.cameraController,
+                                  );
+                                }
+                                if (state is CameraFailure) {
+                                  return SizedBox(
+                                    width: squareSize,
+                                    height: squareSize,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(15),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.surfaceContainerLow,
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Center(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'Không thể truy cập máy ảnh',
+                                                style: appTextTheme(context).titleMedium,
+                                              ),
+                                              Text(
+                                                'Vui lòng kiểm tra lại thiết bị hoặc quyền truy cập.',
+                                                style: appTextTheme(context).labelLarge,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   );
                                 }
                                 return SizedBox(
