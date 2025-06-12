@@ -80,6 +80,9 @@ class CameraPage extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                               child: Column(
                                 children: [
+                                  AppIcons.location1.toSvg(
+                                    color: appColorScheme(context).onSurface,
+                                  ),
                                   Text(
                                     'Vị trí hiện tại',
                                     style: Theme.of(context).textTheme.titleMedium,
@@ -134,6 +137,7 @@ class CameraPage extends StatelessWidget {
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
+                                              const Icon(Icons.warning_amber_rounded),
                                               Text(
                                                 'Không thể truy cập máy ảnh',
                                                 style: appTextTheme(context).titleMedium,
