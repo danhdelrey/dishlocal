@@ -5,20 +5,28 @@ class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
     this.title,
-    required this.hintText,
+    this.hintText,
     this.showSupportingText = false,
     this.leadingIcon,
     this.trailingIcon,
     this.maxLength,
+    this.initialValue,
+    this.onChanged,
+    this.errorText,
+    this.enabled,
   });
 
   final String? title;
-  final String hintText;
+  final String? hintText;
   final bool showSupportingText;
   final Widget? leadingIcon;
   final Widget? trailingIcon;
-
   final int? maxLength;
+
+  final String? initialValue;
+  final ValueChanged<String>? onChanged;
+  final String? errorText;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +56,10 @@ class AppTextField extends StatelessWidget {
                   ],
                 ),
               Expanded(
-                child: TextField(
+                child: TextFormField(
+                  enabled: enabled,
+                  initialValue: initialValue,
+                  onChanged: onChanged,
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: 5,
@@ -61,21 +72,10 @@ class AppTextField extends StatelessWidget {
                         ),
                   ),
                   buildCounter: maxLength != null
-                      ? (context,
-                              {required currentLength,
-                              required isFocused,
-                              required maxLength}) =>
-                          Text(
+                      ? (context, {required currentLength, required isFocused, required maxLength}) => Text(
                             '$currentLength/$maxLength',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall!
-                                .copyWith(
-                                  color: isFocused == false
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .outlineVariant
-                                      : Theme.of(context).colorScheme.onSurface,
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                  color: isFocused == false ? Theme.of(context).colorScheme.outlineVariant : Theme.of(context).colorScheme.onSurface,
                                 ),
                           )
                       : null,
@@ -92,6 +92,16 @@ class AppTextField extends StatelessWidget {
                 ),
             ],
           ),
+          if (errorText != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Text(
+                errorText!,
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+              ),
+            ),
         ],
       ),
     );
