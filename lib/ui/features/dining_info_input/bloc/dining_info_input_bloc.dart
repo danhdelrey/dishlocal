@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
 
 part 'dining_info_input_event.dart';
@@ -26,12 +27,12 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     });
 
     on<DiningInfoInputSubmitted>((event, emit) async {
-      if(state.formzSubmissionStatus.isSuccess){
+      if (state.formzSubmissionStatus.isSuccess) {
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.inProgress));
-        try{
+        try {
           await Future.delayed(const Duration(seconds: 5));
           emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
-        }catch(_){
+        } catch (_) {
           emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
         }
       }

@@ -8,6 +8,6 @@ class DishNameInput extends FormzInput<String, DishNameInputError> {
 
   @override
   DishNameInputError? validator(String value) {
-    return value.isEmpty ? DishNameInputError.empty : null;
+    return value.trim().isEmpty ? DishNameInputError.empty : null;
   }
 }
