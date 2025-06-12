@@ -63,7 +63,6 @@ class AccountSetupPage extends StatelessWidget {
                     AppTextField(
                       title: "Họ và tên",
                       hintText: "Nhập họ và tên của bạn",
-                      showSupportingText: false,
                     ),
                     Divider(
                       indent: 15,
@@ -72,7 +71,6 @@ class AccountSetupPage extends StatelessWidget {
                     AppTextField(
                       title: "Tên người dùng (username)",
                       hintText: "Nhập username",
-                      showSupportingText: false,
                     ),
                     Divider(
                       indent: 15,
@@ -81,7 +79,6 @@ class AccountSetupPage extends StatelessWidget {
                     AppTextField(
                       title: "Tiểu sử",
                       hintText: "Nhập tiểu sử",
-                      showSupportingText: false,
                     ),
                   ],
                 ),

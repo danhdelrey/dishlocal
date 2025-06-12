@@ -1,8 +1,8 @@
-
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
-import 'package:dishlocal/ui/features/new_post/view/food_info_input_section.dart';
+import 'package:dishlocal/ui/widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/rounded_square_image.dart';
 import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';
@@ -81,18 +81,13 @@ class _NewPostPageState extends State<NewPostPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                const FoodInfoInputSection(),
-                // const SizedBox(
-                //   height: 20,
-                // ),
-                // const DiningLocationInfoInputSection(),
-                // const SizedBox(
-                //   height: 20,
-                // ),
-                // const RatingInputSection(),
-                // const SizedBox(
-                //   height: 20,
-                // ),
+                AppTextField(
+                  title: 'Tên món ăn*',
+                  hintText: 'Nhập tên món ăn...',
+                  maxLength: 10,
+                  backgroundColor: appColorScheme(context).surfaceContainerLow,
+                  enabled: false,
+                ),
               ],
             ),
           ),
