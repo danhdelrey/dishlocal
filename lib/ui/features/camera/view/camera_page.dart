@@ -62,7 +62,7 @@ class CameraPage extends StatelessWidget {
                       child: BlocListener<CameraBloc, CameraState>(
                         listener: (context, state) {
                           if (state is CameraCaptureSuccess) {
-                            context.push('/camera/new_post', extra: {
+                            context.pushReplacement('/camera/new_post', extra: {
                               'imagePath': state.imagePath,
                               'address': address,
                             });
