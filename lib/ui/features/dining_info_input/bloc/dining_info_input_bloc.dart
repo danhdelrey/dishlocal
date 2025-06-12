@@ -11,6 +11,7 @@ part 'dining_info_input_state.dart';
 
 class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputState> {
   final _log = Logger('DiningInfoInputBloc');
+
   DiningInfoInputBloc({
     required FocusNode dishNameFocusNode,
     required String imagePath,
@@ -20,56 +21,75 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
           imagePath: imagePath,
           address: address,
         )) {
+    // Ghi log ngay khi BLoC được khởi tạo
+    _log.info(
+      'Khởi tạo DiningInfoInputBloc. '
+      'ImagePath: "$imagePath", Address: "${address.toString()}"',
+    );
+
     on<DishNameInputChanged>((event, emit) {
+      _log.fine('Nhận được sự kiện DishNameInputChanged với giá trị: "${event.dishName}"');
       final dishNameInput = DishNameInput.dirty(value: event.dishName);
+
+      // Xác thực form để lấy trạng thái mới
+      final isFormValid = Formz.validate([dishNameInput]);
+      _log.fine(
+        'Xác thực tên món ăn: ${dishNameInput.isValid ? 'Hợp lệ' : 'Không hợp lệ'}. '
+        'Lỗi: ${dishNameInput.error}. '
+        'Trạng thái toàn bộ form: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}',
+      );
+
       emit(
         state.copyWith(
           dishNameInput: dishNameInput,
-          formzSubmissionStatus: Formz.validate(
-            // BONUS: Kiểm tra luôn xem toàn bộ form có hợp lệ không, nếu có nhiều thì [name, email, password,...]
-            [
-              dishNameInput,
-            ],
-          )
-              ? FormzSubmissionStatus.success
-              : FormzSubmissionStatus.failure,
+          formzSubmissionStatus: isFormValid ? FormzSubmissionStatus.success : FormzSubmissionStatus.failure,
         ),
       );
+      _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi tên món ăn.');
     });
 
     on<DiningInfoInputSubmitted>((event, emit) async {
-      // 1. Mark all fields as dirty to show errors if they are empty
-      final dishNameInput = DishNameInput.dirty(value: state.dishNameInput.value);
-      // ... mark other required fields as dirty ...
+      _log.info('Nhận được sự kiện DiningInfoInputSubmitted.');
 
-      // 2. Emit the new state with dirty fields
+      // 1. Đánh dấu tất cả các trường là 'dirty' để hiển thị lỗi nếu chúng trống
+      _log.fine('Đánh dấu các trường là "dirty" để kiểm tra validation khi submit.');
+      final dishNameInput = DishNameInput.dirty(value: state.dishNameInput.value);
+      // ... đánh dấu các trường bắt buộc khác là 'dirty' ...
+
+      // 2. Phát ra trạng thái mới với các trường 'dirty'
+      final isFormValid = Formz.validate([dishNameInput]);
+      _log.fine('Kết quả xác thực form khi submit: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}.');
+
       emit(state.copyWith(
         dishNameInput: dishNameInput,
-        formzSubmissionStatus: Formz.validate([
-          dishNameInput,
-        ])
-            ? FormzSubmissionStatus.success
-            : FormzSubmissionStatus.failure,
+        formzSubmissionStatus: isFormValid ? FormzSubmissionStatus.success : FormzSubmissionStatus.failure,
       ));
+      _log.fine('Đã phát ra (emit) trạng thái mới sau khi đánh dấu "dirty" và xác thực lại.');
 
-      // 3. Check the updated state
+      // 3. Kiểm tra trạng thái đã cập nhật
       if (state.formzSubmissionStatus.isSuccess) {
-        // It's valid, proceed to submit (call API, etc.)
+        // Form hợp lệ, tiến hành submit
+        _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.inProgress));
+        _log.info('Đã phát ra (emit) trạng thái inProgress.');
         // ... await API call ...
+        _log.info('... Giả lập đang chờ gọi API thành công ...');
       } else {
-        // It's invalid. Find the first error and focus it.
+        // Form không hợp lệ. Tìm lỗi đầu tiên và focus vào nó.
+        _log.warning('Form không hợp lệ. Tìm trường nhập liệu bị lỗi để focus.');
         if (state.dishNameInput.isNotValid) {
-          // state.nameFocusNode is the FocusNode we received from the UI.
-          // It's guaranteed to not be null because we required it in the constructor.
-          state.dishNameFocusNode!.requestFocus(); // Gọi requestFocus()
-          return; // Stop after focusing on the first error.
+          // state.dishNameFocusNode là FocusNode chúng ta nhận được từ UI.
+          // Nó được đảm bảo không null vì chúng ta đã yêu cầu trong constructor.
+          _log.fine('Trường Tên món ăn (dishName) không hợp lệ. Yêu cầu focus.');
+          state.dishNameFocusNode!.requestFocus();
+          return; // Dừng lại sau khi focus vào lỗi đầu tiên.
         }
         // if (state.location.isInvalid) {
+        //   _log.fine('Trường Vị trí (location) không hợp lệ. Yêu cầu focus.');
         //   state.locationFocusNode!.requestFocus();
         //   return;
         // }
-        // ... check other fields ...
+        // ... kiểm tra các trường khác ...
       }
     });
   }
