@@ -1,6 +1,5 @@
 import 'package:dishlocal/app/config/main_shell.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
-import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/login/view/login_page.dart';
@@ -9,8 +8,6 @@ import 'package:dishlocal/ui/features/profile/view/profile_page.dart';
 import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
 // GoRouter router = GoRouter(

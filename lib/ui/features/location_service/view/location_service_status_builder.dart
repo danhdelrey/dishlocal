@@ -16,7 +16,10 @@ class LocationServiceStatusBuilder extends StatelessWidget {
         // Nếu chưa lấy xong trạng thái ban đầu -> loading
         if (futureSnapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CustomLoadingIndicator(indicatorSize: 40),
+            child: CustomLoadingIndicator(
+              indicatorSize: 40,
+              indicatorText: 'Kiểm tra dịch vụ vị trí...',
+            ),
           );
         }
 

@@ -4,7 +4,6 @@ import 'package:dishlocal/data/categories/address/failure/address_failure.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/address/repository/interface/address_repository.dart';
 import 'package:equatable/equatable.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 

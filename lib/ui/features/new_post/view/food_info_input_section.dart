@@ -1,4 +1,3 @@
-import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 

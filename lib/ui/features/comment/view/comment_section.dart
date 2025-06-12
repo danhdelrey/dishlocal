@@ -1,6 +1,4 @@
-import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/comment/view/comment.dart';
-import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
 import 'package:flutter/material.dart';
 
 class CommentSection extends StatelessWidget {

@@ -1,15 +1,11 @@
-import 'dart:io';
 
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
-import 'package:dishlocal/ui/features/new_post/view/dining_location_info_input_section.dart';
 import 'package:dishlocal/ui/features/new_post/view/food_info_input_section.dart';
-import 'package:dishlocal/ui/features/new_post/view/rating_input_section.dart';
 import 'package:dishlocal/ui/widgets/rounded_square_image.dart';
 import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
 class NewPostPage extends StatefulWidget {
