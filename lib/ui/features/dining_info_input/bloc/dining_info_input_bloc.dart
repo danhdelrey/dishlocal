@@ -42,7 +42,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
       emit(
         state.copyWith(
           dishNameInput: dishNameInput,
-          formzSubmissionStatus: isFormValid ? FormzSubmissionStatus.success : FormzSubmissionStatus.failure,
+          isFormValid: isFormValid,
         ),
       );
       _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi tên món ăn.');
@@ -62,21 +62,23 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
 
       emit(state.copyWith(
         dishNameInput: dishNameInput,
-        formzSubmissionStatus: isFormValid ? FormzSubmissionStatus.success : FormzSubmissionStatus.failure,
+        isFormValid: isFormValid,
       ));
       _log.fine('Đã phát ra (emit) trạng thái mới sau khi đánh dấu "dirty" và xác thực lại.');
 
       // 3. Kiểm tra trạng thái đã cập nhật
-      if (state.formzSubmissionStatus.isSuccess) {
+      if (state.isFormValid) {
         // Form hợp lệ, tiến hành submit
         _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.inProgress));
         _log.info('Đã phát ra (emit) trạng thái inProgress.');
         // ... await API call ...
         _log.info('... Giả lập đang chờ gọi API thành công ...');
+        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
       } else {
         // Form không hợp lệ. Tìm lỗi đầu tiên và focus vào nó.
         _log.warning('Form không hợp lệ. Tìm trường nhập liệu bị lỗi để focus.');
+        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
         if (state.dishNameInput.isNotValid) {
           // state.dishNameFocusNode là FocusNode chúng ta nhận được từ UI.
           // Nó được đảm bảo không null vì chúng ta đã yêu cầu trong constructor.
