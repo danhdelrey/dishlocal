@@ -17,6 +17,7 @@ class AppTextField extends StatelessWidget {
     this.enabled,
     this.backgroundColor,
     this.autoFocus = false,
+    this.focusNode,
   });
 
   final String? title;
@@ -32,6 +33,7 @@ class AppTextField extends StatelessWidget {
   final bool? enabled;
   final Color? backgroundColor;
   final bool autoFocus;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +79,7 @@ class AppTextField extends StatelessWidget {
                   ),
                 Expanded(
                   child: TextFormField(
+                    focusNode: focusNode,
                     autofocus: autoFocus,
                     enabled: enabled,
                     initialValue: initialValue,

@@ -82,6 +82,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
           // Nó được đảm bảo không null vì chúng ta đã yêu cầu trong constructor.
           _log.fine('Trường Tên món ăn (dishName) không hợp lệ. Yêu cầu focus.');
           state.dishNameFocusNode!.requestFocus();
+          _log.fine('Đã focus vào trường dishNameInput');
           return; // Dừng lại sau khi focus vào lỗi đầu tiên.
         }
         // if (state.location.isInvalid) {

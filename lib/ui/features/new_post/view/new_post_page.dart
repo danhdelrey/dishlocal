@@ -120,6 +120,7 @@ class _NewPostView extends StatelessWidget {
                       return Column(
                         children: [
                           AppTextField(
+                            focusNode: state.dishNameFocusNode,
                             autoFocus: true,
                             title: 'Tên món ăn*',
                             hintText: 'Nhập tên món ăn...',
