@@ -19,5 +19,11 @@ final class DishNameInputChanged extends DiningInfoInputEvent {
   @override
   List<Object?> get props => [dishName];
 }
+final class DiningLocationNameInputChanged extends DiningInfoInputEvent {
+  final String diningLocationName;
 
-//cac lop khac cho hour, location,...
+  const DiningLocationNameInputChanged({required this.diningLocationName});
+
+  @override
+  List<Object?> get props => [diningLocationName];
+}

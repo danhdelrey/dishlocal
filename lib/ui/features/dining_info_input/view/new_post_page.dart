@@ -142,6 +142,16 @@ class _NewPostPageState extends State<NewPostPage> {
                                   height: 10,
                                 ),
                                 AppTextField(
+                                  title: 'Tên quán ăn',
+                                  hintText: 'Nhập tên quán ăn...',
+                                  maxLength: 200,
+                                  backgroundColor: appColorScheme(context).surfaceContainerLow,
+                                  onChanged: (diningLocationName) => context.read<DiningInfoInputBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                AppTextField(
                                   enabled: false,
                                   title: 'Địa chỉ',
                                   initialValue: widget.address.displayName,

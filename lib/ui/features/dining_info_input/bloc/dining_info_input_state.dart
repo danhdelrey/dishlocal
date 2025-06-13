@@ -7,22 +7,28 @@ class DiningInfoInputState extends Equatable {
     this.dishNameInput = const DishNameInput.pure(),
     this.formzSubmissionStatus = FormzSubmissionStatus.initial,
     this.dishNameFocusNode,
+    this.diningLocationNameInput = const DiningLocationNameInput.pure(),
   });
 
-  final DishNameInput dishNameInput;
+  //các thuộc tính
+  final DishNameInput dishNameInput; 
+  final DiningLocationNameInput diningLocationNameInput;
 
   final FormzSubmissionStatus formzSubmissionStatus;
 
   final FocusNode? dishNameFocusNode;
 
+  //trạng thái
   DiningInfoInputState copyWith({
     DishNameInput? dishNameInput,
+    DiningLocationNameInput? diningLocationNameInput,
     FormzSubmissionStatus? formzSubmissionStatus,
   }) {
     return DiningInfoInputState(
       dishNameInput: dishNameInput ?? this.dishNameInput,
       formzSubmissionStatus: formzSubmissionStatus ?? this.formzSubmissionStatus,
       dishNameFocusNode: dishNameFocusNode ?? this.dishNameFocusNode,
+      diningLocationNameInput: diningLocationNameInput ?? this.diningLocationNameInput,
     );
   }
 
@@ -31,5 +37,6 @@ class DiningInfoInputState extends Equatable {
         dishNameInput,
         formzSubmissionStatus,
         dishNameFocusNode,
+        diningLocationNameInput,
       ];
 }
