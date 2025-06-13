@@ -8,7 +8,9 @@ import 'package:dishlocal/ui/widgets/rounded_square_image.dart';
 import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class NewPostPage extends StatefulWidget {
   const NewPostPage({super.key, required this.imagePath, required this.address});
@@ -76,15 +78,11 @@ class _NewPostView extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              // if (context.canPop()) {
-              //   context.pop();
-              //   if (context.canPop()) {
-              //     context.pop();
-              //   }
-              // }
-              context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted());
-            },
+            onPressed: context.watch<DiningInfoInputBloc>().state.formzSubmissionStatus != FormzSubmissionStatus.inProgress
+                ? () {
+                    context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted());
+                  }
+                : null,
             child: const Text(
               'Đăng',
             ),
@@ -115,7 +113,15 @@ class _NewPostView extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  BlocBuilder<DiningInfoInputBloc, DiningInfoInputState>(
+                  BlocConsumer<DiningInfoInputBloc, DiningInfoInputState>(
+                    listener: (context, state) {
+                      if (state.formzSubmissionStatus == FormzSubmissionStatus.success) {
+                        //context.pop();
+                      }
+                      if (state.formzSubmissionStatus == FormzSubmissionStatus.inProgress) {
+                        FocusScope.of(context).unfocus();
+                      }
+                    },
                     builder: (context, state) {
                       return Column(
                         children: [

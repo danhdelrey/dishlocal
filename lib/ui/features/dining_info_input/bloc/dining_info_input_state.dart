@@ -9,7 +9,6 @@ class DiningInfoInputState extends Equatable {
     this.dishNameFocusNode,
     required this.imagePath,
     required this.address,
-    this.isFormValid = false,
   });
 
   final String imagePath;
@@ -17,7 +16,6 @@ class DiningInfoInputState extends Equatable {
 
   final DishNameInput dishNameInput;
 
-  final bool isFormValid;
   final FormzSubmissionStatus formzSubmissionStatus;
 
   final FocusNode? dishNameFocusNode;
@@ -25,7 +23,6 @@ class DiningInfoInputState extends Equatable {
   DiningInfoInputState copyWith({
     DishNameInput? dishNameInput,
     FormzSubmissionStatus? formzSubmissionStatus,
-    bool? isFormValid,
   }) {
     return DiningInfoInputState(
       dishNameInput: dishNameInput ?? this.dishNameInput,
@@ -33,7 +30,6 @@ class DiningInfoInputState extends Equatable {
       dishNameFocusNode: dishNameFocusNode ?? this.dishNameFocusNode,
       imagePath: this.imagePath,
       address: this.address,
-      isFormValid: isFormValid ?? this.isFormValid,
     );
   }
 
