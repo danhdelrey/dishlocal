@@ -81,7 +81,6 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
       } else {
         // Form không hợp lệ, tìm lỗi đầu tiên và focus vào nó.
         _log.warning('Form không hợp lệ. Yêu cầu focus vào trường lỗi.');
-        // Không cần emit lại ở đây vì đã emit ở bước 3.
         // Chỉ cần thực hiện side-effect là focus.
         if (dishNameInput.isNotValid) {
           _log.fine('Trường Tên món ăn (dishName) không hợp lệ. Yêu cầu focus.');
@@ -92,5 +91,11 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
         // ... kiểm tra và focus các trường khác ...
       }
     });
+  }
+
+  @override
+  Future<void> close() {
+    _log.fine('Đóng DiningInfoInputBloc');
+    return super.close();
   }
 }
