@@ -29,6 +29,8 @@ import '../../data/services/location_service/interface/location_service.dart'
 import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
+import '../../ui/features/dining_info_input/bloc/dining_info_input_bloc.dart'
+    as _i592;
 import '../../utils/image_processor.dart' as _i1028;
 
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -44,6 +46,7 @@ _i174.GetIt init(
   );
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
   gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc());
+  gh.factory<_i592.DiningInfoInputBloc>(() => _i592.DiningInfoInputBloc());
   gh.lazySingleton<_i1028.ImageProcessor>(() => _i1028.ImageProcessor());
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());

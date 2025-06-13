@@ -24,29 +24,32 @@ class NewPostPage extends StatefulWidget {
 }
 
 class _NewPostPageState extends State<NewPostPage> {
+  // 1. Quản lý FocusNode hoàn toàn tại Widget, không còn liên quan đến BLoC.
+  // Thêm FocusNode cho tất cả các trường có thể được focus tự động.
   late final FocusNode _dishNameFocusNode;
+  late final FocusNode _diningLocationNameFocusNode;
 
   @override
   void initState() {
-    _dishNameFocusNode = FocusNode();
     super.initState();
+    _dishNameFocusNode = FocusNode();
+    _diningLocationNameFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _dishNameFocusNode.dispose();
-
+    _diningLocationNameFocusNode.dispose();
     super.dispose();
-
     getIt<ImageProcessor>().deleteTempImageFile(widget.imagePath);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => DiningInfoInputBloc(
-        dishNameFocusNode: _dishNameFocusNode,
-      ),
+      // 2. Cung cấp BLoC bằng service locator (getIt) thay vì khởi tạo trực tiếp.
+      // Constructor của BLoC giờ không cần tham số.
+      create: (context) => getIt<DiningInfoInputBloc>(),
       child: Builder(builder: (context) {
         return LoaderOverlay(
           overlayColor: appColorScheme(context).scrim.withValues(alpha: 0.5),
@@ -54,114 +57,133 @@ class _NewPostPageState extends State<NewPostPage> {
             indicatorSize: 40,
             indicatorText: 'Đang đăng tải bài viết...',
           ),
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'Bài đăng mới',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              surfaceTintColor: Colors.transparent,
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              centerTitle: true,
-              automaticallyImplyLeading: false,
-              leading: IconButton(
-                onPressed: () {
-                  context.pop();
+          // 3. Sử dụng MultiBlocListener để lắng nghe nhiều thay đổi trạng thái một cách rõ ràng.
+          child: MultiBlocListener(
+            listeners: [
+              // Listener 1: Lắng nghe trạng thái submit form (giống như code cũ của bạn).
+              BlocListener<DiningInfoInputBloc, DiningInfoInputState>(
+                listenWhen: (previous, current) => previous.formzSubmissionStatus != current.formzSubmissionStatus,
+                listener: (context, state) {
+                  if (state.formzSubmissionStatus.isSuccess) {
+                    context.loaderOverlay.hide();
+                    // Hiển thị thông báo thành công nếu cần
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(const SnackBar(content: Text('Đăng bài thành công!')));
+                    context.pop();
+                  }
+                  if (state.formzSubmissionStatus.isInProgress) {
+                    FocusScope.of(context).unfocus();
+                    context.loaderOverlay.show();
+                  }
+                  if (state.formzSubmissionStatus.isFailure) {
+                    context.loaderOverlay.hide();
+                    // Hiển thị thông báo lỗi nếu cần
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(const SnackBar(content: Text('Đã có lỗi xảy ra. Vui lòng thử lại.')));
+                  }
                 },
-                icon: AppIcons.left.toSvg(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted());
-                  },
-                  child: const Text(
-                    'Đăng',
-                  ),
+              // Listener 2: Lắng nghe yêu cầu focus từ BLoC.
+              BlocListener<DiningInfoInputBloc, DiningInfoInputState>(
+                listenWhen: (previous, current) => previous.fieldToFocus != current.fieldToFocus,
+                listener: (context, state) {
+                  if (state.fieldToFocus != null) {
+                    switch (state.fieldToFocus!) {
+                      case DiningInfoInputField.dishName:
+                        _dishNameFocusNode.requestFocus();
+                        break;
+                      case DiningInfoInputField.diningLocationName:
+                        _diningLocationNameFocusNode.requestFocus();
+                        break;
+
+                    }
+                    // Báo cho BLoC biết UI đã xử lý yêu cầu focus.
+                    context.read<DiningInfoInputBloc>().add(FocusRequestHandled());
+                  }
+                },
+              ),
+            ],
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text('Bài đăng mới', style: Theme.of(context).textTheme.titleMedium),
+                surfaceTintColor: Colors.transparent,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                centerTitle: true,
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () => context.pop(),
+                  icon: AppIcons.left.toSvg(color: Theme.of(context).colorScheme.onSurface),
                 ),
-              ],
-            ),
-            body: GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-              },
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: SingleChildScrollView(
-                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: Column(
-                      children: [
-                        Text(
-                          '8:30 25/05/2025',
-                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        RoundedSquareImage(imagePath: widget.imagePath),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        BlocConsumer<DiningInfoInputBloc, DiningInfoInputState>(
-                          listener: (context, state) {
-                            if (state.formzSubmissionStatus == FormzSubmissionStatus.success) {
-                              context.loaderOverlay.hide();
-                              context.pop();
-                            }
-                            if (state.formzSubmissionStatus == FormzSubmissionStatus.inProgress) {
-                              FocusScope.of(context).unfocus();
-                              context.loaderOverlay.show();
-                            }
-                            if (state.formzSubmissionStatus == FormzSubmissionStatus.failure) {
-                              context.loaderOverlay.hide();
-                            }
-                          },
-                          builder: (context, state) {
-                            return Column(
-                              children: [
-                                AppTextField(
-                                  focusNode: state.dishNameFocusNode,
-                                  autoFocus: true,
-                                  title: 'Tên món ăn',
-                                  hintText: 'Nhập tên món ăn...',
-                                  maxLength: 100,
-                                  backgroundColor: appColorScheme(context).surfaceContainerLow,
-                                  onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
-                                  errorText: state.dishNameInput.isPure
-                                      ? null
-                                      : state.dishNameInput.isValid
-                                          ? null
-                                          : 'Tên món ăn không được để trống',
+                actions: [
+                  TextButton(
+                    onPressed: () => context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted()),
+                    child: const Text('Đăng'),
+                  ),
+                ],
+              ),
+              body: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: SingleChildScrollView(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                      child: Column(
+                        children: [
+                          Text(
+                            '8:30 25/05/2025', // Cái này bạn có thể thay bằng dữ liệu động
+                            style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                  color: Theme.of(context).colorScheme.outline,
                                 ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                AppTextField(
-                                  title: 'Tên quán ăn',
-                                  hintText: 'Nhập tên quán ăn...',
-                                  maxLength: 200,
-                                  backgroundColor: appColorScheme(context).surfaceContainerLow,
-                                  onChanged: (diningLocationName) => context.read<DiningInfoInputBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                AppTextField(
-                                  enabled: false,
-                                  title: 'Địa chỉ',
-                                  initialValue: widget.address.displayName,
-                                  backgroundColor: appColorScheme(context).surfaceContainerLow,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
+                          ),
+                          const SizedBox(height: 20),
+                          RoundedSquareImage(imagePath: widget.imagePath),
+                          const SizedBox(height: 20),
+                          // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
+                          BlocBuilder<DiningInfoInputBloc, DiningInfoInputState>(
+                            builder: (context, state) {
+                              return Column(
+                                children: [
+                                  AppTextField(
+                                    // Gắn FocusNode của Widget vào đây
+                                    focusNode: _dishNameFocusNode,
+                                    autoFocus: true,
+                                    title: 'Tên món ăn',
+                                    hintText: 'Nhập tên món ăn...',
+                                    maxLength: 100,
+                                    backgroundColor: appColorScheme(context).surfaceContainerLow,
+                                    onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
+                                    // Sử dụng `displayError` của Formz v0.7.0+ để code gọn hơn
+                                    // Hoặc giữ logic cũ của bạn nếu muốn thông báo lỗi tùy chỉnh
+                                    errorText: state.dishNameInput.isNotValid && !state.dishNameInput.isPure ? 'Tên món ăn không được để trống' : null,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  AppTextField(
+                                    // Gắn FocusNode tương ứng
+                                    focusNode: _diningLocationNameFocusNode,
+                                    title: 'Tên quán ăn',
+                                    hintText: 'Nhập tên quán ăn...',
+                                    maxLength: 200,
+                                    backgroundColor: appColorScheme(context).surfaceContainerLow,
+                                    onChanged: (diningLocationName) => context.read<DiningInfoInputBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
+                                    // Thêm errorText cho các trường khác để nhất quán
+                                    errorText: state.diningLocationNameInput.isNotValid && !state.diningLocationNameInput.isPure ? 'Tên quán ăn không hợp lệ' : null,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  AppTextField(
+                                    enabled: false,
+                                    title: 'Địa chỉ',
+                                    initialValue: widget.address.displayName,
+                                    backgroundColor: appColorScheme(context).surfaceContainerLow,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

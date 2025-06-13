@@ -8,6 +8,6 @@ class DiningLocationNameInput extends FormzInput<String, DiningLocationNameInput
 
   @override
   DiningLocationNameInputError? validator(String value) {
-    return null; //trường này hiện tại không bắt buộc
+    return value.trim().isEmpty ? DiningLocationNameInputError.empty : null;
   }
 }
