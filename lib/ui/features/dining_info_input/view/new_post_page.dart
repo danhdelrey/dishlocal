@@ -46,120 +46,117 @@ class _NewPostPageState extends State<NewPostPage> {
     return BlocProvider(
       create: (context) => DiningInfoInputBloc(
         dishNameFocusNode: _dishNameFocusNode,
-        imagePath: widget.imagePath,
-        address: widget.address,
       ),
-      child: const _NewPostView(),
-    );
-  }
-}
-
-class _NewPostView extends StatelessWidget {
-  const _NewPostView();
-
-  @override
-  Widget build(BuildContext context) {
-    return LoaderOverlay(
-      overlayColor: appColorScheme(context).scrim.withValues(alpha: 0.5),
-      overlayWidgetBuilder: (progress) => const CustomLoadingIndicator(
-        indicatorSize: 40,
-        indicatorText: 'Đang đăng tải bài viết...',
-      ),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Bài đăng mới',
-            style: Theme.of(context).textTheme.titleMedium,
+      child: Builder(builder: (context) {
+        return LoaderOverlay(
+          overlayColor: appColorScheme(context).scrim.withValues(alpha: 0.5),
+          overlayWidgetBuilder: (progress) => const CustomLoadingIndicator(
+            indicatorSize: 40,
+            indicatorText: 'Đang đăng tải bài viết...',
           ),
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            onPressed: () {
-              context.pop();
-            },
-            icon: AppIcons.left.toSvg(
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted());
-              },
-              child: const Text(
-                'Đăng',
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'Bài đăng mới',
+                style: Theme.of(context).textTheme.titleMedium,
               ),
+              surfaceTintColor: Colors.transparent,
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              centerTitle: true,
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                onPressed: () {
+                  context.pop();
+                },
+                icon: AppIcons.left.toSvg(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted());
+                  },
+                  child: const Text(
+                    'Đăng',
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: SingleChildScrollView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                child: Column(
-                  children: [
-                    Text(
-                      '8:30 25/05/2025 ${context.watch<DiningInfoInputBloc>().state.address.displayName}',
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    RoundedSquareImage(imagePath: context.watch<DiningInfoInputBloc>().state.imagePath),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    BlocConsumer<DiningInfoInputBloc, DiningInfoInputState>(
-                      listener: (context, state) {
-                        if (state.formzSubmissionStatus == FormzSubmissionStatus.success) {
-                          context.loaderOverlay.hide();
-                          context.pop();
-                        }
-                        if (state.formzSubmissionStatus == FormzSubmissionStatus.inProgress) {
-                          FocusScope.of(context).unfocus();
-                          context.loaderOverlay.show();
-                        }
-                        if (state.formzSubmissionStatus == FormzSubmissionStatus.failure) {
-                          context.loaderOverlay.hide();
-                        }
-                      },
-                      builder: (context, state) {
-                        return Column(
-                          children: [
-                            AppTextField(
-                              focusNode: state.dishNameFocusNode,
-                              autoFocus: true,
-                              title: 'Tên món ăn',
-                              hintText: 'Nhập tên món ăn...',
-                              maxLength: 100,
-                              backgroundColor: appColorScheme(context).surfaceContainerLow,
-                              onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
-                              errorText: state.dishNameInput.isPure
-                                  ? null
-                                  : state.dishNameInput.isValid
+            body: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: Column(
+                      children: [
+                        Text(
+                          '8:30 25/05/2025',
+                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        RoundedSquareImage(imagePath: widget.imagePath),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        BlocConsumer<DiningInfoInputBloc, DiningInfoInputState>(
+                          listener: (context, state) {
+                            if (state.formzSubmissionStatus == FormzSubmissionStatus.success) {
+                              context.loaderOverlay.hide();
+                              context.pop();
+                            }
+                            if (state.formzSubmissionStatus == FormzSubmissionStatus.inProgress) {
+                              FocusScope.of(context).unfocus();
+                              context.loaderOverlay.show();
+                            }
+                            if (state.formzSubmissionStatus == FormzSubmissionStatus.failure) {
+                              context.loaderOverlay.hide();
+                            }
+                          },
+                          builder: (context, state) {
+                            return Column(
+                              children: [
+                                AppTextField(
+                                  focusNode: state.dishNameFocusNode,
+                                  autoFocus: true,
+                                  title: 'Tên món ăn',
+                                  hintText: 'Nhập tên món ăn...',
+                                  maxLength: 100,
+                                  backgroundColor: appColorScheme(context).surfaceContainerLow,
+                                  onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
+                                  errorText: state.dishNameInput.isPure
                                       ? null
-                                      : 'Tên món ăn không được để trống',
-                            ),
-                          ],
-                        );
-                      },
+                                      : state.dishNameInput.isValid
+                                          ? null
+                                          : 'Tên món ăn không được để trống',
+                                ),
+                                AppTextField(
+                                  enabled: false,
+                                  title: 'Địa chỉ',
+                                  initialValue: widget.address.displayName,
+                                  backgroundColor: appColorScheme(context).surfaceContainerLow,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

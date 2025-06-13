@@ -7,12 +7,7 @@ class DiningInfoInputState extends Equatable {
     this.dishNameInput = const DishNameInput.pure(),
     this.formzSubmissionStatus = FormzSubmissionStatus.initial,
     this.dishNameFocusNode,
-    required this.imagePath,
-    required this.address,
   });
-
-  final String imagePath;
-  final Address address;
 
   final DishNameInput dishNameInput;
 
@@ -28,8 +23,6 @@ class DiningInfoInputState extends Equatable {
       dishNameInput: dishNameInput ?? this.dishNameInput,
       formzSubmissionStatus: formzSubmissionStatus ?? this.formzSubmissionStatus,
       dishNameFocusNode: dishNameFocusNode ?? this.dishNameFocusNode,
-      imagePath: this.imagePath,
-      address: this.address,
     );
   }
 
@@ -38,7 +31,5 @@ class DiningInfoInputState extends Equatable {
         dishNameInput,
         formzSubmissionStatus,
         dishNameFocusNode,
-        imagePath,
-        address,
       ];
 }

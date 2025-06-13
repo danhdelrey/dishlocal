@@ -14,17 +14,12 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
 
   DiningInfoInputBloc({
     required FocusNode dishNameFocusNode,
-    required String imagePath,
-    required Address address,
   }) : super(DiningInfoInputState(
           dishNameFocusNode: dishNameFocusNode,
-          imagePath: imagePath,
-          address: address,
         )) {
     // Ghi log ngay khi BLoC được khởi tạo
     _log.info(
       'Khởi tạo DiningInfoInputBloc. '
-      'ImagePath: "$imagePath", Address: "${address.toString()}"',
     );
 
     on<DishNameInputChanged>((event, emit) {
