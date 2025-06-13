@@ -122,7 +122,7 @@ class _NewPostView extends StatelessWidget {
                           AppTextField(
                             focusNode: state.dishNameFocusNode,
                             autoFocus: true,
-                            title: 'Tên món ăn*',
+                            title: 'Tên món ăn',
                             hintText: 'Nhập tên món ăn...',
                             maxLength: 100,
                             backgroundColor: appColorScheme(context).surfaceContainerLow,
