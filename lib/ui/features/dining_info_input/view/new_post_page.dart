@@ -162,7 +162,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                   AppTextField(
                                     // Gắn FocusNode tương ứng
                                     focusNode: _diningLocationNameFocusNode,
-                                    title: 'Tên quán ăn',
+                                    title: 'Tên quán ăn*',
                                     hintText: 'Nhập tên quán ăn...',
                                     maxLength: 200,
                                     backgroundColor: appColorScheme(context).surfaceContainerLow,
