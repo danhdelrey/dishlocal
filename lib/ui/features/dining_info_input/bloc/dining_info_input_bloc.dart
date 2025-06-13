@@ -13,6 +13,9 @@ part 'dining_info_input_state.dart';
 class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputState> {
   final _log = Logger('DiningInfoInputBloc');
 
+  DishNameInput _dishNameInput = const DishNameInput.dirty();
+  DiningLocationNameInput _diningLocationNameInput = const DiningLocationNameInput.dirty();
+
   DiningInfoInputBloc({
     required FocusNode dishNameFocusNode,
   }) : super(DiningInfoInputState(
@@ -23,52 +26,40 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
 
     on<DishNameInputChanged>((event, emit) {
       _log.fine('Nhận được sự kiện DishNameInputChanged với giá trị: "${event.dishName}"');
-      final dishNameInput = DishNameInput.dirty(value: event.dishName);
+      _dishNameInput = DishNameInput.dirty(value: event.dishName);
 
-      // Xác thực form để lấy trạng thái mới
-      final isFormValid = Formz.validate([dishNameInput]);
+      final isFormValid = _validateForm();
       _log.fine(
-        'Xác thực tên món ăn: ${dishNameInput.isValid ? 'Hợp lệ' : 'Không hợp lệ'}. '
-        'Lỗi: ${dishNameInput.error}. '
+        'Xác thực tên món ăn: ${_dishNameInput.isValid ? 'Hợp lệ' : 'Không hợp lệ'}. '
+        'Lỗi: ${_dishNameInput.error}. '
         'Trạng thái toàn bộ form: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}',
       );
 
-      emit(state.copyWith(dishNameInput: dishNameInput));
+      emit(state.copyWith(dishNameInput: _dishNameInput));
       _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi tên món ăn.');
     });
 
     on<DiningLocationNameInputChanged>((event, emit) {
       _log.fine('Nhận được sự kiện DishNameInputChanged với giá trị: "${event.diningLocationName}"');
-      final diningLocationNameInput = DiningLocationNameInput.dirty(value: event.diningLocationName);
+      _diningLocationNameInput = DiningLocationNameInput.dirty(value: event.diningLocationName);
 
       // Xác thực form để lấy trạng thái mới
-      final isFormValid = Formz.validate([diningLocationNameInput]);
+      final isFormValid = _validateForm();
       _log.fine(
-        'Xác thực tên món ăn: ${diningLocationNameInput.isValid ? 'Hợp lệ' : 'Không hợp lệ'}. '
-        'Lỗi: ${diningLocationNameInput.error}. '
+        'Xác thực tên món ăn: ${_diningLocationNameInput.isValid ? 'Hợp lệ' : 'Không hợp lệ'}. '
+        'Lỗi: ${_diningLocationNameInput.error}. '
         'Trạng thái toàn bộ form: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}',
       );
 
-      emit(state.copyWith(diningLocationNameInput: diningLocationNameInput));
+      emit(state.copyWith(diningLocationNameInput: _diningLocationNameInput));
       _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi tên món ăn.');
     });
-
-    
 
     on<DiningInfoInputSubmitted>((event, emit) async {
       _log.info('Nhận được sự kiện DiningInfoInputSubmitted');
 
-      // 1. Luôn tạo phiên bản 'dirty' của các input để kiểm tra
-      //    khi người dùng chủ động submit.
-      final dishNameInput = DishNameInput.dirty(value: state.dishNameInput.value);
-      final diningLocationNameInput = DiningLocationNameInput.dirty(value: state.diningLocationNameInput.value);
-      // ... tạo các phiên bản 'dirty' của các trường khác nếu có ...
-
       // 2. Xác thực form với các phiên bản 'dirty' này.
-      final isFormValid = Formz.validate([
-        dishNameInput,
-        diningLocationNameInput,
-      ]);
+      final isFormValid = _validateForm();
 
       _log.fine('Kết quả xác thực form khi submit: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}.');
 
@@ -77,8 +68,8 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
       //    Dù form hợp lệ hay không, chúng ta vẫn cần emit các input 'dirty'
       //    để UI có thể hiển thị lỗi nếu cần.
       emit(state.copyWith(
-        dishNameInput: dishNameInput,
-        diningLocationNameInput: diningLocationNameInput,
+        dishNameInput: _dishNameInput,
+        diningLocationNameInput: _diningLocationNameInput,
         formzSubmissionStatus: isFormValid ? FormzSubmissionStatus.inProgress : FormzSubmissionStatus.failure,
       ));
 
@@ -87,7 +78,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
       if (isFormValid) {
         // Form hợp lệ, tiến hành submit
         _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
-        _log.info('Dữ liệu được submit là: \n Tên món ăn: ${dishNameInput.value} \n Tên quán ăn: ${diningLocationNameInput.value}');
+        _log.info('Dữ liệu được submit là: \n Tên món ăn: ${_dishNameInput.value} \n Tên quán ăn: ${_diningLocationNameInput.value}');
         try {
           // Giả lập quá trình submit
           await Future.delayed(const Duration(seconds: 5));
@@ -101,7 +92,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
         // Form không hợp lệ, tìm lỗi đầu tiên và focus vào nó.
         _log.warning('Form không hợp lệ. Yêu cầu focus vào trường lỗi.');
         // Chỉ cần thực hiện side-effect là focus.
-        if (dishNameInput.isNotValid) {
+        if (_dishNameInput.isNotValid) {
           _log.fine('Trường Tên món ăn (dishName) không hợp lệ. Yêu cầu focus.');
           state.dishNameFocusNode!.requestFocus();
           _log.fine('Đã focus vào trường dishNameInput');
@@ -110,6 +101,13 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
         // ... kiểm tra và focus các trường khác ...
       }
     });
+  }
+
+  bool _validateForm() {
+    return Formz.validate([
+      _dishNameInput,
+      _diningLocationNameInput,
+    ]);
   }
 
   @override
