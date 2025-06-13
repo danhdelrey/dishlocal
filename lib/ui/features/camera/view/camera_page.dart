@@ -5,7 +5,7 @@ import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/current_address/view/current_address_builder.dart';
-import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_builder.dart';
+import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_checker.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_disconnected_info.dart';
 import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/gradient_fab.dart';
@@ -44,7 +44,7 @@ class CameraPage extends StatelessWidget {
             ),
           ),
         ),
-        body: InternetConnectionBuilder(
+        body: InternetConnectionChecker(
           builder: (hasInternetAccess) {
             if (!hasInternetAccess) {
               return const InternetConnectionDisconnectedInfo();
