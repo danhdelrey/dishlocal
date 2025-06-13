@@ -138,6 +138,9 @@ class _NewPostPageState extends State<NewPostPage> {
                                           ? null
                                           : 'Tên món ăn không được để trống',
                                 ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
                                 AppTextField(
                                   enabled: false,
                                   title: 'Địa chỉ',
