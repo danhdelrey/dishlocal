@@ -53,20 +53,31 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
   Future<void> _onSubmitted(DiningInfoInputSubmitted event, Emitter<DiningInfoInputState> emit) async {
     _log.info('Nhận được sự kiện DiningInfoInputSubmitted');
 
-    // Luôn sử dụng trạng thái hiện tại (`state`) làm nguồn chân lý
+    // Tạo các phiên bản "dirty" của các input từ trạng thái hiện tại.
+    // Điều này đảm bảo rằng lỗi sẽ được hiển thị ngay cả khi người dùng chưa từng chạm vào trường đó.
+    final dishNameInput = DishNameInput.dirty(value: state.dishNameInput.value);
+    final diningLocationNameInput = DiningLocationNameInput.dirty(value: state.diningLocationNameInput.value);
+
+    // Xác thực form với các phiên bản "dirty" này.
     final isFormValid = Formz.validate([
-      state.dishNameInput,
-      state.diningLocationNameInput,
+      dishNameInput,
+      diningLocationNameInput,
     ]);
 
     _log.fine('Kết quả xác thực form khi submit: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}.');
 
     if (isFormValid) {
-      emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.inProgress));
+      // Logic khi form hợp lệ giữ nguyên
+      emit(state.copyWith(
+        formzSubmissionStatus: FormzSubmissionStatus.inProgress,
+        // Cập nhật lại state với các input để đảm bảo nhất quán, dù chúng không thay đổi
+        dishNameInput: dishNameInput,
+        diningLocationNameInput: diningLocationNameInput,
+      ));
       _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
-      _log.info('Dữ liệu được submit là: \n Tên món ăn: ${state.dishNameInput.value} \n Tên quán ăn: ${state.diningLocationNameInput.value}');
+      _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}');
       try {
-        await Future.delayed(const Duration(seconds: 1)); // Giả lập network call
+        await Future.delayed(const Duration(seconds: 1));
         _log.info('Submit dữ liệu thành công');
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
       } catch (e) {
@@ -74,20 +85,24 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
       }
     } else {
-      _log.warning('Form không hợp lệ. Yêu cầu focus vào trường lỗi.');
+      _log.warning('Form không hợp lệ. Hiển thị lỗi và yêu cầu focus.');
 
-      // Xác định trường lỗi đầu tiên và phát ra trạng thái yêu cầu focus.
-      // BLoC không tự mình focus, nó chỉ yêu cầu UI làm việc đó.
+      // Xác định trường lỗi đầu tiên để focus
       DiningInfoInputField? fieldToFocus;
-      if (state.dishNameInput.isNotValid) {
+      if (dishNameInput.isNotValid) {
         fieldToFocus = DiningInfoInputField.dishName;
-      } else if (state.diningLocationNameInput.isNotValid) {
+      } else if (diningLocationNameInput.isNotValid) {
         fieldToFocus = DiningInfoInputField.diningLocationName;
       }
 
+      // Phát ra trạng thái mới với:
+      // 1. Các input đã được "làm bẩn" (dirty) để UI hiển thị lỗi.
+      // 2. Trạng thái submission là `failure`.
+      // 3. Yêu cầu focus vào trường lỗi đầu tiên.
       emit(state.copyWith(
+        dishNameInput: dishNameInput,
+        diningLocationNameInput: diningLocationNameInput,
         formzSubmissionStatus: FormzSubmissionStatus.failure,
-        // Yêu cầu UI focus vào trường được chỉ định
         fieldToFocus: () => fieldToFocus,
       ));
     }

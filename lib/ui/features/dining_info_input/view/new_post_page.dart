@@ -79,9 +79,9 @@ class _NewPostPageState extends State<NewPostPage> {
                   if (state.formzSubmissionStatus.isFailure) {
                     context.loaderOverlay.hide();
                     // Hiển thị thông báo lỗi nếu cần
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(const SnackBar(content: Text('Đã có lỗi xảy ra. Vui lòng thử lại.')));
+                    // ScaffoldMessenger.of(context)
+                    //   ..hideCurrentSnackBar()
+                    //   ..showSnackBar(const SnackBar(content: Text('Đã có lỗi xảy ra. Vui lòng thử lại.')));
                   }
                 },
               ),
@@ -97,7 +97,6 @@ class _NewPostPageState extends State<NewPostPage> {
                       case DiningInfoInputField.diningLocationName:
                         _diningLocationNameFocusNode.requestFocus();
                         break;
-
                     }
                     // Báo cho BLoC biết UI đã xử lý yêu cầu focus.
                     context.read<DiningInfoInputBloc>().add(FocusRequestHandled());
