@@ -25,12 +25,6 @@ class Post extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'Cơm tấm sườn bì chả',
-                style: Theme.of(context).textTheme.labelLarge,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
               const SizedBox(
                 height: 5,
               ),
@@ -98,6 +92,15 @@ class Post extends StatelessWidget {
               const SizedBox(
                 height: 5,
               ),
+              Text(
+                'Cơm tấm sườn bì chả',
+                style: Theme.of(context).textTheme.labelMedium,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               Row(
                 children: [
                   const CroppedImage(
@@ -127,7 +130,10 @@ class Post extends StatelessWidget {
                         ),
                   ),
                 ],
-              )
+              ),
+              const SizedBox(
+                height: 2,
+              ),
             ],
           ),
         ),

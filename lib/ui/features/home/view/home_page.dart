@@ -5,6 +5,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
+import 'package:dishlocal/ui/widgets/glass_space.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -20,16 +21,7 @@ class HomePage extends StatelessWidget {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverAppBar(
-                flexibleSpace: ClipRRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
-                    child: Container(
-                      // Thêm một lớp màu nhẹ để hiệu ứng glass nổi bật hơn
-                      // và dễ đọc chữ hơn trên nền mờ.
-                      color: Colors.black.withValues(alpha: 0.1),
-                    ),
-                  ),
-                ),
+                flexibleSpace: const GlassSpace(),
                 automaticallyImplyLeading: false,
                 leading: Row(
                   children: [
