@@ -69,10 +69,6 @@ class AppTextField extends StatelessWidget {
                         color: errorText != null ? appColorScheme(context).error : Theme.of(context).colorScheme.outline,
                       ),
                 ),
-              if (title != null)
-                const SizedBox(
-                  height: 5,
-                ),
               Row(
                 children: [
                   if (leadingIcon != null)
@@ -120,7 +116,7 @@ class AppTextField extends StatelessWidget {
               ),
               if (errorText != null)
                 Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.only(top: 5.0),
                   child: Text(
                     errorText!,
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
@@ -130,7 +126,7 @@ class AppTextField extends StatelessWidget {
                 ),
               if (supportingText != null)
                 Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.only(top: 5.0),
                   child: Text(
                     supportingText!,
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
