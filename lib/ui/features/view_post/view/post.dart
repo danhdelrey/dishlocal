@@ -20,6 +20,10 @@ class Post extends StatelessWidget {
         "postId": postId,
       }),
       child: GlassContainer(
+        borderTop: true,
+        borderLeft: true,
+        borderRight: true,
+        borderBottom: true,
         borderRadius: 12,
         horizontalPadding: 10,
         verticalPadding: 5,
@@ -87,6 +91,10 @@ class Post extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: GlassContainer(
+                          borderTop: true,
+                          borderLeft: true,
+                          borderRight: true,
+                          borderBottom: true,
                           borderRadius: 12,
                           borderWidth: 0.5,
                           child: _buildSmallReactionBar(context),

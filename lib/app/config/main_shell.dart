@@ -38,14 +38,8 @@ class MainShell extends StatelessWidget {
       bottomNavigationBar: GlassContainer(
         borderRadius: 0,
         backgroundColor: Colors.black,
-        border: Border(
-          top: BorderSide(
-            width: 1,
-            color: Colors.white.withValues(alpha: 0.1),
-            style: BorderStyle.solid,
-          ),
-        ),
         blur: 50,
+        borderTop: true,
         child: BottomAppBar(
           padding: const EdgeInsets.all(0),
           height: kBottomNavigationBarHeight - 10,

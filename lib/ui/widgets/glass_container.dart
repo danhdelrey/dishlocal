@@ -11,9 +11,11 @@ class GlassContainer extends StatelessWidget {
     this.borderRadius = 1000,
     this.backgroundColor = Colors.white,
     this.gradient,
-    this.borderColor,
     this.borderWidth = 1,
-    this.border,
+    this.borderTop,
+    this.borderLeft,
+    this.borderBottom,
+    this.borderRight,
   });
 
   final Widget child;
@@ -23,9 +25,12 @@ class GlassContainer extends StatelessWidget {
   final double borderRadius;
   final Color backgroundColor;
   final Gradient? gradient; // Gradient có thể null
-  final Color? borderColor;
+
   final double borderWidth;
-  final BoxBorder? border;
+  final bool? borderTop;
+  final bool? borderBottom;
+  final bool? borderLeft;
+  final bool? borderRight;
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +50,35 @@ class GlassContainer extends StatelessWidget {
             gradient: gradient,
             color: gradient == null ? backgroundColor.withValues(alpha: 0.1) : null,
             borderRadius: BorderRadius.circular(borderRadius),
-            border: border ?? Border.all(
-              color: borderColor ?? Colors.white.withValues(alpha: 0.2),
-              width: borderWidth,
+            border: Border(
+              top: borderTop != null
+                  ? BorderSide(
+                      width: borderWidth,
+                      color: Colors.white.withValues(alpha: 0.1),
+                      style: BorderStyle.solid,
+                    )
+                  : BorderSide.none,
+              bottom: borderBottom != null
+                  ? BorderSide(
+                      width: borderWidth,
+                      color: Colors.white.withValues(alpha: 0.1),
+                      style: BorderStyle.solid,
+                    )
+                  : BorderSide.none,
+              left: borderLeft != null
+                  ? BorderSide(
+                      width: borderWidth,
+                      color: Colors.white.withValues(alpha: 0.1),
+                      style: BorderStyle.solid,
+                    )
+                  : BorderSide.none,
+              right: borderRight != null
+                  ? BorderSide(
+                      width: borderWidth,
+                      color: Colors.white.withValues(alpha: 0.1),
+                      style: BorderStyle.solid,
+                    )
+                  : BorderSide.none,
             ),
           ),
           child: child,

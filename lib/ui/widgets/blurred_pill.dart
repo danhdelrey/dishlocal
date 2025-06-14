@@ -18,13 +18,17 @@ class BlurredPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
+      borderTop: true,
+      borderLeft: true,
+      borderRight: true,
+      borderBottom: true,
       borderWidth: 0.5,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
             icon!,
-            const SizedBox(width: 4),
+            const SizedBox(width: 2),
           ],
           Text(
             label,

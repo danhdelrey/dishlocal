@@ -15,7 +15,6 @@ class CommentInput extends StatelessWidget {
     return GlassContainer(
       borderRadius: 0,
       backgroundColor: Colors.black,
-      borderColor: Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Row(
