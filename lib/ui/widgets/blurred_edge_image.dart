@@ -8,6 +8,7 @@ class BlurredEdgeImage extends StatelessWidget {
   final double blurSigma;
   final double clearRadius;
   final List<double> gradientStops;
+  final double imageBorderRadius;
 
   const BlurredEdgeImage({
     super.key,
@@ -15,6 +16,7 @@ class BlurredEdgeImage extends StatelessWidget {
     this.blurSigma = 5,
     this.clearRadius = 0.7,
     this.gradientStops = const [0.5, 1.0],
+    this.imageBorderRadius = 20,
   });
 
   @override
@@ -45,9 +47,12 @@ class BlurredEdgeImage extends StatelessWidget {
             ).createShader(bounds);
           },
           blendMode: BlendMode.dstIn,
-          child: Image.network(
-            imageUrl,
-            fit: BoxFit.cover,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(imageBorderRadius),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ],

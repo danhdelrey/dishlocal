@@ -155,7 +155,7 @@ class PostDetailPage extends StatelessWidget {
                   const AspectRatio(
                     aspectRatio: 1,
                     child: BlurredEdgeImage(
-                      clearRadius: 0.7,
+                      clearRadius: 1,
                       imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
                       blurSigma: 50,
                     ),

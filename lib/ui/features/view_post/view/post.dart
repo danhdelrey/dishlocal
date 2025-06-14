@@ -39,9 +39,10 @@ class Post extends StatelessWidget {
                   const AspectRatio(
                     aspectRatio: 1,
                     child: BlurredEdgeImage(
-                      clearRadius: 0.7,
+                      imageBorderRadius: 12,
+                      clearRadius: 1,
                       imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
-                      blurSigma: 50,
+                      blurSigma: 30,
                     ),
                   ),
                   Positioned.fill(
@@ -82,10 +83,13 @@ class Post extends StatelessWidget {
                   Positioned.fill(
                     child: Align(
                       alignment: Alignment.bottomCenter,
-                      child: GlassContainer(
-                        borderRadius: 12,
-                        borderWidth: 0.5,
-                        child: _buildSmallReactionBar(context),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: GlassContainer(
+                          borderRadius: 12,
+                          borderWidth: 0.5,
+                          child: _buildSmallReactionBar(context),
+                        ),
                       ),
                     ),
                   )
