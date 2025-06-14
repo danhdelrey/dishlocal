@@ -92,6 +92,9 @@ class PostDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Hero(
                     tag: 'post_$postId',
                     child: const AspectRatio(
@@ -176,32 +179,45 @@ class PostDetailPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            RichText(
-                              text: TextSpan(
-                                text: 'lanadelrey',
-                                style: Theme.of(context).textTheme.titleMedium,
-                                children: [
-                                  TextSpan(
-                                    text: ' • Theo dõi',
-                                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                          color: Theme.of(context).colorScheme.primary,
-                                        ),
-                                    recognizer: TapGestureRecognizer()..onTap = () {},
-                                  )
-                                ],
-                              ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
+                            Text(
+                              'danhdelrey',
+                              style: Theme.of(context).textTheme.labelLarge,
                             ),
                             CustomIconWithLabel(
                               icon: AppIcons.locationCheckFilled.toSvg(
                                 color: Colors.blue,
-                                width: 16,
+                                width: 14,
                               ),
+                              labelStyle: appTextTheme(context).labelMedium!.copyWith(
+                                    color: Colors.blue,
+                                  ),
                               label: '13:45 25/05/2025',
                               labelColor: Colors.blue,
                             ),
                           ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: appColorScheme(context).primary,
+                            borderRadius: BorderRadius.circular(12),
+                            // border: BoxBorder.all(
+                            //   color: appColorScheme(context).outline,
+                            //   width: 1,
+                            // ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                            child: Text(
+                              'Theo dõi',
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    color: appColorScheme(context).onPrimary,
+                                  ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
