@@ -97,6 +97,8 @@ class Post extends StatelessWidget {
                           borderBottom: true,
                           borderRadius: 12,
                           borderWidth: 0.5,
+                          horizontalPadding: 5,
+                          verticalPadding: 2,
                           backgroundColor: Colors.transparent,
                           child: _buildSmallReactionBar(context),
                         ),

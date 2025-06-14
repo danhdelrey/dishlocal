@@ -224,10 +224,10 @@ class CameraPage extends StatelessWidget {
               width: 2,
               strokeAlign: BorderSide.strokeAlignOutside,
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
             // Cắt những gì tràn ra ngoài SizedBox vuông
             child: FittedBox(
               fit: BoxFit.cover, // Lấp đầy và crop, giữ tỷ lệ

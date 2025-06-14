@@ -5,8 +5,8 @@ class GlassContainer extends StatelessWidget {
   const GlassContainer({
     super.key,
     required this.child,
-    this.horizontalPadding = 5,
-    this.verticalPadding = 2,
+    this.horizontalPadding,
+    this.verticalPadding,
     this.blur = 10,
     this.borderRadius = 1000,
     this.backgroundColor = Colors.white,
@@ -19,8 +19,8 @@ class GlassContainer extends StatelessWidget {
   });
 
   final Widget child;
-  final double horizontalPadding;
-  final double verticalPadding;
+  final double? horizontalPadding;
+  final double? verticalPadding;
   final double blur;
   final double borderRadius;
   final Color backgroundColor;
@@ -40,8 +40,8 @@ class GlassContainer extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: horizontalPadding,
-            vertical: verticalPadding,
+            horizontal: horizontalPadding ?? 0,
+            vertical: verticalPadding ?? 0,
           ),
           decoration: BoxDecoration(
             // --- LOGIC QUAN TRỌNG NẰM Ở ĐÂY ---

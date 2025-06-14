@@ -23,6 +23,8 @@ class BlurredPill extends StatelessWidget {
       borderRight: true,
       borderBottom: true,
       borderWidth: 0.5,
+      horizontalPadding: 5,
+      verticalPadding: 2,
       backgroundColor: Colors.transparent,
       child: Row(
         mainAxisSize: MainAxisSize.min,
