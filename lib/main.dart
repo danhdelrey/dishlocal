@@ -10,7 +10,6 @@ import 'package:logging/logging.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   configureDependencies();
   _setupLogging();
   runApp(const MyApp());
