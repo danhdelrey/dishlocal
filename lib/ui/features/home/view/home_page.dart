@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
@@ -12,10 +14,21 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        extendBody: true,
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverAppBar(
+                flexibleSpace: ClipRRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
+                    child: Container(
+                      // Thêm một lớp màu nhẹ để hiệu ứng glass nổi bật hơn
+                      // và dễ đọc chữ hơn trên nền mờ.
+                      color: Colors.black.withValues(alpha: 0.1),
+                    ),
+                  ),
+                ),
                 automaticallyImplyLeading: false,
                 leading: Row(
                   children: [
@@ -40,27 +53,21 @@ class HomePage extends StatelessWidget {
                 ),
                 leadingWidth: 150,
                 surfaceTintColor: Colors.transparent,
-                backgroundColor: Theme.of(context).colorScheme.surface,
+                backgroundColor: Colors.transparent,
                 actions: [
-                  IconButton.filledTonal(
+                  IconButton(
                     onPressed: () {},
                     icon: AppIcons.search.toSvg(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                    ),
                   ),
-                  IconButton.filledTonal(
+                  IconButton(
                     onPressed: () {},
                     icon: CustomBadge(
                       showBadge: false,
                       child: AppIcons.notification1.toSvg(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
-                    ),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
                     ),
                   ),
                   const SizedBox(
@@ -70,9 +77,11 @@ class HomePage extends StatelessWidget {
                 pinned: true,
                 floating: true,
                 snap: true,
-                bottom: const TabBar(
+                bottom: TabBar(
+                  unselectedLabelColor: Colors.white.withValues(alpha: 0.8),
+                  dividerColor: Colors.white.withValues(alpha: 0.1),
                   indicatorSize: TabBarIndicatorSize.tab,
-                  tabs: [
+                  tabs: const [
                     Tab(
                       text: 'Dành cho bạn',
                     ),

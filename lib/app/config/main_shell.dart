@@ -35,10 +35,10 @@ class MainShell extends StatelessWidget {
 
       // 3. BottomAppBar thay thế cho PersistentTabView
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(10.0),
         child: GlassContainer(
           backgroundColor: Colors.black,
-          blur: 20,
+          blur: 50,
           child: BottomAppBar(
             padding: const EdgeInsets.all(0),
             height: kBottomNavigationBarHeight - 10,

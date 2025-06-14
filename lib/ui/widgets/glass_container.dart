@@ -41,10 +41,10 @@ class GlassContainer extends StatelessWidget {
             // Nếu có gradient, sử dụng nó. Nếu không, dùng màu nền như cũ.
             // BoxDecoration không cho phép có cả `color` và `gradient` cùng lúc.
             gradient: gradient,
-            color: gradient == null ? backgroundColor.withOpacity(0.1) : null,
+            color: gradient == null ? backgroundColor.withValues(alpha: 0.1) : null,
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: borderColor ?? Colors.white.withOpacity(0.2),
+              color: borderColor ?? Colors.white.withValues(alpha: 0.2),
               width: borderWidth,
             ),
           ),

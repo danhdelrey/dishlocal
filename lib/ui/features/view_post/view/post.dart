@@ -20,18 +20,7 @@ class Post extends StatelessWidget {
         horizontalPadding: 10,
         verticalPadding: 5,
         borderWidth: 0.5,
-        gradient: LinearGradient(
-          begin: Alignment.topCenter, // Bắt đầu từ trên
-          end: Alignment.bottomCenter, // Kết thúc ở dưới
-          colors: [
-            // Màu bắt đầu: với 25% độ mờ (để vẫn thấy hiệu ứng glass)
-            Colors.black.withValues(alpha: 0.25),
-            // Màu kết thúc: với 0% độ mờ (hoàn toàn trong suốt)
-            Colors.black.withValues(alpha: 0.0),
-          ],
-          // Tùy chọn: stops để kiểm soát điểm chuyển màu
-          stops: const [0, 1.0],
-        ),
+        backgroundColor: Colors.transparent,
         child: Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -49,7 +38,11 @@ class Post extends StatelessWidget {
                 children: [
                   const AspectRatio(
                     aspectRatio: 1,
-                    child: BlurredEdgeImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
+                    child: BlurredEdgeImage(
+                      clearRadius: 0.7,
+                      imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
+                      blurSigma: 50,
+                    ),
                   ),
                   Positioned.fill(
                     child: Align(
@@ -90,6 +83,7 @@ class Post extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: GlassContainer(
+                        borderRadius: 12,
                         borderWidth: 0.5,
                         child: _buildSmallReactionBar(context),
                       ),
