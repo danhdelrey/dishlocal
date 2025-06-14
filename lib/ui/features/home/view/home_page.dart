@@ -48,8 +48,7 @@ class HomePage extends StatelessWidget {
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     style: IconButton.styleFrom(
-                      backgroundColor:
-                          Theme.of(context).colorScheme.surfaceContainerLow,
+                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
                     ),
                   ),
                   IconButton.filledTonal(
@@ -61,8 +60,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     style: IconButton.styleFrom(
-                      backgroundColor:
-                          Theme.of(context).colorScheme.surfaceContainerLow,
+                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
                     ),
                   ),
                   const SizedBox(
@@ -91,54 +89,7 @@ class HomePage extends StatelessWidget {
           },
           body: const TabBarView(
             children: [
-              GridViewPosts(
-                header: SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        bottom: 10, left: 15, right: 15, top: 20),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          FilterItem(),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          FilterItem(),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          FilterItem(),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          FilterItem(),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          FilterItem(),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          FilterItem(),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          FilterItem(),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          FilterItem(),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          FilterItem(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              GridViewPosts(),
               GridViewPosts(),
               GridViewPosts(),
             ],
