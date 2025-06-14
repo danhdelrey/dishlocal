@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
@@ -78,7 +79,7 @@ class HomePage extends StatelessWidget {
                 floating: true,
                 snap: true,
                 bottom: TabBar(
-                  unselectedLabelColor: Colors.white.withValues(alpha: 0.8),
+                  unselectedLabelColor: appColorScheme(context).onSurface,
                   dividerColor: Colors.white.withValues(alpha: 0.1),
                   indicatorSize: TabBarIndicatorSize.tab,
                   tabs: const [

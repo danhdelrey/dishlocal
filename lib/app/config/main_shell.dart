@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
 import 'package:dishlocal/ui/widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/gradient_fab.dart';
@@ -54,7 +55,7 @@ class MainShell extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   icon: AppIcons.home41.toSvg(
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: appColorScheme(context).onSurface,
                   ),
                   index: 0,
                 ),
@@ -65,7 +66,7 @@ class MainShell extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   icon: AppIcons.rocketLine.toSvg(
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: appColorScheme(context).onSurface,
                   ),
                   index: 1,
                 ),
@@ -84,7 +85,7 @@ class MainShell extends StatelessWidget {
                   icon: CustomBadge(
                     showBadge: false,
                     child: AppIcons.mail1.toSvg(
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: appColorScheme(context).onSurface,
                     ),
                   ),
                   index: 2,
@@ -96,7 +97,7 @@ class MainShell extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   icon: AppIcons.user31.toSvg(
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: appColorScheme(context).onSurface,
                   ),
                   index: 3,
                 ),
