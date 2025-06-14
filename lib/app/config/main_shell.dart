@@ -40,7 +40,8 @@ class MainShell extends StatelessWidget {
           backgroundColor: Colors.black,
           blur: 20,
           child: BottomAppBar(
-            height: kBottomNavigationBarHeight + 10,
+            padding: const EdgeInsets.all(0),
+            height: kBottomNavigationBarHeight - 10,
             color: Colors.transparent,
             child: Row(
               // Chia các item ra các bên của vết lõm
