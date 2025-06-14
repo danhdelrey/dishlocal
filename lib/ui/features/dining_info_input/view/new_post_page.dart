@@ -148,8 +148,9 @@ class _NewPostPageState extends State<NewPostPage> {
                                   AppTextField(
                                     // Gắn FocusNode của Widget vào đây
                                     focusNode: _dishNameFocusNode,
+                                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                                     autoFocus: true,
-                                    title: 'Tên món ăn',
+                                    title: 'Tên món ăn*',
                                     hintText: 'Nhập tên món ăn...',
                                     maxLength: 100,
                                     onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
@@ -161,7 +162,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                   AppTextField(
                                     // Gắn FocusNode tương ứng
                                     focusNode: _diningLocationNameFocusNode,
-                                    title: 'Tên quán ăn*',
+                                    title: 'Tên quán ăn',
                                     hintText: 'Nhập tên quán ăn...',
                                     maxLength: 200,
                                     onChanged: (diningLocationName) => context.read<DiningInfoInputBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
