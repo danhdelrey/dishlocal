@@ -152,7 +152,6 @@ class _NewPostPageState extends State<NewPostPage> {
                                     title: 'Tên món ăn',
                                     hintText: 'Nhập tên món ăn...',
                                     maxLength: 100,
-                                    backgroundColor: appColorScheme(context).surfaceContainerLow,
                                     onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
                                     // Sử dụng `displayError` của Formz v0.7.0+ để code gọn hơn
                                     // Hoặc giữ logic cũ của bạn nếu muốn thông báo lỗi tùy chỉnh
@@ -165,7 +164,6 @@ class _NewPostPageState extends State<NewPostPage> {
                                     title: 'Tên quán ăn*',
                                     hintText: 'Nhập tên quán ăn...',
                                     maxLength: 200,
-                                    backgroundColor: appColorScheme(context).surfaceContainerLow,
                                     onChanged: (diningLocationName) => context.read<DiningInfoInputBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
                                     // Thêm errorText cho các trường khác để nhất quán
                                     errorText: state.diningLocationNameInput.isNotValid && !state.diningLocationNameInput.isPure ? 'Tên quán ăn không hợp lệ' : null,
@@ -175,7 +173,6 @@ class _NewPostPageState extends State<NewPostPage> {
                                     enabled: false,
                                     title: 'Địa chỉ',
                                     initialValue: widget.address.displayName,
-                                    backgroundColor: appColorScheme(context).surfaceContainerLow,
                                   ),
                                 ],
                               );

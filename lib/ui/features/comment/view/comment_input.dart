@@ -31,15 +31,10 @@ class CommentInput extends StatelessWidget {
             const SizedBox(
               width: 10,
             ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
-                ),
-                child: const AppTextField(
-                  hintText: 'Viết bình luận của bạn...',
-                ),
+            const Expanded(
+              child: AppTextField(
+                borderRadius: 20,
+                hintText: 'Viết bình luận của bạn...',
               ),
             ),
             const SizedBox(
