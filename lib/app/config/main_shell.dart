@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
+import 'package:dishlocal/ui/widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -28,71 +29,74 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       // 1. Nội dung của các tab được hiển thị ở đây
       body: navigationShell,
 
       // 3. BottomAppBar thay thế cho PersistentTabView
-      bottomNavigationBar: BottomAppBar(
-        height: kBottomNavigationBarHeight + 10,
-        color: Theme.of(context).colorScheme.surface,
-        child: Row(
-          // Chia các item ra các bên của vết lõm
+      bottomNavigationBar: GlassContainer(
+        child: BottomAppBar(
+          height: kBottomNavigationBarHeight + 10,
+          color: Colors.transparent,
+          child: Row(
+            // Chia các item ra các bên của vết lõm
 
-          children: <Widget>[
-            // Item 0
-            _buildTabItem(
-              context: context,
-              activeIcon: AppIcons.home4.toSvg(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              icon: AppIcons.home41.toSvg(
-                color: Theme.of(context).colorScheme.outline,
-              ),
-              index: 0,
-            ),
-            // Item 1
-            _buildTabItem(
-              context: context,
-              activeIcon: AppIcons.rocketFill.toSvg(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              icon: AppIcons.rocketLine.toSvg(
-                color: Theme.of(context).colorScheme.outline,
-              ),
-              index: 1,
-            ),
-            // FAB
-            GradientFab(
-              onTap: () {
-                context.push("/camera");
-              },
-            ),
-            // Item 3
-            _buildTabItem(
-              context: context,
-              activeIcon: AppIcons.mail.toSvg(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              icon: CustomBadge(
-                showBadge: false,
-                child: AppIcons.mail1.toSvg(
+            children: <Widget>[
+              // Item 0
+              _buildTabItem(
+                context: context,
+                activeIcon: AppIcons.home4.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                icon: AppIcons.home41.toSvg(
                   color: Theme.of(context).colorScheme.outline,
                 ),
+                index: 0,
               ),
-              index: 2,
-            ),
-            // Item 4
-            _buildTabItem(
-              context: context,
-              activeIcon: AppIcons.user3.toSvg(
-                color: Theme.of(context).colorScheme.primary,
+              // Item 1
+              _buildTabItem(
+                context: context,
+                activeIcon: AppIcons.rocketFill.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                icon: AppIcons.rocketLine.toSvg(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+                index: 1,
               ),
-              icon: AppIcons.user31.toSvg(
-                color: Theme.of(context).colorScheme.outline,
+              // FAB
+              GradientFab(
+                onTap: () {
+                  context.push("/camera");
+                },
               ),
-              index: 3,
-            ),
-          ],
+              // Item 3
+              _buildTabItem(
+                context: context,
+                activeIcon: AppIcons.mail.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                icon: CustomBadge(
+                  showBadge: false,
+                  child: AppIcons.mail1.toSvg(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+                index: 2,
+              ),
+              // Item 4
+              _buildTabItem(
+                context: context,
+                activeIcon: AppIcons.user3.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                icon: AppIcons.user31.toSvg(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+                index: 3,
+              ),
+            ],
+          ),
         ),
       ),
     );
