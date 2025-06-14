@@ -14,7 +14,9 @@ class CommentInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassContainer(
       borderRadius: 0,
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
+      blur: 30,
+      borderTop: true,
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Row(

@@ -37,7 +37,7 @@ class MainShell extends StatelessWidget {
       // 3. BottomAppBar thay thế cho PersistentTabView
       bottomNavigationBar: GlassContainer(
         borderRadius: 0,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         blur: 50,
         borderTop: true,
         child: BottomAppBar(

@@ -42,7 +42,10 @@ class PostDetailPage extends StatelessWidget {
           titleTextStyle: appTextTheme(context).titleMedium,
           surfaceTintColor: Colors.transparent,
           backgroundColor: Colors.transparent,
-          flexibleSpace: const GlassSpace(),
+          flexibleSpace: const GlassSpace(
+            blur: 30,
+            backgourndColor: Colors.transparent,
+          ),
           actions: [
             IconButton(
               onPressed: () {},

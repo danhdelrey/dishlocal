@@ -21,7 +21,10 @@ class HomePage extends StatelessWidget {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverAppBar(
-                flexibleSpace: const GlassSpace(),
+                flexibleSpace: const GlassSpace(
+                  blur: 30,
+                  backgourndColor: Colors.transparent,
+                ),
                 automaticallyImplyLeading: false,
                 leading: Row(
                   children: [
