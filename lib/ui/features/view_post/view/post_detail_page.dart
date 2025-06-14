@@ -16,7 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class PostDetailPage extends StatelessWidget {
-  const PostDetailPage({super.key});
+  const PostDetailPage({super.key, required this.postId});
+
+  final int postId;
 
   @override
   Widget build(BuildContext context) {
@@ -80,12 +82,15 @@ class PostDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const AspectRatio(
-                    aspectRatio: 1,
-                    child: BlurredEdgeImage(
-                      clearRadius: 1,
-                      imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
-                      blurSigma: 50,
+                  Hero(
+                    tag: 'post_$postId',
+                    child: const AspectRatio(
+                      aspectRatio: 1,
+                      child: BlurredEdgeImage(
+                        clearRadius: 1,
+                        imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
+                        blurSigma: 50,
+                      ),
                     ),
                   ),
                   const SizedBox(

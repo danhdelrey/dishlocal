@@ -21,7 +21,7 @@ class GridViewPosts extends StatelessWidget {
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
             childCount: 10,
-            itemBuilder: (context, index) => const Post(),
+            itemBuilder: (context, index) =>  Post(postId: index,),
           ),
         ),
 

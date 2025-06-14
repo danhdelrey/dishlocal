@@ -146,7 +146,13 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/post_detail',
-      builder: (context, state) => const PostDetailPage(),
+      builder: (context, state) {
+        final extraMap = state.extra as Map<String, dynamic>;
+        final int postId = extraMap['postId'];
+        return PostDetailPage(
+          postId: postId,
+        );
+      },
     ),
     GoRoute(
       path: '/camera',
