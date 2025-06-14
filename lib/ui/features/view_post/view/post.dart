@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/ui/widgets/blurred_edge_image.dart';
 import 'package:dishlocal/ui/widgets/blurred_pill.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/glass_container.dart';
@@ -31,7 +32,7 @@ class Post extends StatelessWidget {
               ),
               Stack(
                 children: [
-                  const RoundedSquareImageAsset(assetPath: 'assets/images/com-tam-suon-bi-cha-2.jpg'),
+                  const BlurredEdgeImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
                   Positioned.fill(
                     child: Align(
                       alignment: Alignment.topLeft,
