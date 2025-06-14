@@ -232,51 +232,7 @@ class PostDetailPage extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomIconWithLabel(
-                        icon: AppIcons.heart1.toSvg(
-                          width: 16,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        label: '12.4 N',
-                        labelColor: Theme.of(context).colorScheme.outline,
-                      ),
-                      CustomIconWithLabel(
-                        icon: AppIcons.comment2.toSvg(
-                          width: 16,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        labelColor: Theme.of(context).colorScheme.outline,
-                        label: '345',
-                      ),
-                      CustomIconWithLabel(
-                        icon: AppIcons.locationCheck.toSvg(
-                          width: 16,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        labelColor: Theme.of(context).colorScheme.outline,
-                        label: '345',
-                      ),
-                      CustomIconWithLabel(
-                        icon: AppIcons.bookmark1.toSvg(
-                          width: 16,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        labelColor: Theme.of(context).colorScheme.outline,
-                        label: '1.567',
-                      ),
-                      CustomIconWithLabel(
-                        icon: AppIcons.shareForward.toSvg(
-                          width: 16,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        labelColor: Theme.of(context).colorScheme.outline,
-                        label: '101',
-                      ),
-                    ],
-                  ),
+                  _buildReactionBar(context),
                 ],
               ),
             ),
@@ -288,6 +244,54 @@ class PostDetailPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Row _buildReactionBar(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CustomIconWithLabel(
+          icon: AppIcons.heart1.toSvg(
+            width: 16,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          label: '12.4 N',
+          labelColor: Theme.of(context).colorScheme.outline,
+        ),
+        CustomIconWithLabel(
+          icon: AppIcons.comment2.toSvg(
+            width: 16,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          labelColor: Theme.of(context).colorScheme.outline,
+          label: '345',
+        ),
+        CustomIconWithLabel(
+          icon: AppIcons.locationCheck.toSvg(
+            width: 16,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          labelColor: Theme.of(context).colorScheme.outline,
+          label: '345',
+        ),
+        CustomIconWithLabel(
+          icon: AppIcons.bookmark1.toSvg(
+            width: 16,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          labelColor: Theme.of(context).colorScheme.outline,
+          label: '1.567',
+        ),
+        CustomIconWithLabel(
+          icon: AppIcons.shareForward.toSvg(
+            width: 16,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          labelColor: Theme.of(context).colorScheme.outline,
+          label: '101',
+        ),
+      ],
     );
   }
 }
