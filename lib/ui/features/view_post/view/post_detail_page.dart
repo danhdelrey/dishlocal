@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
 import 'package:dishlocal/ui/features/view_post/view/review_section.dart';
+import 'package:dishlocal/ui/widgets/blurred_edge_image.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/gradient_filled_button.dart';
@@ -151,7 +152,14 @@ class PostDetailPage extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  const RoundedSquareImageAsset(assetPath: 'assets/images/com-tam-suon-bi-cha-2.jpg'),
+                  const AspectRatio(
+                    aspectRatio: 1,
+                    child: BlurredEdgeImage(
+                      clearRadius: 0.7,
+                      imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
+                      blurSigma: 50,
+                    ),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
