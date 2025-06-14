@@ -29,6 +29,13 @@ class PostDetailPage extends StatelessWidget {
       child: Scaffold(
         extendBody: true,
         appBar: AppBar(
+          shape: Border(
+            bottom: BorderSide(
+              width: 1,
+              color: Colors.white.withValues(alpha: 0.1),
+              style: BorderStyle.solid,
+            ),
+          ),
           title: const Text('Cơm tấm sườn bì chả'),
           automaticallyImplyLeading: false,
           leading: IconButton(
