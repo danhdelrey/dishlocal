@@ -17,6 +17,7 @@ class BlurredPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
+      borderWidth: 0.5,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

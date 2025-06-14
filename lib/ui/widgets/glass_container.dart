@@ -10,6 +10,9 @@ class GlassContainer extends StatelessWidget {
     this.blur = 10,
     this.borderRadius = 1000,
     this.backgroundColor = Colors.white,
+    this.gradient,
+    this.borderColor,
+    this.borderWidth = 1,
   });
 
   final Widget child;
@@ -18,6 +21,9 @@ class GlassContainer extends StatelessWidget {
   final double blur;
   final double borderRadius;
   final Color backgroundColor;
+  final Gradient? gradient; // Gradient có thể null
+  final Color? borderColor;
+  final double borderWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +32,22 @@ class GlassContainer extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(
-          decoration: BoxDecoration(
-            color: backgroundColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(1000),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: verticalPadding,
           ),
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
+          decoration: BoxDecoration(
+            // --- LOGIC QUAN TRỌNG NẰM Ở ĐÂY ---
+            // Nếu có gradient, sử dụng nó. Nếu không, dùng màu nền như cũ.
+            // BoxDecoration không cho phép có cả `color` và `gradient` cùng lúc.
+            gradient: gradient,
+            color: gradient == null ? backgroundColor.withOpacity(0.1) : null,
+            borderRadius: BorderRadius.circular(borderRadius),
+            border: Border.all(
+              color: borderColor ?? Colors.white.withOpacity(0.2),
+              width: borderWidth,
+            ),
+          ),
           child: child,
         ),
       ),

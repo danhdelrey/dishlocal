@@ -15,8 +15,23 @@ class Post extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () => context.push('/post_detail'),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
+      child: GlassContainer(
+        borderRadius: 12,
+        horizontalPadding: 10,
+        verticalPadding: 5,
+        borderWidth: 0.5,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter, // Bắt đầu từ trên
+          end: Alignment.bottomCenter, // Kết thúc ở dưới
+          colors: [
+            // Màu bắt đầu: với 25% độ mờ (để vẫn thấy hiệu ứng glass)
+            Colors.black.withValues(alpha: 0.25),
+            // Màu kết thúc: với 0% độ mờ (hoàn toàn trong suốt)
+            Colors.black.withValues(alpha: 0.0),
+          ],
+          // Tùy chọn: stops để kiểm soát điểm chuyển màu
+          stops: const [0, 1.0],
+        ),
         child: Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -74,7 +89,10 @@ class Post extends StatelessWidget {
                   Positioned.fill(
                     child: Align(
                       alignment: Alignment.bottomCenter,
-                      child: GlassContainer(child: _buildSmallReactionBar(context)),
+                      child: GlassContainer(
+                        borderWidth: 0.5,
+                        child: _buildSmallReactionBar(context),
+                      ),
                     ),
                   )
                 ],
