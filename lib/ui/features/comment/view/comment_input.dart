@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/ui/widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
+import 'package:dishlocal/ui/widgets/glass_container.dart';
 import 'package:flutter/material.dart';
 
 class CommentInput extends StatelessWidget {
@@ -11,10 +12,10 @@ class CommentInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-      ),
+    return GlassContainer(
+      borderRadius: 0,
+      backgroundColor: Colors.black,
+      borderColor: Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Row(
