@@ -15,18 +15,23 @@ class PostDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            _buildMainContent(context),
-            const Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: CommentInput(),
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Stack(
+            children: [
+              _buildMainContent(context),
+              const Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: CommentInput(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -34,6 +39,7 @@ class PostDetailPage extends StatelessWidget {
 
   Widget _buildMainContent(BuildContext context) {
     return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 150),
         child: Column(
