@@ -12,7 +12,7 @@ class BlurredEdgeImage extends StatelessWidget {
   const BlurredEdgeImage({
     super.key,
     required this.imageUrl,
-    this.blurSigma = 10,
+    this.blurSigma = 5,
     this.clearRadius = 0.7,
     this.gradientStops = const [0.5, 1.0],
   });
@@ -21,39 +21,36 @@ class BlurredEdgeImage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Không cần SizedBox hay ClipRRect ở đây nữa
     // Widget này sẽ fill vào không gian mà cha nó cung cấp
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-            ),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
           ),
-          ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return RadialGradient(
-                center: Alignment.center,
-                radius: clearRadius,
-                colors: const [
-                  Colors.black,
-                  Colors.transparent,
-                ],
-                stops: gradientStops,
-                tileMode: TileMode.clamp,
-              ).createShader(bounds);
-            },
-            blendMode: BlendMode.dstIn,
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-            ),
+        ),
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return RadialGradient(
+              center: Alignment.center,
+              radius: clearRadius,
+              colors: const [
+                Colors.black,
+                Colors.transparent,
+              ],
+              stops: gradientStops,
+              tileMode: TileMode.clamp,
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.dstIn,
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -32,7 +32,10 @@ class Post extends StatelessWidget {
               ),
               Stack(
                 children: [
-                  const BlurredEdgeImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
+                  const AspectRatio(
+                    aspectRatio: 1,
+                    child: BlurredEdgeImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
+                  ),
                   Positioned.fill(
                     child: Align(
                       alignment: Alignment.topLeft,
