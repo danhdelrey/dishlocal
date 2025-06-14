@@ -23,10 +23,17 @@ class ProfilePage extends StatelessWidget {
             return <Widget>[
               // SliverAppBar để có hiệu ứng cuộn đẹp cho AppBar
               SliverAppBar(
+                shape: Border(
+                  bottom: BorderSide(
+                    width: 1,
+                    color: Colors.white.withValues(alpha: 0.1),
+                    style: BorderStyle.solid,
+                  ),
+                ),
                 automaticallyImplyLeading: true,
                 surfaceTintColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
-                flexibleSpace: const GlassSpace(backgourndColor: Colors.transparent, blur: 30),
+                flexibleSpace: const GlassSpace(backgourndColor: Colors.transparent, blur: 50),
                 title: const Text('lanadelrey'),
                 titleTextStyle: Theme.of(context).textTheme.titleMedium,
                 centerTitle: true,
@@ -51,6 +58,9 @@ class ProfilePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Row(
                         children: [
                           const CroppedImage(
@@ -163,7 +173,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return GlassContainer(
       backgroundColor: Colors.transparent,
       borderRadius: 0,
-      blur: 30,
+      blur: 50,
       child: _tabBar,
     );
   }

@@ -50,7 +50,7 @@ class PostDetailPage extends StatelessWidget {
           surfaceTintColor: Colors.transparent,
           backgroundColor: Colors.transparent,
           flexibleSpace: const GlassSpace(
-            blur: 30,
+            blur: 50,
             backgourndColor: Colors.transparent,
           ),
           actions: [
