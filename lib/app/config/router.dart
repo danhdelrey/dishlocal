@@ -133,7 +133,7 @@ import 'package:go_router/go_router.dart';
 // );
 
 final GoRouter router = GoRouter(
-  initialLocation: '/home',
+  initialLocation: '/login',
   routes: [
     // Route này nằm ngoài ShellRoute, nên nó sẽ che toàn bộ màn hình
     GoRoute(

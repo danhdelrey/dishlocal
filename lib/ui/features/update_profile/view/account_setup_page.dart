@@ -11,6 +11,7 @@ class AccountSetupPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Padding(
           padding: const EdgeInsets.only(
             top: 50,
@@ -53,35 +54,27 @@ class AccountSetupPage extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Column(
-                  children: [
-                    AppTextField(
-                      title: "Họ và tên",
-                      hintText: "Nhập họ và tên của bạn",
-                    ),
-                    Divider(
-                      indent: 15,
-                      endIndent: 15,
-                    ),
-                    AppTextField(
-                      title: "Tên người dùng (username)",
-                      hintText: "Nhập username",
-                    ),
-                    Divider(
-                      indent: 15,
-                      endIndent: 15,
-                    ),
-                    AppTextField(
-                      title: "Tiểu sử",
-                      hintText: "Nhập tiểu sử",
-                    ),
-                  ],
-                ),
+              const Column(
+                children: [
+                  AppTextField(
+                    title: "Họ và tên",
+                    hintText: "Nhập họ và tên của bạn",
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  AppTextField(
+                    title: "Tên người dùng (username)",
+                    hintText: "Nhập username",
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  AppTextField(
+                    title: "Tiểu sử",
+                    hintText: "Nhập tiểu sử",
+                  ),
+                ],
               ),
               const SizedBox(
                 height: 30,

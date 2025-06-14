@@ -60,7 +60,7 @@ class LoginPage extends StatelessWidget {
             const Expanded(child: SizedBox()),
             FilledButton.icon(
               onPressed: () {
-                context.go('/update_profile_page');
+                context.go('/account_setup');
               },
               label: const Text('Đăng nhập bằng tài khoản Google'),
               icon: AppIcons.google.toSvg(

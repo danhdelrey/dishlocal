@@ -57,7 +57,7 @@ class _AppTextFieldState extends State<AppTextField> {
       _log.info('Textfield ${widget.title} không nhận vào focus node nào');
       if (widget.enabled) {
         _log.info('Textfield ${widget.title} được enable. Tạo focus node');
-        _focusNode =  FocusNode();
+        _focusNode = FocusNode();
       } else {
         _log.info('Textfield ${widget.title} bị disabled. Không tạo focus node');
       }
@@ -84,7 +84,12 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.enabled ? () => _focusNode.requestFocus() : null,
+      onTap: widget.enabled
+          ? () {
+              _log.info('Focus vào Textfield ${widget.title}');
+              _focusNode.requestFocus();
+            }
+          : null,
       child: GlassContainer(
         borderTop: true,
         borderBottom: true,
