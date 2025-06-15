@@ -2,6 +2,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
+import 'package:dishlocal/ui/features/dining_info_input/form_input/exact_address_input.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:formz/formz.dart';

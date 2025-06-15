@@ -23,6 +23,14 @@ final class DiningLocationNameInputChanged extends DiningInfoInputEvent {
   List<Object?> get props => [diningLocationName];
 }
 
+final class ExactAddressInputChanged extends DiningInfoInputEvent {
+  const ExactAddressInputChanged({required this.exactAddress});
+  final String exactAddress;
+
+  @override
+  List<Object?> get props => [exactAddress];
+}
+
 final class DiningInfoInputSubmitted extends DiningInfoInputEvent {}
 
 // Sự kiện mới để báo hiệu rằng yêu cầu focus đã được UI xử lý
