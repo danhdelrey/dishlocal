@@ -3,7 +3,9 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/dining_info_input/bloc/dining_info_input_bloc.dart';
+import 'package:dishlocal/ui/features/dining_info_input/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
+import 'package:dishlocal/ui/features/dining_info_input/form_input/exact_address_input.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
@@ -187,7 +189,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                   maxLength: 200,
                                   onChanged: (diningLocationName) => context.read<DiningInfoInputBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
                                   // Thêm errorText cho các trường khác để nhất quán
-                                  errorText: state.diningLocationNameInput.isNotValid && !state.diningLocationNameInput.isPure ? 'Tên quán ăn không hợp lệ' : null,
+                                  errorText: state.diningLocationNameInput.isNotValid && !state.diningLocationNameInput.isPure ? state.diningLocationNameInput.displayError?.getMessage() : null,
                                 ),
                                 const SizedBox(height: 10),
                                 AppTextField(
@@ -198,7 +200,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                   hintText: 'Địa chỉ cụ thể, vd: số nhà, tên đường,...',
                                   maxLength: 200,
                                   onChanged: (exactAddress) => context.read<DiningInfoInputBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
-                                  errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? 'Địa chỉ đã nhập không hợp lệ' : null,
+                                  errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? state.exactAddressInput.displayError?.getMessage() : null,
                                 ),
                                 const SizedBox(height: 10),
                                 AppTextField(
@@ -209,7 +211,6 @@ class _NewPostPageState extends State<NewPostPage> {
                                   minLine: 10,
                                   maxLine: 1000,
                                   onChanged: (insight) => context.read<DiningInfoInputBloc>().add(InsightInputChanged(insight: insight)),
-                                  errorText: state.insightInput.isNotValid && !state.insightInput.isPure ? 'Nội dung không hợp lệ' : null,
                                 ),
                               ],
                             );
