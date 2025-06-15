@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,10 +38,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 Text(
                   'DishLocal',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineLarge!
-                      .copyWith(fontWeight: FontWeight.w800),
+                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(
                   height: 10,
@@ -62,7 +60,12 @@ class LoginPage extends StatelessWidget {
               onPressed: () {
                 context.go('/account_setup');
               },
-              label: const Text('Đăng nhập bằng tài khoản Google'),
+              label: Text(
+                'Đăng nhập bằng tài khoản Google',
+                style: appTextTheme(context).labelLarge!.copyWith(
+                      color: Colors.black,
+                    ),
+              ),
               icon: AppIcons.google.toSvg(
                 width: 20,
               ),

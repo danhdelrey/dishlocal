@@ -118,7 +118,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 if (widget.title != null)
                   Text(
                     widget.title!,
-                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
                           color: widget.errorText != null ? appColorScheme(context).error : Theme.of(context).colorScheme.outline,
                         ),
                   ),

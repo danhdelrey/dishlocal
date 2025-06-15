@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
@@ -31,18 +32,21 @@ class HomePage extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    AppIcons.appIconGradient.toSvg(
+                    AppIcons.app.toSvg(
                       width: 24,
                     ),
                     const SizedBox(
                       width: 5,
                     ),
-                    const Text(
-                      'DishLocal',
-                      style: TextStyle(
-                        fontFamily: 'SFProDisplay',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 18,
+                    ShaderMask(
+                      shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                      child: const Text(
+                        'DishLocal',
+                        style: TextStyle(
+                          fontFamily: 'SFProDisplay',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 18,
+                        ),
                       ),
                     ),
                   ],
