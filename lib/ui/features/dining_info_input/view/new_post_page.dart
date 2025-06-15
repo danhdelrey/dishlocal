@@ -6,6 +6,7 @@ import 'package:dishlocal/ui/features/dining_info_input/bloc/dining_info_input_b
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/exact_address_input.dart';
+import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
@@ -126,106 +127,123 @@ class _NewPostPageState extends State<NewPostPage> {
                 },
               ),
             ],
-            child: Scaffold(
-              appBar: AppBar(
-                title: Text('Bài đăng mới', style: Theme.of(context).textTheme.titleMedium),
-                surfaceTintColor: Colors.transparent,
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                centerTitle: true,
-                automaticallyImplyLeading: false,
-                leading: IconButton(
-                  onPressed: () => context.pop(),
-                  icon: AppIcons.left.toSvg(color: Theme.of(context).colorScheme.onSurface),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted()),
-                    child: const Text('Đăng'),
-                  ),
-                ],
-              ),
-              body: GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: Column(
-                      children: [
-                        Text(
-                          formatted,
-                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Scaffold(
+                body: CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  slivers: [
+                    SliverAppBar(
+                      title: Text('Bài đăng mới', style: Theme.of(context).textTheme.titleMedium),
+                      surfaceTintColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      flexibleSpace: const GlassSpace(
+                        blur: 50,
+                        backgroundColor: Colors.transparent,
+                      ),
+                      shape: Border(
+                        bottom: BorderSide(
+                          width: 1,
+                          color: Colors.white.withValues(alpha: 0.1),
+                          style: BorderStyle.solid,
                         ),
-                        const SizedBox(height: 20),
-                        RoundedCornerImageFile(imagePath: widget.imagePath),
-                        const SizedBox(height: 20),
-                        // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
-                        BlocBuilder<DiningInfoInputBloc, DiningInfoInputState>(
-                          builder: (context, state) {
-                            return Column(
-                              children: [
-                                AppTextField(
-                                  // Gắn FocusNode của Widget vào đây
-                                  focusNode: _dishNameFocusNode,
-                                  keyboardType: TextInputType.name,
-                                  maxLine: 1,
-                                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                  autoFocus: true,
-                                  title: 'Tên món ăn*',
-                                  hintText: 'Nhập tên món ăn...',
-                                  maxLength: 100,
-                                  onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
-                                  // Sử dụng `displayError` của Formz v0.7.0+ để code gọn hơn
-                                  // Hoặc giữ logic cũ của bạn nếu muốn thông báo lỗi tùy chỉnh
-                                  errorText: state.dishNameInput.isNotValid && !state.dishNameInput.isPure ? state.dishNameInput.displayError?.getMessage() : null,
-                                ),
-                                const SizedBox(height: 10),
-                                AppTextField(
-                                  // Gắn FocusNode tương ứng
-                                  focusNode: _diningLocationNameFocusNode,
-                                  keyboardType: TextInputType.name,
-                                  maxLine: 1,
-                                  title: 'Tên quán ăn',
-                                  hintText: 'Nhập tên quán ăn...',
-                                  maxLength: 200,
-                                  onChanged: (diningLocationName) => context.read<DiningInfoInputBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
-                                  // Thêm errorText cho các trường khác để nhất quán
-                                  errorText: state.diningLocationNameInput.isNotValid && !state.diningLocationNameInput.isPure ? state.diningLocationNameInput.displayError?.getMessage() : null,
-                                ),
-                                const SizedBox(height: 10),
-                                AppTextField(
-                                  focusNode: _exactAddressInputFocusNode,
-                                  title: widget.address.displayName,
-                                  keyboardType: TextInputType.name,
-                                  maxLine: 1,
-                                  hintText: 'Địa chỉ cụ thể của quán, vd: số nhà, tên đường,...',
-                                  maxLength: 200,
-                                  onChanged: (exactAddress) => context.read<DiningInfoInputBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
-                                  errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? state.exactAddressInput.displayError?.getMessage() : null,
-                                ),
-                                const SizedBox(height: 10),
-                                AppTextField(
-                                  focusNode: _insightInputFocusNode,
-                                  title: 'Cảm nhận',
-                                  hintText: 'Nêu cảm nhận của bạn...',
-                                  maxLength: 2000,
-                                  minLine: 10,
-                                  maxLine: 1000,
-                                  onChanged: (insight) => context.read<DiningInfoInputBloc>().add(InsightInputChanged(insight: insight)),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                        const SizedBox(
-                          height: 300,
+                      ),
+                      centerTitle: true,
+                      automaticallyImplyLeading: false,
+                      pinned: true,
+                      floating: true,
+                      leading: IconButton(
+                        onPressed: () => context.pop(),
+                        icon: AppIcons.left.toSvg(color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted()),
+                          child: const Text('Đăng'),
                         ),
                       ],
                     ),
-                  ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Column(
+                          children: [
+                            Text(
+                              formatted,
+                              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: Theme.of(context).colorScheme.outline,
+                                  ),
+                            ),
+                            const SizedBox(height: 20),
+                            RoundedCornerImageFile(imagePath: widget.imagePath),
+                            const SizedBox(height: 20),
+                            // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
+                            BlocBuilder<DiningInfoInputBloc, DiningInfoInputState>(
+                              builder: (context, state) {
+                                return Column(
+                                  children: [
+                                    AppTextField(
+                                      // Gắn FocusNode của Widget vào đây
+                                      focusNode: _dishNameFocusNode,
+                                      keyboardType: TextInputType.name,
+                                      maxLine: 1,
+                                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                      autoFocus: true,
+                                      title: 'Tên món ăn*',
+                                      hintText: 'Nhập tên món ăn...',
+                                      maxLength: 100,
+                                      onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
+                                      // Sử dụng `displayError` của Formz v0.7.0+ để code gọn hơn
+                                      // Hoặc giữ logic cũ của bạn nếu muốn thông báo lỗi tùy chỉnh
+                                      errorText: state.dishNameInput.isNotValid && !state.dishNameInput.isPure ? state.dishNameInput.displayError?.getMessage() : null,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    AppTextField(
+                                      // Gắn FocusNode tương ứng
+                                      focusNode: _diningLocationNameFocusNode,
+                                      keyboardType: TextInputType.name,
+                                      maxLine: 1,
+                                      title: 'Tên quán ăn',
+                                      hintText: 'Nhập tên quán ăn...',
+                                      maxLength: 200,
+                                      onChanged: (diningLocationName) => context.read<DiningInfoInputBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
+                                      // Thêm errorText cho các trường khác để nhất quán
+                                      errorText: state.diningLocationNameInput.isNotValid && !state.diningLocationNameInput.isPure ? state.diningLocationNameInput.displayError?.getMessage() : null,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    AppTextField(
+                                      focusNode: _exactAddressInputFocusNode,
+                                      title: widget.address.displayName,
+                                      keyboardType: TextInputType.name,
+                                      maxLine: 1,
+                                      hintText: 'Địa chỉ cụ thể của quán, vd: số nhà, tên đường,...',
+                                      maxLength: 200,
+                                      onChanged: (exactAddress) => context.read<DiningInfoInputBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
+                                      errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? state.exactAddressInput.displayError?.getMessage() : null,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    AppTextField(
+                                      focusNode: _insightInputFocusNode,
+                                      title: 'Cảm nhận',
+                                      hintText: 'Nêu cảm nhận của bạn...',
+                                      maxLength: 2000,
+                                      minLine: 10,
+                                      maxLine: 1000,
+                                      onChanged: (insight) => context.read<DiningInfoInputBloc>().add(InsightInputChanged(insight: insight)),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            const SizedBox(
+                              height: 300,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

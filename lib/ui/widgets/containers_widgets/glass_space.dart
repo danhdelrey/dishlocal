@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 class GlassSpace extends StatelessWidget {
   const GlassSpace({
     super.key,
-    required this.backgourndColor,
+    required this.backgroundColor,
     required this.blur,
   });
 
-  final Color backgourndColor;
+  final Color backgroundColor;
   final double blur;
 
   @override
@@ -19,7 +19,7 @@ class GlassSpace extends StatelessWidget {
         child: Container(
           // Thêm một lớp màu nhẹ để hiệu ứng glass nổi bật hơn
           // và dễ đọc chữ hơn trên nền mờ.
-          color: backgourndColor.withValues(alpha: 0.1),
+          color: backgroundColor.withValues(alpha: 0.1),
         ),
       ),
     );

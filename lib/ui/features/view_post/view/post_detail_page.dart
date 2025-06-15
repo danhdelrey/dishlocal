@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_image.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
@@ -45,18 +46,7 @@ class PostDetailPage extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       slivers: [
-        SliverAppBar(
-          floating: true,
-          snap: true,
-          shape: Border(
-            bottom: BorderSide(
-              width: 1,
-              color: Colors.white.withValues(alpha: 0.1),
-              style: BorderStyle.solid,
-            ),
-          ),
-          title: const Text('Cơm tấm sườn bì chả'),
-          automaticallyImplyLeading: false,
+        GlassSliverAppBar(
           leading: IconButton(
             onPressed: () {
               context.pop();
@@ -65,13 +55,7 @@ class PostDetailPage extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          titleTextStyle: appTextTheme(context).titleMedium,
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
-          flexibleSpace: const GlassSpace(
-            blur: 50,
-            backgourndColor: Colors.transparent,
-          ),
+          title: const Text('Cơm tấm sườn bì chả'),
           actions: [
             IconButton(
               onPressed: () {},
