@@ -3,6 +3,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/dining_info_input/bloc/dining_info_input_bloc.dart';
+import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
@@ -173,7 +174,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                   onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
                                   // Sử dụng `displayError` của Formz v0.7.0+ để code gọn hơn
                                   // Hoặc giữ logic cũ của bạn nếu muốn thông báo lỗi tùy chỉnh
-                                  errorText: state.dishNameInput.isNotValid && !state.dishNameInput.isPure ? 'Tên món ăn không được để trống' : null,
+                                  errorText: state.dishNameInput.isNotValid && !state.dishNameInput.isPure ? state.dishNameInput.displayError?.getMessage() : null,
                                 ),
                                 const SizedBox(height: 10),
                                 AppTextField(
