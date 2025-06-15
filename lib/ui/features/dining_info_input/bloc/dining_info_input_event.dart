@@ -31,6 +31,14 @@ final class ExactAddressInputChanged extends DiningInfoInputEvent {
   List<Object?> get props => [exactAddress];
 }
 
+final class InsightInputChanged extends DiningInfoInputEvent {
+  const InsightInputChanged({required this.insight});
+  final String insight;
+
+  @override
+  List<Object?> get props => [insight];
+}
+
 final class DiningInfoInputSubmitted extends DiningInfoInputEvent {}
 
 // Sự kiện mới để báo hiệu rằng yêu cầu focus đã được UI xử lý

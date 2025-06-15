@@ -29,6 +29,7 @@ class _NewPostPageState extends State<NewPostPage> {
   late final FocusNode _dishNameFocusNode;
   late final FocusNode _diningLocationNameFocusNode;
   late final FocusNode _exactAddressInputFocusNode;
+  late final FocusNode _insightInputFocusNode;
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _NewPostPageState extends State<NewPostPage> {
     _dishNameFocusNode = FocusNode();
     _diningLocationNameFocusNode = FocusNode();
     _exactAddressInputFocusNode = FocusNode();
+    _insightInputFocusNode = FocusNode();
   }
 
   @override
@@ -43,6 +45,7 @@ class _NewPostPageState extends State<NewPostPage> {
     _dishNameFocusNode.dispose();
     _diningLocationNameFocusNode.dispose();
     _exactAddressInputFocusNode.dispose();
+    _insightInputFocusNode.dispose();
     super.dispose();
     getIt<ImageProcessor>().deleteTempImageFile(widget.imagePath);
   }
@@ -102,6 +105,9 @@ class _NewPostPageState extends State<NewPostPage> {
                         break;
                       case DiningInfoInputField.exactAddress:
                         _exactAddressInputFocusNode.requestFocus();
+                        break;
+                      case DiningInfoInputField.insightInput:
+                        _insightInputFocusNode.requestFocus();
                         break;
                     }
                     // Báo cho BLoC biết UI đã xử lý yêu cầu focus.
@@ -183,6 +189,15 @@ class _NewPostPageState extends State<NewPostPage> {
                                   maxLength: 200,
                                   onChanged: (exactAddress) => context.read<DiningInfoInputBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
                                   errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? 'Địa chỉ đã nhập không hợp lệ' : null,
+                                ),
+                                const SizedBox(height: 10),
+                                AppTextField(
+                                  focusNode: _insightInputFocusNode,
+                                  title: 'Cảm nhận',
+                                  hintText: 'Nhập cảm nhận của bạn',
+                                  maxLength: 1000,
+                                  onChanged: (insight) => context.read<DiningInfoInputBloc>().add(InsightInputChanged(insight: insight)),
+                                  errorText: state.insightInput.isNotValid && !state.insightInput.isPure ? 'Nội dung không hợp lệ' : null,
                                 ),
                               ],
                             );

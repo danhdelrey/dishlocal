@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/exact_address_input.dart';
+import 'package:dishlocal/ui/features/dining_info_input/form_input/insight_input.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:formz/formz.dart';
@@ -26,6 +27,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     on<DishNameInputChanged>(_onDishNameChanged);
     on<DiningLocationNameInputChanged>(_onDiningLocationNameChanged);
     on<ExactAddressInputChanged>(_onExactAddressInputChanged);
+    on<InsightInputChanged>(_onInsightInputChanged);
 
     on<DiningInfoInputSubmitted>(_onSubmitted);
     on<FocusRequestHandled>(_onFocusRequestHandled);
@@ -64,6 +66,16 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi vị trí cụ thể.');
   }
 
+  FutureOr<void> _onInsightInputChanged(InsightInputChanged event, Emitter<DiningInfoInputState> emit) {
+    _log.fine('Nhận được sự kiện InsightInputChanged với giá trị: "${event.insight}"');
+    final insightInput = InsightInput.dirty(value: event.insight);
+
+    emit(state.copyWith(
+      insightInput: insightInput,
+    ));
+    _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi cảm nhận.');
+  }
+
   Future<void> _onSubmitted(DiningInfoInputSubmitted event, Emitter<DiningInfoInputState> emit) async {
     _log.info('Nhận được sự kiện DiningInfoInputSubmitted');
 
@@ -72,12 +84,14 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     final dishNameInput = DishNameInput.dirty(value: state.dishNameInput.value);
     final diningLocationNameInput = DiningLocationNameInput.dirty(value: state.diningLocationNameInput.value);
     final exactAddressInput = ExactAddressInput.dirty(value: state.exactAddressInput.value);
+    final insightInput = InsightInput.dirty(value: state.insightInput.value);
 
     // Xác thực form với các phiên bản "dirty" này.
     final isFormValid = Formz.validate([
       dishNameInput,
       diningLocationNameInput,
       exactAddressInput,
+      insightInput,
     ]);
 
     _log.fine('Kết quả xác thực form khi submit: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}.');
@@ -90,9 +104,10 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
         dishNameInput: dishNameInput,
         diningLocationNameInput: diningLocationNameInput,
         exactAddressInput: exactAddressInput,
+        insightInput: insightInput,
       ));
       _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
-      _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}, ${exactAddressInput.value}');
+      _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}, ${exactAddressInput.value}, ${insightInput.value}');
       try {
         await Future.delayed(const Duration(seconds: 1));
         _log.info('Submit dữ liệu thành công');
@@ -112,6 +127,8 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
         fieldToFocus = DiningInfoInputField.diningLocationName;
       } else if (exactAddressInput.isNotValid) {
         fieldToFocus = DiningInfoInputField.exactAddress;
+      } else if (insightInput.isNotValid) {
+        fieldToFocus = DiningInfoInputField.insightInput;
       }
 
       // Phát ra trạng thái mới với:
@@ -122,6 +139,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
         dishNameInput: dishNameInput,
         diningLocationNameInput: diningLocationNameInput,
         exactAddressInput: exactAddressInput,
+        insightInput: insightInput,
         formzSubmissionStatus: FormzSubmissionStatus.failure,
         fieldToFocus: () => fieldToFocus,
       ));
@@ -139,6 +157,4 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Đóng DiningInfoInputBloc');
     return super.close();
   }
-
-  
 }
