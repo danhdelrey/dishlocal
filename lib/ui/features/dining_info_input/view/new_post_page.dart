@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:logging/logging.dart';
 
@@ -58,6 +59,9 @@ class _NewPostPageState extends State<NewPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final formatted = DateFormat('H:mm dd/MM/yyyy').format(now);
+
     return BlocProvider(
       // 2. Cung cấp BLoC bằng service locator (getIt) thay vì khởi tạo trực tiếp.
       // Constructor của BLoC giờ không cần tham số.
@@ -150,7 +154,7 @@ class _NewPostPageState extends State<NewPostPage> {
                     child: Column(
                       children: [
                         Text(
-                          '8:30 25/05/2025', // Cái này bạn có thể thay bằng dữ liệu động
+                          formatted,
                           style: Theme.of(context).textTheme.labelLarge!.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
@@ -197,7 +201,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                   title: widget.address.displayName,
                                   keyboardType: TextInputType.name,
                                   maxLine: 1,
-                                  hintText: 'Địa chỉ cụ thể, vd: số nhà, tên đường,...',
+                                  hintText: 'Địa chỉ cụ thể của quán, vd: số nhà, tên đường,...',
                                   maxLength: 200,
                                   onChanged: (exactAddress) => context.read<DiningInfoInputBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
                                   errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? state.exactAddressInput.displayError?.getMessage() : null,
