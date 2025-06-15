@@ -74,7 +74,6 @@ class HomePage extends StatelessWidget {
                     width: 10,
                   ),
                 ],
-                pinned: true,
                 floating: true,
                 snap: true,
                 bottom: TabBar(
