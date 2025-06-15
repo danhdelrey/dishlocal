@@ -7,6 +7,7 @@ import 'package:dishlocal/ui/features/dining_info_input/form_input/dining_locati
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/exact_address_input.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
@@ -134,35 +135,21 @@ class _NewPostPageState extends State<NewPostPage> {
                   physics: const BouncingScrollPhysics(),
                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   slivers: [
-                    SliverAppBar(
-                      title: Text('Bài đăng mới', style: Theme.of(context).textTheme.titleMedium),
-                      surfaceTintColor: Colors.transparent,
-                      backgroundColor: Colors.transparent,
-                      flexibleSpace: const GlassSpace(
-                        blur: 50,
-                        backgroundColor: Colors.transparent,
-                      ),
-                      shape: Border(
-                        bottom: BorderSide(
-                          width: 1,
-                          color: Colors.white.withValues(alpha: 0.1),
-                          style: BorderStyle.solid,
-                        ),
-                      ),
+                    GlassSliverAppBar(
+                      title: const Text('Bài đăng mớidd'),
                       centerTitle: true,
-                      automaticallyImplyLeading: false,
                       pinned: true,
                       floating: true,
-                      leading: IconButton(
-                        onPressed: () => context.pop(),
-                        icon: AppIcons.left.toSvg(color: Theme.of(context).colorScheme.onSurface),
-                      ),
                       actions: [
                         TextButton(
                           onPressed: () => context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted()),
                           child: const Text('Đăng'),
                         ),
                       ],
+                      leading: IconButton(
+                        onPressed: () => context.pop(),
+                        icon: AppIcons.left.toSvg(color: Theme.of(context).colorScheme.onSurface),
+                      ),
                     ),
                     SliverToBoxAdapter(
                       child: Padding(

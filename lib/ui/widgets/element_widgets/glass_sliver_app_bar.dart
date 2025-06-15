@@ -10,9 +10,9 @@ class GlassSliverAppBar extends StatelessWidget {
     this.actions,
     this.centerTitle,
     this.hasBorder = true,
-    this.floating = true,
+    this.floating = false,
     this.pinned = false,
-    this.snap = true,
+    this.snap = false,
     this.bottom,
   });
 
@@ -31,6 +31,7 @@ class GlassSliverAppBar extends StatelessWidget {
     return SliverAppBar(
       floating: floating,
       snap: snap,
+      pinned: pinned,
       shape: hasBorder
           ? Border(
               bottom: BorderSide(

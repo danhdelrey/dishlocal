@@ -4,6 +4,7 @@ import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 
@@ -21,21 +22,10 @@ class ProfilePage extends StatelessWidget {
           // 1. headerSliverBuilder: chứa các widget ở trên cùng (phần header)
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              // SliverAppBar để có hiệu ứng cuộn đẹp cho AppBar
-              SliverAppBar(
-                shape: Border(
-                  bottom: BorderSide(
-                    width: 1,
-                    color: Colors.white.withValues(alpha: 0.1),
-                    style: BorderStyle.solid,
-                  ),
-                ),
-                automaticallyImplyLeading: true,
-                surfaceTintColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
-                flexibleSpace: const GlassSpace(backgroundColor: Colors.transparent, blur: 50),
+              GlassSliverAppBar(
+                pinned: true,
+                floating: true,
                 title: const Text('lanadelrey'),
-                titleTextStyle: Theme.of(context).textTheme.titleMedium,
                 centerTitle: true,
                 actions: [
                   IconButton(
@@ -45,10 +35,6 @@ class ProfilePage extends StatelessWidget {
                     ),
                   )
                 ],
-                // Để AppBar luôn hiện khi cuộn lên
-                pinned: true,
-                // Để AppBar hiện ra ngay khi cuộn xuống dù đang ở giữa list
-                floating: true,
               ),
 
               // SliverToBoxAdapter để bọc các widget không phải là Sliver

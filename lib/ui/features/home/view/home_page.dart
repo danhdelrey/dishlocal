@@ -80,6 +80,7 @@ class HomePage extends StatelessWidget {
                 ),
                 floating: true,
                 snap: true,
+                pinned: true,
               ),
             ];
           },

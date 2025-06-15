@@ -47,6 +47,8 @@ class PostDetailPage extends StatelessWidget {
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       slivers: [
         GlassSliverAppBar(
+          floating: true,
+          pinned: true,
           leading: IconButton(
             onPressed: () {
               context.pop();
