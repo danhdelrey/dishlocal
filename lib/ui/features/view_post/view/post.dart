@@ -143,7 +143,7 @@ class Post extends StatelessWidget {
                   circleRadius: 8,
                 ),
                 const SizedBox(
-                  width: 2,
+                  width: 5,
                 ),
                 Expanded(
                   child: Text(
