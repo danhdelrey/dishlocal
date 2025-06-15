@@ -50,7 +50,7 @@ class PostDetailPage extends StatelessWidget {
           surfaceTintColor: Colors.transparent,
           backgroundColor: Colors.transparent,
           flexibleSpace: const GlassSpace(
-            blur: 50,
+            blur: 10,
             backgourndColor: Colors.transparent,
           ),
           actions: [
@@ -237,7 +237,9 @@ class PostDetailPage extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(),
+            Divider(
+              color: Colors.white.withValues(alpha: 0.1),
+            ),
             const SizedBox(
               height: 10,
             ),
@@ -255,41 +257,41 @@ class PostDetailPage extends StatelessWidget {
         CustomIconWithLabel(
           icon: AppIcons.heart1.toSvg(
             width: 16,
-            color: Theme.of(context).colorScheme.outline,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           label: '12.4 N',
-          labelColor: Theme.of(context).colorScheme.outline,
+          labelColor: Theme.of(context).colorScheme.onSurface,
         ),
         CustomIconWithLabel(
           icon: AppIcons.comment2.toSvg(
             width: 16,
-            color: Theme.of(context).colorScheme.outline,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
-          labelColor: Theme.of(context).colorScheme.outline,
+          labelColor: Theme.of(context).colorScheme.onSurface,
           label: '345',
         ),
         CustomIconWithLabel(
           icon: AppIcons.locationCheck.toSvg(
             width: 16,
-            color: Theme.of(context).colorScheme.outline,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
-          labelColor: Theme.of(context).colorScheme.outline,
+          labelColor: Theme.of(context).colorScheme.onSurface,
           label: '345',
         ),
         CustomIconWithLabel(
           icon: AppIcons.bookmark1.toSvg(
             width: 16,
-            color: Theme.of(context).colorScheme.outline,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
-          labelColor: Theme.of(context).colorScheme.outline,
+          labelColor: Theme.of(context).colorScheme.onSurface,
           label: '1.567',
         ),
         CustomIconWithLabel(
           icon: AppIcons.shareForward.toSvg(
             width: 16,
-            color: Theme.of(context).colorScheme.outline,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
-          labelColor: Theme.of(context).colorScheme.outline,
+          labelColor: Theme.of(context).colorScheme.onSurface,
           label: '101',
         ),
       ],

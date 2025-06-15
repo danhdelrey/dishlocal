@@ -33,7 +33,7 @@ class ProfilePage extends StatelessWidget {
                 automaticallyImplyLeading: true,
                 surfaceTintColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
-                flexibleSpace: const GlassSpace(backgourndColor: Colors.transparent, blur: 50),
+                flexibleSpace: const GlassSpace(backgourndColor: Colors.transparent, blur: 10),
                 title: const Text('lanadelrey'),
                 titleTextStyle: Theme.of(context).textTheme.titleMedium,
                 centerTitle: true,
@@ -173,7 +173,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return GlassContainer(
       backgroundColor: Colors.transparent,
       borderRadius: 0,
-      blur: 50,
+      blur: 10,
       child: _tabBar,
     );
   }

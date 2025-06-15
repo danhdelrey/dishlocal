@@ -43,10 +43,9 @@ class Comment extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: ' • Tác giả',
-                        style:
-                            Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                ),
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                         recognizer: TapGestureRecognizer()..onTap = () {},
                       )
                     ],
@@ -85,7 +84,7 @@ class Comment extends StatelessWidget {
                     Text(
                       'Trả lời',
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                     ),
                     const Spacer(),
@@ -95,10 +94,9 @@ class Comment extends StatelessWidget {
                         width: 14,
                       ),
                       label: '123',
-                      labelStyle:
-                          Theme.of(context).textTheme.labelMedium!.copyWith(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
+                      labelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
                     ),
                   ],
                 ),
