@@ -32,7 +32,7 @@ class CameraPage extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           surfaceTintColor: Colors.transparent,
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Colors.transparent,
           centerTitle: true,
           automaticallyImplyLeading: false,
           leading: IconButton(
