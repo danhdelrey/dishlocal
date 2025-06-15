@@ -171,9 +171,9 @@ class _NewPostPageState extends State<NewPostPage> {
                                 ),
                                 const SizedBox(height: 10),
                                 AppTextField(
-                                  enabled: false,
-                                  title: 'Địa chỉ',
-                                  initialValue: widget.address.displayName,
+                                  enabled: true,
+                                  title: widget.address.displayName,
+                                  hintText: 'Nhập địa chỉ cụ thể, vd: số nhà, tên đường,...',
                                 ),
                               ],
                             );

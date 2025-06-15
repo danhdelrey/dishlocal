@@ -106,20 +106,23 @@ class _AppTextFieldState extends State<AppTextField> {
           child: Padding(
             padding: widget.padding ??
                 const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  top: 5,
-                  bottom: 5,
+                  left: 15,
+                  right: 15,
+                  top: 10,
+                  bottom: 10,
                 ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (widget.title != null)
-                  Text(
-                    widget.title!,
-                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                          color: widget.errorText != null ? appColorScheme(context).error : Theme.of(context).colorScheme.outline,
-                        ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      widget.title!,
+                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                            color: widget.errorText != null ? appColorScheme(context).error : Theme.of(context).colorScheme.onSurface,
+                          ),
+                    ),
                   ),
                 Row(
                   children: [
