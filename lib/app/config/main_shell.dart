@@ -38,7 +38,7 @@ class MainShell extends StatelessWidget {
       bottomNavigationBar: GlassContainer(
         borderRadius: 0,
         backgroundColor: Colors.transparent,
-        blur: 20,
+        blur: 50,
         borderTop: true,
         child: BottomAppBar(
           padding: const EdgeInsets.all(0),

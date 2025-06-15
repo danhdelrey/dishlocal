@@ -1,4 +1,3 @@
-
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
@@ -21,7 +20,7 @@ class HomePage extends StatelessWidget {
             return <Widget>[
               SliverAppBar(
                 flexibleSpace: const GlassSpace(
-                  blur: 20,
+                  blur: 50,
                   backgourndColor: Colors.transparent,
                 ),
                 automaticallyImplyLeading: false,
@@ -105,5 +104,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
