@@ -1,9 +1,8 @@
-
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
-import 'package:dishlocal/ui/widgets/blurred_edge_image.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_image.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/glass_space.dart';
@@ -98,13 +97,10 @@ class PostDetailPage extends StatelessWidget {
                       ),
                       Hero(
                         tag: 'post_$postId',
-                        child: const AspectRatio(
-                          aspectRatio: 1,
-                          child: BlurredEdgeImage(
-                            clearRadius: 1,
-                            imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
-                            blurSigma: 50,
-                          ),
+                        child: const BlurredEdgeImage(
+                          clearRadius: 1,
+                          imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
+                          blurSigma: 100,
                         ),
                       ),
                       const SizedBox(

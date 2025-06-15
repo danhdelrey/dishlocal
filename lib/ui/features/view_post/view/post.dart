@@ -1,5 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
-import 'package:dishlocal/ui/widgets/blurred_edge_image.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_image.dart';
 import 'package:dishlocal/ui/widgets/blurred_pill.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/glass_container.dart';
