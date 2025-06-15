@@ -81,6 +81,7 @@ class PostDetailPage extends StatelessWidget {
 
   Widget _buildMainContent(BuildContext context) {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 150),

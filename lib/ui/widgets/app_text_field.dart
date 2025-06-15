@@ -135,7 +135,7 @@ class _AppTextFieldState extends State<AppTextField> {
                       ),
                     Expanded(
                       child: TextFormField(
-                        focusNode: _focusNode,
+                        focusNode: widget.enabled ? _focusNode : null,
                         autofocus: widget.autoFocus,
                         enabled: widget.enabled,
                         initialValue: widget.initialValue,
