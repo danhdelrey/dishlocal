@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
             return <Widget>[
               SliverAppBar(
                 flexibleSpace: const GlassSpace(
-                  blur: 10,
+                  blur: 20,
                   backgourndColor: Colors.transparent,
                 ),
                 automaticallyImplyLeading: false,

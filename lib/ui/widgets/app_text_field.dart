@@ -150,7 +150,7 @@ class _AppTextFieldState extends State<AppTextField> {
                         decoration: InputDecoration.collapsed(
                           hintText: widget.hintText,
                           hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                color: Theme.of(context).colorScheme.outlineVariant,
+                                color: Theme.of(context).colorScheme.outline,
                               ),
                         ),
                         buildCounter: (context, {required currentLength, required isFocused, required maxLength}) => null,

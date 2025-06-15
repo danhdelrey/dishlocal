@@ -52,6 +52,7 @@ class PostDetailPage extends StatelessWidget {
       slivers: [
         SliverAppBar(
           floating: true,
+          snap: true,
           shape: Border(
             bottom: BorderSide(
               width: 1,
@@ -73,7 +74,7 @@ class PostDetailPage extends StatelessWidget {
           surfaceTintColor: Colors.transparent,
           backgroundColor: Colors.transparent,
           flexibleSpace: const GlassSpace(
-            blur: 10,
+            blur: 20,
             backgourndColor: Colors.transparent,
           ),
           actions: [
