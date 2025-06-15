@@ -39,6 +39,14 @@ final class InsightInputChanged extends DiningInfoInputEvent {
   List<Object?> get props => [insight];
 }
 
+final class MoneyInputChanged extends DiningInfoInputEvent {
+  const MoneyInputChanged({required this.money});
+  final String money;
+
+  @override
+  List<Object?> get props => [money];
+}
+
 final class DiningInfoInputSubmitted extends DiningInfoInputEvent {}
 
 // Sự kiện mới để báo hiệu rằng yêu cầu focus đã được UI xử lý

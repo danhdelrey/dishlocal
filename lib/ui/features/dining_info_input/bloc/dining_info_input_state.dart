@@ -6,6 +6,7 @@ enum DiningInfoInputField {
   diningLocationName,
   exactAddress,
   insightInput,
+  moneyInput,
 }
 
 class DiningInfoInputState extends Equatable {
@@ -15,6 +16,7 @@ class DiningInfoInputState extends Equatable {
     this.diningLocationNameInput = const DiningLocationNameInput.pure(),
     this.exactAddressInput = const ExactAddressInput.pure(),
     this.insightInput = const InsightInput.pure(),
+    this.moneyInput = const MoneyInput.pure(),
     this.formzSubmissionStatus = FormzSubmissionStatus.initial,
     this.fieldToFocus,
   });
@@ -24,6 +26,7 @@ class DiningInfoInputState extends Equatable {
   final DiningLocationNameInput diningLocationNameInput;
   final ExactAddressInput exactAddressInput;
   final InsightInput insightInput;
+  final MoneyInput moneyInput;
 
   //trạng thái của form
   final FormzSubmissionStatus formzSubmissionStatus;
@@ -38,6 +41,7 @@ class DiningInfoInputState extends Equatable {
     ExactAddressInput? exactAddressInput,
     FormzSubmissionStatus? formzSubmissionStatus,
     InsightInput? insightInput,
+    MoneyInput? moneyInput,
     // Cho phép gán giá trị null để xóa yêu cầu focus
     ValueGetter<DiningInfoInputField?>? fieldToFocus, //ValueGetter<T?> là một cách hay để cho phép copyWith gán giá trị null. Khi gọi state.copyWith(fieldToFocus: () => null), nó sẽ xóa yêu cầu focus.
   }) {
@@ -47,6 +51,7 @@ class DiningInfoInputState extends Equatable {
       diningLocationNameInput: diningLocationNameInput ?? this.diningLocationNameInput,
       exactAddressInput: exactAddressInput ?? this.exactAddressInput,
       insightInput: insightInput ?? this.insightInput,
+      moneyInput: moneyInput ?? this.moneyInput,
 
       formzSubmissionStatus: formzSubmissionStatus ?? this.formzSubmissionStatus,
       // Sử dụng ValueGetter để có thể gán giá trị null một cách tường minh
@@ -63,5 +68,6 @@ class DiningInfoInputState extends Equatable {
         fieldToFocus,
         exactAddressInput,
         insightInput,
+        moneyInput,
       ];
 }
