@@ -20,6 +20,9 @@ class AppTextField extends StatefulWidget {
     this.focusNode,
     this.borderRadius,
     this.padding,
+    this.maxLine = 5,
+    this.minLine = 1,
+    this.keyboardType = TextInputType.multiline,
   });
 
   final String? title;
@@ -28,6 +31,9 @@ class AppTextField extends StatefulWidget {
   final Widget? leadingIcon;
   final Widget? trailingIcon;
   final int? maxLength;
+  final int maxLine;
+  final int minLine;
+  final TextInputType keyboardType;
 
   final String? initialValue;
   final ValueChanged<String>? onChanged;
@@ -142,9 +148,9 @@ class _AppTextFieldState extends State<AppTextField> {
                         enabled: widget.enabled,
                         initialValue: widget.initialValue,
                         onChanged: widget.onChanged,
-                        keyboardType: TextInputType.multiline,
-                        minLines: 1,
-                        maxLines: 5,
+                        keyboardType: widget.keyboardType,
+                        minLines: widget.minLine,
+                        maxLines: widget.maxLine,
                         maxLength: widget.maxLength,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: widget.enabled ? appColorScheme(context).onSurface : appColorScheme(context).outline,

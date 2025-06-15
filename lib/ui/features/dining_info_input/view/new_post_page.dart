@@ -163,6 +163,8 @@ class _NewPostPageState extends State<NewPostPage> {
                                 AppTextField(
                                   // Gắn FocusNode của Widget vào đây
                                   focusNode: _dishNameFocusNode,
+                                  keyboardType: TextInputType.name,
+                                  maxLine: 1,
                                   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                                   autoFocus: true,
                                   title: 'Tên món ăn*',
@@ -177,6 +179,8 @@ class _NewPostPageState extends State<NewPostPage> {
                                 AppTextField(
                                   // Gắn FocusNode tương ứng
                                   focusNode: _diningLocationNameFocusNode,
+                                  keyboardType: TextInputType.name,
+                                  maxLine: 1,
                                   title: 'Tên quán ăn',
                                   hintText: 'Nhập tên quán ăn...',
                                   maxLength: 200,
@@ -188,7 +192,9 @@ class _NewPostPageState extends State<NewPostPage> {
                                 AppTextField(
                                   focusNode: _exactAddressInputFocusNode,
                                   title: widget.address.displayName,
-                                  hintText: 'Nhập địa chỉ cụ thể, vd: số nhà, tên đường,...',
+                                  keyboardType: TextInputType.name,
+                                  maxLine: 1,
+                                  hintText: 'Địa chỉ cụ thể, vd: số nhà, tên đường,...',
                                   maxLength: 200,
                                   onChanged: (exactAddress) => context.read<DiningInfoInputBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
                                   errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? 'Địa chỉ đã nhập không hợp lệ' : null,
@@ -197,14 +203,19 @@ class _NewPostPageState extends State<NewPostPage> {
                                 AppTextField(
                                   focusNode: _insightInputFocusNode,
                                   title: 'Cảm nhận',
-                                  hintText: 'Nhập cảm nhận của bạn',
-                                  maxLength: 1000,
+                                  hintText: 'Nêu cảm nhận của bạn...',
+                                  maxLength: 2000,
+                                  minLine: 10,
+                                  maxLine: 1000,
                                   onChanged: (insight) => context.read<DiningInfoInputBloc>().add(InsightInputChanged(insight: insight)),
                                   errorText: state.insightInput.isNotValid && !state.insightInput.isPure ? 'Nội dung không hợp lệ' : null,
                                 ),
                               ],
                             );
                           },
+                        ),
+                        const SizedBox(
+                          height: 300,
                         ),
                       ],
                     ),
