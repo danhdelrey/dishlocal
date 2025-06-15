@@ -3,6 +3,7 @@ import 'package:dishlocal/ui/widgets/blurred_edge_image.dart';
 import 'package:dishlocal/ui/widgets/blurred_pill.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/glass_container.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -38,14 +39,8 @@ class Post extends StatelessWidget {
               children: [
                 Hero(
                   tag: 'post_$postId',
-                  child: const AspectRatio(
-                    aspectRatio: 1,
-                    child: BlurredEdgeImage(
-                      imageBorderRadius: 12,
-                      clearRadius: 1,
-                      imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
-                      blurSigma: 30,
-                    ),
+                  child: const CachedImage(
+                    imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
                   ),
                 ),
                 Positioned.fill(
