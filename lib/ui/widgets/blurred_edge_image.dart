@@ -31,6 +31,7 @@ class BlurredEdgeImage extends StatelessWidget {
           child: Image.network(
             imageUrl,
             fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Image.asset('assets/images/com-tam-suon-bi-cha-2.jpg'),
           ),
         ),
         ShaderMask(
@@ -52,6 +53,7 @@ class BlurredEdgeImage extends StatelessWidget {
             child: Image.network(
               imageUrl,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Image.asset('assets/images/com-tam-suon-bi-cha-2.jpg'),
             ),
           ),
         ),
