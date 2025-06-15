@@ -129,13 +129,15 @@ class PostDetailPage extends StatelessWidget {
                       CustomIconWithLabel(
                         icon: AppIcons.locationCheckFilled.toSvg(
                           color: Colors.blue,
-                          width: 16,
+                          width: 12,
                         ),
                         label: 'Bạn đã đến đây vào ngày 01/06/2025 lúc 10:23',
-                        labelColor: Colors.blue,
+                        labelStyle: appTextTheme(context).labelSmall!.copyWith(
+                              color: Colors.blue,
+                            ),
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       GradientFilledButton(
                         maxWidth: true,
