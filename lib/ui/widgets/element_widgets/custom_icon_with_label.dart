@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class CustomIconWithLabel extends StatelessWidget {
@@ -5,7 +6,8 @@ class CustomIconWithLabel extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
-    this.labelColor, this.labelStyle,
+    this.labelColor,
+    this.labelStyle,
   });
 
   final Widget icon;
@@ -16,6 +18,7 @@ class CustomIconWithLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         icon,
         const SizedBox(
@@ -23,9 +26,10 @@ class CustomIconWithLabel extends StatelessWidget {
         ),
         Text(
           label,
-          style: labelStyle ?? Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: labelColor,
-              ),
+          style: labelStyle ??
+              Theme.of(context).textTheme.labelLarge!.copyWith(
+                    color: labelColor ?? appColorScheme(context).onSurface,
+                  ),
         )
       ],
     );

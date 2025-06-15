@@ -8,7 +8,7 @@ import 'package:dishlocal/ui/features/current_address/view/current_address_build
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_checker.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_disconnected_info.dart';
 import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
-import 'package:dishlocal/ui/widgets/gradient_fab.dart';
+import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

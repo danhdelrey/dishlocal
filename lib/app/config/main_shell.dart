@@ -2,7 +2,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/widgets/custom_badge.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
-import 'package:dishlocal/ui/widgets/gradient_fab.dart';
+import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

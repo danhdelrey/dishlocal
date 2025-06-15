@@ -1,5 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
-import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

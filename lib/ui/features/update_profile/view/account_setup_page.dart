@@ -1,6 +1,6 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
-import 'package:dishlocal/ui/widgets/app_text_field.dart';
-import 'package:dishlocal/ui/widgets/gradient_filled_button.dart';
+import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
+import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_filled_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
