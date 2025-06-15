@@ -53,58 +53,63 @@ class ProfilePage extends StatelessWidget {
 
               // SliverToBoxAdapter để bọc các widget không phải là Sliver
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          const CroppedImage(
-                            borderRadius: 1000,
-                            path: 'assets/images/Lana.jpg',
-                            width: 60,
-                            height: 60,
-                          ),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Đỗ Lan Anh',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const CustomRichText(
-                                label1: '12.4 N',
-                                description1: ' người theo dõi • ',
-                                label2: '245',
-                                description2: ' đang theo dõi',
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        'Follow mình để cùng "ăn sập" thế giới nhé! Mình là một người đam mê ẩm thực, luôn tìm kiếm những trải nghiệm mới lạ và độc đáo.',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      //thêm phần tab ở đây (scroll sẽ dính lên trên cùng)
-                      //nội dung của tab ở đây
-                    ],
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.1),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            const CroppedImage(
+                              borderRadius: 1000,
+                              path: 'assets/images/Lana.jpg',
+                              width: 60,
+                              height: 60,
+                            ),
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Đỗ Lan Anh',
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                const CustomRichText(
+                                  label1: '12.4 N',
+                                  description1: ' người theo dõi • ',
+                                  label2: '245',
+                                  description2: ' đang theo dõi',
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'Follow mình để cùng "ăn sập" thế giới nhé! Mình là một người đam mê ẩm thực, luôn tìm kiếm những trải nghiệm mới lạ và độc đáo.',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        //thêm phần tab ở đây (scroll sẽ dính lên trên cùng)
+                        //nội dung của tab ở đây
+                      ],
+                    ),
                   ),
                 ),
               ),
