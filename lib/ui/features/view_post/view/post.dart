@@ -29,131 +29,129 @@ class Post extends StatelessWidget {
         verticalPadding: 5,
         borderWidth: 0.5,
         backgroundColor: Colors.transparent,
-        child: Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                height: 5,
-              ),
-              Stack(
-                children: [
-                  Hero(
-                    tag: 'post_$postId',
-                    child: const AspectRatio(
-                      aspectRatio: 1,
-                      child: BlurredEdgeImage(
-                        imageBorderRadius: 12,
-                        clearRadius: 1,
-                        imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
-                        blurSigma: 30,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              height: 5,
+            ),
+            Stack(
+              children: [
+                Hero(
+                  tag: 'post_$postId',
+                  child: const AspectRatio(
+                    aspectRatio: 1,
+                    child: BlurredEdgeImage(
+                      imageBorderRadius: 12,
+                      clearRadius: 1,
+                      imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
+                      blurSigma: 30,
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Wrap(
+                        spacing: 5,
+                        runSpacing: 5,
+                        children: [
+                          BlurredPill(
+                            icon: AppIcons.location1.toSvg(
+                              width: 12,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                            label: '2 km',
+                          ),
+                          BlurredPill(
+                            icon: AppIcons.wallet4.toSvg(
+                              width: 12,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                            label: '70.000đ',
+                          ),
+                          BlurredPill(
+                            icon: AppIcons.time.toSvg(
+                              width: 12,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                            label: '4:00-23:00',
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Wrap(
-                          spacing: 5,
-                          runSpacing: 5,
-                          children: [
-                            BlurredPill(
-                              icon: AppIcons.location1.toSvg(
-                                width: 12,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                              label: '2 km',
-                            ),
-                            BlurredPill(
-                              icon: AppIcons.wallet4.toSvg(
-                                width: 12,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                              label: '70.000đ',
-                            ),
-                            BlurredPill(
-                              icon: AppIcons.time.toSvg(
-                                width: 12,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                              label: '4:00-23:00',
-                            ),
-                          ],
-                        ),
+                ),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: GlassContainer(
+                        borderTop: true,
+                        borderLeft: true,
+                        borderRight: true,
+                        borderBottom: true,
+                        borderRadius: 12,
+                        borderWidth: 0.5,
+                        horizontalPadding: 5,
+                        verticalPadding: 2,
+                        backgroundColor: Colors.transparent,
+                        child: _buildSmallReactionBar(context),
                       ),
                     ),
                   ),
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: GlassContainer(
-                          borderTop: true,
-                          borderLeft: true,
-                          borderRight: true,
-                          borderBottom: true,
-                          borderRadius: 12,
-                          borderWidth: 0.5,
-                          horizontalPadding: 5,
-                          verticalPadding: 2,
-                          backgroundColor: Colors.transparent,
-                          child: _buildSmallReactionBar(context),
-                        ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Text(
+              'Cơm tấm sườn bì chả',
+              style: Theme.of(context).textTheme.labelMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                const CroppedImage(
+                  borderRadius: 1000,
+                  width: 16,
+                  height: 16,
+                  path: 'assets/images/Lana.jpg',
+                ),
+                const SizedBox(
+                  width: 2,
+                ),
+                Expanded(
+                  child: Text(
+                    'danhdelrey',
+                    style: Theme.of(context).textTheme.labelMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  '4 giờ',
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
                       ),
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                'Cơm tấm sườn bì chả',
-                style: Theme.of(context).textTheme.labelMedium,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  const CroppedImage(
-                    borderRadius: 1000,
-                    width: 16,
-                    height: 16,
-                    path: 'assets/images/Lana.jpg',
-                  ),
-                  const SizedBox(
-                    width: 2,
-                  ),
-                  Expanded(
-                    child: Text(
-                      'danhdelrey',
-                      style: Theme.of(context).textTheme.labelMedium,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    '4 giờ',
-                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 2,
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+          ],
         ),
       ),
     );
