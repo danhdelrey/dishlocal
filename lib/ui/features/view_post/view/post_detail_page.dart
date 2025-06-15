@@ -3,10 +3,10 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_image.dart';
-import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
-import 'package:dishlocal/ui/widgets/glass_space.dart';
+import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/gradient_filled_button.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -163,11 +163,8 @@ class PostDetailPage extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          const CroppedImage(
-                            borderRadius: 1000,
-                            path: 'assets/images/Lana.jpg',
-                            width: 36,
-                            height: 36,
+                          const CachedCircleAvatar(
+                            imageUrl: 'https://dep.com.vn/wp-content/uploads/2024/10/Lana.jpg',
                           ),
                           const SizedBox(
                             width: 10,

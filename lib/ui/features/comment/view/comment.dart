@@ -1,6 +1,6 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
-import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/custom_icon_with_label.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -8,11 +8,11 @@ class Comment extends StatelessWidget {
   const Comment({
     super.key,
     this.subComment,
-    this.avatarSize = 36,
+    this.circleAvatarRadius = 18,
   });
 
   final Widget? subComment;
-  final double avatarSize;
+  final double circleAvatarRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +23,9 @@ class Comment extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CroppedImage(
-            borderRadius: 1000,
-            path: 'assets/images/Lana.jpg',
-            width: avatarSize,
-            height: avatarSize,
+           CachedCircleAvatar(
+            imageUrl: 'https://dep.com.vn/wp-content/uploads/2024/10/Lana.jpg',
+            circleRadius: circleAvatarRadius,
           ),
           const SizedBox(
             width: 10,

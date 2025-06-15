@@ -1,8 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/ui/widgets/app_text_field.dart';
-import 'package:dishlocal/ui/widgets/cropped_image.dart';
-import 'package:dishlocal/ui/widgets/glass_container.dart';
+import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 
 class CommentInput extends StatelessWidget {
@@ -22,11 +23,8 @@ class CommentInput extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const CroppedImage(
-              borderRadius: 1000,
-              path: 'assets/images/Lana.jpg',
-              width: 36,
-              height: 36,
+            const CachedCircleAvatar(
+              imageUrl: 'https://dep.com.vn/wp-content/uploads/2024/10/Lana.jpg',
             ),
             const SizedBox(
               width: 10,

@@ -2,9 +2,9 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
-import 'package:dishlocal/ui/widgets/cropped_image.dart';
-import 'package:dishlocal/ui/widgets/glass_container.dart';
-import 'package:dishlocal/ui/widgets/glass_space.dart';
+import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
+import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -67,11 +67,9 @@ class ProfilePage extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            const CroppedImage(
-                              borderRadius: 1000,
-                              path: 'assets/images/Lana.jpg',
-                              width: 60,
-                              height: 60,
+                            const CachedCircleAvatar(
+                              circleRadius: 30,
+                              imageUrl: 'https://dep.com.vn/wp-content/uploads/2024/10/Lana.jpg',
                             ),
                             const SizedBox(
                               width: 15,

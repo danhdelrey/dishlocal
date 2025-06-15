@@ -33,7 +33,7 @@ class CommentSection extends StatelessWidget {
           const Comment(),
           const Comment(
             subComment: Comment(
-              avatarSize: 24,
+              circleAvatarRadius: 12,
             ),
           ),
           const Comment(),

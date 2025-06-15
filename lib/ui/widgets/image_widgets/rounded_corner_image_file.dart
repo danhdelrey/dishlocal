@@ -1,18 +1,20 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-class RoundedSquareImage extends StatelessWidget {
-  const RoundedSquareImage({
+class RoundedCornerImageFile extends StatelessWidget {
+  const RoundedCornerImageFile({
     super.key,
     required this.imagePath,
+    this.borderRadius = 20,
   });
 
   final String imagePath;
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(borderRadius),
       child: AspectRatio(
         aspectRatio: 1,
         child: Image.file(

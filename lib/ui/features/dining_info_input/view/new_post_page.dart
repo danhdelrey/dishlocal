@@ -5,7 +5,7 @@ import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/dining_info_input/bloc/dining_info_input_bloc.dart';
 import 'package:dishlocal/ui/widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
-import 'package:dishlocal/ui/widgets/rounded_square_image.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
 import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -138,7 +138,7 @@ class _NewPostPageState extends State<NewPostPage> {
                               ),
                         ),
                         const SizedBox(height: 20),
-                        RoundedSquareImage(imagePath: widget.imagePath),
+                        RoundedCornerImageFile(imagePath: widget.imagePath),
                         const SizedBox(height: 20),
                         // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
                         BlocBuilder<DiningInfoInputBloc, DiningInfoInputState>(
