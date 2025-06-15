@@ -4,6 +4,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_badge.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -18,17 +19,10 @@ class HomePage extends StatelessWidget {
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              SliverAppBar(
-                flexibleSpace: const GlassSpace(
-                  blur: 50,
-                  backgroundColor: Colors.transparent,
-                ),
-                automaticallyImplyLeading: false,
-                leading: Row(
+              GlassSliverAppBar(
+                hasBorder: false,
+                title: Row(
                   children: [
-                    const SizedBox(
-                      width: 10,
-                    ),
                     AppIcons.appIconGradient.toSvg(
                       width: 20,
                     ),
@@ -48,9 +42,6 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                leadingWidth: 150,
-                surfaceTintColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
                 actions: [
                   IconButton(
                     onPressed: () {},
@@ -71,8 +62,6 @@ class HomePage extends StatelessWidget {
                     width: 10,
                   ),
                 ],
-                floating: true,
-                snap: true,
                 bottom: TabBar(
                   unselectedLabelColor: appColorScheme(context).onSurface,
                   dividerColor: Colors.white.withValues(alpha: 0.1),
@@ -89,6 +78,8 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                 ),
+                floating: true,
+                snap: true,
               ),
             ];
           },
