@@ -28,18 +28,21 @@ class _NewPostPageState extends State<NewPostPage> {
   // Thêm FocusNode cho tất cả các trường có thể được focus tự động.
   late final FocusNode _dishNameFocusNode;
   late final FocusNode _diningLocationNameFocusNode;
+  late final FocusNode _exactAddressInputFocusNode;
 
   @override
   void initState() {
     super.initState();
     _dishNameFocusNode = FocusNode();
     _diningLocationNameFocusNode = FocusNode();
+    _exactAddressInputFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _dishNameFocusNode.dispose();
     _diningLocationNameFocusNode.dispose();
+    _exactAddressInputFocusNode.dispose();
     super.dispose();
     getIt<ImageProcessor>().deleteTempImageFile(widget.imagePath);
   }
@@ -96,6 +99,9 @@ class _NewPostPageState extends State<NewPostPage> {
                         break;
                       case DiningInfoInputField.diningLocationName:
                         _diningLocationNameFocusNode.requestFocus();
+                        break;
+                      case DiningInfoInputField.exactAddress:
+                        _exactAddressInputFocusNode.requestFocus();
                         break;
                     }
                     // Báo cho BLoC biết UI đã xử lý yêu cầu focus.
@@ -171,9 +177,12 @@ class _NewPostPageState extends State<NewPostPage> {
                                 ),
                                 const SizedBox(height: 10),
                                 AppTextField(
-                                  enabled: true,
+                                  focusNode: _exactAddressInputFocusNode,
                                   title: widget.address.displayName,
                                   hintText: 'Nhập địa chỉ cụ thể, vd: số nhà, tên đường,...',
+                                  maxLength: 200,
+                                  onChanged: (exactAddress) => context.read<DiningInfoInputBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
+                                  errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? 'Địa chỉ đã nhập không hợp lệ' : null,
                                 ),
                               ],
                             );

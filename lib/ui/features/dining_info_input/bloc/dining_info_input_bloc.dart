@@ -1,4 +1,6 @@
 // dining_info_input_bloc.dart
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
@@ -21,9 +23,10 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
   DiningInfoInputBloc() : super(const DiningInfoInputState()) {
     _log.info('Khởi tạo DiningInfoInputBloc.');
 
-    // Gán sự kiện cho các trình xử lý riêng biệt để code sạch sẽ, dễ đọc
     on<DishNameInputChanged>(_onDishNameChanged);
     on<DiningLocationNameInputChanged>(_onDiningLocationNameChanged);
+    on<ExactAddressInputChanged>(_onExactAddressInputChanged);
+
     on<DiningInfoInputSubmitted>(_onSubmitted);
     on<FocusRequestHandled>(_onFocusRequestHandled);
   }
@@ -51,6 +54,16 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi tên quán ăn.');
   }
 
+  FutureOr<void> _onExactAddressInputChanged(ExactAddressInputChanged event, Emitter<DiningInfoInputState> emit) {
+    _log.fine('Nhận được sự kiện ExactAddressInputChanged với giá trị: "${event.exactAddress}"');
+    final exactAddressInput = ExactAddressInput.dirty(value: event.exactAddress);
+
+    emit(state.copyWith(
+      exactAddressInput: exactAddressInput,
+    ));
+    _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi vị trí cụ thể.');
+  }
+
   Future<void> _onSubmitted(DiningInfoInputSubmitted event, Emitter<DiningInfoInputState> emit) async {
     _log.info('Nhận được sự kiện DiningInfoInputSubmitted');
 
@@ -58,11 +71,13 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     // Điều này đảm bảo rằng lỗi sẽ được hiển thị ngay cả khi người dùng chưa từng chạm vào trường đó.
     final dishNameInput = DishNameInput.dirty(value: state.dishNameInput.value);
     final diningLocationNameInput = DiningLocationNameInput.dirty(value: state.diningLocationNameInput.value);
+    final exactAddressInput = ExactAddressInput.dirty(value: state.exactAddressInput.value);
 
     // Xác thực form với các phiên bản "dirty" này.
     final isFormValid = Formz.validate([
       dishNameInput,
       diningLocationNameInput,
+      exactAddressInput,
     ]);
 
     _log.fine('Kết quả xác thực form khi submit: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}.');
@@ -74,9 +89,10 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
         // Cập nhật lại state với các input để đảm bảo nhất quán, dù chúng không thay đổi
         dishNameInput: dishNameInput,
         diningLocationNameInput: diningLocationNameInput,
+        exactAddressInput: exactAddressInput,
       ));
       _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
-      _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}');
+      _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}, ${exactAddressInput.value}');
       try {
         await Future.delayed(const Duration(seconds: 1));
         _log.info('Submit dữ liệu thành công');
@@ -94,6 +110,8 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
         fieldToFocus = DiningInfoInputField.dishName;
       } else if (diningLocationNameInput.isNotValid) {
         fieldToFocus = DiningInfoInputField.diningLocationName;
+      } else if (exactAddressInput.isNotValid) {
+        fieldToFocus = DiningInfoInputField.exactAddress;
       }
 
       // Phát ra trạng thái mới với:
@@ -103,6 +121,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
       emit(state.copyWith(
         dishNameInput: dishNameInput,
         diningLocationNameInput: diningLocationNameInput,
+        exactAddressInput: exactAddressInput,
         formzSubmissionStatus: FormzSubmissionStatus.failure,
         fieldToFocus: () => fieldToFocus,
       ));
@@ -120,4 +139,6 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Đóng DiningInfoInputBloc');
     return super.close();
   }
+
+  
 }
