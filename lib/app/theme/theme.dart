@@ -16,7 +16,7 @@ final darkTheme = ThemeData.dark().copyWith(
     }));
 
 final colorScheme = ColorScheme.fromSeed(
-  seedColor: const Color(0xFFFF8C69),
+  seedColor: const Color(0xFFfc6076),
   brightness: Brightness.dark,
 );
 
