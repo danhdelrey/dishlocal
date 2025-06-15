@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:logging/logging.dart';
 
 class NewPostPage extends StatefulWidget {
   const NewPostPage({super.key, required this.imagePath, required this.address});
@@ -24,8 +25,8 @@ class NewPostPage extends StatefulWidget {
 }
 
 class _NewPostPageState extends State<NewPostPage> {
-  // 1. Quản lý FocusNode hoàn toàn tại Widget, không còn liên quan đến BLoC.
-  // Thêm FocusNode cho tất cả các trường có thể được focus tự động.
+  final _log = Logger('_NewPostPageState');
+
   late final FocusNode _dishNameFocusNode;
   late final FocusNode _diningLocationNameFocusNode;
   late final FocusNode _exactAddressInputFocusNode;
@@ -33,6 +34,7 @@ class _NewPostPageState extends State<NewPostPage> {
 
   @override
   void initState() {
+    _log.info('Khởi tạo các focus node của screen bài đăng mới');
     super.initState();
     _dishNameFocusNode = FocusNode();
     _diningLocationNameFocusNode = FocusNode();
@@ -42,6 +44,7 @@ class _NewPostPageState extends State<NewPostPage> {
 
   @override
   void dispose() {
+    _log.info('Giải phóng các focus node của screen bài đăng mới');
     _dishNameFocusNode.dispose();
     _diningLocationNameFocusNode.dispose();
     _exactAddressInputFocusNode.dispose();
