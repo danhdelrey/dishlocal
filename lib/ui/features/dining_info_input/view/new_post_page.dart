@@ -4,7 +4,7 @@ import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/dining_info_input/bloc/dining_info_input_bloc.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
-import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
 import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';

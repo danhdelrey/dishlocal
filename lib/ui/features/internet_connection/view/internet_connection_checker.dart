@@ -1,4 +1,4 @@
-import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 

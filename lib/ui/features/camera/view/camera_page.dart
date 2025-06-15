@@ -7,7 +7,7 @@ import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/current_address/view/current_address_builder.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_checker.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_disconnected_info.dart';
-import 'package:dishlocal/ui/widgets/custom_loading_indicator.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
