@@ -3,7 +3,6 @@ import 'package:dishlocal/ui/widgets/blurred_edge_image.dart';
 import 'package:dishlocal/ui/widgets/blurred_pill.dart';
 import 'package:dishlocal/ui/widgets/cropped_image.dart';
 import 'package:dishlocal/ui/widgets/glass_container.dart';
-import 'package:dishlocal/ui/widgets/rounded_square_image_asset.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

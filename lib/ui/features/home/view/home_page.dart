@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/custom_colors.dart';
