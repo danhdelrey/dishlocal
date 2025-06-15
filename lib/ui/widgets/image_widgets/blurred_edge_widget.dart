@@ -2,22 +2,24 @@ import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
-class BlurredEdgeImage extends StatelessWidget {
-  final String imageUrl;
-
+class BlurredEdgeWidget extends StatelessWidget {
   // Thêm các tham số tùy chọn để linh hoạt hơn
   final double blurSigma;
   final double clearRadius;
   final List<double> gradientStops;
   final double imageBorderRadius;
 
-  const BlurredEdgeImage({
+  final Widget blurredChild;
+  final Widget topChild;
+
+  const BlurredEdgeWidget({
     super.key,
-    required this.imageUrl,
     this.blurSigma = 5,
     this.clearRadius = 0.7,
     this.gradientStops = const [0.5, 1.0],
     this.imageBorderRadius = 20,
+    required this.blurredChild,
+    required this.topChild,
   });
 
   @override
@@ -29,9 +31,7 @@ class BlurredEdgeImage extends StatelessWidget {
         children: [
           ImageFiltered(
             imageFilter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-            child: CachedImage(
-              imageUrl: imageUrl,
-            ),
+            child: blurredChild,
           ),
           ShaderMask(
             shaderCallback: (Rect bounds) {
@@ -49,7 +49,7 @@ class BlurredEdgeImage extends StatelessWidget {
             blendMode: BlendMode.dstIn,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(imageBorderRadius),
-              child: CachedImage(imageUrl: imageUrl),
+              child: topChild,
             ),
           ),
         ],

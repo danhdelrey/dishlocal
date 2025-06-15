@@ -3,11 +3,12 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
-import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_image.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_filled_button.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -83,10 +84,11 @@ class PostDetailPage extends StatelessWidget {
                       ),
                       Hero(
                         tag: 'post_$postId',
-                        child: const BlurredEdgeImage(
+                        child: const BlurredEdgeWidget(
+                          blurredChild: CachedImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
                           clearRadius: 1,
-                          imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
                           blurSigma: 100,
+                          topChild: CachedImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
                         ),
                       ),
                       const SizedBox(

@@ -8,6 +8,7 @@ import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_inp
 import 'package:dishlocal/ui/features/dining_info_input/form_input/exact_address_input.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
@@ -136,7 +137,7 @@ class _NewPostPageState extends State<NewPostPage> {
                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   slivers: [
                     GlassSliverAppBar(
-                      title: const Text('Bài đăng mớidd'),
+                      title: const Text('Bài đăng mới'),
                       centerTitle: true,
                       pinned: true,
                       floating: true,
@@ -156,14 +157,28 @@ class _NewPostPageState extends State<NewPostPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Column(
                           children: [
-                            Text(
-                              formatted,
-                              style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                    color: Theme.of(context).colorScheme.outline,
-                                  ),
+                            const SizedBox(height: 20),
+                            BlurredEdgeWidget(
+                              blurSigma: 100,
+                              clearRadius: 1,
+                              blurredChild: RoundedCornerImageFile(imagePath: widget.imagePath),
+                              topChild: RoundedCornerImageFile(imagePath: widget.imagePath),
                             ),
                             const SizedBox(height: 20),
-                            RoundedCornerImageFile(imagePath: widget.imagePath),
+                            Text(
+                              formatted,
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              widget.address.displayName,
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
                             const SizedBox(height: 20),
                             // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
                             BlocBuilder<DiningInfoInputBloc, DiningInfoInputState>(
@@ -201,10 +216,10 @@ class _NewPostPageState extends State<NewPostPage> {
                                     const SizedBox(height: 10),
                                     AppTextField(
                                       focusNode: _exactAddressInputFocusNode,
-                                      title: widget.address.displayName,
+                                      title: 'Địa chỉ cụ thể của quán ăn',
                                       keyboardType: TextInputType.name,
                                       maxLine: 1,
-                                      hintText: 'Địa chỉ cụ thể của quán, vd: số nhà, tên đường,...',
+                                      hintText: 'Vd: số nhà, tên đường,...',
                                       maxLength: 200,
                                       onChanged: (exactAddress) => context.read<DiningInfoInputBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
                                       errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? state.exactAddressInput.displayError?.getMessage() : null,
