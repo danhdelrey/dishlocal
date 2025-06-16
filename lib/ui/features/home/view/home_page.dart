@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
                     'DishLocal',
                     style: TextStyle(
                       fontFamily: 'SFProDisplay',
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       fontSize: 24,
                     ),
                   ),

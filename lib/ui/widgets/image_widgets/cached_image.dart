@@ -21,25 +21,11 @@ class CachedImage extends StatelessWidget {
         child: CachedNetworkImage(
           fit: BoxFit.cover,
           imageUrl: imageUrl,
-          progressIndicatorBuilder: (context, url, downloadProgress) => SizedBox.expand(
-            child: Stack(
-              children: [
-                BlurHash(
-                  hash: blurHash,
-                  imageFit: BoxFit.cover,
-                  color: Colors.transparent,
-                ),
-                Center(
-                  child: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      value: downloadProgress.progress,
-                    ),
-                  ),
-                ),
-              ],
+          placeholder: (context, url) => SizedBox.expand(
+            child: BlurHash(
+              hash: blurHash,
+              imageFit: BoxFit.cover,
+              color: Colors.transparent,
             ),
           ),
           errorWidget: (context, url, error) => const Icon(Icons.error),

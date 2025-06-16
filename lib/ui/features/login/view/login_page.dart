@@ -38,7 +38,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 Text(
                   'DishLocal',
-                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.w800),
+                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(
                   height: 10,
