@@ -38,6 +38,7 @@ class _NewPostPageState extends State<NewPostPage> {
   late final FocusNode _diningLocationNameFocusNode;
   late final FocusNode _exactAddressInputFocusNode;
   late final FocusNode _insightInputFocusNode;
+  late final FocusNode _moneytInputFocusNode;
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _NewPostPageState extends State<NewPostPage> {
     _diningLocationNameFocusNode = FocusNode();
     _exactAddressInputFocusNode = FocusNode();
     _insightInputFocusNode = FocusNode();
+    _moneytInputFocusNode = FocusNode();
   }
 
   @override
@@ -56,6 +58,7 @@ class _NewPostPageState extends State<NewPostPage> {
     _diningLocationNameFocusNode.dispose();
     _exactAddressInputFocusNode.dispose();
     _insightInputFocusNode.dispose();
+    _moneytInputFocusNode.dispose();
     super.dispose();
     getIt<ImageProcessor>().deleteTempImageFile(widget.imagePath);
   }
@@ -121,6 +124,9 @@ class _NewPostPageState extends State<NewPostPage> {
                         break;
                       case DiningInfoInputField.insightInput:
                         _insightInputFocusNode.requestFocus();
+                        break;
+                      case DiningInfoInputField.moneyInput:
+                        _moneytInputFocusNode.requestFocus();
                         break;
                     }
                     // Báo cho BLoC biết UI đã xử lý yêu cầu focus.
