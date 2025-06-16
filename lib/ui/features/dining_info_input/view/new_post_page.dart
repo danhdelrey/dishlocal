@@ -38,7 +38,7 @@ class _NewPostPageState extends State<NewPostPage> {
   late final FocusNode _diningLocationNameFocusNode;
   late final FocusNode _exactAddressInputFocusNode;
   late final FocusNode _insightInputFocusNode;
-  late final FocusNode _moneytInputFocusNode;
+  late final FocusNode _moneyInputFocusNode;
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class _NewPostPageState extends State<NewPostPage> {
     _diningLocationNameFocusNode = FocusNode();
     _exactAddressInputFocusNode = FocusNode();
     _insightInputFocusNode = FocusNode();
-    _moneytInputFocusNode = FocusNode();
+    _moneyInputFocusNode = FocusNode();
   }
 
   @override
@@ -58,7 +58,7 @@ class _NewPostPageState extends State<NewPostPage> {
     _diningLocationNameFocusNode.dispose();
     _exactAddressInputFocusNode.dispose();
     _insightInputFocusNode.dispose();
-    _moneytInputFocusNode.dispose();
+    _moneyInputFocusNode.dispose();
     super.dispose();
     getIt<ImageProcessor>().deleteTempImageFile(widget.imagePath);
   }
@@ -126,7 +126,7 @@ class _NewPostPageState extends State<NewPostPage> {
                         _insightInputFocusNode.requestFocus();
                         break;
                       case DiningInfoInputField.moneyInput:
-                        _moneytInputFocusNode.requestFocus();
+                        _moneyInputFocusNode.requestFocus();
                         break;
                     }
                     // Báo cho BLoC biết UI đã xử lý yêu cầu focus.
@@ -208,6 +208,16 @@ class _NewPostPageState extends State<NewPostPage> {
                                       // Sử dụng `displayError` của Formz v0.7.0+ để code gọn hơn
                                       // Hoặc giữ logic cũ của bạn nếu muốn thông báo lỗi tùy chỉnh
                                       errorText: state.dishNameInput.isNotValid && !state.dishNameInput.isPure ? state.dishNameInput.displayError?.getMessage() : null,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    AppTextField(
+                                      focusNode: _moneyInputFocusNode,
+                                      keyboardType: TextInputType.number,
+                                      title: 'Giá*',
+                                      hintText: 'Nhập giá của món ăn...',
+                                      maxLength: 9,
+                                      maxLine: 1,
+                                      onChanged: (money) => context.read<DiningInfoInputBloc>().add(MoneyInputChanged(money: money)),
                                     ),
                                     const SizedBox(height: 10),
                                     AppTextField(

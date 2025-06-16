@@ -83,7 +83,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Nhận được sự kiện MoneyInputChanged với giá trị: "${event.money}"');
 
     final formatter = NumberFormat("#,##0 'đ'", 'vi_VN');
-    final formattedMoney = formatter.format(event.money);
+    final formattedMoney = formatter.format(int.parse(event.money));
 
     _log.fine('Định dạng lại tiền: $formattedMoney , sau đó truyền vào state');
 
