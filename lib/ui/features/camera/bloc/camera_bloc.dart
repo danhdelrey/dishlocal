@@ -17,7 +17,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
   CameraController? _controller;
 
-  CameraBloc() : super(CameraInitial()) {
+  final ImageProcessor imageProcessor;
+
+  CameraBloc({required this.imageProcessor}) : super(CameraInitial()) {
     on<CameraInitialized>(_onCameraInitialized);
     on<CameraStopped>(_onCameraStopped);
     on<CameraCaptureRequested>(_onCameraCaptureRequested);
@@ -135,8 +137,12 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       // Tốt nhất là đưa logic này vào một service riêng, ví dụ ImageProcessingService.
       _log.fine('Đang xử lý crop ảnh...');
       // Giả sử ImageProcessor là một class bạn đã có
-      await getIt<ImageProcessor>().cropSquare(imageFile.path, imageFile.path, false);
+      await imageProcessor.cropSquare(imageFile.path, imageFile.path, false);
       _log.info('Crop ảnh thành công.');
+
+      _log.fine('Đang tạo chuỗi blurhash cho ảnh đã chụp...');
+      final hash = imageProcessor.encodeImageToBlurhashString(imageFile.path);
+      _log.fine('Tạo chuỗi blurhash thành công: "$hash"');
 
       // 5. Emit trạng thái thành công với đường dẫn ảnh
       // UI sẽ lắng nghe state này và thực hiện điều hướng

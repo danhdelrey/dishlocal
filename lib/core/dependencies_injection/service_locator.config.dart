@@ -45,9 +45,10 @@ _i174.GetIt init(
     environmentFilter,
   );
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
-  gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc());
   gh.factory<_i592.DiningInfoInputBloc>(() => _i592.DiningInfoInputBloc());
   gh.lazySingleton<_i1028.ImageProcessor>(() => _i1028.ImageProcessor());
+  gh.factory<_i889.CameraBloc>(
+      () => _i889.CameraBloc(imageProcessor: gh<_i1028.ImageProcessor>()));
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
