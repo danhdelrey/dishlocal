@@ -66,6 +66,7 @@ class HomePage extends StatelessWidget {
                   unselectedLabelColor: appColorScheme(context).onSurface,
                   dividerColor: Colors.white.withValues(alpha: 0.1),
                   indicatorSize: TabBarIndicatorSize.tab,
+                  labelColor: appColorScheme(context).onSurface,
                   tabs: const [
                     Tab(
                       text: 'Dành cho bạn',

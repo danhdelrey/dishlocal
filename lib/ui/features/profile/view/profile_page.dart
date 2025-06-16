@@ -105,6 +105,7 @@ class ProfilePage extends StatelessWidget {
                     dividerColor: Colors.white.withValues(alpha: 0.1),
                     unselectedLabelColor: appColorScheme(context).onSurface,
                     indicatorSize: TabBarIndicatorSize.tab,
+                    labelColor: appColorScheme(context).onSurface,
                     tabs: const [
                       Tab(text: 'Bài đăng'),
                       Tab(text: 'Đã lưu'),
