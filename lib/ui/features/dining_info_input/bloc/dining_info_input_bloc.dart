@@ -9,6 +9,8 @@ import 'package:dishlocal/ui/features/dining_info_input/form_input/insight_input
 import 'package:dishlocal/ui/features/dining_info_input/form_input/money_input.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_multi_formatter/formatters/formatter_extension_methods.dart';
+import 'package:flutter_multi_formatter/formatters/money_input_enums.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
@@ -83,11 +85,19 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Nhận được sự kiện MoneyInputChanged với giá trị: "${event.money}"');
 
     final regex = RegExp(r'[.\sđ]');
-    final normalizedMoney = event.money.replaceAll(regex, '');
-    _log.fine('"${event.money}" sau khi normalize lại thành: "$normalizedMoney"');
+    final normalizedMoneyString = event.money.replaceAll(regex, '');
+    _log.fine('"${event.money}" sau khi normalize lại thành: "$normalizedMoneyString"');
+
+    final normalizedMoney = int.parse(normalizedMoneyString);
+    final denormalizedMoneyString = normalizedMoney.toCurrencyString(
+      trailingSymbol: 'đ',
+      mantissaLength: 0,
+      thousandSeparator: ThousandSeparator.Period,
+      useSymbolPadding: true,
+    ); //này để init value cho textfield
+    _log.fine('NormalizedMoneyString "$normalizedMoneyString" -parse int---> "$normalizedMoney" ---> sau khi denormalized lại thành: "$denormalizedMoneyString"');
 
     final moneyInput = MoneyInput.dirty(value: normalizedMoney);
-
     emit(state.copyWith(
       moneyInput: moneyInput,
     ));
@@ -144,14 +154,14 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
       DiningInfoInputField? fieldToFocus;
       if (dishNameInput.isNotValid) {
         fieldToFocus = DiningInfoInputField.dishName;
+      } else if (moneyInput.isNotValid) {
+        fieldToFocus = DiningInfoInputField.moneyInput;
       } else if (diningLocationNameInput.isNotValid) {
         fieldToFocus = DiningInfoInputField.diningLocationName;
       } else if (exactAddressInput.isNotValid) {
         fieldToFocus = DiningInfoInputField.exactAddress;
       } else if (insightInput.isNotValid) {
         fieldToFocus = DiningInfoInputField.insightInput;
-      } else if (moneyInput.isNotValid) {
-        fieldToFocus = DiningInfoInputField.moneyInput;
       }
 
       // Phát ra trạng thái mới với:

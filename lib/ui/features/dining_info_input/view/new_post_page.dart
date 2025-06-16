@@ -6,6 +6,7 @@ import 'package:dishlocal/ui/features/dining_info_input/bloc/dining_info_input_b
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
 import 'package:dishlocal/ui/features/dining_info_input/form_input/exact_address_input.dart';
+import 'package:dishlocal/ui/features/dining_info_input/form_input/money_input.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
@@ -233,7 +234,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                       onChanged: (money) {
                                         context.read<DiningInfoInputBloc>().add(MoneyInputChanged(money: money));
                                       },
-                                     
+                                      errorText: state.moneyInput.isNotValid && !state.moneyInput.isPure ? state.moneyInput.displayError?.getMessage() : null,
                                     ),
                                     const SizedBox(height: 10),
                                     AppTextField(
