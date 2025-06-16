@@ -7,6 +7,7 @@ import 'package:dishlocal/ui/features/camera/bloc/camera_bloc.dart';
 import 'package:dishlocal/ui/features/current_address/view/current_address_builder.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_checker.dart';
 import 'package:dishlocal/ui/features/internet_connection/view/internet_connection_disconnected_info.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
@@ -111,18 +112,23 @@ class CameraPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
       child: Column(
         children: [
-          AppIcons.location1.toSvg(
-            color: appColorScheme(context).onSurface,
+          CustomIconWithLabel(
+            icon: AppIcons.location1.toSvg(
+              color: appColorScheme(context).onSurface,
+              width: 14,
+            ),
+            label: 'Vị trí hiện tại',
           ),
-          Text(
-            'Vị trí hiện tại',
-            style: Theme.of(context).textTheme.titleMedium,
+          const SizedBox(
+            height: 10,
           ),
           Text(
             address.displayName,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
             textAlign: TextAlign.center,
-          ),
+          )
         ],
       ),
     );
