@@ -39,11 +39,8 @@ class Post extends StatelessWidget {
             ),
             Stack(
               children: [
-                Hero(
-                  tag: 'post_$postId',
-                  child: const CachedImage(
-                    imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
-                  ),
+                const CachedImage(
+                  imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
                 ),
                 Positioned.fill(
                   child: Align(

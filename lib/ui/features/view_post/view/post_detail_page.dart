@@ -82,14 +82,11 @@ class PostDetailPage extends StatelessWidget {
                       const SizedBox(
                         height: 10,
                       ),
-                      Hero(
-                        tag: 'post_$postId',
-                        child: const BlurredEdgeWidget(
-                          blurredChild: CachedImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
-                          clearRadius: 1,
-                          blurSigma: 100,
-                          topChild: CachedImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
-                        ),
+                      const BlurredEdgeWidget(
+                        blurredChild: CachedImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
+                        clearRadius: 1,
+                        blurSigma: 100,
+                        topChild: CachedImage(imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
                       ),
                       const SizedBox(
                         height: 10,
