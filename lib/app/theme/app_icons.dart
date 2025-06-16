@@ -53,7 +53,9 @@ enum AppIcons {
   locationCheckFilled('location_check_filled'), // Gốc: location_check_filled.svg
   search('search'),
   appIconGradient('app-icon-gradient'),
-  fabGradient('fab_gradient');
+  fabGradient('fab_gradient'),
+  gridLine('gridLine'),
+  gridFilled('gridFilled');
 
   const AppIcons(this.fileName);
   final String fileName;

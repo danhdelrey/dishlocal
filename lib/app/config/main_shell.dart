@@ -60,16 +60,16 @@ class MainShell extends StatelessWidget {
                 index: 0,
               ),
               // Item 1
-              _buildTabItem(
-                context: context,
-                activeIcon: AppIcons.rocketFill.toSvg(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                icon: AppIcons.rocketLine.toSvg(
-                  color: appColorScheme(context).onSurface,
-                ),
-                index: 1,
-              ),
+              // _buildTabItem(
+              //   context: context,
+              //   activeIcon: AppIcons.rocketFill.toSvg(
+              //     color: Theme.of(context).colorScheme.primary,
+              //   ),
+              //   icon: AppIcons.rocketLine.toSvg(
+              //     color: appColorScheme(context).onSurface,
+              //   ),
+              //   index: 1,
+              // ),
               // FAB
               GradientFab(
                 onTap: () {
@@ -77,19 +77,19 @@ class MainShell extends StatelessWidget {
                 },
               ),
               // Item 3
-              _buildTabItem(
-                context: context,
-                activeIcon: AppIcons.mail.toSvg(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                icon: CustomBadge(
-                  showBadge: false,
-                  child: AppIcons.mail1.toSvg(
-                    color: appColorScheme(context).onSurface,
-                  ),
-                ),
-                index: 2,
-              ),
+              // _buildTabItem(
+              //   context: context,
+              //   activeIcon: AppIcons.mail.toSvg(
+              //     color: Theme.of(context).colorScheme.primary,
+              //   ),
+              //   icon: CustomBadge(
+              //     showBadge: false,
+              //     child: AppIcons.mail1.toSvg(
+              //       color: appColorScheme(context).onSurface,
+              //     ),
+              //   ),
+              //   index: 2,
+              // ),
               // Item 4
               _buildTabItem(
                 context: context,
@@ -99,7 +99,7 @@ class MainShell extends StatelessWidget {
                 icon: AppIcons.user31.toSvg(
                   color: appColorScheme(context).onSurface,
                 ),
-                index: 3,
+                index: 1,
               ),
             ],
           ),

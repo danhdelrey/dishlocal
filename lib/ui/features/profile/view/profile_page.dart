@@ -3,7 +3,6 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
-import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +29,7 @@ class ProfilePage extends StatelessWidget {
                 actions: [
                   IconButton(
                     onPressed: () {},
-                    icon: AppIcons.userSettingLine.toSvg(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                    icon: const Icon(Icons.logout_rounded),
                   )
                 ],
               ),
@@ -71,7 +68,7 @@ class ProfilePage extends StatelessWidget {
                                   height: 5,
                                 ),
                                 const CustomRichText(
-                                  label1: '12.4 N',
+                                  label1: '2.3K',
                                   description1: ' người theo dõi • ',
                                   label2: '245',
                                   description2: ' đang theo dõi',
@@ -103,13 +100,13 @@ class ProfilePage extends StatelessWidget {
                 delegate: _SliverAppBarDelegate(
                   TabBar(
                     dividerColor: Colors.white.withValues(alpha: 0.1),
-                    unselectedLabelColor: appColorScheme(context).onSurface,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelColor: appColorScheme(context).onSurface,
                     tabs: const [
-                      Tab(text: 'Bài đăng'),
-                      Tab(text: 'Đã lưu'),
-                      Tab(text: 'Đã đến'),
+                      Tab(
+                        icon: Icon(Icons.grid_view_rounded),
+                      ),
+                      Tab(
+                        icon: Icon(Icons.bookmark_rounded),
+                      ),
                     ],
                   ),
                 ),
@@ -118,27 +115,10 @@ class ProfilePage extends StatelessWidget {
             ];
           },
           // 2. body: chứa nội dung chính có thể cuộn (TabBarView)
-          body: TabBarView(
+          body: const TabBarView(
             children: [
-              GridViewPosts(
-                header: SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 10),
-                    child: Container(
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      child: Text(
-                        '23 bài đăng • 26.3 N lượt thích',
-                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const GridViewPosts(),
-              const GridViewPosts(),
+              GridViewPosts(),
+              GridViewPosts(),
             ],
           ),
         ),

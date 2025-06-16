@@ -20,6 +20,7 @@ class HomePage extends StatelessWidget {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               GlassSliverAppBar(
+                centerTitle: true,
                 hasBorder: false,
                 title: ShaderMask(
                   shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
@@ -32,40 +33,15 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                actions: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: AppIcons.search.toSvg(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: CustomBadge(
-                      showBadge: false,
-                      child: AppIcons.notification1.toSvg(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                ],
                 bottom: TabBar(
-                  unselectedLabelColor: appColorScheme(context).onSurface,
                   dividerColor: Colors.white.withValues(alpha: 0.1),
                   indicatorSize: TabBarIndicatorSize.tab,
-                  labelColor: appColorScheme(context).onSurface,
                   tabs: const [
                     Tab(
                       text: 'Dành cho bạn',
                     ),
                     Tab(
                       text: 'Đang theo dõi',
-                    ),
-                    Tab(
-                      text: 'Xu hướng',
                     ),
                   ],
                 ),
@@ -77,7 +53,6 @@ class HomePage extends StatelessWidget {
           },
           body: const TabBarView(
             children: [
-              GridViewPosts(),
               GridViewPosts(),
               GridViewPosts(),
             ],

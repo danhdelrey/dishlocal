@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
+import 'package:dishlocal/ui/features/view_post/view/reaction_bar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
@@ -29,12 +30,12 @@ class PostDetailPage extends StatelessWidget {
           child: Stack(
             children: [
               _buildMainContent(context),
-              const Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: CommentInput(),
-              ),
+              // const Positioned(
+              //   left: 0,
+              //   right: 0,
+              //   bottom: 0,
+              //   child: CommentInput(),
+              // ),
             ],
           ),
         ),
@@ -58,15 +59,7 @@ class PostDetailPage extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          title: const Text('Cơm tấm sườn bì chả'),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.more_horiz,
-              ),
-            ),
-          ],
+          title: const Text('Hamburger'),
         ),
         SliverToBoxAdapter(
           child: Padding(
@@ -92,49 +85,32 @@ class PostDetailPage extends StatelessWidget {
                         height: 10,
                       ),
                       CustomIconWithLabel(
-                        icon: AppIcons.location.toSvg(
+                        icon: AppIcons.location1.toSvg(
                           width: 16,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
-                        label: '2 km',
+                        label: '1.2 km',
                       ),
                       Text(
-                        'Cơm tấm Hoàng Sang',
+                        'KFC Ninh Kiều',
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       Text(
-                        '75/36 Võ Trường Toản, phường An Hòa, quận Ninh Kiều, tp. Cần Thơ',
+                        '75/36 Võ Trường Toản, phường An Hòa, quận Ninh Kiều, thành phố Cần Thơ, Việt Nam',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                      CustomIconWithLabel(
-                        icon: AppIcons.time.toSvg(
-                          width: 16,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        label: 'Giờ mở cửa: Từ 8:00 đến 23:00',
+                      const SizedBox(
+                        height: 10,
                       ),
                       CustomIconWithLabel(
                         icon: AppIcons.wallet4.toSvg(
                           width: 16,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
-                        label: 'Giá: 100.000đ',
+                        label: 'Giá: 50.000 đ',
                       ),
                       const SizedBox(
                         height: 20,
-                      ),
-                      CustomIconWithLabel(
-                        icon: AppIcons.locationCheckFilled.toSvg(
-                          color: Colors.blue,
-                          width: 12,
-                        ),
-                        label: 'Bạn đã đến đây vào ngày 01/06/2025 lúc 10:23',
-                        labelStyle: appTextTheme(context).labelSmall!.copyWith(
-                              color: Colors.blue,
-                            ),
-                      ),
-                      const SizedBox(
-                        height: 10,
                       ),
                       GradientFilledButton(
                         maxWidth: true,
@@ -204,77 +180,45 @@ class PostDetailPage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 15,
                       ),
                       Text(
-                        'Mới vừa ăn một dĩa cơm tấm ở Quán Hoàng Sang... Ôi trời ơi, ngon xỉu up xỉu down luôn mọi người ơi! 🤤 Miếng sườn nướng thấm vị, nước mắm đỉnh cao, ăn xong chỉ muốn order thêm dĩa nữa. Highly recommend cho team mê cơm tấm nha! ❤️',
+                        """🍔 [REVIEW] Trải nghiệm Hamburger tại KFC Ninh Kiều – Ăn một lần là nhớ mãi! 😋
+
+Hôm nay thèm đồ ăn nhanh nên mình ghé KFC Ninh Kiều thử burger xem sao, ai ngờ lại bất ngờ vì ngon hơn mong đợi luôn!
+
+📍 Vị trí: Quán nằm ngay trung tâm, dễ tìm, có không gian rộng rãi, sạch sẽ. Nhân viên phục vụ nhanh nhẹn và thân thiện.
+
+🍔 Món mình gọi: Zinger Burger – lớp vỏ gà giòn rụm bên ngoài, thịt bên trong thì mềm và đậm vị, kết hợp cùng rau tươi và sốt cay nhẹ. Cắn một miếng là cảm giác "đã cái nư" liền 🤤
+
+🥤 Combo kèm khoai tây chiên nóng hổi và Pepsi lạnh, ăn vào trời nóng thì đúng bài luôn!
+
+💸 Giá cả: Tầm 40-80k/combo, khá hợp lý cho chất lượng và no căng bụng.
+
+🌟 Đánh giá cá nhân:
+
+Hương vị: 9/10
+
+Không gian: 8.5/10
+
+Phục vụ: 9/10
+
+📌 Tips: Đi buổi trưa hơi đông chút nên nếu muốn ngồi chill lâu lâu thì đi sớm hoặc chiều muộn nhé!""",
                         style: appTextTheme(context).bodyMedium,
                       ),
                       const SizedBox(
                         height: 20,
                       ),
-                      _buildReactionBar(context),
+                      const ReactionBar(),
                     ],
                   ),
                 ),
                 Divider(
                   color: Colors.white.withValues(alpha: 0.1),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const CommentSection(),
               ],
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Row _buildReactionBar(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CustomIconWithLabel(
-          icon: AppIcons.heart1.toSvg(
-            width: 16,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          label: '12.4 N',
-          labelColor: Theme.of(context).colorScheme.onSurface,
-        ),
-        CustomIconWithLabel(
-          icon: AppIcons.comment2.toSvg(
-            width: 16,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          labelColor: Theme.of(context).colorScheme.onSurface,
-          label: '345',
-        ),
-        CustomIconWithLabel(
-          icon: AppIcons.locationCheck.toSvg(
-            width: 16,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          labelColor: Theme.of(context).colorScheme.onSurface,
-          label: '345',
-        ),
-        CustomIconWithLabel(
-          icon: AppIcons.bookmark1.toSvg(
-            width: 16,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          labelColor: Theme.of(context).colorScheme.onSurface,
-          label: '1.567',
-        ),
-        CustomIconWithLabel(
-          icon: AppIcons.shareForward.toSvg(
-            width: 16,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          labelColor: Theme.of(context).colorScheme.onSurface,
-          label: '101',
         ),
       ],
     );

@@ -1,5 +1,5 @@
-import 'package:dishlocal/ui/features/view_post/view/post.dart';
+import 'package:dishlocal/ui/features/view_post/view/small_post.dart';
 
 abstract class PostRepository {
-  Future<Post> getPosts();
+  Future<SmallPost> getPosts();
 }
