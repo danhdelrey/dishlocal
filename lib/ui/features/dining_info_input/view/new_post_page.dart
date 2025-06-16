@@ -118,6 +118,9 @@ class _NewPostPageState extends State<NewPostPage> {
                       case DiningInfoInputField.dishName:
                         _dishNameFocusNode.requestFocus();
                         break;
+                      case DiningInfoInputField.moneyInput:
+                        _moneyInputFocusNode.requestFocus();
+                        break;
                       case DiningInfoInputField.diningLocationName:
                         _diningLocationNameFocusNode.requestFocus();
                         break;
@@ -126,9 +129,6 @@ class _NewPostPageState extends State<NewPostPage> {
                         break;
                       case DiningInfoInputField.insightInput:
                         _insightInputFocusNode.requestFocus();
-                        break;
-                      case DiningInfoInputField.moneyInput:
-                        _moneyInputFocusNode.requestFocus();
                         break;
                     }
                     // Báo cho BLoC biết UI đã xử lý yêu cầu focus.
