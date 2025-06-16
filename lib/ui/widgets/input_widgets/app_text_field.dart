@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 
 class AppTextField extends StatefulWidget {
@@ -23,6 +24,7 @@ class AppTextField extends StatefulWidget {
     this.maxLine = 5,
     this.minLine = 1,
     this.keyboardType = TextInputType.multiline,
+    this.inputFormatters,
   });
 
   final String? title;
@@ -34,6 +36,7 @@ class AppTextField extends StatefulWidget {
   final int maxLine;
   final int minLine;
   final TextInputType keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   final String? initialValue;
   final ValueChanged<String>? onChanged;
@@ -162,6 +165,7 @@ class _AppTextFieldState extends State<AppTextField> {
                               ),
                         ),
                         buildCounter: (context, {required currentLength, required isFocused, required maxLength}) => null,
+                        inputFormatters: widget.inputFormatters,
                       ),
                     ),
                     if (widget.trailingIcon != null)

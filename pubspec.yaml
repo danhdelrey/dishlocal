@@ -64,6 +64,7 @@ dependencies:
   formz: ^0.8.0
   cached_network_image: ^3.4.1
   intl: ^0.20.2
+  flutter_multi_formatter: ^2.13.7
   
 
 dev_dependencies:

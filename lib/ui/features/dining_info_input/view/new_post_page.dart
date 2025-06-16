@@ -15,6 +15,7 @@ import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dar
 import 'package:dishlocal/utils/image_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -211,13 +212,28 @@ class _NewPostPageState extends State<NewPostPage> {
                                     ),
                                     const SizedBox(height: 10),
                                     AppTextField(
+                                      leadingIcon: AppIcons.wallet4.toSvg(
+                                        width: 16,
+                                        color: appColorScheme(context).onSurface,
+                                      ),
+                                      inputFormatters: [
+                                        CurrencyInputFormatter(
+                                          trailingSymbol: 'đ',
+                                          mantissaLength: 0,
+                                          thousandSeparator: ThousandSeparator.Period,
+                                          useSymbolPadding: true,
+                                        ),
+                                      ],
                                       focusNode: _moneyInputFocusNode,
                                       keyboardType: TextInputType.number,
-                                      title: 'Giá*',
-                                      hintText: 'Nhập giá của món ăn...',
-                                      maxLength: 9,
+                                      title: 'Giá tiền*',
+                                      hintText: 'Nhập giá tiền của món ăn...',
                                       maxLine: 1,
-                                      onChanged: (money) => context.read<DiningInfoInputBloc>().add(MoneyInputChanged(money: money)),
+                                      maxLength: 12,
+                                      onChanged: (money) {
+                                        context.read<DiningInfoInputBloc>().add(MoneyInputChanged(money: money));
+                                      },
+                                     
                                     ),
                                     const SizedBox(height: 10),
                                     AppTextField(

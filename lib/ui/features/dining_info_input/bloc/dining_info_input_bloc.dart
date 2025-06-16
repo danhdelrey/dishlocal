@@ -82,19 +82,16 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
   void _onMoneyInputChanged(MoneyInputChanged event, Emitter<DiningInfoInputState> emit) {
     _log.fine('Nhận được sự kiện MoneyInputChanged với giá trị: "${event.money}"');
 
-    final formatter = NumberFormat("#,##0 'đ'", 'vi_VN');
-    final formattedMoney = formatter.format(int.parse(event.money));
+    final regex = RegExp(r'[.\sđ]');
+    final normalizedMoney = event.money.replaceAll(regex, '');
+    _log.fine('"${event.money}" sau khi normalize lại thành: "$normalizedMoney"');
 
-    _log.fine('Định dạng lại tiền: $formattedMoney , sau đó truyền vào state');
-
-    //TODO: money được định dạng và truyền vào state có tác dụng gì, có làm thay đổi nội dung text field đang nhập không
-
-    final moneyInput = MoneyInput.dirty(value: formattedMoney);
+    final moneyInput = MoneyInput.dirty(value: normalizedMoney);
 
     emit(state.copyWith(
       moneyInput: moneyInput,
     ));
-    _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi giá.');
+    _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi giá tiền.');
   }
 
   Future<void> _onSubmitted(DiningInfoInputSubmitted event, Emitter<DiningInfoInputState> emit) async {
