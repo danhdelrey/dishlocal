@@ -21,26 +21,16 @@ class HomePage extends StatelessWidget {
             return <Widget>[
               GlassSliverAppBar(
                 hasBorder: false,
-                title: Row(
-                  children: [
-                    AppIcons.appIconGradient.toSvg(
-                      width: 20,
+                title: ShaderMask(
+                  shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                  child: const Text(
+                    'DishLocal',
+                    style: TextStyle(
+                      fontFamily: 'SFProDisplay',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 24,
                     ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    ShaderMask(
-                      shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                      child: const Text(
-                        'DishLocal',
-                        style: TextStyle(
-                          fontFamily: 'SFProDisplay',
-                          fontWeight: FontWeight.w800,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 actions: [
                   IconButton(
