@@ -16,6 +16,10 @@ import '../../data/categories/address/repository/implementation/address_reposito
     as _i437;
 import '../../data/categories/address/repository/interface/address_repository.dart'
     as _i344;
+import '../../data/categories/post/repository/implementation/remote_post_repository_impl.dart'
+    as _i95;
+import '../../data/categories/post/repository/interface/post_repository.dart'
+    as _i480;
 import '../../data/services/geocoding_service/implementation/geocoding_service_nominatim_impl.dart'
     as _i3;
 import '../../data/services/geocoding_service/interface/geocoding_service.dart'
@@ -47,6 +51,7 @@ _i174.GetIt init(
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
   gh.factory<_i592.DiningInfoInputBloc>(() => _i592.DiningInfoInputBloc());
   gh.lazySingleton<_i1028.ImageProcessor>(() => _i1028.ImageProcessor());
+  gh.lazySingleton<_i480.PostRepository>(() => _i95.RemotePostRepositoryImpl());
   gh.factory<_i889.CameraBloc>(
       () => _i889.CameraBloc(imageProcessor: gh<_i1028.ImageProcessor>()));
   gh.lazySingleton<_i766.GeocodingService>(

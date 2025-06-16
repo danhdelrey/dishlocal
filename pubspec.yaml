@@ -67,6 +67,8 @@ dependencies:
   flutter_multi_formatter: ^2.13.7
   flutter_blurhash: ^0.9.1
   blurhash_dart: ^1.2.1
+  json_serializable: ^6.9.5
+  json_annotation: ^4.9.0
   
 
 dev_dependencies:

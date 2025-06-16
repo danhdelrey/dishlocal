@@ -93,4 +93,13 @@ class MockAddress extends _i1.Mock implements _i6.Address {
           Invocation.getter(#displayName),
         ),
       ) as String);
+
+  @override
+  Map<String, dynamic> toJson() => (super.noSuchMethod(
+        Invocation.method(
+          #toJson,
+          [],
+        ),
+        returnValue: <String, dynamic>{},
+      ) as Map<String, dynamic>);
 }
