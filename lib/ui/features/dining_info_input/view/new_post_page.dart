@@ -93,7 +93,22 @@ class _NewPostPageState extends State<NewPostPage> {
                     // Hiển thị thông báo thành công nếu cần
                     ScaffoldMessenger.of(context)
                       ..hideCurrentSnackBar()
-                      ..showSnackBar(const SnackBar(content: Text('Đăng bài thành công!')));
+                      ..showSnackBar(
+                        SnackBar(
+                          backgroundColor: appColorScheme(context).surfaceContainer,
+                          content: Text(
+                            'Đăng bài thành công!',
+                            style: appTextTheme(context).titleMedium!.copyWith(
+                                  color: appColorScheme(context).onSurface,
+                                ),
+                          ),
+                          action: SnackBarAction(label: 'Xem', onPressed: () {}),
+                          duration: const Duration(
+                            days: 1,
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
                     context.pop();
                   }
                   if (state.formzSubmissionStatus.isInProgress) {
