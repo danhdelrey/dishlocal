@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:blurhash_dart/blurhash_dart.dart';
 import 'package:image/image.dart' as img;
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -38,5 +39,13 @@ class ImageProcessor {
     } catch (e) {
       _log.severe('Lỗi khi xóa file: $e');
     }
+  }
+
+  String encodeImageToBlurhashString(String imagePath) {
+    final data = File(imagePath).readAsBytesSync();
+    final image = img.decodeImage(data);
+    final blurHash = BlurHash.encode(image!, numCompX: 4, numCompY: 3);
+    _log.info("Chuỗi blurhash của ảnh là: '${blurHash.hash}'");
+    return blurHash.hash;
   }
 }
