@@ -15,7 +15,6 @@ final class CameraReady extends CameraState {
 
   CameraReady({required this.cameraController});
 
-
   @override
   List<Object?> get props => [cameraController];
 }
@@ -35,8 +34,12 @@ final class CameraCaptureInProgress extends CameraState {}
 
 final class CameraCaptureSuccess extends CameraState {
   final String imagePath;
+  final String blurHash;
 
-  CameraCaptureSuccess({required this.imagePath});
+  CameraCaptureSuccess({
+    required this.imagePath,
+    required this.blurHash,
+  });
 
   @override
   List<Object?> get props => [imagePath];

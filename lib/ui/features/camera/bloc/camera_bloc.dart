@@ -142,11 +142,14 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       _log.fine('Đang tạo chuỗi blurhash cho ảnh đã chụp...');
       final hash = imageProcessor.encodeImageToBlurhashString(imageFile.path);
-      _log.fine('Tạo chuỗi blurhash thành công: "$hash"');
+      _log.fine('Tạo chuỗi blurhash thành công và emit vào state: "$hash"');
 
       // 5. Emit trạng thái thành công với đường dẫn ảnh
       // UI sẽ lắng nghe state này và thực hiện điều hướng
-      emit(CameraCaptureSuccess(imagePath: imageFile.path));
+      emit(CameraCaptureSuccess(
+        imagePath: imageFile.path,
+        blurHash: hash,
+      ));
 
       emit(CameraReady(cameraController: _controller!));
     } on CameraException catch (e, stackTrace) {
