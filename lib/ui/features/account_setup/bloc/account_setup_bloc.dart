@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/bio_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/display_name_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/username_input.dart';
@@ -15,7 +16,11 @@ part 'account_setup_state.dart';
 class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
   final _log = Logger('AccountSetupBloc');
 
-  AccountSetupBloc() : super(const AccountSetupState()) {
+  final AppUserRepository appUserRepository;
+
+  AccountSetupBloc({
+    required this.appUserRepository,
+  }) : super(const AccountSetupState()) {
     _log.info('Khởi tạo AccountSetupBloc.');
 
     on<UsernameChanged>(_onUsernameChanged);
@@ -82,8 +87,7 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
       _log.info('Dữ liệu đã nhập: username="${usernameInput.value}", displayName="${displayNameInput.value}", bio="${bioInput.value}"');
 
       try {
-        // Mô phỏng một lời gọi API
-        await Future.delayed(const Duration(seconds: 1));
+        await appUserRepository.createUsername(usernameInput.value);
         _log.info('Submit dữ liệu thành công.');
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
       } catch (e, st) {
