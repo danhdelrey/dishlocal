@@ -1,5 +1,10 @@
+// file: lib/data/services/authentication_service/implementation/firebase_authentication_service.dart
+
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
+// THÊM IMPORT MỚI
+import 'package:dishlocal/data/services/authentication_service/exception/authentication_service_exception.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart'; // Cần cho PlatformException
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -44,8 +49,8 @@ class FirebaseAuthenticationService implements AuthenticationService {
 
       if (googleUser == null) {
         _log.warning('Người dùng đã hủy quá trình đăng nhập Google.');
-        // Người dùng đã hủy đăng nhập
-        throw FirebaseAuthException(code: 'USER_CANCELLED');
+        // THAY ĐỔI: Throw exception tùy chỉnh thay vì của Firebase.
+        throw GoogleSignInCancelledException();
       }
 
       _log.info('Đăng nhập Google thành công cho người dùng: ${googleUser.email}.');
@@ -63,10 +68,23 @@ class FirebaseAuthenticationService implements AuthenticationService {
       _log.info('Đăng nhập vào Firebase thành công. UID người dùng: ${userCredential.user?.uid}');
 
       return userCredential;
+    }
+    // THAY ĐỔI: Bắt các loại lỗi cụ thể hơn để throw exception tương ứng.
+    on FirebaseAuthException catch (e, stackTrace) {
+      _log.severe('Đã xảy ra lỗi FirebaseAuthException trong quá trình đăng nhập.', e, stackTrace);
+      throw FirebaseSignInException(e.message ?? 'Lỗi không xác định từ Firebase.');
+    } on PlatformException catch (e, stackTrace) {
+      // PlatformException thường đến từ các SDK native như google_sign_in
+      _log.severe('Đã xảy ra lỗi PlatformException (có thể từ Google Sign In).', e, stackTrace);
+      throw GoogleSignInException(e.message ?? 'Lỗi nền tảng, có thể do mạng hoặc dịch vụ.');
     } catch (e, stackTrace) {
-      _log.severe('Đã xảy ra lỗi trong quá trình đăng nhập với Google.', e, stackTrace);
-      // Xử lý các lỗi khác
-      rethrow;
+      // Bắt lại exception "hủy đăng nhập" của chúng ta để không bị gói vào lỗi "Unknown"
+      if (e is GoogleSignInCancelledException) {
+        rethrow;
+      }
+      _log.severe('Đã xảy ra lỗi không xác định trong quá trình đăng nhập với Google.', e, stackTrace);
+      // Gói các lỗi không lường trước được khác vào một exception chung.
+      throw AuthenticationServiceUnknownException(e.toString());
     }
   }
 
@@ -86,9 +104,9 @@ class FirebaseAuthenticationService implements AuthenticationService {
       _log.info('Quá trình đăng xuất hoàn tất.');
     } catch (e, stackTrace) {
       _log.severe('Đã xảy ra lỗi trong quá trình đăng xuất.', e, stackTrace);
-      // Mặc dù không có trong code gốc, nhưng việc bắt lỗi và rethrow ở đây là thực hành tốt
-      // để đảm bảo log được ghi lại mà không thay đổi luồng xử lý lỗi.
-      rethrow;
+      // THAY ĐỔI: Thay vì rethrow, chúng ta throw một Exception cụ thể,
+      // gói lỗi gốc vào trong message để debug.
+      throw SignOutException('Lỗi khi đăng xuất: ${e.toString()}');
     }
   }
 }
