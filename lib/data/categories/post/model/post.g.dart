@@ -8,10 +8,12 @@ part of 'post.dart';
 
 Post _$PostFromJson(Map<String, dynamic> json) => Post(
       postId: json['postId'] as String,
-      address: Address.fromJson(json['address'] as Map<String, dynamic>),
-      dishName: json['dishName'] as String,
-      imageUrl: json['imageUrl'] as String,
-      price: (json['price'] as num).toInt(),
+      address: json['address'] == null
+          ? null
+          : Address.fromJson(json['address'] as Map<String, dynamic>),
+      dishName: json['dishName'] as String?,
+      imageUrl: json['imageUrl'] as String?,
+      price: (json['price'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{

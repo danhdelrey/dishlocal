@@ -45,6 +45,7 @@ import '../../data/services/location_service/implementation/geolocator_wrapper.d
     as _i258;
 import '../../data/services/location_service/interface/location_service.dart'
     as _i473;
+import '../../ui/features/auth/bloc/auth_bloc.dart' as _i511;
 import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
@@ -98,6 +99,8 @@ _i174.GetIt init(
         gh<_i780.AuthenticationService>(),
         gh<_i4.DatabaseService>(),
       ));
+  gh.factory<_i511.AuthBloc>(
+      () => _i511.AuthBloc(gh<_i749.AppUserRepository>()));
   return getIt;
 }
 

@@ -12,7 +12,6 @@ import 'package:dishlocal/data/categories/address/model/address.dart' as _i6;
 import 'package:dishlocal/data/categories/address/repository/interface/address_repository.dart'
     as _i3;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -74,25 +73,10 @@ class MockAddress extends _i1.Mock implements _i6.Address {
   }
 
   @override
-  double get latitude => (super.noSuchMethod(
-        Invocation.getter(#latitude),
-        returnValue: 0.0,
-      ) as double);
-
-  @override
-  double get longitude => (super.noSuchMethod(
-        Invocation.getter(#longitude),
-        returnValue: 0.0,
-      ) as double);
-
-  @override
-  String get displayName => (super.noSuchMethod(
-        Invocation.getter(#displayName),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.getter(#displayName),
-        ),
-      ) as String);
+  List<Object?> get props => (super.noSuchMethod(
+        Invocation.getter(#props),
+        returnValue: <Object?>[],
+      ) as List<Object?>);
 
   @override
   Map<String, dynamic> toJson() => (super.noSuchMethod(

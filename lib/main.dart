@@ -1,11 +1,13 @@
 import 'dart:developer';
 
-import 'package:dishlocal/app/config/router.dart';
+import 'package:dishlocal/app/config/app_router.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/firebase_options.dart';
+import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 
 Future<void> main() async {
@@ -25,12 +27,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Flutter Demo',
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.dark,
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
+    return BlocProvider(
+      create: (context) => getIt<AuthBloc>(),
+      child: Builder(
+        builder: (context) {
+          // Sử dụng Builder để lấy context có BlocProvider
+          final router = AppRouter(context.read<AuthBloc>()).router;
+          return MaterialApp.router(
+            title: 'Flutter Demo',
+            darkTheme: darkTheme,
+            themeMode: ThemeMode.dark,
+            debugShowCheckedModeBanner: false,
+            routerConfig: router,
+          );
+        }
+      ),
     );
   }
 }

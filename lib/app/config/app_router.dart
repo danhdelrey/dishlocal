@@ -1,0 +1,138 @@
+import 'package:dishlocal/app/config/main_shell.dart';
+import 'package:dishlocal/data/categories/address/model/address.dart';
+import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
+import 'package:dishlocal/ui/features/auth/view/login_page.dart';
+import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
+import 'package:dishlocal/ui/features/dining_info_input/view/new_post_page.dart';
+import 'package:dishlocal/ui/features/home/view/home_page.dart';
+import 'package:dishlocal/ui/features/profile/view/profile_page.dart';
+import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
+import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+class AppRouter {
+  final AuthBloc authBloc;
+  AppRouter(this.authBloc);
+
+  late final router = GoRouter(
+    initialLocation: '/login',
+    refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
+    redirect: (BuildContext context, GoRouterState state) {
+      final authState = authBloc.state;
+      final isLoggingIn = state.matchedLocation == '/login';
+      final isSettingUpAccount = state.matchedLocation == '/account_setup';
+
+      // Khi chưa xác thực, điều hướng đến login
+      if (authState is Unauthenticated && !isLoggingIn) {
+        return '/login';
+      }
+
+      // Khi cần tạo username, điều hướng đến màn hình tạo
+      if (authState is NeedsUsername && !isSettingUpAccount) {
+        return '/account_setup';
+      }
+
+      // Khi đã xác thực và có username, điều hướng đến home
+      if (authState is Authenticated && (isLoggingIn || isSettingUpAccount)) {
+        return '/home';
+      }
+
+      return null; // Không cần điều hướng
+    },
+    routes: [
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+        path: '/account_setup',
+        builder: (context, state) => const AccountSetupPage(),
+      ),
+      GoRoute(
+        path: '/post_detail',
+        builder: (context, state) {
+          final extraMap = state.extra as Map<String, dynamic>;
+          final int postId = extraMap['postId'];
+          return PostDetailPage(
+            postId: postId,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/camera',
+        builder: (context, state) => const CameraPage(),
+        routes: [
+          GoRoute(
+            path: 'new_post',
+            builder: (context, state) {
+              final extraMap = state.extra as Map<String, dynamic>;
+              final String imagePath = extraMap['imagePath'];
+              final Address address = extraMap['address'];
+              return NewPostPage(
+                imagePath: imagePath,
+                address: address,
+              );
+            },
+          ),
+        ],
+      ),
+
+      // Sử dụng MainShell thay vì PersistentTabView.router
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          // Trả về widget "khung" mà chúng ta vừa tạo
+          return MainShell(navigationShell: navigationShell);
+        },
+        branches: [
+          // Branch 0: Trang chủ
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                builder: (context, state) => const HomePage(),
+              ),
+            ],
+          ),
+          // Branch 1: Khám phá
+          // StatefulShellBranch(
+          //   routes: [
+          //     GoRoute(
+          //       path: '/explore', // Đặt tên route rõ ràng
+          //       builder: (context, state) => const SizedBox(), // Dùng page tương ứng
+          //     ),
+          //   ],
+          // ),
+
+          // Branch 2: Tin nhắn
+          // StatefulShellBranch(
+          //   routes: [
+          //     GoRoute(
+          //       path: '/messages',
+          //       builder: (context, state) => const SizedBox(),
+          //     ),
+          //   ],
+          // ),
+          // Branch 3: Cá nhân
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfilePage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
+
+}
+
+// Helper class để GoRouter lắng nghe stream của BLoC
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    stream.asBroadcastStream().listen((_) => notifyListeners());
+  }
+}
