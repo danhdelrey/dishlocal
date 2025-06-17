@@ -157,6 +157,14 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                                     state.appUser!.displayName ?? '',
                                     style: Theme.of(context).textTheme.titleMedium,
                                   ),
+                                const SizedBox(height: 10),
+                                AppTextField(
+                                  focusNode: _usernameFocusNode,
+                                  title: "Username*",
+                                  hintText: "VD: annguyen123",
+                                  onChanged: (value) => context.read<AccountSetupBloc>().add(UsernameChanged(username: value)),
+                                  errorText: state.usernameInput.isNotValid && !state.usernameInput.isPure ? state.usernameInput.displayError?.getMessage() : null,
+                                ),
                                 const SizedBox(height: 20),
                                 AppTextField(
                                   focusNode: _displayNameFocusNode,
@@ -165,14 +173,6 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                                   keyboardType: TextInputType.name,
                                   onChanged: (value) => context.read<AccountSetupBloc>().add(DisplayNameChanged(displayName: value)),
                                   errorText: state.displayNameInput.isNotValid && !state.displayNameInput.isPure ? state.displayNameInput.displayError?.getMessage() : null,
-                                ),
-                                const SizedBox(height: 10),
-                                AppTextField(
-                                  focusNode: _usernameFocusNode,
-                                  title: "Username*",
-                                  hintText: "VD: annguyen123",
-                                  onChanged: (value) => context.read<AccountSetupBloc>().add(UsernameChanged(username: value)),
-                                  errorText: state.usernameInput.isNotValid && !state.usernameInput.isPure ? state.usernameInput.displayError?.getMessage() : null,
                                 ),
                                 const SizedBox(height: 10),
                                 AppTextField(
