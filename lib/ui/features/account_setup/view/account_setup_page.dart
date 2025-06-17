@@ -152,15 +152,16 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                                     circleRadius: 40,
                                   ),
                                 const SizedBox(height: 10),
-                                Text(
-                                  'Ảnh đại diện',
-                                  style: Theme.of(context).textTheme.titleMedium,
-                                ),
+                                if (state.appUser != null)
+                                  Text(
+                                    state.appUser!.displayName ?? '',
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
                                 const SizedBox(height: 20),
                                 AppTextField(
                                   focusNode: _displayNameFocusNode,
-                                  title: "Họ và tên*",
-                                  hintText: "Nhập họ và tên của bạn",
+                                  title: "Nickname*",
+                                  hintText: "Nhập nickname của bạn...",
                                   keyboardType: TextInputType.name,
                                   onChanged: (value) => context.read<AccountSetupBloc>().add(DisplayNameChanged(displayName: value)),
                                   errorText: state.displayNameInput.isNotValid && !state.displayNameInput.isPure ? state.displayNameInput.displayError?.getMessage() : null,
@@ -168,7 +169,7 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                                 const SizedBox(height: 10),
                                 AppTextField(
                                   focusNode: _usernameFocusNode,
-                                  title: "Tên người dùng (username)*",
+                                  title: "Username*",
                                   hintText: "VD: annguyen123",
                                   onChanged: (value) => context.read<AccountSetupBloc>().add(UsernameChanged(username: value)),
                                   errorText: state.usernameInput.isNotValid && !state.usernameInput.isPure ? state.usernameInput.displayError?.getMessage() : null,
