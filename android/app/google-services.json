@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "994917582362",
+    "project_id": "dishlocal-dev",
+    "storage_bucket": "dishlocal-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994917582362:android:1c0767d93f555d7b1b73a3",
+        "android_client_info": {
+          "package_name": "com.example.dishlocal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJhHofI60k0FjtcEoYVDcrqo4ERDrgkK0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
