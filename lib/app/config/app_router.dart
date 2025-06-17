@@ -8,7 +8,7 @@ import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
 import 'package:dishlocal/ui/features/dining_info_input/view/new_post_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/profile/view/profile_page.dart';
-import 'package:dishlocal/ui/features/update_profile/view/account_setup_page.dart';
+import 'package:dishlocal/ui/features/account_setup/view/account_setup_page.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
