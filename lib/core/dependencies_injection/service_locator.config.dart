@@ -100,7 +100,7 @@ _i174.GetIt init(
         gh<_i4.DatabaseService>(),
       ));
   gh.factory<_i511.AuthBloc>(
-      () => _i511.AuthBloc(gh<_i749.AppUserRepository>()));
+      () => _i511.AuthBloc(userRepository: gh<_i749.AppUserRepository>()));
   return getIt;
 }
 

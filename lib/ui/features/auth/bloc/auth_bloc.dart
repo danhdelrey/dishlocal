@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
+import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
@@ -16,19 +17,43 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AppUserRepository _userRepository;
   StreamSubscription<AppUser?>? _userSubscription;
 
-  AuthBloc(this._userRepository) : super(AuthInitial()) {
+  AuthBloc({required AppUserRepository userRepository}) // Sửa lại constructor để nhận dependency
+      : _userRepository = userRepository,
+        super(AuthInitial()) {
     _log.info('Khởi tạo AuthBloc.');
 
     _log.fine('Bắt đầu lắng nghe luồng (stream) người dùng từ AppUserRepository.');
-    _userSubscription = _userRepository.user.listen((user) {
-      _log.info('Nhận được cập nhật trạng thái người dùng từ luồng. Đang thêm sự kiện AuthStatusChanged.');
-      add(AuthStatusChanged(user));
-    });
+    // THAY ĐỔI: Xử lý lỗi từ stream
+    _userSubscription = _userRepository.user.listen(
+      (user) {
+        _log.info('Nhận được cập nhật trạng thái người dùng từ luồng. Đang thêm sự kiện AuthStatusChanged.');
+        add(AuthStatusChanged(user));
+      },
+      onError: (error) {
+        // Khi stream ném ra lỗi (ví dụ: DatabaseFailure từ repository),
+        // chúng ta sẽ bắt nó ở đây và chuyển thành một State lỗi.
+        _log.severe('Lỗi trong luồng người dùng của repository: $error');
+        add(AuthStreamErrorOccurred(error.toString()));
+      },
+    );
 
     on<AuthStatusChanged>(_onAuthStatusChanged);
     on<GoogleSignInRequested>(_onGoogleSignInRequested);
     on<UsernameCreated>(_onUsernameCreated);
     on<SignOutRequested>(_onSignOutRequested);
+    on<AuthStreamErrorOccurred>(_onAuthStreamErrorOccurred); // THÊM HANDLER MỚI
+  }
+
+  // Phương thức helper để ánh xạ Failure sang State
+  // Giúp logic trong `fold` gọn hơn và có thể tái sử dụng
+  AuthState _mapFailureToState(AppUserFailure failure) {
+    _log.warning('Ánh xạ Failure sang State. Loại Failure: ${failure.runtimeType}');
+    return switch (failure) {
+      SignInCancelledFailure() => Unauthenticated(), // Quay về trạng thái chưa đăng nhập
+      NotAuthenticatedFailure() => Unauthenticated(),
+      // Các lỗi khác thì hiển thị thông báo
+      _ => AuthFailure(failure.message),
+    };
   }
 
   void _onAuthStatusChanged(AuthStatusChanged event, Emitter<AuthState> emit) {
@@ -49,51 +74,75 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void _onGoogleSignInRequested(GoogleSignInRequested event, Emitter<AuthState> emit) async {
+  Future<void> _onGoogleSignInRequested(GoogleSignInRequested event, Emitter<AuthState> emit) async {
     _log.info('Bắt đầu xử lý sự kiện GoogleSignInRequested.');
     _log.fine('Đang phát ra trạng thái AuthLoading.');
     emit(AuthLoading());
-    try {
-      await _userRepository.signInWithGoogle();
-      _log.info('Yêu cầu signInWithGoogle đến repository đã hoàn tất. Trạng thái xác thực sẽ được cập nhật thông qua luồng (stream).');
-    } catch (e, stackTrace) {
-      _log.severe('Đã xảy ra lỗi khi đăng nhập Google.', e, stackTrace);
-      _log.fine('Đang phát ra trạng thái AuthFailure với lỗi: ${e.toString()}');
-      emit(AuthFailure(e.toString()));
-    }
+
+    // THAY ĐỔI: Sử dụng Either và fold
+    final result = await _userRepository.signInWithGoogle();
+
+    result.fold(
+      (failure) {
+        _log.severe('Đăng nhập Google thất bại. Failure: ${failure.runtimeType}');
+        emit(_mapFailureToState(failure));
+      },
+      (_) {
+        // Thành công không cần làm gì ở đây.
+        // Stream `user` sẽ tự động nhận được user mới và kích hoạt `AuthStatusChanged`.
+        _log.info('Yêu cầu signInWithGoogle đến repository đã hoàn tất thành công. Chờ cập nhật từ stream...');
+      },
+    );
   }
 
-  void _onUsernameCreated(UsernameCreated event, Emitter<AuthState> emit) async {
+  Future<void> _onUsernameCreated(UsernameCreated event, Emitter<AuthState> emit) async {
     _log.info("Bắt đầu xử lý sự kiện UsernameCreated với username: '${event.username}'.");
-    _log.fine('Đang phát ra trạng thái AuthLoading.');
-    emit(AuthLoading());
-    try {
-      await _userRepository.createUsername(event.username);
-      _log.info('Yêu cầu createUsername đến repository đã hoàn tất. Trạng thái người dùng sẽ được cập nhật thông qua luồng.');
-    } catch (e, stackTrace) {
-      _log.severe("Đã xảy ra lỗi khi tạo username '${event.username}'.", e, stackTrace);
-      _log.fine('Đang phát ra trạng thái AuthFailure với lỗi: ${e.toString()}');
-      emit(AuthFailure(e.toString()));
-    }
+    // Giữ state hiện tại (Authenticated hoặc NeedsUsername) thay vì loading toàn màn hình
+    // Có thể thêm một flag loading vào state hiện tại nếu muốn hiển thị indicator nhỏ.
+    // Ví dụ: emit(Authenticated(state.user, isLoading: true));
+    // Ở đây, để đơn giản, chúng ta không emit state loading.
+
+    final result = await _userRepository.createUsername(event.username);
+
+    result.fold(
+      (failure) {
+        _log.severe("Đã xảy ra lỗi khi tạo username '${event.username}'. Failure: ${failure.runtimeType}");
+        emit(_mapFailureToState(failure));
+      },
+      (_) {
+        _log.info('Yêu cầu createUsername đến repository đã hoàn tất thành công. Chờ cập nhật từ stream...');
+        // Tương tự, stream sẽ lo phần còn lại.
+      },
+    );
   }
 
-  void _onSignOutRequested(SignOutRequested event, Emitter<AuthState> emit) async {
+  Future<void> _onSignOutRequested(SignOutRequested event, Emitter<AuthState> emit) async {
     _log.info('Bắt đầu xử lý sự kiện SignOutRequested.');
-    _log.fine('Đang phát ra trạng thái AuthLoading.');
-    emit(AuthLoading());
-    try {
-      await _userRepository.signOut();
-      _log.info('Đăng xuất thành công ở tầng repository.');
-    } catch (e, stackTrace) {
-      _log.severe('Lỗi xảy ra trong quá trình đăng xuất.', e, stackTrace);
-      // Để không thay đổi logic, chúng ta cần ném lại lỗi này
-      // để nếu BLoC có Error handler, nó vẫn sẽ hoạt động như cũ.
-      rethrow;
-    }
-    // Logic gốc là luôn emit Unauthenticated sau khi gọi signOut, bất kể kết quả từ stream.
-    // Chúng ta giữ nguyên logic này.
-    _log.fine('Đang phát ra trạng thái Unauthenticated sau khi yêu cầu đăng xuất.');
-    emit(Unauthenticated());
+    emit(AuthLoading()); // Hiển thị loading khi đăng xuất
+
+    final result = await _userRepository.signOut();
+
+    result.fold(
+      (failure) {
+        _log.severe('Lỗi xảy ra trong quá trình đăng xuất. Failure: ${failure.runtimeType}');
+        // Dù đăng xuất lỗi, vẫn nên đưa người dùng về trạng thái Unauthenticated
+        // và hiển thị lỗi qua một cơ chế khác (snackbar, dialog).
+        // Ở đây, chúng ta vẫn emit AuthFailure.
+        emit(_mapFailureToState(failure));
+      },
+      (_) {
+        _log.info('Đăng xuất thành công ở tầng repository.');
+        // Khi đăng xuất thành công, stream `user` sẽ phát ra `null`,
+        // và `_onAuthStatusChanged` sẽ xử lý việc emit `Unauthenticated`.
+        // Vì vậy, không cần emit gì ở đây.
+      },
+    );
+  }
+
+  // Handler mới để xử lý lỗi từ stream
+  void _onAuthStreamErrorOccurred(AuthStreamErrorOccurred event, Emitter<AuthState> emit) {
+    _log.info('Xử lý lỗi từ stream: ${event.errorMessage}');
+    emit(AuthFailure(event.errorMessage));
   }
 
   @override

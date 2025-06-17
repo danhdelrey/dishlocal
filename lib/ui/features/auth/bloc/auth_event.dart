@@ -14,6 +14,14 @@ class AuthStatusChanged extends AuthEvent {
   List<Object?> get props => [user];
 }
 
+// THÊM EVENT MỚI
+class AuthStreamErrorOccurred extends AuthEvent {
+  final String errorMessage;
+  const AuthStreamErrorOccurred(this.errorMessage);
+  @override
+  List<Object?> get props => [errorMessage];
+}
+
 class GoogleSignInRequested extends AuthEvent {}
 
 class UsernameCreated extends AuthEvent {
