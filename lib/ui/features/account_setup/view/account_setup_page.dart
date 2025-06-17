@@ -5,6 +5,7 @@ import 'package:dishlocal/ui/features/account_setup/bloc/account_setup_bloc.dart
 import 'package:dishlocal/ui/features/account_setup/form_input/bio_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/display_name_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/username_input.dart';
+import 'package:dishlocal/ui/features/profile_avatar/view/profile_avatar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_filled_button.dart';
@@ -139,20 +140,7 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 30),
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Theme.of(context).colorScheme.surfaceContainerLow,
-                          ),
-                          // TODO: Thêm logic chọn ảnh đại diện
-                          child: Icon(
-                            Icons.camera_alt_outlined,
-                            size: 40,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
+                        const ProfileAvatar(avatarRadius: 40),
                         const SizedBox(height: 10),
                         Text(
                           'Ảnh đại diện',
