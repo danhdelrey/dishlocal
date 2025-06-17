@@ -1,7 +1,9 @@
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
@@ -65,7 +67,7 @@ class LoginPage extends StatelessWidget {
             const Expanded(child: SizedBox()),
             FilledButton.icon(
               onPressed: () {
-                context.go('/account_setup');
+                context.read<AuthBloc>().add(GoogleSignInRequested());
               },
               label: Text(
                 'Đăng nhập bằng tài khoản Google',
