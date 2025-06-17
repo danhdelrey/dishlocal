@@ -181,13 +181,14 @@ class UserRepositoryImpl implements AppUserRepository {
       if (firebaseUser == null) {
         return const Left(NotAuthenticatedFailure());
       }
+      _log.info('Người dùng hiện tại là userId: ${firebaseUser.uid}, displayName: ${firebaseUser.displayName}, photoUrl: ${firebaseUser.photoURL}, email: ${firebaseUser.email}');
       //TODO: chưa truyền vào userID
       return Right(
         AppUser(
           userId: firebaseUser.uid,
           displayName: firebaseUser.displayName,
           photoUrl: firebaseUser.photoURL,
-          email: firebaseUser.displayName,
+          email: firebaseUser.email,
         ),
       );
     } catch (e) {

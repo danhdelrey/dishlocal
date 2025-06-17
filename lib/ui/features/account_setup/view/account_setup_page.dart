@@ -5,8 +5,8 @@ import 'package:dishlocal/ui/features/account_setup/bloc/account_setup_bloc.dart
 import 'package:dishlocal/ui/features/account_setup/form_input/bio_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/display_name_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/username_input.dart';
-import 'package:dishlocal/ui/features/profile_avatar/view/profile_avatar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_filled_button.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +51,7 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<AccountSetupBloc>(),
+      create: (context) => getIt<AccountSetupBloc>()..add(AccountSetupInitialized()),
       child: Builder(builder: (context) {
         return LoaderOverlay(
           overlayColor: appColorScheme(context).scrim.withValues(alpha: 0.5),
@@ -139,19 +139,24 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                           style: Theme.of(context).textTheme.bodyLarge,
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 30),
-                        const ProfileAvatar(avatarRadius: 40),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Ảnh đại diện',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 20),
+
                         // Sử dụng BlocBuilder để chỉ rebuild các trường input
                         BlocBuilder<AccountSetupBloc, AccountSetupState>(
                           builder: (context, state) {
                             return Column(
                               children: [
+                                const SizedBox(height: 30),
+                                if (state.appUser != null)
+                                  CachedCircleAvatar(
+                                    imageUrl: state.appUser!.photoUrl ?? '',
+                                    circleRadius: 40,
+                                  ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'Ảnh đại diện',
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                ),
+                                const SizedBox(height: 20),
                                 AppTextField(
                                   focusNode: _displayNameFocusNode,
                                   title: "Họ và tên*",

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/bio_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/display_name_input.dart';
@@ -22,12 +23,26 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
     required this.appUserRepository,
   }) : super(const AccountSetupState()) {
     _log.info('Khởi tạo AccountSetupBloc.');
-
+    on<AccountSetupInitialized>(_onAccountSetupInitialized);
     on<UsernameChanged>(_onUsernameChanged);
     on<DisplayNameChanged>(_onDisplayNameChanged);
     on<BioChanged>(_onBioChanged);
     on<AccountSetupSubmitted>(_onSubmitted);
     on<FocusRequestHandled>(_onFocusRequestHandled);
+  }
+
+  void _onAccountSetupInitialized(AccountSetupInitialized event, Emitter<AccountSetupState> emit) async {
+    final result = await appUserRepository.getCurrentUser();
+    result.fold(
+      (failure) {
+        _log.severe('_onAccountSetupInitialized: Có lỗi xảy ra khi initialized: ${failure.message}');
+      },
+      (appUser) {
+        emit(state.copyWith(
+          appUser: appUser,
+        ));
+      },
+    );
   }
 
   void _onUsernameChanged(UsernameChanged event, Emitter<AccountSetupState> emit) {

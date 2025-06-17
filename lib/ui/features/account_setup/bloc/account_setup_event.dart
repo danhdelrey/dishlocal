@@ -7,6 +7,8 @@ sealed class AccountSetupEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+final class AccountSetupInitialized extends AccountSetupEvent {}
+
 // Sự kiện khi người dùng thay đổi giá trị của trường username.
 final class UsernameChanged extends AccountSetupEvent {
   const UsernameChanged({required this.username});
