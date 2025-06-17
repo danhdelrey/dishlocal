@@ -173,4 +173,25 @@ class UserRepositoryImpl implements AppUserRepository {
       return const Left(UnknownFailure(message: 'Lỗi không xác định khi đăng xuất.'));
     }
   }
+
+  @override
+  Future<Either<AppUserFailure, AppUser>> getCurrentUser() async {
+    try {
+      final firebaseUser = _authService.getCurrentUser();
+      if (firebaseUser == null) {
+        return const Left(NotAuthenticatedFailure());
+      }
+      //TODO: chưa truyền vào userID
+      return Right(
+        AppUser(
+          userId: firebaseUser.uid,
+          displayName: firebaseUser.displayName,
+          photoUrl: firebaseUser.photoURL,
+          email: firebaseUser.displayName,
+        ),
+      );
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
 }
