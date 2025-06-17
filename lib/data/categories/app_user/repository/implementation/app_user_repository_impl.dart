@@ -1,6 +1,12 @@
+// file: lib/data/categories/app_user/repository/implementation/user_repository_impl.dart
+
+import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
+import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
+import 'package:dishlocal/data/services/authentication_service/exception/authentication_service_exception.dart';
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
+import 'package:dishlocal/data/services/database_service/exception/database_service_exception.dart' as db_exception;
 import 'package:dishlocal/data/services/database_service/interface/database_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -48,15 +54,17 @@ class UserRepositoryImpl implements AppUserRepository {
           );
         }
       } catch (e, stackTrace) {
-        _log.severe('Lỗi không mong muốn khi xử lý sự kiện thay đổi người dùng cho UID: $userId', e, stackTrace);
-        // Ném lại lỗi để stream có thể xử lý nó
-        rethrow;
+        _log.severe('Lỗi khi xử lý sự kiện thay đổi người dùng cho UID: $userId', e, stackTrace);
+        // THAY ĐỔI: Thay vì rethrow, chúng ta ném ra một lỗi mà stream có thể bắt được.
+        // BLoC lắng nghe stream này sẽ cần có .handleError hoặc .listen(onError: ...).
+        // Đối với BLoC, một cách hay là biến stream lỗi thành stream State lỗi.
+        throw DatabaseFailure('Không thể tải dữ liệu người dùng: ${e.toString()}');
       }
     });
   }
 
   @override
-  Future<void> signInWithGoogle() async {
+  Future<Either<AppUserFailure, void>> signInWithGoogle() async {
     _log.info('Bắt đầu quy trình đăng nhập với Google ở tầng Repository.');
     try {
       _log.fine('Đang gọi _authService.signInWithGoogle()...');
@@ -64,8 +72,9 @@ class UserRepositoryImpl implements AppUserRepository {
       final firebaseUser = userCredential.user;
 
       if (firebaseUser == null) {
-        _log.warning('signInWithGoogle từ authService trả về credential nhưng không có user object. Kết thúc quy trình.');
-        return;
+        // Trường hợp này rất hiếm, nhưng nên xử lý
+        _log.severe('signInWithGoogle từ authService trả về credential nhưng không có user object.');
+        return const Left(UnknownFailure(message: 'Không nhận được thông tin người dùng sau khi đăng nhập.'));
       }
 
       final userId = firebaseUser.uid;
@@ -91,21 +100,37 @@ class UserRepositoryImpl implements AppUserRepository {
       } else {
         _log.info('Người dùng với UID $userId đã tồn tại trong Firestore. Bỏ qua bước tạo mới.');
       }
+      return const Right(null); // Thành công
+    }
+    // THAY ĐỔI: Bắt các ServiceException và "dịch" sang Failure
+    on GoogleSignInCancelledException catch (e) {
+      _log.warning('Bắt được GoogleSignInCancelledException: ${e.message}');
+      return const Left(SignInCancelledFailure());
+    } on GoogleSignInException catch (e) {
+      _log.severe('Bắt được GoogleSignInException: ${e.message}');
+      return Left(SignInServiceFailure(e.message));
+    } on FirebaseSignInException catch (e) {
+      _log.severe('Bắt được FirebaseSignInException: ${e.message}');
+      return Left(SignInServiceFailure(e.message));
+    } on db_exception.DatabaseServiceException catch (e) {
+      _log.severe('Bắt được DatabaseServiceException trong lúc đăng nhập: ${e.message}');
+      return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi thiết lập người dùng: ${e.message}'));
     } catch (e, stackTrace) {
-      _log.severe('Lỗi xảy ra trong quá trình signInWithGoogle tại Repository.', e, stackTrace);
-      rethrow;
+      _log.severe('Lỗi không xác định xảy ra trong quá trình signInWithGoogle tại Repository.', e, stackTrace);
+      return const Left(UnknownFailure());
     }
   }
 
   @override
-  Future<void> createUsername(String username) async {
+  Future<Either<AppUserFailure, void>> createUsername(String username) async {
     _log.info("Bắt đầu cập nhật username cho người dùng hiện tại.");
     try {
       _log.fine('Đang lấy người dùng hiện tại từ _authService...');
       final firebaseUser = _authService.getCurrentUser();
       if (firebaseUser == null) {
-        _log.severe('Không có người dùng nào đang đăng nhập để cập nhật username. Ném ra ngoại lệ.');
-        throw Exception('Not authenticated');
+        _log.warning('Không có người dùng nào đang đăng nhập để cập nhật username.');
+        // THAY ĐỔI: Trả về Failure thay vì throw Exception
+        return const Left(NotAuthenticatedFailure());
       }
 
       final userId = firebaseUser.uid;
@@ -116,21 +141,36 @@ class UserRepositoryImpl implements AppUserRepository {
         data: {'username': username},
       );
       _log.info('Cập nhật username thành công cho người dùng $userId.');
+      return const Right(null); // Thành công
+    }
+    // THAY ĐỔI: Bắt các ServiceException và "dịch" sang Failure
+    on db_exception.PermissionDeniedException catch (e) {
+      _log.severe('Lỗi quyền khi cập nhật username: ${e.message}');
+      return const Left(UpdatePermissionDeniedFailure());
+    } on db_exception.DatabaseServiceException catch (e) {
+      _log.severe('Lỗi database khi cập nhật username: ${e.message}');
+      return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi cập nhật username: ${e.message}'));
     } catch (e, stackTrace) {
-      _log.severe('Lỗi khi đang cập nhật username.', e, stackTrace);
-      rethrow;
+      _log.severe('Lỗi không xác định khi đang cập nhật username.', e, stackTrace);
+      return const Left(UnknownFailure());
     }
   }
 
   @override
-  Future<void> signOut() async {
+  Future<Either<AppUserFailure, void>> signOut() async {
     _log.info('Bắt đầu quy trình đăng xuất.');
     try {
       await _authService.signOut();
       _log.info('Đăng xuất thành công.');
+      return const Right(null); // Thành công
+    }
+    // THAY ĐỔI: Bắt ServiceException và "dịch" sang Failure
+    on SignOutException catch (e) {
+      _log.severe('Bắt được SignOutException: ${e.message}');
+      return Left(SignOutFailure(e.message));
     } catch (e, stackTrace) {
-      _log.severe('Lỗi xảy ra trong quá trình đăng xuất.', e, stackTrace);
-      rethrow;
+      _log.severe('Lỗi không xác định xảy ra trong quá trình đăng xuất.', e, stackTrace);
+      return const Left(UnknownFailure(message: 'Lỗi không xác định khi đăng xuất.'));
     }
   }
 }
