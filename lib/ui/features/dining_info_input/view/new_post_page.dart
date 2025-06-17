@@ -198,7 +198,7 @@ class _NewPostPageState extends State<NewPostPage> {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 50),
                               child: Text(
-                                widget.address.displayName,
+                                widget.address.displayName ?? '',
                                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                       color: Theme.of(context).colorScheme.onSurface,
                                     ),

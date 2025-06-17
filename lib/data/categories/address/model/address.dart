@@ -4,14 +4,14 @@ part 'address.g.dart';
 
 @JsonSerializable()
 class Address extends Equatable {
-  final double? latitude;
-  final double? longitude;
+  final double latitude;
+  final double longitude;
   final String? displayName;
 
   const Address({
-     this.latitude,
-     this.longitude,
-     this.displayName,
+    required this.latitude,
+    required this.longitude,
+    this.displayName,
   });
 
   factory Address.fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
