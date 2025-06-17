@@ -73,6 +73,18 @@ class MockAddress extends _i1.Mock implements _i6.Address {
   }
 
   @override
+  double get latitude => (super.noSuchMethod(
+        Invocation.getter(#latitude),
+        returnValue: 0.0,
+      ) as double);
+
+  @override
+  double get longitude => (super.noSuchMethod(
+        Invocation.getter(#longitude),
+        returnValue: 0.0,
+      ) as double);
+
+  @override
   List<Object?> get props => (super.noSuchMethod(
         Invocation.getter(#props),
         returnValue: <Object?>[],
