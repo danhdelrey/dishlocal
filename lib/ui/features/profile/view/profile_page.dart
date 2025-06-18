@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
 import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_info.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
@@ -22,16 +23,13 @@ class ProfilePage extends StatelessWidget {
           // 1. headerSliverBuilder: chứa các widget ở trên cùng (phần header)
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              GlassSliverAppBar(
+              const GlassSliverAppBar(
                 pinned: true,
                 floating: true,
-                title: const Text('lanadelrey'),
+                title: Text('lanadelrey'),
                 centerTitle: true,
                 actions: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.logout_rounded),
-                  )
+                  LogoutButton(),
                 ],
               ),
 
