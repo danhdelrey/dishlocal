@@ -91,7 +91,18 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
         await appUserRepository.updateBio(bioInput.value);
         await appUserRepository.updateDisplayName(displayNameInput.value);
         _log.info('Submit dữ liệu thành công.');
-        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
+        final appUser = await appUserRepository.getCurrentUser();
+        appUser.fold(
+          (failure) {
+            _log.info('User là null, form success.');
+            emit(state.copyWith(appUser: null, formzSubmissionStatus: FormzSubmissionStatus.success));
+          },
+          (appUser) {
+            _log.info('User đã có, form success.');
+            emit(state.copyWith(appUser: appUser, formzSubmissionStatus: FormzSubmissionStatus.success));
+          },
+        );
+        
       } catch (e, st) {
         _log.severe('Submit thất bại', e, st);
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));

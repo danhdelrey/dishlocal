@@ -9,6 +9,7 @@ enum AccountSetupField {
 
 class AccountSetupState extends Equatable {
   const AccountSetupState({
+    this.appUser,
     this.usernameInput = const UsernameInput.pure(),
     this.displayNameInput = const DisplayNameInput.pure(),
     this.bioInput = const BioInput.pure(),
@@ -16,6 +17,7 @@ class AccountSetupState extends Equatable {
     this.fieldToFocus,
   });
 
+  final AppUser? appUser;
 
   // Khai báo các trường input của form.
   final UsernameInput usernameInput;
@@ -29,6 +31,7 @@ class AccountSetupState extends Equatable {
   final AccountSetupField? fieldToFocus;
 
   AccountSetupState copyWith({
+    AppUser? appUser,
     UsernameInput? usernameInput,
     DisplayNameInput? displayNameInput,
     BioInput? bioInput,
@@ -37,6 +40,7 @@ class AccountSetupState extends Equatable {
     ValueGetter<AccountSetupField?>? fieldToFocus,
   }) {
     return AccountSetupState(
+      appUser: appUser ?? this.appUser,
       usernameInput: usernameInput ?? this.usernameInput,
       displayNameInput: displayNameInput ?? this.displayNameInput,
       bioInput: bioInput ?? this.bioInput,
@@ -48,6 +52,7 @@ class AccountSetupState extends Equatable {
 
   @override
   List<Object?> get props => [
+        appUser,
         usernameInput,
         displayNameInput,
         bioInput,

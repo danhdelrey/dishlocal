@@ -5,6 +5,7 @@ import 'package:dishlocal/ui/features/account_setup/bloc/account_setup_bloc.dart
 import 'package:dishlocal/ui/features/account_setup/form_input/bio_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/display_name_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/username_input.dart';
+import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_avatar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
@@ -79,7 +80,7 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                           backgroundColor: appColorScheme(context).inverseSurface,
                         ),
                       );
-                    
+                    context.read<AuthBloc>().add(AuthStatusChanged(state.appUser));
                   }
                   if (state.formzSubmissionStatus.isInProgress) {
                     FocusScope.of(context).unfocus();
