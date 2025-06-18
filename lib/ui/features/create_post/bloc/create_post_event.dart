@@ -47,7 +47,15 @@ final class MoneyInputChanged extends CreatePostEvent {
   List<Object?> get props => [money];
 }
 
-final class CreatePostRequested extends CreatePostEvent {}
+final class CreatePostRequested extends CreatePostEvent {
+  final Address address;
+  final String imagePath;
+  final DateTime createdAt;
+
+  const CreatePostRequested({required this.address, required this.imagePath, required this.createdAt});
+  @override
+  List<Object?> get props => [address, imagePath, createdAt];
+}
 
 // Sự kiện mới để báo hiệu rằng yêu cầu focus đã được UI xử lý
 final class FocusRequestHandled extends CreatePostEvent {}

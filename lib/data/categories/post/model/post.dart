@@ -9,7 +9,7 @@ class Post extends Equatable {
   final String postId;
   final String authorUserId;
   final String authorUsername;
-  final String authorAvatarUrl;
+  final String? authorAvatarUrl;
   final String? imageUrl;
   final String? dishName;
   final String? diningLocationName;
@@ -26,7 +26,7 @@ class Post extends Equatable {
     required this.postId,
     required this.authorUserId,
     required this.authorUsername,
-    required this.authorAvatarUrl,
+     this.authorAvatarUrl,
     this.imageUrl,
     this.dishName,
     this.diningLocationName,

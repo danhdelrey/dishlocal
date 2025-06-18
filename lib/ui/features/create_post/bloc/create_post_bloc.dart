@@ -1,7 +1,14 @@
 // dining_info_input_bloc.dart
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:dishlocal/data/categories/address/model/address.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
+import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
+import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
+import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/dish_name_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/exact_address_input.dart';
@@ -15,6 +22,7 @@ import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
+import 'package:uuid/uuid.dart';
 
 part 'create_post_event.dart';
 part 'create_post_state.dart';
@@ -22,10 +30,17 @@ part 'create_post_state.dart';
 @injectable // Đánh dấu để injectable có thể quản lý
 class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
   final _log = Logger('DiningInfoInputBloc');
+  static const uuid = Uuid();
+
+  final PostRepository _postRepository;
+  final AppUserRepository _appUserRepository;
 
   // Loại bỏ các trường state private. Nguồn chân lý duy nhất là `state`.
   // Không còn phụ thuộc vào FocusNode.
-  CreatePostBloc() : super(const CreatePostState()) {
+  CreatePostBloc(
+    this._postRepository,
+    this._appUserRepository,
+  ) : super(const CreatePostState()) {
     _log.info('Khởi tạo DiningInfoInputBloc.');
 
     on<DishNameInputChanged>(_onDishNameChanged);
@@ -139,14 +154,49 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       ));
       _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
       _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}, ${exactAddressInput.value}, ${insightInput.value}, ${moneyInput.value}');
-      try {
-        await Future.delayed(const Duration(seconds: 1));
-        _log.info('Submit dữ liệu thành công');
-        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
-      } catch (e) {
-        _log.severe('Submit thất bại', e);
-        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
-      }
+
+      final appUserResult = await _appUserRepository.getCurrentUser();
+      appUserResult.fold(
+        (failure) {},
+        (appUser) async {
+          final postId = uuid.v4();
+          final uploadImageResult = await _postRepository.uploadPostImage(File(event.imagePath), postId);
+          uploadImageResult.fold(
+            (failure) {},
+            (imageUrl) async {
+              final createNewPostResult = await _postRepository.createNewPost(
+                Post(
+                  postId: postId,
+                  authorUserId: appUser.userId,
+                  authorUsername: appUser.username!,
+                  authorAvatarUrl: appUser.photoUrl,
+                  imageUrl: imageUrl,
+                  dishName: dishNameInput.value,
+                  diningLocationName: diningLocationNameInput.value,
+                  address: event.address,
+                  price: moneyInput.value,
+                  insight: insightInput.value,
+                  createdAt: event.createdAt,
+                  likeCount: 0,
+                  saveCount: 0,
+                ),
+              );
+              createNewPostResult.fold(
+                (failure) {
+                  _log.severe('Submit thất bại', failure);
+                  emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+                },
+                (_) {
+                  _log.info('Submit dữ liệu thành công');
+                  emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
+                },
+              );
+            },
+          );
+        },
+      );
+
+     
     } else {
       _log.warning('Form không hợp lệ. Hiển thị lỗi và yêu cầu focus.');
 

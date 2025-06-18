@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/post/failure/post_failure.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 
 abstract class PostRepository {
   Future<Either<PostFailure, void>> createNewPost(Post newPost);
+  Future<Either<PostFailure, String>> uploadPostImage(File imageFile,String postId);
 }
