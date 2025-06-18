@@ -1,5 +1,7 @@
-import 'package:dishlocal/ui/features/view_post/view/small_post.dart';
+import 'package:dartz/dartz.dart';
+import 'package:dishlocal/data/categories/post/failure/post_failure.dart';
+import 'package:dishlocal/data/categories/post/model/post.dart';
 
 abstract class PostRepository {
-  Future<SmallPost> getPosts();
+  Future<Either<PostFailure, void>> createNewPost(Post newPost);
 }

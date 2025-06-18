@@ -77,7 +77,6 @@ _i174.GetIt init(
   gh.lazySingleton<_i974.FirebaseFirestore>(
       () => firebaseInjectableModule.firestore);
   gh.lazySingleton<_i1028.ImageProcessor>(() => _i1028.ImageProcessor());
-  gh.lazySingleton<_i480.PostRepository>(() => _i95.RemotePostRepositoryImpl());
   gh.factory<_i889.CameraBloc>(
       () => _i889.CameraBloc(imageProcessor: gh<_i1028.ImageProcessor>()));
   gh.lazySingleton<_i780.AuthenticationService>(
@@ -97,6 +96,8 @@ _i174.GetIt init(
       ));
   gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
       addressRepository: gh<_i344.AddressRepository>()));
+  gh.lazySingleton<_i480.PostRepository>(
+      () => _i95.RemotePostRepositoryImpl(gh<_i4.DatabaseService>()));
   gh.lazySingleton<_i749.AppUserRepository>(() => _i904.UserRepositoryImpl(
         gh<_i780.AuthenticationService>(),
         gh<_i4.DatabaseService>(),
