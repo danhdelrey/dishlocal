@@ -26,9 +26,9 @@ class RemotePostRepositoryImpl implements PostRepository {
     try {
       final url = await _storageService.uploadFile(path: 'path', file: imageFile, publicId: post.postId);
       await _databaseService.setDocument(collection: 'posts', docId: post.postId, data: post.copyWith(imageUrl: url).toJson());
-      return Right(null);
+      return const Right(null);
     } catch (e) {
-      return Left(UnknownFailure());
+      return const Left(UnknownFailure());
     }
   }
 }

@@ -160,43 +160,35 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         (failure) {},
         (appUser) async {
           final postId = uuid.v4();
-          final uploadImageResult = await _postRepository.uploadPostImage(File(event.imagePath), postId);
-          uploadImageResult.fold(
-            (failure) {},
-            (imageUrl) async {
-              final createNewPostResult = await _postRepository.createNewPost(
-                Post(
-                  postId: postId,
-                  authorUserId: appUser.userId,
-                  authorUsername: appUser.username!,
-                  authorAvatarUrl: appUser.photoUrl,
-                  imageUrl: imageUrl,
-                  dishName: dishNameInput.value,
-                  diningLocationName: diningLocationNameInput.value,
-                  address: event.address,
-                  price: moneyInput.value,
-                  insight: insightInput.value,
-                  createdAt: event.createdAt,
-                  likeCount: 0,
-                  saveCount: 0,
-                ),
-              );
-              createNewPostResult.fold(
-                (failure) {
-                  _log.severe('Submit thất bại', failure);
-                  emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
-                },
-                (_) {
-                  _log.info('Submit dữ liệu thành công');
-                  emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
-                },
-              );
+          final createNewPostResult = await _postRepository.createPost(
+            post: Post(
+              postId: postId,
+              authorUserId: appUser.userId,
+              authorUsername: appUser.username!,
+              authorAvatarUrl: appUser.photoUrl,
+              dishName: dishNameInput.value,
+              diningLocationName: diningLocationNameInput.value,
+              address: event.address,
+              price: moneyInput.value,
+              insight: insightInput.value,
+              createdAt: event.createdAt,
+              likeCount: 0,
+              saveCount: 0,
+            ),
+            imageFile: File(event.imagePath),
+          );
+          createNewPostResult.fold(
+            (failure) {
+              _log.severe('Submit thất bại', failure);
+              emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+            },
+            (_) {
+              _log.info('Submit dữ liệu thành công');
+              emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
             },
           );
         },
       );
-
-     
     } else {
       _log.warning('Form không hợp lệ. Hiển thị lỗi và yêu cầu focus.');
 
