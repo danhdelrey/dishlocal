@@ -125,37 +125,17 @@ class UserRepositoryImpl implements AppUserRepository {
 
   @override
   Future<Either<AppUserFailure, void>> updateUsername(String username) async {
-    _log.info("Bắt đầu cập nhật username cho người dùng hiện tại.");
-    try {
-      _log.fine('Đang lấy người dùng hiện tại từ _authService...');
-      final firebaseUser = _authService.getCurrentUser();
-      if (firebaseUser == null) {
-        _log.warning('Không có người dùng nào đang đăng nhập để cập nhật username.');
-        // THAY ĐỔI: Trả về Failure thay vì throw Exception
-        return const Left(NotAuthenticatedFailure());
-      }
+    return _updateUserField('username', username);
+  }
 
-      final userId = firebaseUser.uid;
-      _log.fine('Người dùng $userId đã xác thực. Đang cập nhật username thành "$username"...');
-      await _databaseService.updateDocument(
-        collection: _usersCollection,
-        docId: userId,
-        data: {'username': username},
-      );
-      _log.info('Cập nhật username thành công cho người dùng $userId.');
-      return const Right(null); // Thành công
-    }
-    // THAY ĐỔI: Bắt các ServiceException và "dịch" sang Failure
-    on db_exception.PermissionDeniedException catch (e) {
-      _log.severe('Lỗi quyền khi cập nhật username: ${e.message}');
-      return const Left(UpdatePermissionDeniedFailure());
-    } on db_exception.DatabaseServiceException catch (e) {
-      _log.severe('Lỗi database khi cập nhật username: ${e.message}');
-      return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi cập nhật username: ${e.message}'));
-    } catch (e, stackTrace) {
-      _log.severe('Lỗi không xác định khi đang cập nhật username.', e, stackTrace);
-      return const Left(UnknownFailure());
-    }
+  @override
+  Future<Either<AppUserFailure, void>> updateBio(String? bio) async {
+    return _updateUserField('bio', bio);
+  }
+
+  @override
+  Future<Either<AppUserFailure, void>> updateDisplayName(String displayName) async {
+    return _updateUserField('displayName', displayName);
   }
 
   @override
@@ -193,72 +173,39 @@ class UserRepositoryImpl implements AppUserRepository {
     }
   }
 
-  @override
-  Future<Either<AppUserFailure, void>> updateBio(String? bio) async {
-    _log.info("Bắt đầu cập nhật bio cho người dùng hiện tại.");
+  Future<Either<AppUserFailure, void>> _updateUserField(
+    String fieldName,
+    Object? value,
+  ) async {
+    _log.info("Bắt đầu cập nhật trường '$fieldName' cho người dùng hiện tại.");
     try {
       _log.fine('Đang lấy người dùng hiện tại từ _authService...');
       final firebaseUser = _authService.getCurrentUser();
       if (firebaseUser == null) {
-        _log.warning('Không có người dùng nào đang đăng nhập để cập nhật bio.');
-        // THAY ĐỔI: Trả về Failure thay vì throw Exception
+        _log.warning('Không có người dùng nào đang đăng nhập để cập nhật $fieldName.');
         return const Left(NotAuthenticatedFailure());
       }
 
       final userId = firebaseUser.uid;
-      _log.fine('Người dùng $userId đã xác thực. Đang cập nhật bio thành "$bio"...');
+      _log.fine('Người dùng $userId đã xác thực. Đang cập nhật $fieldName thành "$value"...');
+
       await _databaseService.updateDocument(
         collection: _usersCollection,
         docId: userId,
-        data: {'bio': bio},
+        // Đây là điểm mấu chốt: tạo một map với key và value động
+        data: {fieldName: value},
       );
-      _log.info('Cập nhật bio thành công cho người dùng $userId.');
+
+      _log.info('Cập nhật $fieldName thành công cho người dùng $userId.');
       return const Right(null); // Thành công
-    }
-    // THAY ĐỔI: Bắt các ServiceException và "dịch" sang Failure
-    on db_exception.PermissionDeniedException catch (e) {
-      _log.severe('Lỗi quyền khi cập nhật bio: ${e.message}');
+    } on db_exception.PermissionDeniedException catch (e) {
+      _log.severe("Lỗi quyền khi cập nhật $fieldName: ${e.message}");
       return const Left(UpdatePermissionDeniedFailure());
     } on db_exception.DatabaseServiceException catch (e) {
-      _log.severe('Lỗi database khi cập nhật bio: ${e.message}');
-      return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi cập nhật bio: ${e.message}'));
+      _log.severe("Lỗi database khi cập nhật $fieldName: ${e.message}");
+      return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi cập nhật $fieldName: ${e.message}'));
     } catch (e, stackTrace) {
-      _log.severe('Lỗi không xác định khi đang cập nhật bio.', e, stackTrace);
-      return const Left(UnknownFailure());
-    }
-  }
-
-  @override
-  Future<Either<AppUserFailure, void>> updateDisplayName(String displayName) async {
-    _log.info("Bắt đầu cập nhật displayName cho người dùng hiện tại.");
-    try {
-      _log.fine('Đang lấy người dùng hiện tại từ _authService...');
-      final firebaseUser = _authService.getCurrentUser();
-      if (firebaseUser == null) {
-        _log.warning('Không có người dùng nào đang đăng nhập để cập nhật displayName.');
-        // THAY ĐỔI: Trả về Failure thay vì throw Exception
-        return const Left(NotAuthenticatedFailure());
-      }
-
-      final userId = firebaseUser.uid;
-      _log.fine('Người dùng $userId đã xác thực. Đang cập nhật displayName thành "$displayName"...');
-      await _databaseService.updateDocument(
-        collection: _usersCollection,
-        docId: userId,
-        data: {'displayName': displayName},
-      );
-      _log.info('Cập nhật displayName thành công cho người dùng $userId.');
-      return const Right(null); // Thành công
-    }
-    // THAY ĐỔI: Bắt các ServiceException và "dịch" sang Failure
-    on db_exception.PermissionDeniedException catch (e) {
-      _log.severe('Lỗi quyền khi cập nhật displayName: ${e.message}');
-      return const Left(UpdatePermissionDeniedFailure());
-    } on db_exception.DatabaseServiceException catch (e) {
-      _log.severe('Lỗi database khi cập nhật displayName: ${e.message}');
-      return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi cập nhật displayName: ${e.message}'));
-    } catch (e, stackTrace) {
-      _log.severe('Lỗi không xác định khi đang cập nhật displayName.', e, stackTrace);
+      _log.severe('Lỗi không xác định khi đang cập nhật $fieldName.', e, stackTrace);
       return const Left(UnknownFailure());
     }
   }
