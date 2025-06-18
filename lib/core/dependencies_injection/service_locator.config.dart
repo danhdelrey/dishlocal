@@ -52,6 +52,7 @@ import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
 import '../../ui/features/dining_info_input/bloc/dining_info_input_bloc.dart'
     as _i592;
+import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../../utils/image_processor.dart' as _i1028;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
 
@@ -100,6 +101,8 @@ _i174.GetIt init(
         gh<_i780.AuthenticationService>(),
         gh<_i4.DatabaseService>(),
       ));
+  gh.factory<_i973.UserInfoBloc>(
+      () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factory<_i511.AuthBloc>(

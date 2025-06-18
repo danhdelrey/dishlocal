@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
+import 'package:dishlocal/ui/features/user_info/view/profile_info.dart';
 import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
@@ -35,64 +36,8 @@ class ProfilePage extends StatelessWidget {
               ),
 
               // SliverToBoxAdapter để bọc các widget không phải là Sliver
-              SliverToBoxAdapter(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.1),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            const CachedCircleAvatar(
-                              circleRadius: 30,
-                              imageUrl: 'https://dep.com.vn/wp-content/uploads/2024/10/Lana.jpg',
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Đỗ Lan Anh',
-                                  style: Theme.of(context).textTheme.titleMedium,
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                const CustomRichText(
-                                  label1: '2.3K',
-                                  description1: ' người theo dõi • ',
-                                  label2: '245',
-                                  description2: ' đang theo dõi',
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          'Follow mình để cùng "ăn sập" thế giới nhé! Mình là một người đam mê ẩm thực, luôn tìm kiếm những trải nghiệm mới lạ và độc đáo.',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        //thêm phần tab ở đây (scroll sẽ dính lên trên cùng)
-                        //nội dung của tab ở đây
-                      ],
-                    ),
-                  ),
-                ),
+              const SliverToBoxAdapter(
+                child: ProfileInfo(),
               ),
 
               // SliverPersistentHeader để "ghim" TabBar ở trên cùng khi cuộn

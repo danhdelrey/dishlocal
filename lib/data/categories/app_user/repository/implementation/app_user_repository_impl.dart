@@ -175,7 +175,7 @@ class UserRepositoryImpl implements AppUserRepository {
   }
 
   @override
-  Future<Either<AppUserFailure, AppUser>> getCurrentUser() async {
+  Either<AppUserFailure, AppUser> getCurrentUser() {
     try {
       final firebaseUser = _authService.getCurrentUser();
       if (firebaseUser == null) {

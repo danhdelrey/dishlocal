@@ -5,6 +5,7 @@ import 'package:dishlocal/ui/features/account_setup/bloc/account_setup_bloc.dart
 import 'package:dishlocal/ui/features/account_setup/form_input/bio_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/display_name_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/username_input.dart';
+import 'package:dishlocal/ui/features/user_info/view/profile_avatar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
@@ -51,7 +52,7 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<AccountSetupBloc>()..add(AccountSetupInitialized()),
+      create: (context) => getIt<AccountSetupBloc>(),
       child: Builder(builder: (context) {
         return LoaderOverlay(
           overlayColor: appColorScheme(context).scrim.withValues(alpha: 0.5),
@@ -140,24 +141,13 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 30),
-                        if (state.appUser != null)
-                          CachedCircleAvatar(
-                            imageUrl: state.appUser!.photoUrl ?? '',
-                            circleRadius: 40,
-                          ),
-                        const SizedBox(height: 10),
-                        if (state.appUser != null)
-                          Text(
-                            state.appUser!.displayName ?? '',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
+                        const ProfileAvatar(avatarRadius: 40),
                         const SizedBox(height: 10),
                         // Sử dụng BlocBuilder để chỉ rebuild các trường input
                         BlocBuilder<AccountSetupBloc, AccountSetupState>(
                           builder: (context, state) {
                             return Column(
                               children: [
-                                
                                 AppTextField(
                                   focusNode: _usernameFocusNode,
                                   title: "Username*",

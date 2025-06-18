@@ -7,7 +7,7 @@ abstract class AppUserRepository {
   // Lỗi trong stream sẽ được xử lý bằng cách phát ra một event lỗi.
   Stream<AppUser?> get user;
 
-  Future<Either<AppUserFailure, AppUser>> getCurrentUser();
+  Either<AppUserFailure, AppUser> getCurrentUser();
 
   // Đăng nhập và kiểm tra username
   // THAY ĐỔI: Trả về Either<Failure, void>
