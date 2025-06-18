@@ -79,8 +79,7 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                           backgroundColor: appColorScheme(context).inverseSurface,
                         ),
                       );
-                    // Điều hướng đến trang chủ sau khi thành công
-                    context.go('/home');
+                    
                   }
                   if (state.formzSubmissionStatus.isInProgress) {
                     FocusScope.of(context).unfocus();
