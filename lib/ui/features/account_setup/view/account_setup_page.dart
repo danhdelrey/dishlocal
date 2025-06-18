@@ -142,7 +142,7 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                         ),
                         const SizedBox(height: 30),
                         const ProfileAvatar(avatarRadius: 40),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 30),
                         // Sử dụng BlocBuilder để chỉ rebuild các trường input
                         BlocBuilder<AccountSetupBloc, AccountSetupState>(
                           builder: (context, state) {

@@ -9,6 +9,7 @@ class AppUser extends Equatable {
   final String? username;
   final String? displayName;
   final String? photoUrl;
+  final String? bio;
 
   const AppUser({
     required this.userId,
@@ -16,6 +17,7 @@ class AppUser extends Equatable {
     this.username,
     this.displayName,
     this.photoUrl,
+    this.bio,
   });
 
   AppUser copyWith({
@@ -31,6 +33,7 @@ class AppUser extends Equatable {
       username: username ?? this.username,
       displayName: displayName ?? this.displayName,
       photoUrl: photoUrl ?? this.photoUrl,
+      bio: bio ?? this.bio,
     );
   }
 
@@ -44,5 +47,6 @@ class AppUser extends Equatable {
         username,
         displayName,
         photoUrl,
+        bio,
       ];
 }
