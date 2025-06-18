@@ -24,11 +24,5 @@ class AuthStreamErrorOccurred extends AuthEvent {
 
 class GoogleSignInRequested extends AuthEvent {}
 
-class UsernameCreated extends AuthEvent {
-  final String username;
-  const UsernameCreated(this.username);
-  @override
-  List<Object?> get props => [username];
-}
 
 class SignOutRequested extends AuthEvent {}

@@ -39,7 +39,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<AuthStatusChanged>(_onAuthStatusChanged);
     on<GoogleSignInRequested>(_onGoogleSignInRequested);
-    on<UsernameCreated>(_onUsernameCreated);
     on<SignOutRequested>(_onSignOutRequested);
     on<AuthStreamErrorOccurred>(_onAuthStreamErrorOccurred); // THÊM HANDLER MỚI
   }
@@ -94,28 +93,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
     );
   }
-
-  Future<void> _onUsernameCreated(UsernameCreated event, Emitter<AuthState> emit) async {
-    _log.info("Bắt đầu xử lý sự kiện UsernameCreated với username: '${event.username}'.");
-    // Giữ state hiện tại (Authenticated hoặc NeedsUsername) thay vì loading toàn màn hình
-    // Có thể thêm một flag loading vào state hiện tại nếu muốn hiển thị indicator nhỏ.
-    // Ví dụ: emit(Authenticated(state.user, isLoading: true));
-    // Ở đây, để đơn giản, chúng ta không emit state loading.
-    
-    final result = await _userRepository.updateUsername(event.username);
-
-    result.fold(
-      (failure) {
-        _log.severe("Đã xảy ra lỗi khi tạo username '${event.username}'. Failure: ${failure.runtimeType}");
-        emit(_mapFailureToState(failure));
-      },
-      (_) {
-        _log.info('Yêu cầu createUsername đến repository đã hoàn tất thành công. Chờ cập nhật từ stream...');
-        // Tương tự, stream sẽ lo phần còn lại.
-      },
-    );
-  }
-
+  
   Future<void> _onSignOutRequested(SignOutRequested event, Emitter<AuthState> emit) async {
     _log.info('Bắt đầu xử lý sự kiện SignOutRequested.');
     emit(AuthLoading()); // Hiển thị loading khi đăng xuất
