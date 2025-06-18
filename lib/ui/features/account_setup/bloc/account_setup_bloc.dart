@@ -23,7 +23,6 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
     required this.appUserRepository,
   }) : super(const AccountSetupState()) {
     _log.info('Khởi tạo AccountSetupBloc.');
-    on<AccountSetupInitialized>(_onAccountSetupInitialized);
     on<UsernameChanged>(_onUsernameChanged);
     on<DisplayNameChanged>(_onDisplayNameChanged);
     on<BioChanged>(_onBioChanged);
@@ -31,19 +30,6 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
     on<FocusRequestHandled>(_onFocusRequestHandled);
   }
 
-  void _onAccountSetupInitialized(AccountSetupInitialized event, Emitter<AccountSetupState> emit) async {
-    final result = await appUserRepository.getCurrentUser();
-    result.fold(
-      (failure) {
-        _log.severe('_onAccountSetupInitialized: Có lỗi xảy ra khi initialized: ${failure.message}');
-      },
-      (appUser) {
-        emit(state.copyWith(
-          appUser: appUser,
-        ));
-      },
-    );
-  }
 
   void _onUsernameChanged(UsernameChanged event, Emitter<AccountSetupState> emit) {
     _log.fine('Nhận được sự kiện UsernameChanged với giá trị: "${event.username}"');
