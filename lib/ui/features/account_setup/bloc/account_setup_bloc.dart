@@ -30,7 +30,6 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
     on<FocusRequestHandled>(_onFocusRequestHandled);
   }
 
-
   void _onUsernameChanged(UsernameChanged event, Emitter<AccountSetupState> emit) {
     _log.fine('Nhận được sự kiện UsernameChanged với giá trị: "${event.username}"');
     final usernameInput = UsernameInput.dirty(value: event.username);
@@ -88,7 +87,9 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
       _log.info('Dữ liệu đã nhập: username="${usernameInput.value}", displayName="${displayNameInput.value}", bio="${bioInput.value}"');
 
       try {
-        await appUserRepository.createUsername(usernameInput.value);
+        await appUserRepository.updateUsername(usernameInput.value);
+        await appUserRepository.updateBio(bioInput.value);
+        await appUserRepository.updateDisplayName(displayNameInput.value);
         _log.info('Submit dữ liệu thành công.');
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
       } catch (e, st) {

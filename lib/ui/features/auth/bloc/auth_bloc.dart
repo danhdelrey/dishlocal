@@ -101,8 +101,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Có thể thêm một flag loading vào state hiện tại nếu muốn hiển thị indicator nhỏ.
     // Ví dụ: emit(Authenticated(state.user, isLoading: true));
     // Ở đây, để đơn giản, chúng ta không emit state loading.
-
-    final result = await _userRepository.createUsername(event.username);
+    
+    final result = await _userRepository.updateUsername(event.username);
 
     result.fold(
       (failure) {

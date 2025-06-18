@@ -13,13 +13,12 @@ abstract class AppUserRepository {
   // THAY ĐỔI: Trả về Either<Failure, void>
   Future<Either<AppUserFailure, void>> signInWithGoogle();
 
-  // Tạo username
-  // THAY ĐỔI: Trả về Either<Failure, void>
-  Future<Either<AppUserFailure, void>> createUsername(String username);
+  
+  Future<Either<AppUserFailure, void>> updateUsername(String username);
+  Future<Either<AppUserFailure, void>> updateBio(String? bio);
+  Future<Either<AppUserFailure, void>> updateDisplayName(String displayName);
 
   // Đăng xuất
   // THAY ĐỔI: Trả về Either<Failure, void>
   Future<Either<AppUserFailure, void>> signOut();
-
-
 }

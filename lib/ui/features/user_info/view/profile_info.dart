@@ -10,72 +10,71 @@ class ProfileInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested()),
-      child: BlocBuilder<UserInfoBloc, UserInfoState>(
-        builder: (context, state) {
-          if (state is UserInfoSuccess) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.1),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+    return BlocBuilder<UserInfoBloc, UserInfoState>(
+      builder: (context, state) {
+        if (state is UserInfoSuccess) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.1),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      CachedCircleAvatar(
+                        circleRadius: 30,
+                        imageUrl: state.appUser.photoUrl ?? '',
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            state.appUser.displayName ?? '',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const CustomRichText(
+                            label1: '2.3K',
+                            description1: ' người theo dõi • ',
+                            label2: '245',
+                            description2: ' đang theo dõi',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  if (state.appUser.bio != null)
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      children: [
-                         CachedCircleAvatar(
-                          circleRadius: 30,
-                          imageUrl: state.appUser.photoUrl ?? '',
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              state.appUser.displayName ?? '',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            const CustomRichText(
-                              label1: '2.3K',
-                              description1: ' người theo dõi • ',
-                              label2: '245',
-                              description2: ' đang theo dõi',
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                  if (state.appUser.bio != null)
                     Text(
-                      'Follow mình để cùng "ăn sập" thế giới nhé! Mình là một người đam mê ẩm thực, luôn tìm kiếm những trải nghiệm mới lạ và độc đáo.',
+                      state.appUser.bio!,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    //thêm phần tab ở đây (scroll sẽ dính lên trên cùng)
-                    //nội dung của tab ở đây
-                  ],
-                ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  //thêm phần tab ở đây (scroll sẽ dính lên trên cùng)
+                  //nội dung của tab ở đây
+                ],
               ),
-            );
-          }
-          return SizedBox();
-        },
-      ),
+            ),
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 }
