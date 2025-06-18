@@ -139,25 +139,25 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                           style: Theme.of(context).textTheme.bodyLarge,
                           textAlign: TextAlign.center,
                         ),
-
+                        const SizedBox(height: 30),
+                        if (state.appUser != null)
+                          CachedCircleAvatar(
+                            imageUrl: state.appUser!.photoUrl ?? '',
+                            circleRadius: 40,
+                          ),
+                        const SizedBox(height: 10),
+                        if (state.appUser != null)
+                          Text(
+                            state.appUser!.displayName ?? '',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        const SizedBox(height: 10),
                         // Sử dụng BlocBuilder để chỉ rebuild các trường input
                         BlocBuilder<AccountSetupBloc, AccountSetupState>(
                           builder: (context, state) {
                             return Column(
                               children: [
-                                const SizedBox(height: 30),
-                                if (state.appUser != null)
-                                  CachedCircleAvatar(
-                                    imageUrl: state.appUser!.photoUrl ?? '',
-                                    circleRadius: 40,
-                                  ),
-                                const SizedBox(height: 10),
-                                if (state.appUser != null)
-                                  Text(
-                                    state.appUser!.displayName ?? '',
-                                    style: Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                const SizedBox(height: 10),
+                                
                                 AppTextField(
                                   focusNode: _usernameFocusNode,
                                   title: "Username*",
