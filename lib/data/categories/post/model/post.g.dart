@@ -8,18 +8,35 @@ part of 'post.dart';
 
 Post _$PostFromJson(Map<String, dynamic> json) => Post(
       postId: json['postId'] as String,
+      authorUserId: json['authorUserId'] as String,
+      authorUsername: json['authorUsername'] as String,
+      authorAvatarUrl: json['authorAvatarUrl'] as String,
+      imageUrl: json['imageUrl'] as String?,
+      dishName: json['dishName'] as String?,
+      diningLocationName: json['diningLocationName'] as String?,
       address: json['address'] == null
           ? null
           : Address.fromJson(json['address'] as Map<String, dynamic>),
-      dishName: json['dishName'] as String?,
-      imageUrl: json['imageUrl'] as String?,
       price: (json['price'] as num?)?.toInt(),
+      insight: json['insight'] as String?,
+      createdAt:
+          const DateTimeConverter().fromJson(json['createdAt'] as String),
+      likeCount: (json['likeCount'] as num).toInt(),
+      saveCount: (json['saveCount'] as num).toInt(),
     );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'postId': instance.postId,
+      'authorUserId': instance.authorUserId,
+      'authorUsername': instance.authorUsername,
+      'authorAvatarUrl': instance.authorAvatarUrl,
       'imageUrl': instance.imageUrl,
       'dishName': instance.dishName,
+      'diningLocationName': instance.diningLocationName,
       'address': instance.address,
       'price': instance.price,
+      'insight': instance.insight,
+      'createdAt': const DateTimeConverter().toJson(instance.createdAt),
+      'likeCount': instance.likeCount,
+      'saveCount': instance.saveCount,
     };
