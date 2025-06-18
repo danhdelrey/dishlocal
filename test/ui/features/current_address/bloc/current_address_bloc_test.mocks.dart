@@ -3,14 +3,14 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
 import 'package:dartz/dartz.dart' as _i2;
 import 'package:dishlocal/data/categories/address/failure/address_failure.dart'
-    as _i5;
-import 'package:dishlocal/data/categories/address/model/address.dart' as _i6;
+    as _i6;
+import 'package:dishlocal/data/categories/address/model/address.dart' as _i3;
 import 'package:dishlocal/data/categories/address/repository/interface/address_repository.dart'
-    as _i3;
+    as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -37,37 +37,48 @@ class _FakeEither_0<L, R> extends _i1.SmartFake implements _i2.Either<L, R> {
         );
 }
 
+class _Fake$AddressCopyWith_1<$Res> extends _i1.SmartFake
+    implements _i3.$AddressCopyWith<$Res> {
+  _Fake$AddressCopyWith_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AddressRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAddressRepository extends _i1.Mock implements _i3.AddressRepository {
+class MockAddressRepository extends _i1.Mock implements _i4.AddressRepository {
   MockAddressRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<_i2.Either<_i5.AddressFailure, _i6.Address>> getCurrentAddress() =>
+  _i5.Future<_i2.Either<_i6.AddressFailure, _i3.Address>> getCurrentAddress() =>
       (super.noSuchMethod(
         Invocation.method(
           #getCurrentAddress,
           [],
         ),
         returnValue:
-            _i4.Future<_i2.Either<_i5.AddressFailure, _i6.Address>>.value(
-                _FakeEither_0<_i5.AddressFailure, _i6.Address>(
+            _i5.Future<_i2.Either<_i6.AddressFailure, _i3.Address>>.value(
+                _FakeEither_0<_i6.AddressFailure, _i3.Address>(
           this,
           Invocation.method(
             #getCurrentAddress,
             [],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.AddressFailure, _i6.Address>>);
+      ) as _i5.Future<_i2.Either<_i6.AddressFailure, _i3.Address>>);
 }
 
 /// A class which mocks [Address].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAddress extends _i1.Mock implements _i6.Address {
+class MockAddress extends _i1.Mock implements _i3.Address {
   MockAddress() {
     _i1.throwOnMissingStub(this);
   }
@@ -85,10 +96,13 @@ class MockAddress extends _i1.Mock implements _i6.Address {
       ) as double);
 
   @override
-  List<Object?> get props => (super.noSuchMethod(
-        Invocation.getter(#props),
-        returnValue: <Object?>[],
-      ) as List<Object?>);
+  _i3.$AddressCopyWith<_i3.Address> get copyWith => (super.noSuchMethod(
+        Invocation.getter(#copyWith),
+        returnValue: _Fake$AddressCopyWith_1<_i3.Address>(
+          this,
+          Invocation.getter(#copyWith),
+        ),
+      ) as _i3.$AddressCopyWith<_i3.Address>);
 
   @override
   Map<String, dynamic> toJson() => (super.noSuchMethod(

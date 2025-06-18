@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:dishlocal/app/config/app_router.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
@@ -11,12 +12,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
 
+var cloudinary = Cloudinary.fromStringUrl(dotenv.env['CLOUDINARY_URL'] as String);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  cloudinary.config.urlConfig.secure = true;
 
   await dotenv.load(fileName: ".env"); //final String apiKey = dotenv.env['API_KEY_WEATHER'] ?? 'Không tìm thấy key';
 
@@ -32,19 +36,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<AuthBloc>(),
-      child: Builder(
-        builder: (context) {
-          // Sử dụng Builder để lấy context có BlocProvider
-          final router = AppRouter(context.read<AuthBloc>()).router;
-          return MaterialApp.router(
-            title: 'Flutter Demo',
-            darkTheme: darkTheme,
-            themeMode: ThemeMode.dark,
-            debugShowCheckedModeBanner: false,
-            routerConfig: router,
-          );
-        }
-      ),
+      child: Builder(builder: (context) {
+        // Sử dụng Builder để lấy context có BlocProvider
+        final router = AppRouter(context.read<AuthBloc>()).router;
+        return MaterialApp.router(
+          title: 'Flutter Demo',
+          darkTheme: darkTheme,
+          themeMode: ThemeMode.dark,
+          debugShowCheckedModeBanner: false,
+          routerConfig: router,
+        );
+      }),
     );
   }
 }

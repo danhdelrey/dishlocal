@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
 import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
 import 'package:injectable/injectable.dart';
@@ -15,31 +16,19 @@ import 'package:dishlocal/ui/features/view_post/view/small_post.dart';
 
 @LazySingleton(as: PostRepository)
 class RemotePostRepositoryImpl implements PostRepository {
-  final _log = Logger('RemotePostRepositoryImpl');
-  final DatabaseService _databaseService;
+  final AppUserRepository _appUserRepository;
   final StorageService _storageService;
-  RemotePostRepositoryImpl(
-    this._databaseService,
-    this._storageService,
-  );
+  final DatabaseService _databaseService;
 
+  RemotePostRepositoryImpl(this._appUserRepository, this._storageService, this._databaseService);
   @override
-  Future<Either<PostFailure, void>> createNewPost(Post newPost) async {
+  Future<Either<PostFailure, void>> createPost({required Post post, required File imageFile}) async {
     try {
-      await _databaseService.setDocument(collection: 'posts', docId: newPost.postId, data: newPost.toJson());
-      return const Right(null);
+      final url = await _storageService.uploadFile(path: 'path', file: imageFile, publicId: post.postId);
+      await _databaseService.setDocument(collection: 'posts', docId: post.postId, data: post.copyWith(imageUrl: url).toJson());
+      return Right(null);
     } catch (e) {
-      return const Left(UnknownFailure());
-    }
-  }
-
-  @override
-  Future<Either<PostFailure, String>> uploadPostImage(File imageFile, String postId) async {
-    try {
-      final imageUrl = await _storageService.uploadFile(path: 'posts/$postId/${imageFile.path.split('/').last}', file: imageFile);
-      return Right(imageUrl);
-    } catch (e) {
-      return const Left(UnknownFailure());
+      return Left(UnknownFailure());
     }
   }
 }
