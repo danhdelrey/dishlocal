@@ -5,7 +5,7 @@ import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:dishlocal/ui/features/auth/view/login_page.dart';
 import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
-import 'package:dishlocal/ui/features/dining_info_input/view/new_post_page.dart';
+import 'package:dishlocal/ui/features/create_post/view/new_post_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_page.dart';
 import 'package:dishlocal/ui/features/account_setup/view/account_setup_page.dart';
