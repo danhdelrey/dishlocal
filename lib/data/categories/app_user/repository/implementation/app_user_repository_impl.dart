@@ -48,7 +48,8 @@ class UserRepositoryImpl implements AppUserRepository {
           _log.warning('Không tìm thấy dữ liệu trong Firestore cho UID: $userId. Đây có thể là người dùng mới. Đang tạo đối tượng AppUser tạm thời từ dữ liệu xác thực.');
           return AppUser(
             userId: firebaseUser.uid,
-            email: firebaseUser.email,
+            originalDisplayname: firebaseUser.displayName!,
+            email: firebaseUser.email!,
             photoUrl: firebaseUser.photoURL,
             displayName: firebaseUser.displayName,
           );
@@ -86,7 +87,8 @@ class UserRepositoryImpl implements AppUserRepository {
         _log.info('Người dùng với UID $userId chưa tồn tại trong Firestore. Đang tiến hành tạo mới.');
         final newUser = AppUser(
           userId: userId,
-          email: firebaseUser.email,
+          originalDisplayname: firebaseUser.displayName!,
+          email: firebaseUser.email!,
           photoUrl: firebaseUser.photoURL,
           displayName: firebaseUser.displayName,
         );
@@ -175,27 +177,22 @@ class UserRepositoryImpl implements AppUserRepository {
   }
 
   @override
-  Either<AppUserFailure, AppUser> getCurrentUser() {
+  Future<Either<AppUserFailure, AppUser>> getCurrentUser() async {
     try {
       final firebaseUser = _authService.getCurrentUser();
       if (firebaseUser == null) {
         return const Left(NotAuthenticatedFailure());
       }
-      _log.info('Người dùng hiện tại là userId: ${firebaseUser.uid}, displayName: ${firebaseUser.displayName}, photoUrl: ${firebaseUser.photoURL}, email: ${firebaseUser.email}');
-      //TODO: chưa truyền vào userID
-      return Right(
-        AppUser(
-          userId: firebaseUser.uid,
-          displayName: firebaseUser.displayName,
-          photoUrl: firebaseUser.photoURL,
-          email: firebaseUser.email,
-        ),
-      );
+      final userData = await _databaseService.getDocument(collection: _usersCollection, docId: firebaseUser.uid);
+      final appUser = AppUser.fromJson(userData!);
+
+      _log.info('Người dùng hiện tại là userId: ${appUser.userId}, displayName: ${appUser.displayName}, photoUrl: ${appUser.photoUrl}, email: ${appUser.email}, username: ${appUser.username}, bio: ${appUser.bio}');
+      return Right(appUser);
     } catch (e) {
       return const Left(UnknownFailure());
     }
   }
-  
+
   @override
   Future<Either<AppUserFailure, void>> updateBio(String? bio) async {
     _log.info("Bắt đầu cập nhật bio cho người dùng hiện tại.");
@@ -230,7 +227,7 @@ class UserRepositoryImpl implements AppUserRepository {
       return const Left(UnknownFailure());
     }
   }
-  
+
   @override
   Future<Either<AppUserFailure, void>> updateDisplayName(String displayName) async {
     _log.info("Bắt đầu cập nhật displayName cho người dùng hiện tại.");

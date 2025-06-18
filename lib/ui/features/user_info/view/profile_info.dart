@@ -38,7 +38,7 @@ class ProfileInfo extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            state.appUser.displayName ?? '',
+                            state.appUser.displayName ?? state.appUser.originalDisplayname,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(
