@@ -16,50 +16,47 @@ class GridPostPage extends StatefulWidget {
 class _GridPostPageState extends State<GridPostPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<PostBloc>(),
-      child: BlocBuilder<PostBloc, PagingState<DateTime?, Post>>(
-        builder: (context, state) {
-          return RefreshIndicator(
-            onRefresh: () => Future.sync(
-              () => context.read<PostBloc>().add(
-                    const PostEvent.refreshRequested(),
-                  ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
-                slivers: [
-                  // Grid dạng masonry
-                  PagedSliverMasonryGrid<DateTime?, Post>(
-                    state: state,
-                    fetchNextPage: () {
-                      context.read<PostBloc>().add(
-                            const PostEvent.fetchNextPostPageRequested(),
-                          );
-                    },
-                    builderDelegate: PagedChildBuilderDelegate<Post>(
-                      itemBuilder: (context, post, index) => SmallPost(post: post),
-                      firstPageProgressIndicatorBuilder: (_) => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      noItemsFoundIndicatorBuilder: (_) => const Center(
-                        child: Text("Không có bài viết nào."),
-                      ),
+    return BlocBuilder<PostBloc, PagingState<DateTime?, Post>>(
+      builder: (context, state) {
+        return RefreshIndicator(
+          onRefresh: () => Future.sync(
+            () => context.read<PostBloc>().add(
+                  const PostEvent.refreshRequested(),
+                ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
+              slivers: [
+                // Grid dạng masonry
+                PagedSliverMasonryGrid<DateTime?, Post>(
+                  state: state,
+                  fetchNextPage: () {
+                    context.read<PostBloc>().add(
+                          const PostEvent.fetchNextPostPageRequested(),
+                        );
+                  },
+                  builderDelegate: PagedChildBuilderDelegate<Post>(
+                    itemBuilder: (context, post, index) => SmallPost(post: post),
+                    firstPageProgressIndicatorBuilder: (_) => const Center(
+                      child: CircularProgressIndicator(),
                     ),
-                    gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                    noItemsFoundIndicatorBuilder: (_) => const Center(
+                      child: Text("Không có bài viết nào."),
                     ),
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
                   ),
-                ],
-              ),
+                  gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                  ),
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

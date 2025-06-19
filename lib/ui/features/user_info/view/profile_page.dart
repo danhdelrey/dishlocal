@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
+import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
 import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
@@ -18,8 +19,15 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // DefaultTabController phải bọc toàn bộ widget sử dụng TabController
-    return BlocProvider(
-      create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested()),
+        ),
+        BlocProvider(
+          create: (context) => getIt<PostBloc>(),
+        ),
+      ],
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
