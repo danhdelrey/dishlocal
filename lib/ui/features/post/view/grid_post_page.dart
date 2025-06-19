@@ -23,36 +23,39 @@ class _GridPostPageState extends State<GridPostPage> {
           return RefreshIndicator(
             onRefresh: () => Future.sync(
               () => context.read<PostBloc>().add(
-                          const PostEvent.refreshRequested(),
-                        ),
+                    const PostEvent.refreshRequested(),
+                  ),
             ),
-            child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
-              slivers: [
-                // Grid dạng masonry
-                PagedSliverMasonryGrid<DateTime?, Post>(
-                  state: state,
-                  fetchNextPage: () {
-                    context.read<PostBloc>().add(
-                          const PostEvent.fetchNextPostPageRequested(),
-                        );
-                  },
-                  builderDelegate: PagedChildBuilderDelegate<Post>(
-                    itemBuilder: (context, post, index) => SmallPost(post: post),
-                    firstPageProgressIndicatorBuilder: (_) => const Center(
-                      child: CircularProgressIndicator(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
+                slivers: [
+                  // Grid dạng masonry
+                  PagedSliverMasonryGrid<DateTime?, Post>(
+                    state: state,
+                    fetchNextPage: () {
+                      context.read<PostBloc>().add(
+                            const PostEvent.fetchNextPostPageRequested(),
+                          );
+                    },
+                    builderDelegate: PagedChildBuilderDelegate<Post>(
+                      itemBuilder: (context, post, index) => SmallPost(post: post),
+                      firstPageProgressIndicatorBuilder: (_) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      noItemsFoundIndicatorBuilder: (_) => const Center(
+                        child: Text("Không có bài viết nào."),
+                      ),
                     ),
-                    noItemsFoundIndicatorBuilder: (_) => const Center(
-                      child: Text("Không có bài viết nào."),
+                    gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
                     ),
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
                   ),
-                  gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  ),
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
