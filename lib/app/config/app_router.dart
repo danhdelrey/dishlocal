@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dishlocal/app/config/main_shell.dart';
+import 'package:dishlocal/app/config/splash_page.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
@@ -22,10 +23,14 @@ class AppRouter {
   final _log = Logger('AppRouter');
 
   late final router = GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: redirect,
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashPage(),
+      ),
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginPage(),
@@ -116,35 +121,66 @@ class AppRouter {
 
   FutureOr<String?> redirect(BuildContext context, GoRouterState state) {
     final authState = authBloc.state;
-    final isLoggingIn = state.matchedLocation == '/login';
-    final isSettingUpAccount = state.matchedLocation == '/account_setup';
+    final currentLocation = state.matchedLocation;
 
-    _log.info("Bắt đầu logic điều hướng (redirect). Vị trí đang cố gắng truy cập: '${state.matchedLocation}'.");
-    _log.fine("Trạng thái xác thực hiện tại: ${authState.runtimeType}. "
-        "Đang ở trang đăng nhập: $isLoggingIn. "
-        "Đang ở trang cài đặt tài khoản: $isSettingUpAccount.");
+    final isSplash = currentLocation == '/splash';
+    final isLogin = currentLocation == '/login';
+    final isSetup = currentLocation == '/account_setup';
 
-    // Khi chưa xác thực, điều hướng đến login
-    if (authState is Unauthenticated && !isLoggingIn) {
-      _log.info("-> Điều kiện THỎA MÃN: Người dùng chưa xác thực và không ở trang đăng nhập. Chuyển hướng đến '/login'.");
-      return '/login';
+    _log.info('🔁 [REDIRECT] Đang xử lý điều hướng...');
+    _log.info('📍 Vị trí hiện tại: $currentLocation');
+    _log.info('🔐 Trạng thái xác thực hiện tại: ${authState.runtimeType}');
+
+    // ⏳ 1. Nếu đang loading auth (chưa xác định trạng thái)
+    if (authState is AuthLoading) {
+      _log.info('⏳ AuthBloc đang ở trạng thái Loading. Hiển thị trang splash.');
+
+      // Nếu chưa ở splash → chuyển sang splash
+      if (!isSplash) {
+        _log.info('➡️ Chuyển hướng tới /splash để hiển thị loading indicator.');
+        return '/splash';
+      }
+
+      _log.info('✅ Đã ở /splash → giữ nguyên.');
+      return null;
     }
 
-    // Khi cần tạo username, điều hướng đến màn hình tạo
-    if (authState is NeedsUsername && !isSettingUpAccount) {
-      _log.info("-> Điều kiện THỎA MÃN: Người dùng cần tạo username và không ở trang cài đặt. Chuyển hướng đến '/account_setup'.");
-      return '/account_setup';
+    // 🔐 2. Người dùng chưa đăng nhập
+    if (authState is Unauthenticated) {
+      if (!isLogin) {
+        _log.info('🚫 Người dùng chưa đăng nhập. Chuyển hướng về /login.');
+        return '/login';
+      }
+      _log.info('✅ Người dùng chưa đăng nhập nhưng đã ở /login → giữ nguyên.');
+      return null;
     }
 
-    // Khi đã xác thực và có username, điều hướng đến home
-    if (authState is Authenticated && (isLoggingIn || isSettingUpAccount)) {
-      _log.info("-> Điều kiện THỎA MÃN: Người dùng đã xác thực và đang truy cập trang đăng nhập hoặc cài đặt. Chuyển hướng đến '/home'.");
-      return '/home';
+    // 🧑 3. Người dùng cần setup username
+    if (authState is NeedsUsername) {
+      if (!isSetup) {
+        _log.info('🛠️ Người dùng cần cài đặt username. Chuyển hướng đến /account_setup.');
+        return '/account_setup';
+      }
+      _log.info('✅ Người dùng đang ở trang /account_setup → giữ nguyên.');
+      return null;
     }
 
-    _log.info("-> Không có điều kiện nào thỏa mãn. KHÔNG thực hiện chuyển hướng, cho phép truy cập '${state.matchedLocation}'.");
-    return null; // Không cần điều hướng
+    // 🏠 4. Người dùng đã đăng nhập hoàn chỉnh
+    if (authState is Authenticated) {
+      if (isLogin || isSetup || isSplash) {
+        _log.info('🔓 Người dùng đã đăng nhập hoàn chỉnh. Rời khỏi login/setup/splash → chuyển về /home.');
+        return '/home';
+      }
+
+      _log.info('✅ Người dùng đã xác thực và đang ở trang phù hợp → giữ nguyên.');
+      return null;
+    }
+
+    // ❓ 5. Không khớp điều kiện nào
+    _log.warning('❗ Không có điều kiện nào thỏa mãn trong redirect → giữ nguyên.');
+    return null;
   }
+
 }
 
 // Helper class để GoRouter lắng nghe stream của BLoC

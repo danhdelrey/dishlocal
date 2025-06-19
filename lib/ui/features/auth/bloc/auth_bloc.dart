@@ -19,7 +19,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required AppUserRepository userRepository}) // Sửa lại constructor để nhận dependency
       : _userRepository = userRepository,
-        super(AuthInitial()) {
+        super(AuthLoading()) {
     _log.info('Khởi tạo AuthBloc.');
 
     _log.fine('Bắt đầu lắng nghe luồng (stream) người dùng từ AppUserRepository.');
