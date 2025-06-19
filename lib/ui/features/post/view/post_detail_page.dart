@@ -63,6 +63,15 @@ class PostDetailPage extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.more_horiz_rounded,
+                color: appColorScheme(context).onSurface,
+              ),
+            ),
+          ],
           title: Text(post.dishName ?? ''),
         ),
         SliverToBoxAdapter(
@@ -220,7 +229,7 @@ class _FollowButtonState extends State<FollowButton> with TickerProviderStateMix
     return GestureDetector(
       onTap: _toggleFollow,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 150),
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
@@ -232,11 +241,11 @@ class _FollowButtonState extends State<FollowButton> with TickerProviderStateMix
           ),
         ),
         child: AnimatedSize(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 150),
           curve: Curves.easeInOut,
           alignment: Alignment.center,
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 100),
             transitionBuilder: (child, animation) {
               final offsetAnimation = Tween<Offset>(
                 begin: const Offset(0, 0.3),
