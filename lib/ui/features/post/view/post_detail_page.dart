@@ -226,7 +226,7 @@ class _FollowButtonState extends State<FollowButton> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(isFollowing ? 24 : 12),
+          borderRadius: BorderRadius.circular(isFollowing ? 1000 : 1000),
           border: Border.all(
             color: isFollowing ? primary : Colors.transparent,
             width: 1,
