@@ -4,7 +4,7 @@ import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:dishlocal/app/config/app_router.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
-import 'package:dishlocal/core/utils/timeago_formatter.dart';
+import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/firebase_options.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';

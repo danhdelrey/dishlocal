@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
-import 'package:dishlocal/core/utils/timeago_formatter.dart';
+import 'package:dishlocal/core/utils/number_formatter.dart';
+import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_icon_labels_wrap.dart';
@@ -21,7 +22,7 @@ class SmallPost extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () => context.push('/post_detail', extra: {
-        "post" : post,
+        "post": post,
       }),
       child: Container(
         decoration: BoxDecoration(
@@ -46,7 +47,7 @@ class SmallPost extends StatelessWidget {
               ),
               Stack(
                 children: [
-                   CachedImage(
+                  CachedImage(
                     imageUrl: post.imageUrl ?? '',
                     blurHash: post.blurHash ?? '',
                   ),
@@ -78,7 +79,7 @@ class SmallPost extends StatelessWidget {
                                     width: 12,
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
-                                  label: post.price.toString(),
+                                  label: NumberFormatter.formatMoney(post.price ?? 0),
                                   labelStyle: appTextTheme(context).labelSmall,
                                 ),
                               ],
@@ -117,7 +118,7 @@ class SmallPost extends StatelessWidget {
               ),
               Row(
                 children: [
-                   CachedCircleAvatar(
+                  CachedCircleAvatar(
                     imageUrl: post.authorAvatarUrl ?? '',
                     circleRadius: 8,
                   ),
@@ -136,7 +137,7 @@ class SmallPost extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    TimeagoFormatter.formatTimeAgo(post.createdAt),
+                    TimeFormatter.formatTimeAgo(post.createdAt),
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
                           color: Theme.of(context).colorScheme.outline,
                         ),

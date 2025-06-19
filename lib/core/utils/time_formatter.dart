@@ -3,13 +3,18 @@ import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 @lazySingleton
-class TimeagoFormatter {
+class TimeFormatter {
   static String formatTimeAgo(DateTime time) {
     final now = DateTime.now();
     if (now.difference(time).inDays > 30) {
       return DateFormat('dd/MM/yyyy').format(time);
     }
     return timeago.format(time, locale: 'vi');
+  }
+
+  static String formatDateTimeFull(DateTime time) {
+    final formatter = DateFormat('HH:mm dd/MM/yyyy');
+    return formatter.format(time);
   }
 }
 

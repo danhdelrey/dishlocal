@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dishlocal/app/config/main_shell.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
+import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:dishlocal/ui/features/auth/view/login_page.dart';
 import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
@@ -9,7 +10,7 @@ import 'package:dishlocal/ui/features/create_post/view/new_post_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_page.dart';
 import 'package:dishlocal/ui/features/account_setup/view/account_setup_page.dart';
-import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
+import 'package:dishlocal/ui/features/post/view/post_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
@@ -37,9 +38,9 @@ class AppRouter {
         path: '/post_detail',
         builder: (context, state) {
           final extraMap = state.extra as Map<String, dynamic>;
-          final int postId = extraMap['postId'];
+          final Post post = extraMap['post'];
           return PostDetailPage(
-            postId: postId,
+            post: post,
           );
         },
       ),

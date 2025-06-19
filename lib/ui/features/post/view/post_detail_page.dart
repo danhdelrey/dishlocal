@@ -1,5 +1,8 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/utils/number_formatter.dart';
+import 'package:dishlocal/core/utils/time_formatter.dart';
+import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
 import 'package:dishlocal/ui/features/view_post/view/reaction_bar.dart';
@@ -14,9 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class PostDetailPage extends StatelessWidget {
-  const PostDetailPage({super.key, required this.postId});
+  const PostDetailPage({super.key, required this.post});
 
-  final int postId;
+  final Post post;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +62,7 @@ class PostDetailPage extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          title: const Text('Hamburger'),
+          title: Text(post.dishName ?? ''),
         ),
         SliverToBoxAdapter(
           child: Padding(
@@ -75,11 +78,11 @@ class PostDetailPage extends StatelessWidget {
                       const SizedBox(
                         height: 10,
                       ),
-                      const BlurredEdgeWidget(
-                        blurredChild: CachedImage(blurHash: '', imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
+                      BlurredEdgeWidget(
+                        blurredChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
                         clearRadius: 1,
                         blurSigma: 100,
-                        topChild: CachedImage(blurHash: '', imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg'),
+                        topChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
                       ),
                       const SizedBox(
                         height: 10,
@@ -92,11 +95,11 @@ class PostDetailPage extends StatelessWidget {
                         label: '1.2 km',
                       ),
                       Text(
-                        'KFC Ninh Kiều',
+                        post.diningLocationName ?? '',
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       Text(
-                        '75/36 Võ Trường Toản, phường An Hòa, quận Ninh Kiều, thành phố Cần Thơ, Việt Nam',
+                        post.address?.displayName ?? '',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const SizedBox(
@@ -107,7 +110,7 @@ class PostDetailPage extends StatelessWidget {
                           width: 16,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
-                        label: 'Giá: 50.000 đ',
+                        label: 'Giá: ${NumberFormatter.formatMoney(post.price ?? 0)}',
                       ),
                       const SizedBox(
                         height: 20,
@@ -126,8 +129,8 @@ class PostDetailPage extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          const CachedCircleAvatar(
-                            imageUrl: 'https://dep.com.vn/wp-content/uploads/2024/10/Lana.jpg',
+                          CachedCircleAvatar(
+                            imageUrl: post.authorAvatarUrl ?? '',
                           ),
                           const SizedBox(
                             width: 10,
@@ -148,7 +151,7 @@ class PostDetailPage extends StatelessWidget {
                                   labelStyle: appTextTheme(context).labelMedium!.copyWith(
                                         color: Colors.blue,
                                       ),
-                                  label: '13:45 25/05/2025',
+                                  label: TimeFormatter.formatDateTimeFull(post.createdAt),
                                   labelColor: Colors.blue,
                                 ),
                               ],
@@ -183,27 +186,7 @@ class PostDetailPage extends StatelessWidget {
                         height: 15,
                       ),
                       Text(
-                        """🍔 [REVIEW] Trải nghiệm Hamburger tại KFC Ninh Kiều – Ăn một lần là nhớ mãi! 😋
-
-Hôm nay thèm đồ ăn nhanh nên mình ghé KFC Ninh Kiều thử burger xem sao, ai ngờ lại bất ngờ vì ngon hơn mong đợi luôn!
-
-📍 Vị trí: Quán nằm ngay trung tâm, dễ tìm, có không gian rộng rãi, sạch sẽ. Nhân viên phục vụ nhanh nhẹn và thân thiện.
-
-🍔 Món mình gọi: Zinger Burger – lớp vỏ gà giòn rụm bên ngoài, thịt bên trong thì mềm và đậm vị, kết hợp cùng rau tươi và sốt cay nhẹ. Cắn một miếng là cảm giác "đã cái nư" liền 🤤
-
-🥤 Combo kèm khoai tây chiên nóng hổi và Pepsi lạnh, ăn vào trời nóng thì đúng bài luôn!
-
-💸 Giá cả: Tầm 40-80k/combo, khá hợp lý cho chất lượng và no căng bụng.
-
-🌟 Đánh giá cá nhân:
-
-Hương vị: 9/10
-
-Không gian: 8.5/10
-
-Phục vụ: 9/10
-
-📌 Tips: Đi buổi trưa hơi đông chút nên nếu muốn ngồi chill lâu lâu thì đi sớm hoặc chiều muộn nhé!""",
+                        post.insight ?? '',
                         style: appTextTheme(context).bodyMedium,
                       ),
                       const SizedBox(

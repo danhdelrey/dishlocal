@@ -60,7 +60,8 @@ import '../../ui/features/post/bloc/post_bloc.dart' as _i913;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
 import '../utils/image_processor.dart' as _i19;
-import '../utils/timeago_formatter.dart' as _i517;
+import '../utils/number_formatter.dart' as _i660;
+import '../utils/time_formatter.dart' as _i537;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt init(
@@ -84,7 +85,8 @@ _i174.GetIt init(
   gh.lazySingleton<_i457.FirebaseStorage>(
       () => firebaseInjectableModule.firebaseStorage);
   gh.lazySingleton<_i19.ImageProcessor>(() => _i19.ImageProcessor());
-  gh.lazySingleton<_i517.TimeagoFormatter>(() => _i517.TimeagoFormatter());
+  gh.lazySingleton<_i660.NumberFormatter>(() => _i660.NumberFormatter());
+  gh.lazySingleton<_i537.TimeFormatter>(() => _i537.TimeFormatter());
   gh.lazySingleton<_i1045.StorageService>(
       () => _i1046.CloudinaryStorageServiceImpl());
   gh.lazySingleton<_i780.AuthenticationService>(
