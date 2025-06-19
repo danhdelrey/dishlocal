@@ -56,6 +56,7 @@ import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
 import '../../ui/features/create_post/bloc/create_post_bloc.dart' as _i622;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
+import '../../ui/features/post/bloc/post_bloc.dart' as _i913;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../../utils/image_processor.dart' as _i1028;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
@@ -122,6 +123,7 @@ _i174.GetIt init(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
       ));
+  gh.factory<_i913.PostBloc>(() => _i913.PostBloc(gh<_i480.PostRepository>()));
   return getIt;
 }
 
