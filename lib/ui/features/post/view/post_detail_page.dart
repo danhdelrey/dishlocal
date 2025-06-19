@@ -162,29 +162,7 @@ class PostDetailPage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          InkWell(
-                            onTap: () {},
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: appColorScheme(context).primary,
-                                borderRadius: BorderRadius.circular(12),
-                                // border: BoxBorder.all(
-                                //   color: appColorScheme(context).outline,
-                                //   width: 1,
-                                // ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                                child: Text(
-                                  'Theo dõi',
-                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                        color: appColorScheme(context).onPrimary,
-                                      ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          const FollowButton(),
                         ],
                       ),
                       const SizedBox(
@@ -209,6 +187,74 @@ class PostDetailPage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class FollowButton extends StatefulWidget {
+  const FollowButton({super.key});
+
+  @override
+  State<FollowButton> createState() => _FollowButtonState();
+}
+
+class _FollowButtonState extends State<FollowButton> {
+  bool isFollowing = false;
+
+  void _toggleFollow() {
+    setState(() {
+      isFollowing = !isFollowing;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = appColorScheme(context).primary;
+    final onPrimary = appColorScheme(context).onPrimary;
+    final surface = appColorScheme(context).surface;
+    final onSurface = appColorScheme(context).onSurface;
+
+    final backgroundColor = isFollowing ? surface : primary;
+    final textColor = isFollowing ? onSurface : onPrimary;
+
+    return InkWell(
+      onTap: _toggleFollow,
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(isFollowing ? 24 : 12),
+          border: Border.all(
+            color: isFollowing ? primary : Colors.transparent,
+            width: 1,
+          ),
+        ),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          transitionBuilder: (child, animation) {
+            // Fade + slide lên hoặc xuống
+            final offsetAnimation = Tween<Offset>(
+              begin: const Offset(0, 0.3),
+              end: Offset.zero,
+            ).animate(animation);
+            return FadeTransition(
+              opacity: animation,
+              child: SlideTransition(position: offsetAnimation, child: child),
+            );
+          },
+          child: Text(
+            isFollowing ? 'Đang theo dõi' : 'Theo dõi',
+            key: ValueKey(isFollowing),
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+        ),
+      ),
     );
   }
 }
