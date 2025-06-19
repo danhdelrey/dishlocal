@@ -142,3 +142,82 @@ class _LikeButtonState extends State<LikeButton> with SingleTickerProviderStateM
     );
   }
 }
+
+class AnimatedIconCounterButton extends StatefulWidget {
+  final bool isActive;
+  final int count;
+  final Widget Function(bool isActive, Color color) iconBuilder;
+  final VoidCallback onTap;
+
+  const AnimatedIconCounterButton({
+    super.key,
+    required this.isActive,
+    required this.count,
+    required this.iconBuilder,
+    required this.onTap,
+  });
+
+  @override
+  State<AnimatedIconCounterButton> createState() => _AnimatedIconCounterButtonState();
+}
+
+class _AnimatedIconCounterButtonState extends State<AnimatedIconCounterButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeIn,
+      ),
+    );
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _controller.reverse();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    widget.onTap();
+    _controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = widget.isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: _handleTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: AnimatedSwitcherIconWithLabel(
+            icon: widget.iconBuilder(widget.isActive, color),
+            label: widget.count.toString(),
+            labelColor: color,
+          ),
+        ),
+      ),
+    );
+  }
+}
