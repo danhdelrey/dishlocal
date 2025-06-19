@@ -6,6 +6,7 @@ import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
 import 'package:dishlocal/ui/features/post/view/reaction_bar.dart';
+import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
@@ -33,7 +34,149 @@ class PostDetailPage extends StatelessWidget {
         body: SafeArea(
           child: Stack(
             children: [
-              _buildMainContent(context),
+              CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                slivers: [
+                  GlassSliverAppBar(
+                    floating: true,
+                    pinned: true,
+                    leading: IconButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      icon: AppIcons.left.toSvg(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    actions: const [
+                      BouncingOverlayMenu(),
+                    ],
+                    title: Text(post.dishName ?? ''),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 150),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                BlurredEdgeWidget(
+                                  blurredChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
+                                  clearRadius: 1,
+                                  blurSigma: 100,
+                                  topChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                CustomIconWithLabel(
+                                  icon: AppIcons.location1.toSvg(
+                                    width: 16,
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                  label: 'Khoảng cách: ${NumberFormatter.formatDistance(post.distance)}',
+                                ),
+                                Text(
+                                  post.diningLocationName ?? '',
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                                Text(
+                                  '${post.address?.exactAddress ?? ''}, ${post.address?.displayName ?? ''}',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                CustomIconWithLabel(
+                                  icon: AppIcons.wallet4.toSvg(
+                                    width: 16,
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                  label: 'Giá: ${NumberFormatter.formatMoney(post.price ?? 0)}',
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                GradientFilledButton(
+                                  maxWidth: true,
+                                  icon: AppIcons.location.toSvg(
+                                    width: 16,
+                                    color: Colors.white,
+                                  ),
+                                  label: 'Xem trên bản đồ',
+                                  onTap: () {
+                                    if (post.address != null) {
+                                      MapsLauncher.launchCoordinates(post.address!.latitude, post.address!.longitude);
+                                    }
+                                  },
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  children: [
+                                    CachedCircleAvatar(
+                                      imageUrl: post.authorAvatarUrl ?? '',
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'danhdelrey',
+                                            style: Theme.of(context).textTheme.labelLarge,
+                                          ),
+                                          CustomIconWithLabel(
+                                            icon: AppIcons.locationCheckFilled.toSvg(
+                                              color: Colors.blue,
+                                              width: 14,
+                                            ),
+                                            labelStyle: appTextTheme(context).labelMedium!.copyWith(
+                                                  color: Colors.blue,
+                                                ),
+                                            label: TimeFormatter.formatDateTimeFull(post.createdAt),
+                                            labelColor: Colors.blue,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const FollowButton(),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  post.insight ?? '',
+                                  style: appTextTheme(context).bodyMedium,
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                ReactionBar(likeCount: post.likeCount, saveCount: post.saveCount),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            color: Colors.white.withValues(alpha: 0.1),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               // const Positioned(
               //   left: 0,
               //   right: 0,
@@ -44,158 +187,6 @@ class PostDetailPage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildMainContent(BuildContext context) {
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      slivers: [
-        GlassSliverAppBar(
-          floating: true,
-          pinned: true,
-          leading: IconButton(
-            onPressed: () {
-              context.pop();
-            },
-            icon: AppIcons.left.toSvg(
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.more_horiz_rounded,
-                color: appColorScheme(context).onSurface,
-              ),
-            ),
-          ],
-          title: Text(post.dishName ?? ''),
-        ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 150),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      BlurredEdgeWidget(
-                        blurredChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
-                        clearRadius: 1,
-                        blurSigma: 100,
-                        topChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomIconWithLabel(
-                        icon: AppIcons.location1.toSvg(
-                          width: 16,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        label: 'Khoảng cách: ${NumberFormatter.formatDistance(post.distance)}',
-                      ),
-                      Text(
-                        post.diningLocationName ?? '',
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      Text(
-                        '${post.address?.exactAddress ?? ''}, ${post.address?.displayName ?? ''}',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomIconWithLabel(
-                        icon: AppIcons.wallet4.toSvg(
-                          width: 16,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        label: 'Giá: ${NumberFormatter.formatMoney(post.price ?? 0)}',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      GradientFilledButton(
-                        maxWidth: true,
-                        icon: AppIcons.location.toSvg(
-                          width: 16,
-                          color: Colors.white,
-                        ),
-                        label: 'Xem trên bản đồ',
-                        onTap: () {
-                          if (post.address != null) {
-                            MapsLauncher.launchCoordinates(post.address!.latitude, post.address!.longitude);
-                          }
-                        },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          CachedCircleAvatar(
-                            imageUrl: post.authorAvatarUrl ?? '',
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'danhdelrey',
-                                  style: Theme.of(context).textTheme.labelLarge,
-                                ),
-                                CustomIconWithLabel(
-                                  icon: AppIcons.locationCheckFilled.toSvg(
-                                    color: Colors.blue,
-                                    width: 14,
-                                  ),
-                                  labelStyle: appTextTheme(context).labelMedium!.copyWith(
-                                        color: Colors.blue,
-                                      ),
-                                  label: TimeFormatter.formatDateTimeFull(post.createdAt),
-                                  labelColor: Colors.blue,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const FollowButton(),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        post.insight ?? '',
-                        style: appTextTheme(context).bodyMedium,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ReactionBar(likeCount: post.likeCount, saveCount: post.saveCount),
-                    ],
-                  ),
-                ),
-                Divider(
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -266,6 +257,99 @@ class _FollowButtonState extends State<FollowButton> with TickerProviderStateMix
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class BouncingOverlayMenu extends StatefulWidget {
+  const BouncingOverlayMenu({super.key});
+
+  @override
+  State<BouncingOverlayMenu> createState() => _BouncingOverlayMenuState();
+}
+
+class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTickerProviderStateMixin {
+  final _overlayPortalController = OverlayPortalController();
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  bool _isShowing = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutBack, // 👈 nhẹ hơn elasticOut
+      reverseCurve: Curves.easeIn, // 👈 mượt khi đóng
+    );
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed && _isShowing) {
+        _overlayPortalController.hide();
+        _isShowing = false;
+      }
+    });
+  }
+
+  void _toggleOverlay() {
+    if (_overlayPortalController.isShowing) {
+      _animationController.reverse();
+    } else {
+      _overlayPortalController.show();
+      _isShowing = true;
+      _animationController.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: _toggleOverlay,
+      child: OverlayPortal(
+        controller: _overlayPortalController,
+        overlayChildBuilder: (context) {
+          return Positioned(
+            top: 50,
+            right: 50,
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: const GlassContainer(
+                borderBottom: true,
+                borderLeft: true,
+                borderTop: true,
+                borderRight: true,
+                borderRadius: 20,
+                backgroundColor: Colors.black,
+                blur: 50,
+                child: SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: Column(
+                    children: [
+                      Text('data'),
+                      Text('data'),
+                      Text('data'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+        child: const Icon(Icons.more_horiz_rounded),
       ),
     );
   }
