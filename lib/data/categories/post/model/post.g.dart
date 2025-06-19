@@ -25,6 +25,8 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
           const TimestampConverter().fromJson(json['createdAt'] as Timestamp),
       likeCount: (json['likeCount'] as num).toInt(),
       saveCount: (json['saveCount'] as num).toInt(),
+      isLiked: json['isLiked'] as bool,
+      isSaved: json['isSaved'] as bool,
     );
 
 Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
@@ -43,4 +45,6 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'createdAt': const TimestampConverter().toJson(instance.createdAt),
       'likeCount': instance.likeCount,
       'saveCount': instance.saveCount,
+      'isLiked': instance.isLiked,
+      'isSaved': instance.isSaved,
     };

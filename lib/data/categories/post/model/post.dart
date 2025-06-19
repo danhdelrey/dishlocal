@@ -25,6 +25,8 @@ abstract class Post with _$Post {
     @TimestampConverter() required DateTime createdAt,
     required int likeCount,
     required int saveCount,
+    required bool isLiked,
+    required bool isSaved,
   }) = _Post;
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);

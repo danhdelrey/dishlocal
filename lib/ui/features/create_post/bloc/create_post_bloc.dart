@@ -179,6 +179,8 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           createdAt: event.createdAt,
           likeCount: 0,
           saveCount: 0,
+          isLiked: false,
+          isSaved: false,
         ),
         imageFile: File(event.imagePath),
       );

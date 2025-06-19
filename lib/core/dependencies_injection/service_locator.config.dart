@@ -108,10 +108,16 @@ _i174.GetIt init(
       () => _i85.FirestoreServiceImpl(gh<_i974.FirebaseFirestore>()));
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
+  gh.lazySingleton<_i480.PostRepository>(() => _i95.RemotePostRepositoryImpl(
+        gh<_i1045.StorageService>(),
+        gh<_i4.DatabaseService>(),
+        gh<_i367.DistanceService>(),
+        gh<_i473.LocationService>(),
+      ));
+  gh.factory<_i913.PostBloc>(() => _i913.PostBloc(gh<_i480.PostRepository>()));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
         gh<_i473.LocationService>(),
         gh<_i766.GeocodingService>(),
-        gh<_i367.DistanceService>(),
       ));
   gh.lazySingleton<_i749.AppUserRepository>(() => _i904.UserRepositoryImpl(
         gh<_i780.AuthenticationService>(),
@@ -119,25 +125,16 @@ _i174.GetIt init(
       ));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
+  gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
+        gh<_i480.PostRepository>(),
+        gh<_i749.AppUserRepository>(),
+      ));
   gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factory<_i511.AuthBloc>(
       () => _i511.AuthBloc(userRepository: gh<_i749.AppUserRepository>()));
-  gh.lazySingleton<_i480.PostRepository>(() => _i95.RemotePostRepositoryImpl(
-        gh<_i749.AppUserRepository>(),
-        gh<_i1045.StorageService>(),
-        gh<_i4.DatabaseService>(),
-      ));
-  gh.factory<_i913.PostBloc>(() => _i913.PostBloc(
-        gh<_i480.PostRepository>(),
-        gh<_i344.AddressRepository>(),
-      ));
-  gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
-        gh<_i480.PostRepository>(),
-        gh<_i749.AppUserRepository>(),
-      ));
   return getIt;
 }
 

@@ -16,9 +16,8 @@ part 'post_bloc.freezed.dart';
 class PostBloc extends Bloc<PostEvent, PagingState<DateTime?, Post>> {
   final _log = Logger('PostBloc');
   final PostRepository _postRepository;
-  final AddressRepository _addressRepository;
 
-  PostBloc(this._postRepository, this._addressRepository) : super(PagingState()) {
+  PostBloc(this._postRepository) : super(PagingState()) {
     on<_FetchNextPostPageRequested>((event, emit) async {
       if (state.isLoading || !state.hasNextPage) {
         _log.warning('⚠️ Bỏ qua fetch: isLoading=${state.isLoading}, hasNextPage=${state.hasNextPage}');

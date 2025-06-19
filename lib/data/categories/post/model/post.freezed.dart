@@ -31,6 +31,8 @@ mixin _$Post {
   DateTime get createdAt;
   int get likeCount;
   int get saveCount;
+  bool get isLiked;
+  bool get isSaved;
 
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
@@ -72,7 +74,9 @@ mixin _$Post {
             (identical(other.likeCount, likeCount) ||
                 other.likeCount == likeCount) &&
             (identical(other.saveCount, saveCount) ||
-                other.saveCount == saveCount));
+                other.saveCount == saveCount) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
+            (identical(other.isSaved, isSaved) || other.isSaved == isSaved));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -93,11 +97,13 @@ mixin _$Post {
       insight,
       createdAt,
       likeCount,
-      saveCount);
+      saveCount,
+      isLiked,
+      isSaved);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved)';
   }
 }
 
@@ -121,7 +127,9 @@ abstract mixin class $PostCopyWith<$Res> {
       String? insight,
       @TimestampConverter() DateTime createdAt,
       int likeCount,
-      int saveCount});
+      int saveCount,
+      bool isLiked,
+      bool isSaved});
 
   $AddressCopyWith<$Res>? get address;
 }
@@ -153,6 +161,8 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
     Object? createdAt = null,
     Object? likeCount = null,
     Object? saveCount = null,
+    Object? isLiked = null,
+    Object? isSaved = null,
   }) {
     return _then(_self.copyWith(
       postId: null == postId
@@ -215,6 +225,14 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
           ? _self.saveCount
           : saveCount // ignore: cast_nullable_to_non_nullable
               as int,
+      isLiked: null == isLiked
+          ? _self.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isSaved: null == isSaved
+          ? _self.isSaved
+          : isSaved // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -252,7 +270,9 @@ class _Post implements Post {
       this.insight,
       @TimestampConverter() required this.createdAt,
       required this.likeCount,
-      required this.saveCount});
+      required this.saveCount,
+      required this.isLiked,
+      required this.isSaved});
   factory _Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
   @override
@@ -286,6 +306,10 @@ class _Post implements Post {
   final int likeCount;
   @override
   final int saveCount;
+  @override
+  final bool isLiked;
+  @override
+  final bool isSaved;
 
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
@@ -332,7 +356,9 @@ class _Post implements Post {
             (identical(other.likeCount, likeCount) ||
                 other.likeCount == likeCount) &&
             (identical(other.saveCount, saveCount) ||
-                other.saveCount == saveCount));
+                other.saveCount == saveCount) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
+            (identical(other.isSaved, isSaved) || other.isSaved == isSaved));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -353,11 +379,13 @@ class _Post implements Post {
       insight,
       createdAt,
       likeCount,
-      saveCount);
+      saveCount,
+      isLiked,
+      isSaved);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved)';
   }
 }
 
@@ -382,7 +410,9 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       String? insight,
       @TimestampConverter() DateTime createdAt,
       int likeCount,
-      int saveCount});
+      int saveCount,
+      bool isLiked,
+      bool isSaved});
 
   @override
   $AddressCopyWith<$Res>? get address;
@@ -415,6 +445,8 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
     Object? createdAt = null,
     Object? likeCount = null,
     Object? saveCount = null,
+    Object? isLiked = null,
+    Object? isSaved = null,
   }) {
     return _then(_Post(
       postId: null == postId
@@ -477,6 +509,14 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
           ? _self.saveCount
           : saveCount // ignore: cast_nullable_to_non_nullable
               as int,
+      isLiked: null == isLiked
+          ? _self.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isSaved: null == isSaved
+          ? _self.isSaved
+          : isSaved // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
