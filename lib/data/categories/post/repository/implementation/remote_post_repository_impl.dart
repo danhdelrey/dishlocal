@@ -65,7 +65,7 @@ class RemotePostRepositoryImpl implements PostRepository {
     int limit = 10,
     DateTime? startAfter,
   }) async {
-    _log.info('📥 Bắt đầu lấy danh sách bài viết (limit: $limit, startAfter: $startAfter)');
+    _log.info('📥 Lấy danh sách post (limit: $limit, startAfter: $startAfter)');
 
     try {
       final rawPosts = await _databaseService.getDocuments(
@@ -73,20 +73,17 @@ class RemotePostRepositoryImpl implements PostRepository {
         orderBy: 'createdAt',
         descending: true,
         limit: limit,
-        startAfter: startAfter?.toIso8601String(), // Nếu Firestore lưu createdAt là String ISO
+        startAfter: startAfter,
       );
 
       final posts = rawPosts.map((json) => Post.fromJson(json)).toList();
-      _log.info('✅ Lấy được ${posts.length} bài viết từ Firestore.');
+      _log.info('✅ Lấy được ${posts.length} bài viết.');
       return right(posts);
     } catch (e, stackTrace) {
-      _log.severe('❌ Lỗi khi lấy danh sách bài viết', e, stackTrace);
+      _log.severe('❌ Lỗi khi lấy post', e, stackTrace);
       return const Left(UnknownFailure());
     }
   }
 
-  
-  
-  
   
 }
