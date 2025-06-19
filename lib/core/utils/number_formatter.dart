@@ -41,4 +41,60 @@ class NumberFormatter {
       return '>100 km';
     }
   }
+
+  static String formatCompactNumberStable(int number) {
+    if (number < 1000) return number.toString();
+
+    double value;
+    String suffix;
+
+    if (number < 1000000) {
+      value = number / 1000;
+      suffix = 'K';
+    } else if (number < 1000000000) {
+      value = number / 1000000;
+      suffix = 'M';
+    } else {
+      value = number / 1000000000;
+      suffix = 'B';
+    }
+
+    // Làm tròn xuống 1 chữ số thập phân
+    double rounded = (value * 10).floorToDouble() / 10;
+
+    return rounded.toStringAsFixed(rounded % 1 == 0 ? 0 : 1) + suffix;
+  }
+
+  static String formatCompactNumberStable2Decimals(int number) {
+    if (number < 1000) return number.toString();
+
+    double value;
+    String suffix;
+
+    if (number < 1000000) {
+      value = number / 1000;
+      suffix = 'K';
+    } else if (number < 1000000000) {
+      value = number / 1000000;
+      suffix = 'M';
+    } else {
+      value = number / 1000000000;
+      suffix = 'B';
+    }
+
+    // Làm tròn xuống 2 chữ số thập phân
+    double rounded = (value * 100).floorToDouble() / 100;
+
+    // Bỏ số 0 dư thừa: 2.00K -> 2K
+    String text = rounded.toStringAsFixed(2);
+    if (text.endsWith('.00')) {
+      text = text.substring(0, text.length - 3);
+    } else if (text.endsWith('0')) {
+      text = text.substring(0, text.length - 1);
+    }
+
+    return text + suffix;
+  }
+
+
 }

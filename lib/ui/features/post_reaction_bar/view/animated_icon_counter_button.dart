@@ -1,6 +1,8 @@
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/reaction_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AnimatedIconCounterButton extends StatefulWidget {
   final bool isActive;
@@ -84,7 +86,7 @@ class _AnimatedIconCounterButtonState extends State<AnimatedIconCounterButton> w
           scale: _scaleAnimation,
           child: _AnimatedSwitcherIconWithLabel(
             icon: icon,
-            label: widget.count.toString(),
+            label: NumberFormatter.formatCompactNumberStable(widget.count),
             labelColor: color,
           ),
         ),

@@ -10,9 +10,9 @@ class PostReactionBarBloc extends Bloc<PostReactionBarEvent, PostReactionBarStat
       : super(
             // Khởi tạo state ban đầu với một số dữ liệu giả
             const PostReactionBarState(
-          likeCount: 135,
+          likeCount: 13556564,
           isLiked: false,
-          saveCount: 42,
+          saveCount: 4256,
           isSaved: true, // Giả sử bài viết này đã được lưu từ trước
         )) {
     // Đăng ký các handler cho từng event
