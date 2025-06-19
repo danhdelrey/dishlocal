@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/utils/timeago_formatter.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_icon_labels_wrap.dart';
@@ -134,7 +135,7 @@ class SmallPost extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    post.createdAt.toString(),
+                    TimeagoFormatter.formatTimeAgo(post.createdAt),
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
                           color: Theme.of(context).colorScheme.outline,
                         ),

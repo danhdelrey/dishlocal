@@ -13,7 +13,7 @@ import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
-import 'package:dishlocal/utils/image_processor.dart';
+import 'package:dishlocal/core/utils/image_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -24,9 +24,10 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:logging/logging.dart';
 
 class NewPostPage extends StatefulWidget {
-  const NewPostPage({super.key, required this.imagePath, required this.address});
+  const NewPostPage({super.key, required this.imagePath, required this.address, required this.blurHash});
 
   final String imagePath;
+  final String blurHash;
   final Address address;
 
   @override

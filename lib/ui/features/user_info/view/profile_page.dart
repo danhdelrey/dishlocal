@@ -2,10 +2,10 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
+import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
 import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_info.dart';
-import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
@@ -72,8 +72,8 @@ class ProfilePage extends StatelessWidget {
             // 2. body: chứa nội dung chính có thể cuộn (TabBarView)
             body: const TabBarView(
               children: [
-                GridViewPosts(),
-                GridViewPosts(),
+                GridPostPage(),
+                GridPostPage(),
               ],
             ),
           ),

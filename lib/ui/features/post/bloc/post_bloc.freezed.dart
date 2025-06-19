@@ -15,130 +15,64 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$PostEvent {
-  DateTime? get pageKey;
-
-  /// Create a copy of PostEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  $PostEventCopyWith<PostEvent> get copyWith =>
-      _$PostEventCopyWithImpl<PostEvent>(this as PostEvent, _$identity);
-
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is PostEvent &&
-            (identical(other.pageKey, pageKey) || other.pageKey == pageKey));
+        (other.runtimeType == runtimeType && other is PostEvent);
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, pageKey);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   String toString() {
-    return 'PostEvent(pageKey: $pageKey)';
+    return 'PostEvent()';
   }
 }
 
 /// @nodoc
-abstract mixin class $PostEventCopyWith<$Res> {
-  factory $PostEventCopyWith(PostEvent value, $Res Function(PostEvent) _then) =
-      _$PostEventCopyWithImpl;
-  @useResult
-  $Res call({DateTime? pageKey});
-}
-
-/// @nodoc
-class _$PostEventCopyWithImpl<$Res> implements $PostEventCopyWith<$Res> {
-  _$PostEventCopyWithImpl(this._self, this._then);
-
-  final PostEvent _self;
-  final $Res Function(PostEvent) _then;
-
-  /// Create a copy of PostEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? pageKey = freezed,
-  }) {
-    return _then(_self.copyWith(
-      pageKey: freezed == pageKey
-          ? _self.pageKey
-          : pageKey // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
-  }
+class $PostEventCopyWith<$Res> {
+  $PostEventCopyWith(PostEvent _, $Res Function(PostEvent) __);
 }
 
 /// @nodoc
 
 class _FetchNextPostPageRequested implements PostEvent {
-  const _FetchNextPostPageRequested({this.pageKey});
-
-  @override
-  final DateTime? pageKey;
-
-  /// Create a copy of PostEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$FetchNextPostPageRequestedCopyWith<_FetchNextPostPageRequested>
-      get copyWith => __$FetchNextPostPageRequestedCopyWithImpl<
-          _FetchNextPostPageRequested>(this, _$identity);
+  const _FetchNextPostPageRequested();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _FetchNextPostPageRequested &&
-            (identical(other.pageKey, pageKey) || other.pageKey == pageKey));
+            other is _FetchNextPostPageRequested);
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, pageKey);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   String toString() {
-    return 'PostEvent.fetchNextPostPageRequested(pageKey: $pageKey)';
+    return 'PostEvent.fetchNextPostPageRequested()';
   }
 }
 
 /// @nodoc
-abstract mixin class _$FetchNextPostPageRequestedCopyWith<$Res>
-    implements $PostEventCopyWith<$Res> {
-  factory _$FetchNextPostPageRequestedCopyWith(
-          _FetchNextPostPageRequested value,
-          $Res Function(_FetchNextPostPageRequested) _then) =
-      __$FetchNextPostPageRequestedCopyWithImpl;
+
+class _RefreshRequested implements PostEvent {
+  const _RefreshRequested();
+
   @override
-  @useResult
-  $Res call({DateTime? pageKey});
-}
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _RefreshRequested);
+  }
 
-/// @nodoc
-class __$FetchNextPostPageRequestedCopyWithImpl<$Res>
-    implements _$FetchNextPostPageRequestedCopyWith<$Res> {
-  __$FetchNextPostPageRequestedCopyWithImpl(this._self, this._then);
-
-  final _FetchNextPostPageRequested _self;
-  final $Res Function(_FetchNextPostPageRequested) _then;
-
-  /// Create a copy of PostEvent
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? pageKey = freezed,
-  }) {
-    return _then(_FetchNextPostPageRequested(
-      pageKey: freezed == pageKey
-          ? _self.pageKey
-          : pageKey // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'PostEvent.refreshRequested()';
   }
 }
 

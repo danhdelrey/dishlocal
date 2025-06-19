@@ -12,6 +12,7 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
       authorUsername: json['authorUsername'] as String,
       authorAvatarUrl: json['authorAvatarUrl'] as String?,
       imageUrl: json['imageUrl'] as String?,
+      blurHash: json['blurHash'] as String?,
       dishName: json['dishName'] as String?,
       diningLocationName: json['diningLocationName'] as String?,
       address: json['address'] == null
@@ -31,6 +32,7 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'authorUsername': instance.authorUsername,
       'authorAvatarUrl': instance.authorAvatarUrl,
       'imageUrl': instance.imageUrl,
+      'blurHash': instance.blurHash,
       'dishName': instance.dishName,
       'diningLocationName': instance.diningLocationName,
       'address': instance.address?.toJson(),

@@ -21,16 +21,14 @@ class PostBloc extends Bloc<PostEvent, PagingState<DateTime?, Post>> {
         return;
       }
 
+      emit(state.copyWith(isLoading: true));
+
       final lastPost = state.pages?.lastOrNull?.last;
       final pageKey = lastPost?.createdAt;
 
       _log.info('📥 Đang tải bài viết (startAfter: $pageKey)...');
-      emit(state.copyWith(isLoading: true));
 
-      final result = await _postRepository.getPosts(
-        limit: 10,
-        startAfter: pageKey,
-      );
+      final result = await _postRepository.getPosts(limit: 10, startAfter: pageKey);
 
       result.fold(
         (failure) {
@@ -47,12 +45,19 @@ class PostBloc extends Bloc<PostEvent, PagingState<DateTime?, Post>> {
 
           emit(state.copyWith(
             pages: [...?state.pages, newPosts],
+            keys: [...?state.keys, pageKey], // ✅ quan trọng
             hasNextPage: !isLastPage,
             isLoading: false,
           ));
         },
       );
     });
+
+    on<_RefreshRequested>((event, emit) async {
+      emit( PagingState()); // reset toàn bộ state
+      add(const PostEvent.fetchNextPostPageRequested()); // fetch lại từ đầu
+    });
+
   }
 }
 

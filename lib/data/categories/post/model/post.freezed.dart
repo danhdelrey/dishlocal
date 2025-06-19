@@ -20,6 +20,7 @@ mixin _$Post {
   String get authorUsername;
   String? get authorAvatarUrl;
   String? get imageUrl;
+  String? get blurHash;
   String? get dishName;
   String? get diningLocationName;
   Address? get address;
@@ -54,6 +55,8 @@ mixin _$Post {
                 other.authorAvatarUrl == authorAvatarUrl) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
+            (identical(other.blurHash, blurHash) ||
+                other.blurHash == blurHash) &&
             (identical(other.dishName, dishName) ||
                 other.dishName == dishName) &&
             (identical(other.diningLocationName, diningLocationName) ||
@@ -78,6 +81,7 @@ mixin _$Post {
       authorUsername,
       authorAvatarUrl,
       imageUrl,
+      blurHash,
       dishName,
       diningLocationName,
       address,
@@ -89,7 +93,7 @@ mixin _$Post {
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
   }
 }
 
@@ -104,6 +108,7 @@ abstract mixin class $PostCopyWith<$Res> {
       String authorUsername,
       String? authorAvatarUrl,
       String? imageUrl,
+      String? blurHash,
       String? dishName,
       String? diningLocationName,
       Address? address,
@@ -133,6 +138,7 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
     Object? authorUsername = null,
     Object? authorAvatarUrl = freezed,
     Object? imageUrl = freezed,
+    Object? blurHash = freezed,
     Object? dishName = freezed,
     Object? diningLocationName = freezed,
     Object? address = freezed,
@@ -162,6 +168,10 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
       imageUrl: freezed == imageUrl
           ? _self.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      blurHash: freezed == blurHash
+          ? _self.blurHash
+          : blurHash // ignore: cast_nullable_to_non_nullable
               as String?,
       dishName: freezed == dishName
           ? _self.dishName
@@ -223,6 +233,7 @@ class _Post implements Post {
       required this.authorUsername,
       this.authorAvatarUrl,
       this.imageUrl,
+      this.blurHash,
       this.dishName,
       this.diningLocationName,
       this.address,
@@ -243,6 +254,8 @@ class _Post implements Post {
   final String? authorAvatarUrl;
   @override
   final String? imageUrl;
+  @override
+  final String? blurHash;
   @override
   final String? dishName;
   @override
@@ -290,6 +303,8 @@ class _Post implements Post {
                 other.authorAvatarUrl == authorAvatarUrl) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
+            (identical(other.blurHash, blurHash) ||
+                other.blurHash == blurHash) &&
             (identical(other.dishName, dishName) ||
                 other.dishName == dishName) &&
             (identical(other.diningLocationName, diningLocationName) ||
@@ -314,6 +329,7 @@ class _Post implements Post {
       authorUsername,
       authorAvatarUrl,
       imageUrl,
+      blurHash,
       dishName,
       diningLocationName,
       address,
@@ -325,7 +341,7 @@ class _Post implements Post {
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
   }
 }
 
@@ -341,6 +357,7 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       String authorUsername,
       String? authorAvatarUrl,
       String? imageUrl,
+      String? blurHash,
       String? dishName,
       String? diningLocationName,
       Address? address,
@@ -371,6 +388,7 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
     Object? authorUsername = null,
     Object? authorAvatarUrl = freezed,
     Object? imageUrl = freezed,
+    Object? blurHash = freezed,
     Object? dishName = freezed,
     Object? diningLocationName = freezed,
     Object? address = freezed,
@@ -400,6 +418,10 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
       imageUrl: freezed == imageUrl
           ? _self.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      blurHash: freezed == blurHash
+          ? _self.blurHash
+          : blurHash // ignore: cast_nullable_to_non_nullable
               as String?,
       dishName: freezed == dishName
           ? _self.dishName

@@ -19,14 +19,43 @@ class _GridPostPageState extends State<GridPostPage> {
     return BlocProvider(
       create: (context) => getIt<PostBloc>(),
       child: BlocBuilder<PostBloc, PagingState<DateTime?, Post>>(
-        builder: (context, state) => PagedMasonryGridView<DateTime?, Post>.count(
-          crossAxisCount: 2,
-          state: state,
-          fetchNextPage: () => context.read<PostBloc>().add(const PostEvent.fetchNextPostPageRequested()),
-          builderDelegate: PagedChildBuilderDelegate<Post>(
-            itemBuilder: (_, item, index) => SmallPost(post: item),
-          ),
-        ),
+        builder: (context, state) {
+          return RefreshIndicator(
+            onRefresh: () => Future.sync(
+              () => context.read<PostBloc>().add(
+                          const PostEvent.refreshRequested(),
+                        ),
+            ),
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
+              slivers: [
+                // Grid dạng masonry
+                PagedSliverMasonryGrid<DateTime?, Post>(
+                  state: state,
+                  fetchNextPage: () {
+                    context.read<PostBloc>().add(
+                          const PostEvent.fetchNextPostPageRequested(),
+                        );
+                  },
+                  builderDelegate: PagedChildBuilderDelegate<Post>(
+                    itemBuilder: (context, post, index) => SmallPost(post: post),
+                    firstPageProgressIndicatorBuilder: (_) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    noItemsFoundIndicatorBuilder: (_) => const Center(
+                      child: Text("Không có bài viết nào."),
+                    ),
+                  ),
+                  gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                  ),
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

@@ -58,8 +58,9 @@ import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
 import '../../ui/features/post/bloc/post_bloc.dart' as _i913;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
-import '../../utils/image_processor.dart' as _i1028;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
+import '../utils/image_processor.dart' as _i19;
+import '../utils/timeago_formatter.dart' as _i517;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt init(
@@ -82,9 +83,8 @@ _i174.GetIt init(
       () => firebaseInjectableModule.firestore);
   gh.lazySingleton<_i457.FirebaseStorage>(
       () => firebaseInjectableModule.firebaseStorage);
-  gh.lazySingleton<_i1028.ImageProcessor>(() => _i1028.ImageProcessor());
-  gh.factory<_i889.CameraBloc>(
-      () => _i889.CameraBloc(imageProcessor: gh<_i1028.ImageProcessor>()));
+  gh.lazySingleton<_i19.ImageProcessor>(() => _i19.ImageProcessor());
+  gh.lazySingleton<_i517.TimeagoFormatter>(() => _i517.TimeagoFormatter());
   gh.lazySingleton<_i1045.StorageService>(
       () => _i1046.CloudinaryStorageServiceImpl());
   gh.lazySingleton<_i780.AuthenticationService>(
@@ -94,6 +94,8 @@ _i174.GetIt init(
           ));
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());
+  gh.factory<_i889.CameraBloc>(
+      () => _i889.CameraBloc(imageProcessor: gh<_i19.ImageProcessor>()));
   gh.lazySingleton<_i4.DatabaseService>(
       () => _i85.FirestoreServiceImpl(gh<_i974.FirebaseFirestore>()));
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(

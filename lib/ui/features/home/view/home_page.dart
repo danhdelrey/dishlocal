@@ -1,7 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
-import 'package:dishlocal/ui/features/view_post/view/grid_view_posts.dart';
+import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_badge.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
@@ -53,8 +53,8 @@ class HomePage extends StatelessWidget {
           },
           body: const TabBarView(
             children: [
-              GridViewPosts(),
-              GridViewPosts(),
+              GridPostPage(),
+              GridPostPage(),
             ],
           ),
         ),

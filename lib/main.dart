@@ -4,6 +4,7 @@ import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:dishlocal/app/config/app_router.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/core/utils/timeago_formatter.dart';
 import 'package:dishlocal/firebase_options.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:timeago/timeago.dart' as timeago_vi;
 
 
 
@@ -21,7 +24,8 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load(fileName: ".env"); //final String apiKey = dotenv.env['API_KEY_WEATHER'] ?? 'Không tìm thấy key';
-
+  timeago.setLocaleMessages('vi', ShortViMessages());
+  
   configureDependencies();
   _setupLogging();
   runApp(const MyApp());

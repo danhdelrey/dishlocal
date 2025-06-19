@@ -21,19 +21,28 @@ class CloudinaryStorageServiceImpl implements StorageService {
   }
 
   @override
-  Future<String> uploadFile({required String path, required File file, required String publicId}) async {
+  Future<String> uploadFile({
+    required String path,
+    required File file,
+    required String publicId,
+  }) async {
     cloudinary.config.urlConfig.secure = true;
+
+    const folder = 'posts';
+    final fullPublicId = '$folder/$publicId';
+
     var response = await cloudinary.uploader().upload(
           file,
           params: UploadParams(
-            folder: 'posts',
+            folder: folder,
             publicId: publicId,
             uniqueFilename: false,
             overwrite: true,
           ),
         );
 
-    String url = cloudinary.image(publicId).toString();
+    final url = cloudinary.image(fullPublicId).toString();
     return url;
   }
+
 }

@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
-import 'package:dishlocal/utils/image_processor.dart';
+import 'package:dishlocal/core/utils/image_processor.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';

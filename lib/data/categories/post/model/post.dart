@@ -15,6 +15,7 @@ abstract class Post with _$Post {
     required String authorUsername,
     String? authorAvatarUrl,
     String? imageUrl,
+    String? blurHash,
     String? dishName,
     String? diningLocationName,
     Address? address,

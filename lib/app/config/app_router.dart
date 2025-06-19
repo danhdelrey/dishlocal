@@ -21,7 +21,7 @@ class AppRouter {
   final _log = Logger('AppRouter');
 
   late final router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/login',
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: redirect,
     routes: [
@@ -53,9 +53,11 @@ class AppRouter {
               final extraMap = state.extra as Map<String, dynamic>;
               final String imagePath = extraMap['imagePath'];
               final Address address = extraMap['address'];
+              final String blurHash = extraMap['blurHash'];
               return NewPostPage(
                 imagePath: imagePath,
                 address: address,
+                blurHash: blurHash,
               );
             },
           ),
@@ -112,7 +114,6 @@ class AppRouter {
   );
 
   FutureOr<String?> redirect(BuildContext context, GoRouterState state) {
-    
     final authState = authBloc.state;
     final isLoggingIn = state.matchedLocation == '/login';
     final isSettingUpAccount = state.matchedLocation == '/account_setup';

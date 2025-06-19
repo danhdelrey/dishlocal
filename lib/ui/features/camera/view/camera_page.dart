@@ -60,6 +60,7 @@ class CameraPage extends StatelessWidget {
                         context.pushReplacement('/camera/new_post', extra: {
                           'imagePath': state.imagePath,
                           'address': address,
+                          'blurHash' : state.blurHash,
                         });
                       }
                       if (state is CameraCaptureInProgress) {
