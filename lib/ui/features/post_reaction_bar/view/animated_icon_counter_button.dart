@@ -1,9 +1,11 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/reaction_bar.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedIconCounterButton extends StatefulWidget {
   final bool isActive;
   final int count;
+  final Color activeColor;
   final Widget Function(bool isActive, Color color) iconBuilder;
   final VoidCallback onTap;
 
@@ -13,6 +15,7 @@ class AnimatedIconCounterButton extends StatefulWidget {
     required this.count,
     required this.iconBuilder,
     required this.onTap,
+    required this.activeColor,
   });
 
   @override
@@ -64,7 +67,7 @@ class _AnimatedIconCounterButtonState extends State<AnimatedIconCounterButton> w
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface;
+    final color = widget.isActive ? widget.activeColor : appColorScheme(context).onSurface;
 
     // Sử dụng ValueKey để AnimatedSwitcher nhận biết sự thay đổi của icon
     final icon = KeyedSubtree(

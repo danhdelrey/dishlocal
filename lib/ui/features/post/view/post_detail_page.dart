@@ -173,6 +173,8 @@ class PostDetailPage extends StatelessWidget {
                                   BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
                                     builder: (context, state) {
                                       return ReactionBar(
+                                        likeColor: Colors.pink,
+                                        saveColor: Colors.amber,
                                         isLiked: state.isLiked,
                                         likeCount: state.likeCount,
                                         isSaved: state.isSaved,

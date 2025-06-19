@@ -6,10 +6,12 @@ class ReactionBar extends StatelessWidget {
   final int likeCount;
   final bool isLiked;
   final VoidCallback onLikeTap;
+  final Color likeColor;
 
   final int saveCount;
   final bool isSaved;
   final VoidCallback onSaveTap;
+  final Color saveColor;
 
   const ReactionBar({
     super.key,
@@ -19,6 +21,8 @@ class ReactionBar extends StatelessWidget {
     required this.saveCount,
     required this.isSaved,
     required this.onSaveTap,
+    required this.likeColor,
+    required this.saveColor,
   });
 
   @override
@@ -27,6 +31,7 @@ class ReactionBar extends StatelessWidget {
       children: [
         // Nút Like
         AnimatedIconCounterButton(
+          activeColor: likeColor,
           isActive: isLiked,
           count: likeCount,
           onTap: onLikeTap,
@@ -38,6 +43,7 @@ class ReactionBar extends StatelessWidget {
         const SizedBox(width: 20),
         // Nút Save/Bookmark
         AnimatedIconCounterButton(
+          activeColor: saveColor,
           isActive: isSaved,
           count: saveCount,
           onTap: onSaveTap,
