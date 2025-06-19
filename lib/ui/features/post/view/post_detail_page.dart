@@ -281,14 +281,18 @@ class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTi
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 300),
     );
 
-    _scaleAnimation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack, // 👈 nhẹ hơn elasticOut
-      reverseCurve: Curves.easeIn, // 👈 mượt khi đóng
-    );
+    _scaleAnimation = TweenSequence<double>([
+      // Show (forward): đơn giản
+      TweenSequenceItem(
+        tween: Tween(begin: 0.0, end: 1.0).chain(
+          CurveTween(curve: Curves.easeOutBack),
+        ),
+        weight: 1,
+      ),
+    ]).animate(_animationController);
 
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.dismissed && _isShowing) {
@@ -298,15 +302,22 @@ class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTi
     });
   }
 
-  void _toggleOverlay() {
+  void _toggleOverlay() async {
     if (_overlayPortalController.isShowing) {
-      _animationController.reverse();
+      // 👇 Reverse: nảy lên rồi mới thu nhỏ
+      await _animationController.animateTo(
+        1.1,
+        duration: const Duration(milliseconds: 80),
+        curve: Curves.easeOut,
+      );
+      await _animationController.reverse();
     } else {
       _overlayPortalController.show();
       _isShowing = true;
       _animationController.forward(from: 0);
     }
   }
+
 
   @override
   void dispose() {
