@@ -12,7 +12,7 @@ import 'package:dishlocal/data/categories/post/failure/post_failure.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/data/services/database_service/interface/database_service.dart';
-import 'package:dishlocal/ui/features/view_post/view/small_post.dart';
+import 'package:dishlocal/ui/features/post/view/small_post.dart';
 
 @LazySingleton(as: PostRepository)
 class RemotePostRepositoryImpl implements PostRepository {

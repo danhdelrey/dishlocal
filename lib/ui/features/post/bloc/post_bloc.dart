@@ -7,39 +7,48 @@ import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
 part 'post_event.dart';
-part 'post_state.dart';
 part 'post_bloc.freezed.dart';
 
 @injectable
-class PostBloc extends Bloc<PostEvent, PostState> {
+class PostBloc extends Bloc<PostEvent, PagingState> {
   final _log = Logger('PostBloc');
   final PostRepository _postRepository;
+  PostBloc(this._postRepository) : super(PagingState()) {
+    on<_FetchNextPostPageRequested>((event, emit) async {
+      if (state.isLoading) return;
 
-  PostBloc(this._postRepository) : super(const _Initial()) {
-    on<_PageRequested>(_onPageRequested);
-  }
+      emit(state.copyWith(isLoading: true, error: null));
 
-  Future<void> _onPageRequested(
-    _PageRequested event,
-    Emitter<PostState> emit,
-  ) async {
-    _log.info('🌀 Yêu cầu tải bài viết pageKey: ${event.pageKey}');
+      try {
+        // Lấy khóa mới: createdAt của post cuối cùng trong page cuối
+        final lastPost = state.pages?.lastOrNull?.last as Post?;
+        final newKey = lastPost?.createdAt;
 
-    final result = await _postRepository.getPosts(
-      limit: 10,
-      startAfter: event.pageKey,
-    );
+        final result = await _postRepository.getPosts(limit: 10, startAfter: newKey);
 
-    result.fold(
-      (failure) {
-        _log.warning('❌ Lỗi khi tải bài viết: ${failure.message}');
-        emit(PostState.failure(failure.message));
-      },
-      (_) {
-        // Không cần emit gì thêm nếu load thành công (UI sẽ xử lý)
-      },
-    );
+        result.fold(
+          (failure) {
+            emit(state.copyWith(
+              error: failure,
+              isLoading: false,
+            ));
+          },
+          (newPosts) {
+            final isLastPage = newPosts.isEmpty;
+
+            emit(state.copyWith(
+              pages: [...?state.pages, newPosts],
+              hasNextPage: !isLastPage,
+              isLoading: false,
+            ));
+          },
+        );
+      } catch (error) {
+        emit(state.copyWith(
+          error: error,
+          isLoading: false,
+        ));
+      }
+    });
   }
 }
-
-

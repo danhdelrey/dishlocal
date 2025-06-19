@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_icon_labels_wrap.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
@@ -10,16 +11,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class SmallPost extends StatelessWidget {
-  const SmallPost({super.key, required this.postId});
+  const SmallPost({super.key, required this.post});
 
-  final int postId;
+  final Post post;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () => context.push('/post_detail', extra: {
-        "postId": postId,
+        "post" : post,
       }),
       child: Container(
         decoration: BoxDecoration(
@@ -34,7 +35,7 @@ class SmallPost extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Hamburger',
+                post.dishName ?? '',
                 style: Theme.of(context).textTheme.labelMedium,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -44,8 +45,8 @@ class SmallPost extends StatelessWidget {
               ),
               Stack(
                 children: [
-                  const CachedImage(
-                    imageUrl: 'https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg',
+                   CachedImage(
+                    imageUrl: post.imageUrl ?? '',
                   ),
                   Positioned.fill(
                     child: Align(
@@ -75,7 +76,7 @@ class SmallPost extends StatelessWidget {
                                     width: 12,
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
-                                  label: '50.000 đ',
+                                  label: post.price.toString(),
                                   labelStyle: appTextTheme(context).labelSmall,
                                 ),
                               ],
@@ -94,12 +95,12 @@ class SmallPost extends StatelessWidget {
                           iconLabels: [
                             CustomIconWithLabel(
                               icon: AppIcons.heart1.toSvg(width: 12, color: appColorScheme(context).onSurface),
-                              label: '12K',
+                              label: post.likeCount.toString(),
                               labelStyle: appTextTheme(context).labelSmall,
                             ),
                             CustomIconWithLabel(
                               icon: AppIcons.bookmark1.toSvg(width: 12, color: appColorScheme(context).onSurface),
-                              label: '1.2K',
+                              label: post.saveCount.toString(),
                               labelStyle: appTextTheme(context).labelSmall,
                             ),
                           ],
@@ -114,8 +115,8 @@ class SmallPost extends StatelessWidget {
               ),
               Row(
                 children: [
-                  const CachedCircleAvatar(
-                    imageUrl: 'https://dep.com.vn/wp-content/uploads/2024/10/Lana.jpg',
+                   CachedCircleAvatar(
+                    imageUrl: post.authorAvatarUrl ?? '',
                     circleRadius: 8,
                   ),
                   const SizedBox(
@@ -123,7 +124,7 @@ class SmallPost extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      'danhdelrey',
+                      post.authorUsername,
                       style: Theme.of(context).textTheme.labelMedium,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -133,7 +134,7 @@ class SmallPost extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    '4 giờ',
+                    post.createdAt.toString(),
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
                           color: Theme.of(context).colorScheme.outline,
                         ),
