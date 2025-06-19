@@ -20,79 +20,77 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // DefaultTabController phải bọc toàn bộ widget sử dụng TabController
-    return ConnectivityAndLocationGuard(
-      builder: (context) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested()),
-            ),
-            BlocProvider(
-              create: (context) => getIt<PostBloc>(),
-            ),
-          ],
-          child: DefaultTabController(
-            length: 2,
-            child: Scaffold(
-              // Sử dụng NestedScrollView làm body của Scaffold
-              body: NestedScrollView(
-                // 1. headerSliverBuilder: chứa các widget ở trên cùng (phần header)
-                headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                  return <Widget>[
-                    GlassSliverAppBar(
-                      pinned: true,
-                      floating: true,
-                      title: BlocBuilder<UserInfoBloc, UserInfoState>(
-                        builder: (context, state) {
-                          if (state is UserInfoSuccess) {
-                            return Text(state.appUser.username ?? 'error');
-                          }
-                          return const SizedBox();
-                        },
+    return ConnectivityAndLocationGuard(builder: (context) {
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested()),
+          ),
+          BlocProvider(
+            create: (context) => getIt<PostBloc>(),
+          ),
+        ],
+        child: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            // Sử dụng NestedScrollView làm body của Scaffold
+            body: NestedScrollView(
+              // 1. headerSliverBuilder: chứa các widget ở trên cùng (phần header)
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                return <Widget>[
+                  GlassSliverAppBar(
+                    pinned: true,
+                    floating: true,
+                    title: BlocBuilder<UserInfoBloc, UserInfoState>(
+                      builder: (context, state) {
+                        if (state is UserInfoSuccess) {
+                          return Text(state.appUser.username ?? 'error');
+                        }
+                        return const SizedBox();
+                      },
+                    ),
+                    centerTitle: true,
+                    actions: const [
+                      LogoutButton(),
+                    ],
+                  ),
+
+                  // SliverToBoxAdapter để bọc các widget không phải là Sliver
+                  const SliverToBoxAdapter(
+                    child: ProfileInfo(),
+                  ),
+
+                  // SliverPersistentHeader để "ghim" TabBar ở trên cùng khi cuộn
+                  SliverPersistentHeader(
+                    delegate: _SliverAppBarDelegate(
+                      TabBar(
+                        dividerColor: Colors.white.withValues(alpha: 0.1),
+                        tabs: const [
+                          Tab(
+                            icon: Icon(Icons.grid_view_rounded),
+                          ),
+                          Tab(
+                            icon: Icon(Icons.bookmark_rounded),
+                          ),
+                        ],
                       ),
-                      centerTitle: true,
-                      actions: const [
-                        LogoutButton(),
-                      ],
                     ),
-        
-                    // SliverToBoxAdapter để bọc các widget không phải là Sliver
-                    const SliverToBoxAdapter(
-                      child: ProfileInfo(),
-                    ),
-        
-                    // SliverPersistentHeader để "ghim" TabBar ở trên cùng khi cuộn
-                    SliverPersistentHeader(
-                      delegate: _SliverAppBarDelegate(
-                        TabBar(
-                          dividerColor: Colors.white.withValues(alpha: 0.1),
-                          tabs: const [
-                            Tab(
-                              icon: Icon(Icons.grid_view_rounded),
-                            ),
-                            Tab(
-                              icon: Icon(Icons.bookmark_rounded),
-                            ),
-                          ],
-                        ),
-                      ),
-                      pinned: true,
-                    ),
-                  ];
-                },
-                // 2. body: chứa nội dung chính có thể cuộn (TabBarView)
-                body: const TabBarView(
-                  children: [
-                    GridPostPage(),
-                    GridPostPage(),
-                  ],
-                ),
+                    pinned: true,
+                  ),
+                ];
+              },
+              // 2. body: chứa nội dung chính có thể cuộn (TabBarView)
+              body: const TabBarView(
+                children: [
+                  GridPostPage(),
+                  GridPostPage(),
+                ],
               ),
             ),
           ),
-        );
-      }
-    );
+        ),
+      );
+    });
   }
 }
 
