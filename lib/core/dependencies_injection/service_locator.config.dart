@@ -36,6 +36,10 @@ import '../../data/services/database_service/implementation/firestore_service_im
     as _i85;
 import '../../data/services/database_service/interface/database_service.dart'
     as _i4;
+import '../../data/services/distance_service/implementation/haversine_distance_service.dart'
+    as _i1015;
+import '../../data/services/distance_service/interface/distance_service.dart'
+    as _i367;
 import '../../data/services/geocoding_service/implementation/geocoding_service_nominatim_impl.dart'
     as _i3;
 import '../../data/services/geocoding_service/interface/geocoding_service.dart'
@@ -87,6 +91,8 @@ _i174.GetIt init(
   gh.lazySingleton<_i19.ImageProcessor>(() => _i19.ImageProcessor());
   gh.lazySingleton<_i660.NumberFormatter>(() => _i660.NumberFormatter());
   gh.lazySingleton<_i537.TimeFormatter>(() => _i537.TimeFormatter());
+  gh.lazySingleton<_i367.DistanceService>(
+      () => _i1015.HaversineDistanceService());
   gh.lazySingleton<_i1045.StorageService>(
       () => _i1046.CloudinaryStorageServiceImpl());
   gh.lazySingleton<_i780.AuthenticationService>(
@@ -103,17 +109,18 @@ _i174.GetIt init(
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
-        locationService: gh<_i473.LocationService>(),
-        geocodingService: gh<_i766.GeocodingService>(),
+        gh<_i473.LocationService>(),
+        gh<_i766.GeocodingService>(),
+        gh<_i367.DistanceService>(),
       ));
-  gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
-      addressRepository: gh<_i344.AddressRepository>()));
   gh.lazySingleton<_i749.AppUserRepository>(() => _i904.UserRepositoryImpl(
         gh<_i780.AuthenticationService>(),
         gh<_i4.DatabaseService>(),
       ));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
+  gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
+      addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factory<_i511.AuthBloc>(

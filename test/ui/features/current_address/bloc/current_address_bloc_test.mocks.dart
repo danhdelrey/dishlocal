@@ -73,6 +73,32 @@ class MockAddressRepository extends _i1.Mock implements _i4.AddressRepository {
           ),
         )),
       ) as _i5.Future<_i2.Either<_i6.AddressFailure, _i3.Address>>);
+
+  @override
+  _i5.Future<_i2.Either<_i6.AddressFailure, double>> calculateDistance(
+    double? toLat,
+    double? toLong,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #calculateDistance,
+          [
+            toLat,
+            toLong,
+          ],
+        ),
+        returnValue: _i5.Future<_i2.Either<_i6.AddressFailure, double>>.value(
+            _FakeEither_0<_i6.AddressFailure, double>(
+          this,
+          Invocation.method(
+            #calculateDistance,
+            [
+              toLat,
+              toLong,
+            ],
+          ),
+        )),
+      ) as _i5.Future<_i2.Either<_i6.AddressFailure, double>>);
 }
 
 /// A class which mocks [Address].
