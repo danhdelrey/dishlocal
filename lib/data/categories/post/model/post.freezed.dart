@@ -24,6 +24,7 @@ mixin _$Post {
   String? get dishName;
   String? get diningLocationName;
   Address? get address;
+  double? get distance;
   int? get price;
   String? get insight;
   @TimestampConverter()
@@ -62,6 +63,8 @@ mixin _$Post {
             (identical(other.diningLocationName, diningLocationName) ||
                 other.diningLocationName == diningLocationName) &&
             (identical(other.address, address) || other.address == address) &&
+            (identical(other.distance, distance) ||
+                other.distance == distance) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.insight, insight) || other.insight == insight) &&
             (identical(other.createdAt, createdAt) ||
@@ -85,6 +88,7 @@ mixin _$Post {
       dishName,
       diningLocationName,
       address,
+      distance,
       price,
       insight,
       createdAt,
@@ -93,7 +97,7 @@ mixin _$Post {
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
   }
 }
 
@@ -112,6 +116,7 @@ abstract mixin class $PostCopyWith<$Res> {
       String? dishName,
       String? diningLocationName,
       Address? address,
+      double? distance,
       int? price,
       String? insight,
       @TimestampConverter() DateTime createdAt,
@@ -142,6 +147,7 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
     Object? dishName = freezed,
     Object? diningLocationName = freezed,
     Object? address = freezed,
+    Object? distance = freezed,
     Object? price = freezed,
     Object? insight = freezed,
     Object? createdAt = null,
@@ -185,6 +191,10 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
               as Address?,
+      distance: freezed == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double?,
       price: freezed == price
           ? _self.price
           : price // ignore: cast_nullable_to_non_nullable
@@ -237,6 +247,7 @@ class _Post implements Post {
       this.dishName,
       this.diningLocationName,
       this.address,
+      this.distance,
       this.price,
       this.insight,
       @TimestampConverter() required this.createdAt,
@@ -262,6 +273,8 @@ class _Post implements Post {
   final String? diningLocationName;
   @override
   final Address? address;
+  @override
+  final double? distance;
   @override
   final int? price;
   @override
@@ -310,6 +323,8 @@ class _Post implements Post {
             (identical(other.diningLocationName, diningLocationName) ||
                 other.diningLocationName == diningLocationName) &&
             (identical(other.address, address) || other.address == address) &&
+            (identical(other.distance, distance) ||
+                other.distance == distance) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.insight, insight) || other.insight == insight) &&
             (identical(other.createdAt, createdAt) ||
@@ -333,6 +348,7 @@ class _Post implements Post {
       dishName,
       diningLocationName,
       address,
+      distance,
       price,
       insight,
       createdAt,
@@ -341,7 +357,7 @@ class _Post implements Post {
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount)';
   }
 }
 
@@ -361,6 +377,7 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       String? dishName,
       String? diningLocationName,
       Address? address,
+      double? distance,
       int? price,
       String? insight,
       @TimestampConverter() DateTime createdAt,
@@ -392,6 +409,7 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
     Object? dishName = freezed,
     Object? diningLocationName = freezed,
     Object? address = freezed,
+    Object? distance = freezed,
     Object? price = freezed,
     Object? insight = freezed,
     Object? createdAt = null,
@@ -435,6 +453,10 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
               as Address?,
+      distance: freezed == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double?,
       price: freezed == price
           ? _self.price
           : price // ignore: cast_nullable_to_non_nullable

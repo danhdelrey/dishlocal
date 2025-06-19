@@ -93,7 +93,7 @@ class PostDetailPage extends StatelessWidget {
                           width: 16,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
-                        label: '1.2 km',
+                        label: NumberFormatter.formatDistance(post.distance),
                       ),
                       Text(
                         post.diningLocationName ?? '',

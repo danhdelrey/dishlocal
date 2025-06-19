@@ -18,6 +18,7 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
       address: json['address'] == null
           ? null
           : Address.fromJson(json['address'] as Map<String, dynamic>),
+      distance: (json['distance'] as num?)?.toDouble(),
       price: (json['price'] as num?)?.toInt(),
       insight: json['insight'] as String?,
       createdAt:
@@ -36,6 +37,7 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'dishName': instance.dishName,
       'diningLocationName': instance.diningLocationName,
       'address': instance.address?.toJson(),
+      'distance': instance.distance,
       'price': instance.price,
       'insight': instance.insight,
       'createdAt': const TimestampConverter().toJson(instance.createdAt),

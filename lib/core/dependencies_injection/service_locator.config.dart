@@ -130,11 +130,14 @@ _i174.GetIt init(
         gh<_i1045.StorageService>(),
         gh<_i4.DatabaseService>(),
       ));
+  gh.factory<_i913.PostBloc>(() => _i913.PostBloc(
+        gh<_i480.PostRepository>(),
+        gh<_i344.AddressRepository>(),
+      ));
   gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
       ));
-  gh.factory<_i913.PostBloc>(() => _i913.PostBloc(gh<_i480.PostRepository>()));
   return getIt;
 }
 

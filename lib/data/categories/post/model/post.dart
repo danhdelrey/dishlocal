@@ -19,6 +19,7 @@ abstract class Post with _$Post {
     String? dishName,
     String? diningLocationName,
     Address? address,
+    double? distance,
     int? price,
     String? insight,
     @TimestampConverter() required DateTime createdAt,
