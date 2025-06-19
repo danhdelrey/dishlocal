@@ -10,6 +10,7 @@ abstract class Address with _$Address {
     required double latitude,
     required double longitude,
     String? displayName,
+    String? exactAddress,
   }) = _Address;
 
   factory Address.fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);

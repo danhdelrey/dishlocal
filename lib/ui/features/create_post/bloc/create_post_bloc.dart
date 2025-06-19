@@ -173,7 +173,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           dishName: dishNameInput.value,
           blurHash: event.blurHash,
           diningLocationName: diningLocationNameInput.value,
-          address: event.address,
+          address: event.address.copyWith(exactAddress: exactAddressInput.value),
           price: moneyInput.value,
           insight: insightInput.value,
           createdAt: event.createdAt,

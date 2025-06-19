@@ -5,7 +5,7 @@ import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
-import 'package:dishlocal/ui/features/view_post/view/reaction_bar.dart';
+import 'package:dishlocal/ui/features/post/view/reaction_bar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
@@ -99,7 +99,7 @@ class PostDetailPage extends StatelessWidget {
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       Text(
-                        post.address?.displayName ?? '',
+                        '${post.address?.exactAddress ?? ''}, ${post.address?.displayName ?? ''}',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const SizedBox(
@@ -192,7 +192,7 @@ class PostDetailPage extends StatelessWidget {
                       const SizedBox(
                         height: 20,
                       ),
-                      const ReactionBar(),
+                      ReactionBar(likeCount: post.likeCount, saveCount: post.saveCount),
                     ],
                   ),
                 ),

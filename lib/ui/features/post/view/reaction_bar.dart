@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 class ReactionBar extends StatelessWidget {
   const ReactionBar({
     super.key,
+    required this.likeCount,
+    required this.saveCount,
   });
+
+  final int likeCount;
+  final int saveCount;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +21,7 @@ class ReactionBar extends StatelessWidget {
             width: 16,
             color: Theme.of(context).colorScheme.onSurface,
           ),
-          label: '12K',
+          label: likeCount.toString(),
           labelColor: Theme.of(context).colorScheme.onSurface,
         ),
         const SizedBox(
@@ -28,7 +33,7 @@ class ReactionBar extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurface,
           ),
           labelColor: Theme.of(context).colorScheme.onSurface,
-          label: '1.2K',
+          label: saveCount.toString(),
         ),
       ],
     );

@@ -18,6 +18,7 @@ mixin _$Address {
   double get latitude;
   double get longitude;
   String? get displayName;
+  String? get exactAddress;
 
   /// Create a copy of Address
   /// with the given fields replaced by the non-null parameter values.
@@ -39,17 +40,19 @@ mixin _$Address {
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
             (identical(other.displayName, displayName) ||
-                other.displayName == displayName));
+                other.displayName == displayName) &&
+            (identical(other.exactAddress, exactAddress) ||
+                other.exactAddress == exactAddress));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, latitude, longitude, displayName);
+      Object.hash(runtimeType, latitude, longitude, displayName, exactAddress);
 
   @override
   String toString() {
-    return 'Address(latitude: $latitude, longitude: $longitude, displayName: $displayName)';
+    return 'Address(latitude: $latitude, longitude: $longitude, displayName: $displayName, exactAddress: $exactAddress)';
   }
 }
 
@@ -58,7 +61,11 @@ abstract mixin class $AddressCopyWith<$Res> {
   factory $AddressCopyWith(Address value, $Res Function(Address) _then) =
       _$AddressCopyWithImpl;
   @useResult
-  $Res call({double latitude, double longitude, String? displayName});
+  $Res call(
+      {double latitude,
+      double longitude,
+      String? displayName,
+      String? exactAddress});
 }
 
 /// @nodoc
@@ -76,6 +83,7 @@ class _$AddressCopyWithImpl<$Res> implements $AddressCopyWith<$Res> {
     Object? latitude = null,
     Object? longitude = null,
     Object? displayName = freezed,
+    Object? exactAddress = freezed,
   }) {
     return _then(_self.copyWith(
       latitude: null == latitude
@@ -90,6 +98,10 @@ class _$AddressCopyWithImpl<$Res> implements $AddressCopyWith<$Res> {
           ? _self.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
               as String?,
+      exactAddress: freezed == exactAddress
+          ? _self.exactAddress
+          : exactAddress // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -99,7 +111,10 @@ class _$AddressCopyWithImpl<$Res> implements $AddressCopyWith<$Res> {
 @JsonSerializable(explicitToJson: true)
 class _Address implements Address {
   const _Address(
-      {required this.latitude, required this.longitude, this.displayName});
+      {required this.latitude,
+      required this.longitude,
+      this.displayName,
+      this.exactAddress});
   factory _Address.fromJson(Map<String, dynamic> json) =>
       _$AddressFromJson(json);
 
@@ -109,6 +124,8 @@ class _Address implements Address {
   final double longitude;
   @override
   final String? displayName;
+  @override
+  final String? exactAddress;
 
   /// Create a copy of Address
   /// with the given fields replaced by the non-null parameter values.
@@ -135,17 +152,19 @@ class _Address implements Address {
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
             (identical(other.displayName, displayName) ||
-                other.displayName == displayName));
+                other.displayName == displayName) &&
+            (identical(other.exactAddress, exactAddress) ||
+                other.exactAddress == exactAddress));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, latitude, longitude, displayName);
+      Object.hash(runtimeType, latitude, longitude, displayName, exactAddress);
 
   @override
   String toString() {
-    return 'Address(latitude: $latitude, longitude: $longitude, displayName: $displayName)';
+    return 'Address(latitude: $latitude, longitude: $longitude, displayName: $displayName, exactAddress: $exactAddress)';
   }
 }
 
@@ -155,7 +174,11 @@ abstract mixin class _$AddressCopyWith<$Res> implements $AddressCopyWith<$Res> {
       __$AddressCopyWithImpl;
   @override
   @useResult
-  $Res call({double latitude, double longitude, String? displayName});
+  $Res call(
+      {double latitude,
+      double longitude,
+      String? displayName,
+      String? exactAddress});
 }
 
 /// @nodoc
@@ -173,6 +196,7 @@ class __$AddressCopyWithImpl<$Res> implements _$AddressCopyWith<$Res> {
     Object? latitude = null,
     Object? longitude = null,
     Object? displayName = freezed,
+    Object? exactAddress = freezed,
   }) {
     return _then(_Address(
       latitude: null == latitude
@@ -186,6 +210,10 @@ class __$AddressCopyWithImpl<$Res> implements _$AddressCopyWith<$Res> {
       displayName: freezed == displayName
           ? _self.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      exactAddress: freezed == exactAddress
+          ? _self.exactAddress
+          : exactAddress // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
