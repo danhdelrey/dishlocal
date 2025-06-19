@@ -316,9 +316,10 @@ class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: _toggleOverlay,
-      child: OverlayPortal(
+    return IconButton(
+      color: appColorScheme(context).onSurface,
+      onPressed: _toggleOverlay,
+      icon: OverlayPortal(
         controller: _overlayPortalController,
         overlayChildBuilder: (context) {
           return Positioned(
