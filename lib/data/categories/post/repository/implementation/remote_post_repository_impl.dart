@@ -59,4 +59,34 @@ class RemotePostRepositoryImpl implements PostRepository {
       return const Left(UnknownFailure());
     }
   }
+  
+  @override
+  Future<Either<PostFailure, List<Post>>> getPosts({
+    int limit = 10,
+    DateTime? startAfter,
+  }) async {
+    _log.info('📥 Bắt đầu lấy danh sách bài viết (limit: $limit, startAfter: $startAfter)');
+
+    try {
+      final rawPosts = await _databaseService.getDocuments(
+        collection: 'posts',
+        orderBy: 'createdAt',
+        descending: true,
+        limit: limit,
+        startAfter: startAfter?.toIso8601String(), // Nếu Firestore lưu createdAt là String ISO
+      );
+
+      final posts = rawPosts.map((json) => Post.fromJson(json)).toList();
+      _log.info('✅ Lấy được ${posts.length} bài viết từ Firestore.');
+      return right(posts);
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi khi lấy danh sách bài viết', e, stackTrace);
+      return const Left(UnknownFailure());
+    }
+  }
+
+  
+  
+  
+  
 }

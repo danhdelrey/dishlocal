@@ -107,4 +107,45 @@ class FirestoreServiceImpl implements DatabaseService {
       throw DatabaseServiceUnknownException("Lỗi không xác định khi cập nhật dữ liệu: ${e.toString()}");
     }
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> getDocuments({
+    required String collection,
+    String? orderBy,
+    bool descending = false,
+    int limit = 10,
+    dynamic startAfter,
+  }) async {
+    final path = collection;
+    _log.info("Bắt đầu truy vấn danh sách tài liệu từ collection: '$path'");
+    _log.fine("Tham số truy vấn: orderBy='$orderBy', descending=$descending, limit=$limit, startAfter=$startAfter");
+
+    try {
+      Query query = _firestore.collection(collection);
+
+      if (orderBy != null) {
+        query = query.orderBy(orderBy, descending: descending);
+        if (startAfter != null) {
+          query = query.startAfter([startAfter]);
+        }
+      }
+
+      query = query.limit(limit);
+
+      final snapshot = await query.get();
+
+      _log.info("Lấy được ${snapshot.docs.length} tài liệu từ collection: '$path'");
+
+      return snapshot.docs.map<Map<String, dynamic>>((doc) {
+        final data = doc.data() as Map<String, dynamic>; // Ép kiểu rõ ràng
+        data['id'] = doc.id; // Tuỳ chọn thêm id
+        return data;
+      }).toList();
+    } on FirebaseException catch (e) {
+      throw _handleFirestoreException(e, path, "truy vấn danh sách");
+    } catch (e, stackTrace) {
+      _log.severe("Đã xảy ra lỗi không xác định khi truy vấn danh sách tài liệu từ '$path'.", e, stackTrace);
+      throw DatabaseServiceUnknownException("Lỗi không xác định khi truy vấn danh sách: ${e.toString()}");
+    }
+  }
 }
