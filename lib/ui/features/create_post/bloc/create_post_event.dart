@@ -50,9 +50,10 @@ final class MoneyInputChanged extends CreatePostEvent {
 final class CreatePostRequested extends CreatePostEvent {
   final Address address;
   final String imagePath;
+  final String blurHash;
   final DateTime createdAt;
 
-  const CreatePostRequested({required this.address, required this.imagePath, required this.createdAt});
+  const CreatePostRequested({required this.address, required this.imagePath, required this.createdAt, required this.blurHash});
   @override
   List<Object?> get props => [address, imagePath, createdAt];
 }

@@ -48,6 +48,7 @@ class SmallPost extends StatelessWidget {
                 children: [
                    CachedImage(
                     imageUrl: post.imageUrl ?? '',
+                    blurHash: post.blurHash ?? '',
                   ),
                   Positioned.fill(
                     child: Align(

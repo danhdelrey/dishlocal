@@ -171,6 +171,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           authorUsername: appUser.username!,
           authorAvatarUrl: appUser.photoUrl,
           dishName: dishNameInput.value,
+          blurHash: event.blurHash,
           diningLocationName: diningLocationNameInput.value,
           address: event.address,
           price: moneyInput.value,
@@ -192,7 +193,6 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
         },
       );
-
     } else {
       _log.warning('Form không hợp lệ. Hiển thị lỗi và yêu cầu focus.');
 

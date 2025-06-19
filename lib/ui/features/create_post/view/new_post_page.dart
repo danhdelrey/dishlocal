@@ -161,7 +161,12 @@ class _NewPostPageState extends State<NewPostPage> {
                       actions: [
                         TextButton(
                           onPressed: () => context.read<CreatePostBloc>().add(
-                                CreatePostRequested(address: widget.address, imagePath: widget.imagePath, createdAt: now),
+                                CreatePostRequested(
+                                  address: widget.address,
+                                  imagePath: widget.imagePath,
+                                  createdAt: now,
+                                  blurHash: widget.blurHash,
+                                ),
                               ),
                           child: const Text('Đăng'),
                         ),
