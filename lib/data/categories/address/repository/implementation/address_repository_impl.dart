@@ -19,12 +19,10 @@ class AddressRepositoryImpl implements AddressRepository {
   // 1. Nhận các phụ thuộc qua constructor (Dependency Injection)
   final LocationService _locationService;
   final GeocodingService _geocodingService;
-  final DistanceService _distanceService;
 
   AddressRepositoryImpl(
     this._locationService,
     this._geocodingService,
-    this._distanceService,
   );
 
   @override
@@ -70,34 +68,5 @@ class AddressRepositoryImpl implements AddressRepository {
     }
   }
 
-  @override
-  Future<Either<address_failure.AddressFailure, double>> calculateDistance(double toLat, double toLong) async {
-    try {
-      final position = await _locationService.getCurrentPosition();
-      _log.info('Lấy tọa độ thành công: ${position.latitude}, ${position.longitude}');
-
-      final distance = await _distanceService.calculateDistance(fromLat: position.latitude, fromLong: position.longitude, toLat: toLat, toLong: toLong);
-
-      return Right(distance);
-
-      // 5. BẮT LỖI VÀ "DỊCH" SANG FAILURE (LEFT)
-    } on location_service_exception.LocationServiceDisabledException {
-      _log.warning('Dịch vụ định vị bị tắt.');
-      return const Left(address_failure.ServiceDisabledFailure());
-    } on location_service_exception.LocationPermissionDeniedException {
-      _log.warning('Quyền truy cập vị trí bị từ chối.');
-      return const Left(address_failure.PermissionDeniedFailure());
-    } on location_service_exception.LocationPermissionPermanentlyDeniedException {
-      _log.severe('Quyền truy cập vị trí bị từ chối vĩnh viễn.');
-      return const Left(address_failure.PermissionPermanentlyDeniedFailure());
-    } on GeocodingServiceException catch (e) {
-      // Bắt lỗi từ service mới
-      _log.severe('Lỗi từ GeocodingService: ${e.message}');
-      return Left(address_failure.GeocodingFailure(e.message));
-    } catch (e) {
-      // Bắt tất cả các lỗi còn lại (từ cả hai service)
-      _log.severe('Lỗi không xác định trong AddressRepository: $e');
-      return const Left(address_failure.UnknownFailure());
-    }
-  }
+  
 }

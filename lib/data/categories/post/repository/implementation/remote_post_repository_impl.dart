@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
+import 'package:dishlocal/data/services/distance_service/interface/distance_service.dart';
+import 'package:dishlocal/data/services/location_service/interface/location_service.dart';
 import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -17,14 +19,16 @@ import 'package:dishlocal/ui/features/post/view/small_post.dart';
 @LazySingleton(as: PostRepository)
 class RemotePostRepositoryImpl implements PostRepository {
   final _log = Logger('RemotePostRepositoryImpl');
-  final AppUserRepository _appUserRepository;
   final StorageService _storageService;
   final DatabaseService _databaseService;
+  final DistanceService _distanceService;
+  final LocationService _locationService;
 
   RemotePostRepositoryImpl(
-    this._appUserRepository,
     this._storageService,
     this._databaseService,
+    this._distanceService,
+    this._locationService,
   );
 
   @override
@@ -59,7 +63,7 @@ class RemotePostRepositoryImpl implements PostRepository {
       return const Left(UnknownFailure());
     }
   }
-  
+
   @override
   Future<Either<PostFailure, List<Post>>> getPosts({
     int limit = 10,
@@ -78,12 +82,36 @@ class RemotePostRepositoryImpl implements PostRepository {
 
       final posts = rawPosts.map((json) => Post.fromJson(json)).toList();
       _log.info('✅ Lấy được ${posts.length} bài viết.');
-      return right(posts);
+
+      // 🔍 Lấy tọa độ người dùng hiện tại
+      final userPosition = await _locationService.getCurrentPosition();
+      final userLat = userPosition.latitude;
+      final userLong = userPosition.longitude;
+
+      // 🔁 Tính khoảng cách cho từng bài viết
+      final postsWithDistance = await Future.wait(posts.map((post) async {
+        final postLat = post.address?.latitude;
+        final postLong = post.address?.longitude;
+
+        if (postLat == null || postLong == null) {
+          _log.warning('⚠️ Post ${post.postId} không có tọa độ');
+          return post;
+        }
+
+        final distance = await _distanceService.calculateDistance(
+          fromLat: userLat,
+          fromLong: userLong,
+          toLat: postLat,
+          toLong: postLong,
+        );
+
+        return post.copyWith(distance: distance);
+      }));
+
+      return right(postsWithDistance);
     } catch (e, stackTrace) {
       _log.severe('❌ Lỗi khi lấy post', e, stackTrace);
       return const Left(UnknownFailure());
     }
   }
-
-  
 }
