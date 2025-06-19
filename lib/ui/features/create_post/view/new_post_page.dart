@@ -96,16 +96,10 @@ class _NewPostPageState extends State<NewPostPage> {
                       ..showSnackBar(
                         SnackBar(
                           backgroundColor: appColorScheme(context).surfaceContainer,
-                          content: Text(
+                          content: const Text(
                             'Đăng bài thành công!',
-                            style: appTextTheme(context).titleMedium!.copyWith(
-                                  color: appColorScheme(context).onSurface,
-                                ),
                           ),
                           action: SnackBarAction(label: 'Xem', onPressed: () {}),
-                          duration: const Duration(
-                            days: 1,
-                          ),
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
@@ -117,10 +111,9 @@ class _NewPostPageState extends State<NewPostPage> {
                   }
                   if (state.formzSubmissionStatus.isFailure) {
                     context.loaderOverlay.hide();
-                    // Hiển thị thông báo lỗi nếu cần
-                    // ScaffoldMessenger.of(context)
-                    //   ..hideCurrentSnackBar()
-                    //   ..showSnackBar(const SnackBar(content: Text('Đã có lỗi xảy ra. Vui lòng thử lại.')));
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(const SnackBar(content: Text('Đã có lỗi xảy ra. Vui lòng thử lại.')));
                   }
                 },
               ),
