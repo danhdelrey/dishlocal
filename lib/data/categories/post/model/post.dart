@@ -1,3 +1,4 @@
+import 'package:dishlocal/core/json_converter/timestamp_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/core/json_converter/date_time_converter.dart';
@@ -18,7 +19,7 @@ abstract class Post with _$Post {
     Address? address,
     int? price,
     String? insight,
-    @DateTimeConverter() required DateTime createdAt,
+    @TimestampConverter() required DateTime createdAt,
     required int likeCount,
     required int saveCount,
   }) = _Post;

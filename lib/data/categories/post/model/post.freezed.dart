@@ -25,7 +25,7 @@ mixin _$Post {
   Address? get address;
   int? get price;
   String? get insight;
-  @DateTimeConverter()
+  @TimestampConverter()
   DateTime get createdAt;
   int get likeCount;
   int get saveCount;
@@ -109,7 +109,7 @@ abstract mixin class $PostCopyWith<$Res> {
       Address? address,
       int? price,
       String? insight,
-      @DateTimeConverter() DateTime createdAt,
+      @TimestampConverter() DateTime createdAt,
       int likeCount,
       int saveCount});
 
@@ -227,7 +227,7 @@ class _Post implements Post {
       this.address,
       this.price,
       this.insight,
-      @DateTimeConverter() required this.createdAt,
+      @TimestampConverter() required this.createdAt,
       required this.likeCount,
       required this.saveCount});
   factory _Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
@@ -253,7 +253,7 @@ class _Post implements Post {
   @override
   final String? insight;
   @override
-  @DateTimeConverter()
+  @TimestampConverter()
   final DateTime createdAt;
   @override
   final int likeCount;
@@ -345,7 +345,7 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       Address? address,
       int? price,
       String? insight,
-      @DateTimeConverter() DateTime createdAt,
+      @TimestampConverter() DateTime createdAt,
       int likeCount,
       int saveCount});
 

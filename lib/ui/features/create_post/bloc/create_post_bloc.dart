@@ -160,7 +160,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         (failure) {},
         (appUser) async {
           final postId = uuid.v4();
-          final createNewPostResult = await _postRepository.createPost(
+          final createNewPostResult = await _postRepository.createPost( //TODO: firestore không lưu được DateTime, ArgumentError (Invalid argument: Instance of '_Address')
             post: Post(
               postId: postId,
               authorUserId: appUser.userId,

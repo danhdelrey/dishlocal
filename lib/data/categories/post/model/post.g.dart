@@ -20,7 +20,7 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
       price: (json['price'] as num?)?.toInt(),
       insight: json['insight'] as String?,
       createdAt:
-          const DateTimeConverter().fromJson(json['createdAt'] as String),
+          const TimestampConverter().fromJson(json['createdAt'] as Timestamp),
       likeCount: (json['likeCount'] as num).toInt(),
       saveCount: (json['saveCount'] as num).toInt(),
     );
@@ -36,7 +36,7 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'address': instance.address,
       'price': instance.price,
       'insight': instance.insight,
-      'createdAt': const DateTimeConverter().toJson(instance.createdAt),
+      'createdAt': const TimestampConverter().toJson(instance.createdAt),
       'likeCount': instance.likeCount,
       'saveCount': instance.saveCount,
     };

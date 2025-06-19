@@ -12,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
 
-var cloudinary = Cloudinary.fromStringUrl(dotenv.env['CLOUDINARY_URL'] as String);
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,8 +20,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  cloudinary.config.urlConfig.secure = true;
-
   await dotenv.load(fileName: ".env"); //final String apiKey = dotenv.env['API_KEY_WEATHER'] ?? 'Không tìm thấy key';
 
   configureDependencies();
