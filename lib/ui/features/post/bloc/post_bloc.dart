@@ -48,28 +48,10 @@ class PostBloc extends Bloc<PostEvent, PagingState<DateTime?, Post>> {
       final newPosts = result.getOrElse(() => []);
       final isLastPage = newPosts.isEmpty;
 
-      // 🔁 Tính khoảng cách
-      final postsWithDistance = await Future.wait(newPosts.map((post) async {
-        final eitherDistance = await _addressRepository.calculateDistance(
-          post.address?.latitude ?? 0,
-          post.address?.longitude ?? 0,
-        );
-
-        final distance = eitherDistance.fold(
-          (failure) {
-            _log.warning('❗ Không tính được khoảng cách cho post ${post.postId}');
-            return null;
-          },
-          (value) => value,
-        );
-
-        return post.copyWith(distance: distance);
-      }));
-
-      _log.info('✅ Tải được ${postsWithDistance.length} bài viết. isLastPage=$isLastPage');
+      _log.info('✅ Tải được ${newPosts.length} bài viết. isLastPage=$isLastPage');
 
       emit(state.copyWith(
-        pages: [...?state.pages, postsWithDistance],
+        pages: [...?state.pages, newPosts],
         keys: [...?state.keys, pageKey],
         hasNextPage: !isLastPage,
         isLoading: false,
