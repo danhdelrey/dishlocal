@@ -82,6 +82,7 @@ dependencies:
   freezed_annotation: ^3.0.0
   infinite_scroll_pagination: ^5.1.0
   timeago: ^3.7.1
+  maps_launcher: ^3.0.0+1
   
 
 dev_dependencies:

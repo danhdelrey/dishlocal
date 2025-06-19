@@ -15,6 +15,7 @@ import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 
 class PostDetailPage extends StatelessWidget {
   const PostDetailPage({super.key, required this.post});
@@ -122,7 +123,11 @@ class PostDetailPage extends StatelessWidget {
                           color: Colors.white,
                         ),
                         label: 'Xem trên bản đồ',
-                        onTap: () {},
+                        onTap: () {
+                          if (post.address != null) {
+                            MapsLauncher.launchCoordinates(post.address!.latitude, post.address!.longitude);
+                          }
+                        },
                       ),
                       const SizedBox(
                         height: 20,
