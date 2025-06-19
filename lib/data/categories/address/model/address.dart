@@ -5,6 +5,7 @@ part 'address.g.dart';
 
 @freezed
 abstract class Address with _$Address {
+  @JsonSerializable(explicitToJson: true)
   const factory Address({
     required double latitude,
     required double longitude,

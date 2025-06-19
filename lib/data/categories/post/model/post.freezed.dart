@@ -214,7 +214,8 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true)
 class _Post implements Post {
   const _Post(
       {required this.postId,

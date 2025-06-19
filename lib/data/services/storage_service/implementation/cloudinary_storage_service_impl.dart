@@ -26,6 +26,7 @@ class CloudinaryStorageServiceImpl implements StorageService {
     var response = await cloudinary.uploader().upload(
           file,
           params: UploadParams(
+            folder: 'posts',
             publicId: publicId,
             uniqueFilename: false,
             overwrite: true,

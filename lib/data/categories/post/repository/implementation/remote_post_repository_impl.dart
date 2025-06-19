@@ -16,18 +16,46 @@ import 'package:dishlocal/ui/features/view_post/view/small_post.dart';
 
 @LazySingleton(as: PostRepository)
 class RemotePostRepositoryImpl implements PostRepository {
+  final _log = Logger('RemotePostRepositoryImpl');
   final AppUserRepository _appUserRepository;
   final StorageService _storageService;
   final DatabaseService _databaseService;
 
-  RemotePostRepositoryImpl(this._appUserRepository, this._storageService, this._databaseService);
+  RemotePostRepositoryImpl(
+    this._appUserRepository,
+    this._storageService,
+    this._databaseService,
+  );
+
   @override
-  Future<Either<PostFailure, void>> createPost({required Post post, required File imageFile}) async {
+  Future<Either<PostFailure, void>> createPost({
+    required Post post,
+    required File imageFile,
+  }) async {
+    _log.info('👉 Bắt đầu tạo bài viết với postId: ${post.postId}');
+
     try {
-      final url = await _storageService.uploadFile(path: 'path', file: imageFile, publicId: post.postId);
-      await _databaseService.setDocument(collection: 'posts', docId: post.postId, data: post.copyWith(imageUrl: url).toJson());
+      _log.fine('🔄 Đang tải ảnh lên Storage với postId: ${post.postId}...');
+      final url = await _storageService.uploadFile(
+        path: 'path',
+        file: imageFile,
+        publicId: post.postId,
+      );
+      _log.fine('✅ Tải ảnh thành công. URL: $url');
+
+      final postWithImage = post.copyWith(imageUrl: url);
+      _log.fine('📤 Đang lưu bài viết vào Firestore với dữ liệu: ${postWithImage.toJson()}');
+
+      await _databaseService.setDocument(
+        collection: 'posts',
+        docId: post.postId,
+        data: postWithImage.toJson(),
+      );
+
+      _log.info('🎉 Tạo bài viết thành công: ${post.postId}');
       return const Right(null);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi khi tạo bài viết: ${post.postId}', e, stackTrace);
       return const Left(UnknownFailure());
     }
   }

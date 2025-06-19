@@ -95,7 +95,8 @@ class _$AddressCopyWithImpl<$Res> implements $AddressCopyWith<$Res> {
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true)
 class _Address implements Address {
   const _Address(
       {required this.latitude, required this.longitude, this.displayName});

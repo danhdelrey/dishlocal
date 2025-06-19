@@ -33,7 +33,7 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'imageUrl': instance.imageUrl,
       'dishName': instance.dishName,
       'diningLocationName': instance.diningLocationName,
-      'address': instance.address,
+      'address': instance.address?.toJson(),
       'price': instance.price,
       'insight': instance.insight,
       'createdAt': const TimestampConverter().toJson(instance.createdAt),

@@ -156,39 +156,43 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}, ${exactAddressInput.value}, ${insightInput.value}, ${moneyInput.value}');
 
       final appUserResult = await _appUserRepository.getCurrentUser();
-      appUserResult.fold(
-        (failure) {},
-        (appUser) async {
-          final postId = uuid.v4();
-          final createNewPostResult = await _postRepository.createPost( //TODO: firestore không lưu được DateTime, ArgumentError (Invalid argument: Instance of '_Address')
-            post: Post(
-              postId: postId,
-              authorUserId: appUser.userId,
-              authorUsername: appUser.username!,
-              authorAvatarUrl: appUser.photoUrl,
-              dishName: dishNameInput.value,
-              diningLocationName: diningLocationNameInput.value,
-              address: event.address,
-              price: moneyInput.value,
-              insight: insightInput.value,
-              createdAt: event.createdAt,
-              likeCount: 0,
-              saveCount: 0,
-            ),
-            imageFile: File(event.imagePath),
-          );
-          createNewPostResult.fold(
-            (failure) {
-              _log.severe('Submit thất bại', failure);
-              emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
-            },
-            (_) {
-              _log.info('Submit dữ liệu thành công');
-              emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
-            },
-          );
+      if (appUserResult.isLeft()) {
+        _log.severe('Không lấy được user hiện tại.');
+        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+        return;
+      }
+      final appUser = appUserResult.getOrElse(() => throw Exception("User null")); // safe vì đã kiểm tra
+
+      final postId = uuid.v4();
+      final createNewPostResult = await _postRepository.createPost(
+        post: Post(
+          postId: postId,
+          authorUserId: appUser.userId,
+          authorUsername: appUser.username!,
+          authorAvatarUrl: appUser.photoUrl,
+          dishName: dishNameInput.value,
+          diningLocationName: diningLocationNameInput.value,
+          address: event.address,
+          price: moneyInput.value,
+          insight: insightInput.value,
+          createdAt: event.createdAt,
+          likeCount: 0,
+          saveCount: 0,
+        ),
+        imageFile: File(event.imagePath),
+      );
+
+      createNewPostResult.fold(
+        (failure) {
+          _log.severe('Submit thất bại', failure);
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+        },
+        (_) {
+          _log.info('Submit dữ liệu thành công');
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
         },
       );
+
     } else {
       _log.warning('Form không hợp lệ. Hiển thị lỗi và yêu cầu focus.');
 
