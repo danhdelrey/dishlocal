@@ -45,6 +45,8 @@ class _GridPostPageState extends State<GridPostPage> {
                     noItemsFoundIndicatorBuilder: (_) => const Center(
                       child: Text("Không có bài viết nào."),
                     ),
+                    noMoreItemsIndicatorBuilder: (context) => const Text('no more'),
+                    newPageProgressIndicatorBuilder: (context) => const Text('loading'),
                   ),
                   gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
