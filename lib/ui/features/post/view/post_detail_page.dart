@@ -93,7 +93,7 @@ class PostDetailPage extends StatelessWidget {
                           width: 16,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
-                        label: NumberFormatter.formatDistance(post.distance),
+                        label: 'Khoảng cách: ${NumberFormatter.formatDistance(post.distance)}',
                       ),
                       Text(
                         post.diningLocationName ?? '',
