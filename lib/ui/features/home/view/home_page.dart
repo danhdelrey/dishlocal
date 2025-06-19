@@ -7,6 +7,7 @@ import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_badge.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
+import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,56 +16,60 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<PostBloc>(),
-      child: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          extendBody: true,
-          body: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                GlassSliverAppBar(
-                  centerTitle: true,
-                  hasBorder: false,
-                  title: ShaderMask(
-                    shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                    child: const Text(
-                      'DishLocal',
-                      style: TextStyle(
-                        fontFamily: 'SFProDisplay',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 24,
+    return ConnectivityAndLocationGuard(
+      builder: (context) {
+        return BlocProvider(
+          create: (context) => getIt<PostBloc>(),
+          child: DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              extendBody: true,
+              body: NestedScrollView(
+                headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                  return <Widget>[
+                    GlassSliverAppBar(
+                      centerTitle: true,
+                      hasBorder: false,
+                      title: ShaderMask(
+                        shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                        child: const Text(
+                          'DishLocal',
+                          style: TextStyle(
+                            fontFamily: 'SFProDisplay',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 24,
+                          ),
+                        ),
                       ),
+                      bottom: TabBar(
+                        dividerColor: Colors.white.withValues(alpha: 0.1),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        tabs: const [
+                          Tab(
+                            text: 'Dành cho bạn',
+                          ),
+                          Tab(
+                            text: 'Đang theo dõi',
+                          ),
+                        ],
+                      ),
+                      floating: true,
+                      snap: true,
+                      pinned: true,
                     ),
-                  ),
-                  bottom: TabBar(
-                    dividerColor: Colors.white.withValues(alpha: 0.1),
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    tabs: const [
-                      Tab(
-                        text: 'Dành cho bạn',
-                      ),
-                      Tab(
-                        text: 'Đang theo dõi',
-                      ),
-                    ],
-                  ),
-                  floating: true,
-                  snap: true,
-                  pinned: true,
+                  ];
+                },
+                body: const TabBarView(
+                  children: [
+                    GridPostPage(),
+                    GridPostPage(),
+                  ],
                 ),
-              ];
-            },
-            body: const TabBarView(
-              children: [
-                GridPostPage(),
-                GridPostPage(),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 }
