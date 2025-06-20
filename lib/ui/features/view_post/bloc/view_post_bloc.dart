@@ -11,9 +11,8 @@ part 'view_post_bloc.freezed.dart';
 @injectable
 class ViewPostBloc extends Bloc<ViewPostEvent, ViewPostState> {
   final PostRepository _postRepository;
-  ViewPostBloc(this._postRepository) : super(const Initial()) {
+  ViewPostBloc(this._postRepository) : super(const Loading()) {
     on<Started>((event, emit) async {
-      emit(const ViewPostState.loading());
       final fetchedPost = await _postRepository.getPostWithId(event.post.postId);
       fetchedPost.fold(
         (failure) {

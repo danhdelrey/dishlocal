@@ -190,26 +190,6 @@ class $ViewPostStateCopyWith<$Res> {
 
 /// @nodoc
 
-class Initial implements ViewPostState {
-  const Initial();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is Initial);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() {
-    return 'ViewPostState.initial()';
-  }
-}
-
-/// @nodoc
-
 class Loading implements ViewPostState {
   const Loading();
 
