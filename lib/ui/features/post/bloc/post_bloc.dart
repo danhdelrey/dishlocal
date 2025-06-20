@@ -20,7 +20,6 @@ typedef PostFetcher = Future<Either<post_failure.PostFailure, List<Post>>> Funct
   DateTime? startAfter,
 });
 
-@injectable
 class PostBloc extends Bloc<PostEvent, PagingState<DateTime?, Post>> {
   final _log = Logger('PostBloc');
   // THAY ĐỔI 1: Thay vì PostRepository, chúng ta dùng PostFetcher
