@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // THÊM IMPORT MỚI
 import 'package:dishlocal/data/services/database_service/exception/database_service_exception.dart';
 import 'package:dishlocal/data/services/database_service/interface/database_service.dart';
+import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
@@ -148,7 +149,7 @@ class FirestoreServiceImpl implements DatabaseService {
       throw DatabaseServiceUnknownException("Lỗi không xác định khi truy vấn danh sách: ${e.toString()}");
     }
   }
-  
+
   @override
   Future<String> addDocument({required String collection, required Map<String, dynamic> data}) async {
     final path = collection;
@@ -165,7 +166,7 @@ class FirestoreServiceImpl implements DatabaseService {
       throw DatabaseServiceUnknownException("Lỗi không xác định khi thêm tài liệu: ${e.toString()}");
     }
   }
-  
+
   @override
   Future<void> deleteDocument({required String collection, required String docId}) async {
     final path = '$collection/$docId';
@@ -180,20 +181,15 @@ class FirestoreServiceImpl implements DatabaseService {
       throw DatabaseServiceUnknownException("Lỗi không xác định khi xóa tài liệu: ${e.toString()}");
     }
   }
-  
+
   @override
   Future<Map<String, dynamic>?> getSubDocument({required String parentCollection, required String parentDocId, required String subCollection, required String subDocId}) async {
     final path = '$parentCollection/$parentDocId/$subCollection/$subDocId';
     _log.info("Bắt đầu lấy tài liệu con từ đường dẫn: '$path'");
 
     try {
-      final docSnapshot = await _firestore
-          .collection(parentCollection)
-          .doc(parentDocId)
-          .collection(subCollection)
-          .doc(subDocId)
-          .get();
-      
+      final docSnapshot = await _firestore.collection(parentCollection).doc(parentDocId).collection(subCollection).doc(subDocId).get();
+
       final data = docSnapshot.data();
 
       if (data != null) {
@@ -217,11 +213,7 @@ class FirestoreServiceImpl implements DatabaseService {
     _log.fine("Dữ liệu thêm mới có ${data.keys.length} trường.");
 
     try {
-      final docRef = await _firestore
-          .collection(parentCollection)
-          .doc(parentDocId)
-          .collection(subCollection)
-          .add(data);
+      final docRef = await _firestore.collection(parentCollection).doc(parentDocId).collection(subCollection).add(data);
       _log.info("Thêm tài liệu con mới thành công vào collection '$path' với ID: '${docRef.id}'.");
       return docRef.id;
     } on FirebaseException catch (e) {
@@ -239,12 +231,7 @@ class FirestoreServiceImpl implements DatabaseService {
     _log.fine("Dữ liệu sẽ được ghi có ${data.keys.length} trường.");
 
     try {
-      await _firestore
-          .collection(parentCollection)
-          .doc(parentDocId)
-          .collection(subCollection)
-          .doc(subDocId)
-          .set(data);
+      await _firestore.collection(parentCollection).doc(parentDocId).collection(subCollection).doc(subDocId).set(data);
       _log.info("Ghi dữ liệu thành công cho tài liệu con: '$path'.");
     } on FirebaseException catch (e) {
       throw _handleFirestoreException(e, path, "ghi (set)");
@@ -253,7 +240,7 @@ class FirestoreServiceImpl implements DatabaseService {
       throw DatabaseServiceUnknownException("Lỗi không xác định khi ghi dữ liệu: ${e.toString()}");
     }
   }
-  
+
   @override
   Future<void> updateSubDocument({required String parentCollection, required String parentDocId, required String subCollection, required String subDocId, required Map<String, dynamic> data}) async {
     final path = '$parentCollection/$parentDocId/$subCollection/$subDocId';
@@ -261,12 +248,7 @@ class FirestoreServiceImpl implements DatabaseService {
     _log.fine("Dữ liệu cập nhật có ${data.keys.length} trường: ${data.keys.join(', ')}");
 
     try {
-      await _firestore
-          .collection(parentCollection)
-          .doc(parentDocId)
-          .collection(subCollection)
-          .doc(subDocId)
-          .update(data);
+      await _firestore.collection(parentCollection).doc(parentDocId).collection(subCollection).doc(subDocId).update(data);
       _log.info("Cập nhật dữ liệu thành công cho tài liệu con: '$path'.");
     } on FirebaseException catch (e) {
       throw _handleFirestoreException(e, path, "cập nhật");
@@ -281,12 +263,7 @@ class FirestoreServiceImpl implements DatabaseService {
     final path = '$parentCollection/$parentDocId/$subCollection/$subDocId';
     _log.info("Bắt đầu xóa tài liệu con tại đường dẫn: '$path'.");
     try {
-      await _firestore
-          .collection(parentCollection)
-          .doc(parentDocId)
-          .collection(subCollection)
-          .doc(subDocId)
-          .delete();
+      await _firestore.collection(parentCollection).doc(parentDocId).collection(subCollection).doc(subDocId).delete();
       _log.info("Xóa tài liệu con thành công tại đường dẫn: '$path'.");
     } on FirebaseException catch (e) {
       throw _handleFirestoreException(e, path, "xóa");
@@ -295,19 +272,16 @@ class FirestoreServiceImpl implements DatabaseService {
       throw DatabaseServiceUnknownException("Lỗi không xác định khi xóa tài liệu con: ${e.toString()}");
     }
   }
-  
+
   @override
   Future<List<Map<String, dynamic>>> getSubDocuments({required String parentCollection, required String parentDocId, required String subCollection, String? orderBy, bool descending = false, int limit = 10, startAfter}) async {
     final path = '$parentCollection/$parentDocId/$subCollection';
     _log.info("Bắt đầu truy vấn danh sách tài liệu con từ collection: '$path'");
     _log.fine("Tham số truy vấn: orderBy='$orderBy', descending=$descending, limit=$limit, startAfter=$startAfter");
-    
+
     try {
-      Query query = _firestore
-          .collection(parentCollection)
-          .doc(parentDocId)
-          .collection(subCollection);
-      
+      Query query = _firestore.collection(parentCollection).doc(parentDocId).collection(subCollection);
+
       if (orderBy != null) {
         query = query.orderBy(orderBy, descending: descending);
         if (startAfter != null) {
@@ -322,8 +296,8 @@ class FirestoreServiceImpl implements DatabaseService {
       _log.info("Lấy được ${snapshot.docs.length} tài liệu con từ collection: '$path'");
 
       return snapshot.docs.map<Map<String, dynamic>>((doc) {
-        final data = doc.data() as Map<String, dynamic>; 
-        data['id'] = doc.id; 
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
         return data;
       }).toList();
     } on FirebaseException catch (e) {
@@ -334,4 +308,47 @@ class FirestoreServiceImpl implements DatabaseService {
     }
   }
 
+  @override
+  Future<void> executeBatch(List<BatchOperation> operations) async {
+    if (operations.isEmpty) {
+      _log.warning("Thực thi batch nhưng danh sách thao tác rỗng. Bỏ qua.");
+      return;
+    }
+
+    _log.info("Bắt đầu thực thi batch write với ${operations.length} thao tác.");
+    final batch = _firestore.batch();
+
+    try {
+      for (final op in operations) {
+        // Lấy DocumentReference từ đường dẫn string
+        final docRef = _firestore.doc(op.path);
+
+        // Thêm thao tác tương ứng vào batch
+        switch (op.type) {
+          case BatchOperationType.set:
+            _log.fine("Batch: Thêm thao tác SET cho đường dẫn '${op.path}'.");
+            batch.set(docRef, op.data!);
+            break;
+          case BatchOperationType.update:
+            _log.fine("Batch: Thêm thao tác UPDATE cho đường dẫn '${op.path}'.");
+            batch.update(docRef, op.data!);
+            break;
+          case BatchOperationType.delete:
+            _log.fine("Batch: Thêm thao tác DELETE cho đường dẫn '${op.path}'.");
+            batch.delete(docRef);
+            break;
+        }
+      }
+
+      // Commit tất cả các thao tác
+      await batch.commit();
+      _log.info("Thực thi batch write thành công.");
+    } on FirebaseException catch (e) {
+      _log.severe("Lỗi FirebaseException trong quá trình batch write.", e, e.stackTrace);
+      throw DatabaseServiceUnknownException("Lỗi Firestore trong batch write: ${e.message ?? e.code}");
+    } catch (e, stackTrace) {
+      _log.severe("Lỗi không xác định trong quá trình batch write.", e, stackTrace);
+      throw DatabaseServiceUnknownException("Lỗi không xác định trong batch write: ${e.toString()}");
+    }
+  }
 }

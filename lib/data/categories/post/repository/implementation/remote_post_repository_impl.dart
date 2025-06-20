@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
+import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
 import 'package:dishlocal/data/services/distance_service/interface/distance_service.dart';
 import 'package:dishlocal/data/services/location_service/interface/location_service.dart';
 import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
@@ -117,14 +118,63 @@ class RemotePostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<Either<PostFailure, void>> likePost({required String postId, required String userId, required bool isLiked}) {
-    if (isLiked) {
-    } else {}
-  }
+  Future<Either<PostFailure, void>> likePost({
+    required String postId,
+    required String userId,
+    required bool isLiked,
+  }) async {
+    final action = isLiked ? "thích" : "bỏ thích";
+    _log.info('🔄 Bắt đầu $action bài viết $postId cho người dùng $userId.');
 
+    try {
+      // Định nghĩa các đường dẫn đến tài liệu
+      final postLikePath = 'likes/$postId/users/$userId';
+      final userLikePath = 'users/$userId/likes/$postId';
+
+      final List<BatchOperation> operations = [];
+
+      if (isLiked) {
+        // --- HÀNH ĐỘNG: THÍCH BÀI VIẾT ---
+        _log.fine('➕ Chuẩn bị các thao tác SET để thích bài viết.');
+        final likeData = {
+          // Lưu ý: FieldValue.serverTimestamp() là của Firestore.
+          // Để giữ repository độc lập, chúng ta nên xử lý việc này trong service
+          // hoặc chấp nhận một quy ước, ví dụ: một giá trị string đặc biệt.
+          // Cách đơn giản hơn là tạo timestamp ngay tại đây.
+          'likedAt': DateTime.now().toUtc().toIso8601String(),
+        };
+
+        operations.add(BatchOperation.set(path: postLikePath, data: likeData));
+        operations.add(BatchOperation.set(path: userLikePath, data: likeData));
+      } else {
+        // --- HÀNH ĐỘNG: BỎ THÍCH BÀI VIẾT ---
+        _log.fine('➖ Chuẩn bị các thao tác DELETE để bỏ thích bài viết.');
+
+        operations.add(BatchOperation.delete(path: postLikePath));
+        operations.add(BatchOperation.delete(path: userLikePath));
+      }
+
+      // Gửi danh sách các thao tác đến service để thực thi nguyên tử
+      await _databaseService.executeBatch(operations);
+
+      _log.info('✅ Hoàn thành $action bài viết $postId thành công.');
+      return right(null);
+    } catch (e, stackTrace) {
+      // Bắt các lỗi từ DatabaseService (ví dụ: DatabaseServiceUnknownException)
+      _log.severe(
+        '❌ Lỗi khi $action bài viết $postId cho người dùng $userId.',
+        e,
+        stackTrace,
+      );
+      return left(const UnknownFailure());
+    }
+  }
+  
   @override
   Future<Either<PostFailure, void>> savePost({required String postId, required String userId, required bool isSaved}) {
     // TODO: implement savePost
     throw UnimplementedError();
   }
+
+  
 }

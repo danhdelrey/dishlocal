@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
+
 abstract class DatabaseService {
   //----------------------------------------------------//
   //--- THAO TÁC VỚI DOCUMENT GỐC (TOP-LEVEL) ---//
@@ -103,4 +106,9 @@ abstract class DatabaseService {
     int limit = 10,
     dynamic startAfter,
   });
+
+  /// Thực thi một danh sách các thao tác ghi một cách nguyên tử.
+  /// Phương thức này nhận một list các `BatchOperation` đã được định nghĩa trước.
+  /// Nó đảm bảo tất cả các thao tác thành công, hoặc không thao tác nào được thực hiện.
+  Future<void> executeBatch(List<BatchOperation> operations);
 }
