@@ -10,6 +10,7 @@ import 'package:dishlocal/ui/features/post/view/bouncing_overlay_menu.dart';
 import 'package:dishlocal/ui/features/post/view/follow_button.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/reaction_bar.dart';
+import 'package:dishlocal/ui/features/view_post/bloc/view_post_bloc.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
@@ -30,19 +31,41 @@ class PostDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<ViewPostBloc>()..add(ViewPostEvent.started(post)),
+      child: BlocBuilder<ViewPostBloc, ViewPostState>(
+        builder: (context, state) {
+          return switch (state) {
+            Initial() => const SizedBox(),
+            Loading() => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            Success() => _buildMainContent(context, state.post),
+            Failure() => const Text('Có lỗi xảy ra'),
+          };
+        },
+      ),
+    );
+  }
+
+  GestureDetector _buildMainContent(BuildContext context, Post post) {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: BlocProvider(
-        create: (context) => getIt<PostReactionBarBloc>(param1: post),
-        child: Scaffold(
-          extendBody: true,
-          body: SafeArea(
-            child: Stack(
-              children: [
-                CustomScrollView(
-                  physics: const BouncingScrollPhysics(),
+      child: Scaffold(
+        extendBody: true,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              RefreshIndicator(
+                onRefresh: () => Future.sync(
+                  () => context.read<ViewPostBloc>().add(
+                        ViewPostEvent.started(post),
+                      ),
+                ),
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   slivers: [
                     GlassSliverAppBar(
@@ -171,24 +194,27 @@ class PostDetailPage extends StatelessWidget {
                                   const SizedBox(
                                     height: 20,
                                   ),
-                                  BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
-                                    builder: (context, state) {
-                                      return ReactionBar(
-                                        likeColor: Colors.pink,
-                                        saveColor: Colors.amber,
-                                        isLiked: state.isLiked,
-                                        likeCount: state.likeCount,
-                                        isSaved: state.isSaved,
-                                        saveCount: state.saveCount,
-                                        // Khi nhấn, gửi event đến BLoC
-                                        onLikeTap: () {
-                                          context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
-                                        },
-                                        onSaveTap: () {
-                                          context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
-                                        },
-                                      );
-                                    },
+                                  BlocProvider(
+                                    create: (context) => getIt<PostReactionBarBloc>(param1: post),
+                                    child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
+                                      builder: (context, state) {
+                                        return ReactionBar(
+                                          likeColor: Colors.pink,
+                                          saveColor: Colors.amber,
+                                          isLiked: state.isLiked,
+                                          likeCount: state.likeCount,
+                                          isSaved: state.isSaved,
+                                          saveCount: state.saveCount,
+                                          // Khi nhấn, gửi event đến BLoC
+                                          onLikeTap: () {
+                                            context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
+                                          },
+                                          onSaveTap: () {
+                                            context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
+                                          },
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -202,14 +228,14 @@ class PostDetailPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                // const Positioned(
-                //   left: 0,
-                //   right: 0,
-                //   bottom: 0,
-                //   child: CommentInput(),
-                // ),
-              ],
-            ),
+              ),
+              // const Positioned(
+              //   left: 0,
+              //   right: 0,
+              //   bottom: 0,
+              //   child: CommentInput(),
+              // ),
+            ],
           ),
         ),
       ),

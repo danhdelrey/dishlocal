@@ -4,5 +4,5 @@ part of 'view_post_bloc.dart';
 sealed class ViewPostEvent with _$ViewPostEvent {
   const factory ViewPostEvent.started(
     final Post post,
-  ) = _Started;
+  ) = Started;
 }

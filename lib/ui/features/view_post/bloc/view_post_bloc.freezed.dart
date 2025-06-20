@@ -89,8 +89,8 @@ class _$ViewPostEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _Started implements ViewPostEvent {
-  const _Started(this.post);
+class Started implements ViewPostEvent {
+  const Started(this.post);
 
   @override
   final Post post;
@@ -100,14 +100,14 @@ class _Started implements ViewPostEvent {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$StartedCopyWith<_Started> get copyWith =>
-      __$StartedCopyWithImpl<_Started>(this, _$identity);
+  $StartedCopyWith<Started> get copyWith =>
+      _$StartedCopyWithImpl<Started>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Started &&
+            other is Started &&
             (identical(other.post, post) || other.post == post));
   }
 
@@ -121,10 +121,10 @@ class _Started implements ViewPostEvent {
 }
 
 /// @nodoc
-abstract mixin class _$StartedCopyWith<$Res>
+abstract mixin class $StartedCopyWith<$Res>
     implements $ViewPostEventCopyWith<$Res> {
-  factory _$StartedCopyWith(_Started value, $Res Function(_Started) _then) =
-      __$StartedCopyWithImpl;
+  factory $StartedCopyWith(Started value, $Res Function(Started) _then) =
+      _$StartedCopyWithImpl;
   @override
   @useResult
   $Res call({Post post});
@@ -134,11 +134,11 @@ abstract mixin class _$StartedCopyWith<$Res>
 }
 
 /// @nodoc
-class __$StartedCopyWithImpl<$Res> implements _$StartedCopyWith<$Res> {
-  __$StartedCopyWithImpl(this._self, this._then);
+class _$StartedCopyWithImpl<$Res> implements $StartedCopyWith<$Res> {
+  _$StartedCopyWithImpl(this._self, this._then);
 
-  final _Started _self;
-  final $Res Function(_Started) _then;
+  final Started _self;
+  final $Res Function(Started) _then;
 
   /// Create a copy of ViewPostEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -147,7 +147,7 @@ class __$StartedCopyWithImpl<$Res> implements _$StartedCopyWith<$Res> {
   $Res call({
     Object? post = null,
   }) {
-    return _then(_Started(
+    return _then(Started(
       null == post
           ? _self.post
           : post // ignore: cast_nullable_to_non_nullable
@@ -190,13 +190,13 @@ class $ViewPostStateCopyWith<$Res> {
 
 /// @nodoc
 
-class _Initial implements ViewPostState {
-  const _Initial();
+class Initial implements ViewPostState {
+  const Initial();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _Initial);
+        (other.runtimeType == runtimeType && other is Initial);
   }
 
   @override
@@ -210,13 +210,13 @@ class _Initial implements ViewPostState {
 
 /// @nodoc
 
-class _Loading implements ViewPostState {
-  const _Loading();
+class Loading implements ViewPostState {
+  const Loading();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _Loading);
+        (other.runtimeType == runtimeType && other is Loading);
   }
 
   @override
@@ -230,8 +230,8 @@ class _Loading implements ViewPostState {
 
 /// @nodoc
 
-class _Success implements ViewPostState {
-  const _Success({required this.post});
+class Success implements ViewPostState {
+  const Success({required this.post});
 
   final Post post;
 
@@ -239,14 +239,14 @@ class _Success implements ViewPostState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$SuccessCopyWith<_Success> get copyWith =>
-      __$SuccessCopyWithImpl<_Success>(this, _$identity);
+  $SuccessCopyWith<Success> get copyWith =>
+      _$SuccessCopyWithImpl<Success>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Success &&
+            other is Success &&
             (identical(other.post, post) || other.post == post));
   }
 
@@ -260,10 +260,10 @@ class _Success implements ViewPostState {
 }
 
 /// @nodoc
-abstract mixin class _$SuccessCopyWith<$Res>
+abstract mixin class $SuccessCopyWith<$Res>
     implements $ViewPostStateCopyWith<$Res> {
-  factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) =
-      __$SuccessCopyWithImpl;
+  factory $SuccessCopyWith(Success value, $Res Function(Success) _then) =
+      _$SuccessCopyWithImpl;
   @useResult
   $Res call({Post post});
 
@@ -271,11 +271,11 @@ abstract mixin class _$SuccessCopyWith<$Res>
 }
 
 /// @nodoc
-class __$SuccessCopyWithImpl<$Res> implements _$SuccessCopyWith<$Res> {
-  __$SuccessCopyWithImpl(this._self, this._then);
+class _$SuccessCopyWithImpl<$Res> implements $SuccessCopyWith<$Res> {
+  _$SuccessCopyWithImpl(this._self, this._then);
 
-  final _Success _self;
-  final $Res Function(_Success) _then;
+  final Success _self;
+  final $Res Function(Success) _then;
 
   /// Create a copy of ViewPostState
   /// with the given fields replaced by the non-null parameter values.
@@ -283,7 +283,7 @@ class __$SuccessCopyWithImpl<$Res> implements _$SuccessCopyWith<$Res> {
   $Res call({
     Object? post = null,
   }) {
-    return _then(_Success(
+    return _then(Success(
       post: null == post
           ? _self.post
           : post // ignore: cast_nullable_to_non_nullable
@@ -304,13 +304,13 @@ class __$SuccessCopyWithImpl<$Res> implements _$SuccessCopyWith<$Res> {
 
 /// @nodoc
 
-class _Failure implements ViewPostState {
-  const _Failure();
+class Failure implements ViewPostState {
+  const Failure();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _Failure);
+        (other.runtimeType == runtimeType && other is Failure);
   }
 
   @override
