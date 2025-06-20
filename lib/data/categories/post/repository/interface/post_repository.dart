@@ -22,4 +22,13 @@ abstract class PostRepository {
     required String userId,
     required bool isSaved, // true: save, false: unsave
   });
+
+  /// Lấy danh sách các bài viết mà người dùng đã lưu.
+  ///
+  /// Hỗ trợ phân trang bằng [limit] và [startAfter].
+  /// [startAfter] là giá trị `savedAt` của bài viết cuối cùng trong trang trước đó.
+  Future<Either<PostFailure, List<Post>>> getSavedPosts({
+    int limit = 10,
+    DateTime? startAfter,
+  });
 }

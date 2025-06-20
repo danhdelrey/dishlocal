@@ -332,5 +332,70 @@ class RemotePostRepositoryImpl implements PostRepository {
     }
   }
 
+  @override
+  Future<Either<PostFailure, List<Post>>> getSavedPosts({
+    int limit = 10,
+    DateTime? startAfter,
+  }) async {
+    _log.info('📥 Bắt đầu lấy danh sách bài viết đã lưu...');
+    try {
+      // Bước 1: Lấy ID người dùng hiện tại
+      final currentUserId = _authenticationService.getCurrentUserId();
+      if (currentUserId == null || currentUserId.isEmpty) {
+        _log.warning('⚠️ Người dùng chưa đăng nhập. Không thể lấy bài viết đã lưu.');
+        // Người dùng chưa đăng nhập, trả về danh sách rỗng.
+        return right([]);
+      }
+      _log.fine('🆔 Lấy bài viết đã lưu cho người dùng: $currentUserId');
+
+      // Bước 2: Lấy danh sách tham chiếu bài viết đã lưu, sắp xếp theo thời gian lưu gần nhất
+      // để hỗ trợ phân trang (pagination).
+      final savedPostRefs = await _databaseService.getDocuments(
+        collection: 'users/$currentUserId/savedPosts',
+        orderBy: 'savedAt', // Giả sử bạn lưu field 'savedAt' khi người dùng lưu bài
+        descending: true,
+        limit: limit,
+        startAfter: startAfter,
+      );
+
+      if (savedPostRefs.isEmpty) {
+        _log.info('✅ Không còn bài viết nào đã lưu để hiển thị.');
+        return right([]);
+      }
+
+      // Trích xuất danh sách các post ID từ các document tham chiếu.
+      final postIds = savedPostRefs.map((ref) => ref['id'] as String).toList();
+      _log.fine('🔍 Tìm thấy ${postIds.length} ID bài viết đã lưu: $postIds');
+
+      // Bước 3: Lấy dữ liệu đầy đủ của các bài viết từ collection 'posts'
+      final rawPostsData = await _databaseService.getDocumentsWhereIdIn(
+        collection: 'posts',
+        ids: postIds,
+      );
+
+      final posts = rawPostsData.map((json) => Post.fromJson(json)).toList();
+
+      // Bước 4: Làm giàu dữ liệu cho các bài viết (tính khoảng cách, trạng thái like, v.v.)
+      // Hàm này sẽ xử lý luôn cả isLiked và isSaved.
+      final enrichedPosts = await _enrichPostsWithUserData(posts);
+
+      // Bước 5: Sắp xếp lại kết quả. Rất quan trọng vì `getDocumentsWhereIdIn` không
+      // đảm bảo thứ tự của kết quả trả về. Chúng ta cần sắp xếp lại theo thứ tự
+      // của `postIds` ban đầu (đã được sắp xếp theo `savedAt`).
+      final postIdToPostMap = {for (var post in enrichedPosts) post.postId: post};
+      final sortedEnrichedPosts = postIds
+          .map((id) => postIdToPostMap[id])
+          .where((post) => post != null) // Lọc ra các post không tìm thấy (nếu có)
+          .cast<Post>()
+          .toList();
+
+      _log.info('🎉 Lấy thành công ${sortedEnrichedPosts.length} bài viết đã lưu.');
+      return right(sortedEnrichedPosts);
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi khi lấy danh sách bài viết đã lưu', e, stackTrace);
+      return const Left(UnknownFailure());
+    }
+  }
+
 
 }
