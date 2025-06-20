@@ -46,26 +46,22 @@ class _GridPostPageState extends State<GridPostPage> {
                       delay: Duration(milliseconds: index * 100),
                       child: SmallPost(post: post),
                     ),
-                    firstPageProgressIndicatorBuilder: (_) => Shimmer.fromColors(
-                      baseColor: appColorScheme(context).surfaceContainerLow,
-                      highlightColor: appColorScheme(context).outline,
-                      child: Column(
-                        children: List.generate(
-                          2,
-                          (_) => Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildShimmeringSmallPost(),
-                              _buildShimmeringSmallPost(),
-                            ],
-                          ),
+                    firstPageProgressIndicatorBuilder: (_) => Column(
+                      children: List.generate(
+                        2,
+                        (_) => const Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: ShimmeringSmallPost()),
+                            Expanded(child: ShimmeringSmallPost()),
+                          ],
                         ),
                       ),
                     ),
                     noItemsFoundIndicatorBuilder: (_) => const Center(
                       child: Text("Không có bài viết nào."),
                     ),
-                    newPageProgressIndicatorBuilder: (context) => const Center(child: CustomLoadingIndicator(indicatorSize: 30)),
+                    newPageProgressIndicatorBuilder: (context) => const ShimmeringSmallPost(),
                   ),
                   gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -80,73 +76,115 @@ class _GridPostPageState extends State<GridPostPage> {
       },
     );
   }
+}
 
-  Widget _buildShimmeringSmallPost() {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Column(
+class ShimmeringSmallPost extends StatefulWidget {
+  const ShimmeringSmallPost({super.key});
+
+  @override
+  State<ShimmeringSmallPost> createState() => _ShimmeringSmallPostState();
+}
+
+// Thêm "with SingleTickerProviderStateMixin" để cung cấp Ticker cho AnimationController
+class _ShimmeringSmallPostState extends State<ShimmeringSmallPost> with SingleTickerProviderStateMixin {
+  // 1. Khai báo AnimationController
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // 2. Khởi tạo controller
+    _controller = AnimationController(
+      vsync: this, // Cung cấp Ticker
+      duration: const Duration(milliseconds: 1500), // Thời gian cho một chu kỳ (sáng lên -> dịu xuống)
+    )..repeat(reverse: true); // Lặp lại và đảo ngược animation để tạo hiệu ứng pulse
+  }
+
+  @override
+  void dispose() {
+    // 3. Hủy controller khi không cần thiết
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      // 4. Sử dụng FadeTransition thay vì Shimmer.fromColors
+      child: FadeTransition(
+        // Gắn animation opacity vào controller
+        opacity: _controller,
+        child: _buildPlaceholderContent(),
+      ),
+    );
+  }
+
+  // Tách phần nội dung placeholder ra cho dễ đọc
+  Widget _buildPlaceholderContent() {
+    // Màu nền cho các thành phần placeholder
+    final placeholderColor = appColorScheme(context).outlineVariant;
+
+    return Column(
+      children: [
+        Container(
+          height: 10,
+          decoration: BoxDecoration(
+            color: placeholderColor,
+            borderRadius: BorderRadius.circular(1000),
+          ),
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              color: placeholderColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        Row(
           children: [
             Container(
-              height: 10,
+              width: 16,
+              height: 16,
               decoration: BoxDecoration(
-                color: Colors.amber,
+                color: placeholderColor,
                 borderRadius: BorderRadius.circular(1000),
               ),
             ),
             const SizedBox(
-              height: 5,
+              width: 5,
             ),
-            AspectRatio(
-              aspectRatio: 1,
+            Expanded(
               child: Container(
+                height: 10,
                 decoration: BoxDecoration(
-                  color: Colors.amber,
-                  borderRadius: BorderRadius.circular(12),
+                  color: placeholderColor,
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
             const SizedBox(
-              height: 5,
+              width: 20,
             ),
-            Row(
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.circular(1000),
-                  ),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Expanded(
-                  child: Container(
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                Container(
-                  width: 30,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ],
+            Container(
+              width: 30,
+              height: 10,
+              decoration: BoxDecoration(
+                color: placeholderColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 }
