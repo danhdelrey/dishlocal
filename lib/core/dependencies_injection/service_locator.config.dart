@@ -24,6 +24,7 @@ import '../../data/categories/app_user/repository/implementation/app_user_reposi
     as _i904;
 import '../../data/categories/app_user/repository/interface/app_user_repository.dart'
     as _i749;
+import '../../data/categories/post/model/post.dart' as _i1028;
 import '../../data/categories/post/repository/implementation/remote_post_repository_impl.dart'
     as _i95;
 import '../../data/categories/post/repository/interface/post_repository.dart'
@@ -61,6 +62,8 @@ import '../../ui/features/create_post/bloc/create_post_bloc.dart' as _i622;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
 import '../../ui/features/post/bloc/post_bloc.dart' as _i913;
+import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
+    as _i144;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
 import '../utils/image_processor.dart' as _i19;
@@ -136,6 +139,15 @@ _i174.GetIt init(
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factory<_i511.AuthBloc>(
       () => _i511.AuthBloc(userRepository: gh<_i749.AppUserRepository>()));
+  gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
+    post,
+    _,
+  ) =>
+      _i144.PostReactionBarBloc(
+        gh<_i480.PostRepository>(),
+        gh<_i749.AppUserRepository>(),
+        post,
+      ));
   return getIt;
 }
 

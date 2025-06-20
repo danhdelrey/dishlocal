@@ -8,12 +8,12 @@ abstract class AppUserRepository {
   Stream<AppUser?> get user;
 
   Future<Either<AppUserFailure, AppUser>> getCurrentUser();
+  String? getCurrentUserId();
 
   // Đăng nhập và kiểm tra username
   // THAY ĐỔI: Trả về Either<Failure, void>
   Future<Either<AppUserFailure, void>> signInWithGoogle();
 
-  
   Future<Either<AppUserFailure, void>> updateUsername(String username);
   Future<Either<AppUserFailure, void>> updateBio(String? bio);
   Future<Either<AppUserFailure, void>> updateDisplayName(String displayName);

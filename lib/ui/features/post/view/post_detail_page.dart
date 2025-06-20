@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
@@ -34,7 +35,7 @@ class PostDetailPage extends StatelessWidget {
         FocusScope.of(context).unfocus();
       },
       child: BlocProvider(
-        create: (context) => PostReactionBarBloc(),
+        create: (context) => getIt<PostReactionBarBloc>(param1: post),
         child: Scaffold(
           extendBody: true,
           body: SafeArea(
