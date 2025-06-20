@@ -8,7 +8,10 @@ abstract class AppUserRepository {
   Stream<AppUser?> get user;
 
   Future<Either<AppUserFailure, AppUser>> getCurrentUser();
-  Future<Either<AppUserFailure, AppUser>> getUserWithId(String userId);
+  Future<Either<AppUserFailure, AppUser>> getUserWithId({
+    required String userId,
+    String? currentUserId,
+  });
   String? getCurrentUserId();
 
   // Đăng nhập và kiểm tra username

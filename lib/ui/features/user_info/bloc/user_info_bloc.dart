@@ -20,9 +20,9 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
     on<UserInfoRequested>(_onUserInfoRequested);
   }
 
-  FutureOr<void> _onUserInfoRequested(UserInfoRequested event, Emitter<UserInfoState> emit) async  {
+  FutureOr<void> _onUserInfoRequested(UserInfoRequested event, Emitter<UserInfoState> emit) async {
     emit(UserInfoLoading());
-    final result = event.userId != null ? await _appUserRepository.getUserWithId(event.userId!) : await _appUserRepository.getCurrentUser();
+    final result = event.userId != null ? await _appUserRepository.getUserWithId(userId: event.userId!) : await _appUserRepository.getCurrentUser();
     result.fold(
       (failure) {
         emit(UserInfoFailure());

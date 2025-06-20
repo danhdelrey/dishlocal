@@ -222,13 +222,53 @@ class UserRepositoryImpl implements AppUserRepository {
   }
 
   @override
-  Future<Either<AppUserFailure, AppUser>> getUserWithId(String userId) async {
+  Future<Either<AppUserFailure, AppUser>> getUserWithId({
+    required String userId,
+    String? currentUserId, // <-- Nhận tham số mới
+  }) async {
+    _log.info('📥 Bắt đầu lấy dữ liệu cho người dùng: $userId. Người xem: ${currentUserId ?? "khách"}');
     try {
-      final userData = await _databaseService.getDocument(collection: _usersCollection, docId: userId);
-      final appUser = AppUser.fromJson(userData!);
-      _log.info('Người dùng đang lấy là ${appUser.toString()}');
-      return Right(appUser);
-    } catch (e) {
+      // Luôn lấy dữ liệu chính của người dùng
+      final userData = await _databaseService.getDocument(
+        collection: _usersCollection,
+        docId: userId,
+      );
+
+      if (userData == null) {
+        _log.warning('⚠️ Không tìm thấy người dùng với ID: $userId');
+        return Left(const UnknownFailure(message: 'User not found'));
+      }
+
+      final appUser = AppUser.fromJson(userData);
+
+      // Nếu không có người dùng hiện tại hoặc người dùng đang xem chính mình,
+      // thì không cần kiểm tra trạng thái follow.
+      if (currentUserId == null || currentUserId.isEmpty || currentUserId == userId) {
+        _log.fine('Không cần kiểm tra trạng thái follow. Trả về dữ liệu gốc.');
+        // Trả về dữ liệu người dùng mà không cần làm giàu thêm
+        return Right(appUser.copyWith(isFollowing: false));
+      }
+
+      // Nếu có người dùng hiện tại, tiến hành kiểm tra trạng thái follow
+      _log.fine('🔄 Đang kiểm tra trạng thái follow từ $currentUserId đến $userId...');
+      final followCheckDoc = await _databaseService.getDocument(
+        collection: '$_usersCollection/$currentUserId/following',
+        docId: userId,
+      );
+
+      // isFollowing sẽ là true nếu tài liệu tồn tại (khác null)
+      final bool isFollowing = followCheckDoc != null;
+      _log.info('✅ Kiểm tra follow hoàn tất. isFollowing: $isFollowing');
+
+      // Tạo một bản sao của appUser với thông tin isFollowing đã được làm giàu
+      final enrichedUser = appUser.copyWith(isFollowing: isFollowing);
+
+      return Right(enrichedUser);
+    } on db_exception.DatabaseServiceException catch (e, stackTrace) {
+      _log.severe('❌ Lỗi Database Service khi lấy người dùng $userId.', e, stackTrace);
+      return Left(DatabaseFailure(e.message));
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi không xác định khi lấy người dùng $userId.', e, stackTrace);
       return const Left(UnknownFailure());
     }
   }
