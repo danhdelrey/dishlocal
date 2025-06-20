@@ -8,7 +8,7 @@ import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
 import 'package:dishlocal/ui/features/post/view/bouncing_overlay_menu.dart';
-import 'package:dishlocal/ui/features/follow/view/animated_follow_button_wrapper.dart';
+import 'package:dishlocal/ui/features/follow/view/follow_button.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/reaction_bar.dart';
 import 'package:dishlocal/ui/features/view_post/bloc/view_post_bloc.dart';
@@ -285,9 +285,8 @@ class PostDetailPage extends StatelessWidget {
             ),
           ),
           if (post.authorUserId != currentUserId)
-            AnimatedFollowButtonWrapper(
+            FollowButton(
               targetUser: author,
-              hideAfterFollow: true,
             ),
         ],
       ),

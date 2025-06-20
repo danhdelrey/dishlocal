@@ -1,6 +1,6 @@
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
-import 'package:dishlocal/ui/features/follow/view/animated_follow_button_wrapper.dart';
+import 'package:dishlocal/ui/features/follow/view/follow_button.dart';
 import 'package:dishlocal/ui/features/user_info/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
@@ -68,9 +68,8 @@ class ProfileInfo extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  AnimatedFollowButtonWrapper(
+                  FollowButton(
                     targetUser: state.appUser,
-                    hideAfterFollow: false,
                   ),
                 ],
               ),
