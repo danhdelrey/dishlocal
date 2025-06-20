@@ -3,11 +3,12 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
 import 'package:dishlocal/ui/features/post/view/bouncing_overlay_menu.dart';
-import 'package:dishlocal/ui/features/post/view/follow_button.dart';
+import 'package:dishlocal/ui/features/follow/view/follow_button.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/reaction_bar.dart';
 import 'package:dishlocal/ui/features/view_post/bloc/view_post_bloc.dart';
@@ -108,7 +109,7 @@ class PostDetailPage extends StatelessWidget {
                                   builder: (context, state) {
                                     return switch (state) {
                                       Loading() => const Center(child: CustomLoadingIndicator(indicatorSize: 40)),
-                                      Success() => _buildMainContent(context, state.post),
+                                      Success() => _buildMainContent(context, state.post, state.currentUserId, state.author),
                                       Failure() => const Center(child: Text('Có lỗi xảy ra')),
                                     };
                                   },
@@ -135,7 +136,7 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
-  Column _buildMainContent(BuildContext context, Post post) {
+  Column _buildMainContent(BuildContext context, Post post, String currentUserId, AppUser author) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -202,79 +203,101 @@ class PostDetailPage extends StatelessWidget {
         ),
         FadeSlideUp(
           delay: const Duration(milliseconds: 500),
-          child: Row(
-            children: [
-              CachedCircleAvatar(
-                imageUrl: post.authorAvatarUrl ?? '',
+          child: _buildAuthorInfo(post, context, currentUserId, author),
+        ),
+        if (post.insight != null)
+          FadeSlideUp(
+            delay: const Duration(milliseconds: 600),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 15),
+              child: Text(
+                post.insight!,
+                style: appTextTheme(context).bodyMedium,
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'danhdelrey',
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                    CustomIconWithLabel(
-                      icon: AppIcons.locationCheckFilled.toSvg(
-                        color: Colors.blue,
-                        width: 14,
-                      ),
-                      labelStyle: appTextTheme(context).labelMedium!.copyWith(
-                            color: Colors.blue,
-                          ),
-                      label: TimeFormatter.formatDateTimeFull(post.createdAt),
-                      labelColor: Colors.blue,
-                    ),
-                  ],
-                ),
-              ),
-              const FollowButton(),
-            ],
+            ),
           ),
-        ),
-        const SizedBox(
-          height: 15,
-        ),
-        FadeSlideUp(
-          delay: const Duration(milliseconds: 600),
-          child: Text(
-            post.insight ?? '',
-            style: appTextTheme(context).bodyMedium,
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
         BlocProvider(
           create: (context) => getIt<PostReactionBarBloc>(param1: post),
           child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
             builder: (context, state) {
               return FadeSlideUp(
                 delay: const Duration(milliseconds: 700),
-                child: ReactionBar(
-                  likeColor: Colors.pink,
-                  saveColor: Colors.amber,
-                  isLiked: state.isLiked,
-                  likeCount: state.likeCount,
-                  isSaved: state.isSaved,
-                  saveCount: state.saveCount,
-                  // Khi nhấn, gửi event đến BLoC
-                  onLikeTap: () {
-                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
-                  },
-                  onSaveTap: () {
-                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: ReactionBar(
+                    likeColor: Colors.pink,
+                    saveColor: Colors.amber,
+                    isLiked: state.isLiked,
+                    likeCount: state.likeCount,
+                    isSaved: state.isSaved,
+                    saveCount: state.saveCount,
+                    // Khi nhấn, gửi event đến BLoC
+                    onLikeTap: () {
+                      context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
+                    },
+                    onSaveTap: () {
+                      context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
+                    },
+                  ),
                 ),
               );
             },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAuthorInfo(Post post, BuildContext context, String currentUserId, AppUser author) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        context.push('/post_detail/profile', extra: {'userId': post.authorUserId});
+      },
+      child: Row(
+        children: [
+          CachedCircleAvatar(
+            imageUrl: post.authorAvatarUrl ?? '',
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    style: Theme.of(context).textTheme.labelLarge,
+                    children: [
+                      const TextSpan(text: 'danhdelrey'),
+                      if (post.authorUserId != currentUserId && author.isFollowing == true)
+                        TextSpan(
+                          text: ' • Đang theo dõi',
+                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: appColorScheme(context).outline,
+                                fontStyle: FontStyle.italic,
+                              ),
+                        ),
+                    ],
+                  ),
+                ),
+                CustomIconWithLabel(
+                  icon: AppIcons.locationCheckFilled.toSvg(
+                    color: Colors.blue,
+                    width: 14,
+                  ),
+                  labelStyle: appTextTheme(context).labelMedium!.copyWith(
+                        color: Colors.blue,
+                      ),
+                  label: TimeFormatter.formatDateTimeFull(post.createdAt),
+                  labelColor: Colors.blue,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

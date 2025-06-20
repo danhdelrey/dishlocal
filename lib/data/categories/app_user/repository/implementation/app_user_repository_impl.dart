@@ -8,6 +8,8 @@ import 'package:dishlocal/data/services/authentication_service/exception/authent
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
 import 'package:dishlocal/data/services/database_service/exception/database_service_exception.dart' as db_exception;
 import 'package:dishlocal/data/services/database_service/interface/database_service.dart';
+import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
+import 'package:dishlocal/data/services/database_service/model/server_timestamp.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
@@ -52,6 +54,8 @@ class UserRepositoryImpl implements AppUserRepository {
             email: firebaseUser.email!,
             photoUrl: firebaseUser.photoURL,
             displayName: firebaseUser.displayName,
+            followerCount: 0,
+            followingCount: 0,
           );
         }
       } catch (e, stackTrace) {
@@ -91,6 +95,8 @@ class UserRepositoryImpl implements AppUserRepository {
           email: firebaseUser.email!,
           photoUrl: firebaseUser.photoURL,
           displayName: firebaseUser.displayName,
+          followerCount: 0,
+          followingCount: 0,
         );
         _log.fine('Đang lưu thông tin người dùng mới vào Firestore...');
         await _databaseService.setDocument(
@@ -211,6 +217,137 @@ class UserRepositoryImpl implements AppUserRepository {
       return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi cập nhật $fieldName: ${e.message}'));
     } catch (e, stackTrace) {
       _log.severe('Lỗi không xác định khi đang cập nhật $fieldName.', e, stackTrace);
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<AppUserFailure, AppUser>> getUserWithId({
+    required String userId,
+    String? currentUserId, // <-- Nhận tham số mới
+  }) async {
+    _log.info('📥 Bắt đầu lấy dữ liệu cho người dùng: $userId. Người xem: ${currentUserId ?? "khách"}');
+    try {
+      // Luôn lấy dữ liệu chính của người dùng
+      final userData = await _databaseService.getDocument(
+        collection: _usersCollection,
+        docId: userId,
+      );
+
+      if (userData == null) {
+        _log.warning('⚠️ Không tìm thấy người dùng với ID: $userId');
+        return Left(const UnknownFailure(message: 'User not found'));
+      }
+
+      final appUser = AppUser.fromJson(userData);
+
+      // Nếu không có người dùng hiện tại hoặc người dùng đang xem chính mình,
+      // thì không cần kiểm tra trạng thái follow.
+      if (currentUserId == null || currentUserId.isEmpty || currentUserId == userId) {
+        _log.fine('Không cần kiểm tra trạng thái follow. Trả về dữ liệu gốc.');
+        // Trả về dữ liệu người dùng mà không cần làm giàu thêm
+        return Right(appUser.copyWith(isFollowing: false));
+      }
+
+      // Nếu có người dùng hiện tại, tiến hành kiểm tra trạng thái follow
+      _log.fine('🔄 Đang kiểm tra trạng thái follow từ $currentUserId đến $userId...');
+      final followCheckDoc = await _databaseService.getDocument(
+        collection: '$_usersCollection/$currentUserId/following',
+        docId: userId,
+      );
+
+      // isFollowing sẽ là true nếu tài liệu tồn tại (khác null)
+      final bool isFollowing = followCheckDoc != null;
+      _log.info('✅ Kiểm tra follow hoàn tất. isFollowing: $isFollowing');
+
+      // Tạo một bản sao của appUser với thông tin isFollowing đã được làm giàu
+      final enrichedUser = appUser.copyWith(isFollowing: isFollowing);
+
+      return Right(enrichedUser);
+    } on db_exception.DatabaseServiceException catch (e, stackTrace) {
+      _log.severe('❌ Lỗi Database Service khi lấy người dùng $userId.', e, stackTrace);
+      return Left(DatabaseFailure(e.message));
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi không xác định khi lấy người dùng $userId.', e, stackTrace);
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<AppUserFailure, void>> followUser({
+    required String targetUserId,
+    required bool isFollowing,
+  }) async {
+    final action = isFollowing ? "theo dõi" : "bỏ theo dõi";
+    _log.info('▶️ Bắt đầu quá trình $action người dùng: $targetUserId.');
+
+    try {
+      // BƯỚC 1: Lấy ID của người dùng hiện tại và kiểm tra các điều kiện cơ bản
+      final currentUserId = _authService.getCurrentUserId();
+      if (currentUserId == null) {
+        _log.warning('Người dùng chưa đăng nhập. Không thể thực hiện hành động $action.');
+        return const Left(NotAuthenticatedFailure());
+      }
+
+      if (currentUserId == targetUserId) {
+        _log.warning('Người dùng không thể tự $action chính mình.');
+        return const Left(UnknownFailure(message: 'Bạn không thể tự theo dõi chính mình.'));
+      }
+
+      // BƯỚC 2: Định nghĩa các đường dẫn tài liệu cần thao tác
+      final currentUserDocPath = '$_usersCollection/$currentUserId';
+      final targetUserDocPath = '$_usersCollection/$targetUserId';
+
+      // Đường dẫn để lưu danh sách "đang theo dõi" của người dùng hiện tại
+      final followingPath = '$currentUserDocPath/following/$targetUserId';
+      // Đường dẫn để lưu danh sách "người theo dõi" của người dùng mục tiêu
+      final followerPath = '$targetUserDocPath/followers/$currentUserId';
+
+      // BƯỚC 3: Chuẩn bị danh sách các thao tác cho batch write
+      final List<BatchOperation> operations = [];
+      final incrementValue = isFollowing ? 1 : -1;
+
+      // Thao tác 1: Cập nhật `followingCount` cho người dùng hiện tại
+      operations.add(BatchOperation.update(
+        path: currentUserDocPath,
+        data: {'followingCount': FieldIncrement(incrementValue)},
+      ));
+
+      // Thao tác 2: Cập nhật `followerCount` cho người dùng mục tiêu
+      operations.add(BatchOperation.update(
+        path: targetUserDocPath,
+        data: {'followerCount': FieldIncrement(incrementValue)},
+      ));
+
+      if (isFollowing) {
+        // Thao tác 3 & 4 (khi theo dõi): Tạo các bản ghi quan hệ
+        // Ghi lại rằng `currentUser` đang theo dõi `targetUser`
+        operations.add(BatchOperation.set(
+          path: followingPath,
+          data: {'followedAt': const ServerTimestamp()},
+        ));
+        // Ghi lại rằng `targetUser` có một người theo dõi mới là `currentUser`
+        operations.add(BatchOperation.set(
+          path: followerPath,
+          data: {'followedAt': const ServerTimestamp()},
+        ));
+      } else {
+        // Thao tác 3 & 4 (khi bỏ theo dõi): Xóa các bản ghi quan hệ
+        operations.add(BatchOperation.delete(path: followingPath));
+        operations.add(BatchOperation.delete(path: followerPath));
+      }
+
+      // BƯỚC 4: Thực thi tất cả các thao tác một cách nguyên tử
+      _log.fine('🔄 Chuẩn bị thực thi batch write cho hành động $action...');
+      await _databaseService.executeBatch(operations);
+
+      _log.info('✅ Hoàn thành $action người dùng $targetUserId thành công.');
+      return right(null);
+    } on db_exception.DatabaseServiceException catch (e, stackTrace) {
+      _log.severe('❌ Lỗi Database Service khi $action người dùng $targetUserId.', e, stackTrace);
+      return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi $action: ${e.message}'));
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi không xác định khi $action người dùng $targetUserId.', e, stackTrace);
       return const Left(UnknownFailure());
     }
   }

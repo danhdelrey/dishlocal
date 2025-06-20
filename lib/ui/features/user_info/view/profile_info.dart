@@ -1,5 +1,7 @@
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
-import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
+import 'package:dishlocal/core/utils/number_formatter.dart';
+import 'package:dishlocal/ui/features/follow/view/follow_button.dart';
+import 'package:dishlocal/ui/features/user_info/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
@@ -44,10 +46,10 @@ class ProfileInfo extends StatelessWidget {
                           const SizedBox(
                             height: 5,
                           ),
-                          const CustomRichText(
-                            label1: '2.3K',
+                          CustomRichText(
+                            label1: NumberFormatter.formatCompactNumberStable(state.appUser.followerCount),
                             description1: ' người theo dõi • ',
-                            label2: '245',
+                            label2: NumberFormatter.formatCompactNumberStable(state.appUser.followingCount),
                             description2: ' đang theo dõi',
                           ),
                         ],
@@ -66,8 +68,12 @@ class ProfileInfo extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  //thêm phần tab ở đây (scroll sẽ dính lên trên cùng)
-                  //nội dung của tab ở đây
+                  FollowButton(
+                    targetUser: state.appUser,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                 ],
               ),
             ),

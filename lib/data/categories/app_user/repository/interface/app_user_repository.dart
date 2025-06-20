@@ -8,6 +8,10 @@ abstract class AppUserRepository {
   Stream<AppUser?> get user;
 
   Future<Either<AppUserFailure, AppUser>> getCurrentUser();
+  Future<Either<AppUserFailure, AppUser>> getUserWithId({
+    required String userId,
+    String? currentUserId,
+  });
   String? getCurrentUserId();
 
   // Đăng nhập và kiểm tra username
@@ -17,6 +21,11 @@ abstract class AppUserRepository {
   Future<Either<AppUserFailure, void>> updateUsername(String username);
   Future<Either<AppUserFailure, void>> updateBio(String? bio);
   Future<Either<AppUserFailure, void>> updateDisplayName(String displayName);
+
+  Future<Either<AppUserFailure, void>> followUser({
+    required String targetUserId,
+    required bool isFollowing,
+  });
 
   // Đăng xuất
   // THAY ĐỔI: Trả về Either<Failure, void>

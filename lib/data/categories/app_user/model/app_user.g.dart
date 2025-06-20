@@ -14,6 +14,9 @@ _AppUser _$AppUserFromJson(Map<String, dynamic> json) => _AppUser(
       displayName: json['displayName'] as String?,
       photoUrl: json['photoUrl'] as String?,
       bio: json['bio'] as String?,
+      followerCount: (json['followerCount'] as num?)?.toInt() ?? 0,
+      followingCount: (json['followingCount'] as num?)?.toInt() ?? 0,
+      isFollowing: json['isFollowing'] as bool?,
     );
 
 Map<String, dynamic> _$AppUserToJson(_AppUser instance) => <String, dynamic>{
@@ -24,4 +27,7 @@ Map<String, dynamic> _$AppUserToJson(_AppUser instance) => <String, dynamic>{
       'displayName': instance.displayName,
       'photoUrl': instance.photoUrl,
       'bio': instance.bio,
+      'followerCount': instance.followerCount,
+      'followingCount': instance.followingCount,
+      'isFollowing': instance.isFollowing,
     };

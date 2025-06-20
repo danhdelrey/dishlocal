@@ -20,6 +20,7 @@ import '../../data/categories/address/repository/implementation/address_reposito
     as _i437;
 import '../../data/categories/address/repository/interface/address_repository.dart'
     as _i344;
+import '../../data/categories/app_user/model/app_user.dart' as _i640;
 import '../../data/categories/app_user/repository/implementation/app_user_repository_impl.dart'
     as _i904;
 import '../../data/categories/app_user/repository/interface/app_user_repository.dart'
@@ -61,6 +62,7 @@ import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
 import '../../ui/features/create_post/bloc/create_post_bloc.dart' as _i622;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
+import '../../ui/features/follow/bloc/follow_bloc.dart' as _i501;
 import '../../ui/features/post/bloc/post_bloc.dart' as _i913;
 import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
     as _i144;
@@ -133,13 +135,23 @@ _i174.GetIt init(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
       ));
+  gh.factory<_i10.ViewPostBloc>(() => _i10.ViewPostBloc(
+        gh<_i480.PostRepository>(),
+        gh<_i749.AppUserRepository>(),
+      ));
   gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i913.PostBloc>(() => _i913.PostBloc(gh<_i480.PostRepository>()));
-  gh.factory<_i10.ViewPostBloc>(
-      () => _i10.ViewPostBloc(gh<_i480.PostRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
+  gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((
+    user,
+    _,
+  ) =>
+      _i501.FollowBloc(
+        gh<_i749.AppUserRepository>(),
+        user,
+      ));
   gh.factory<_i511.AuthBloc>(
       () => _i511.AuthBloc(userRepository: gh<_i749.AppUserRepository>()));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
