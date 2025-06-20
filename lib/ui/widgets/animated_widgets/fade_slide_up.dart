@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 class FadeSlideUp extends StatefulWidget {
   final Widget child;
   final Duration duration;
+  final Duration delay;
   final double offsetY;
 
   const FadeSlideUp({
     super.key,
     required this.child,
     this.duration = const Duration(milliseconds: 400),
-    this.offsetY = 20.0, // độ nổi lên (từ dưới lên)
+    this.delay = Duration.zero,
+    this.offsetY = 20.0,
   });
 
   @override
@@ -35,13 +37,17 @@ class _FadeSlideUpState extends State<FadeSlideUp> with SingleTickerProviderStat
     );
 
     _slide = Tween<Offset>(
-      begin: Offset(0, widget.offsetY / 100), // nổi lên từ dưới
+      begin: Offset(0, widget.offsetY / 100), // ví dụ: offsetY = 20 => Offset(0, 0.2)
       end: Offset.zero,
     ).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    _controller.forward(); // bắt đầu animation khi widget được build
+    Future.delayed(widget.delay, () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
   }
 
   @override
