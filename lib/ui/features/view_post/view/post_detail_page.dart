@@ -266,9 +266,21 @@ class PostDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'danhdelrey',
-                  style: Theme.of(context).textTheme.labelLarge,
+                RichText(
+                  text: TextSpan(
+                    style: Theme.of(context).textTheme.labelLarge,
+                    children: [
+                      const TextSpan(text: 'danhdelrey'),
+                      if (post.authorUserId != currentUserId && author.isFollowing == true)
+                        TextSpan(
+                          text: ' • Đang theo dõi',
+                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: appColorScheme(context).outline,
+                                fontStyle: FontStyle.italic,
+                              ),
+                        ),
+                    ],
+                  ),
                 ),
                 CustomIconWithLabel(
                   icon: AppIcons.locationCheckFilled.toSvg(
@@ -284,10 +296,6 @@ class PostDetailPage extends StatelessWidget {
               ],
             ),
           ),
-          if (post.authorUserId != currentUserId)
-            FollowButton(
-              targetUser: author,
-            ),
         ],
       ),
     );
