@@ -6,6 +6,7 @@ sealed class ViewPostState with _$ViewPostState {
   const factory ViewPostState.success({
     required Post post,
     required String currentUserId,
+    required AppUser author,
   }) = Success;
   const factory ViewPostState.failure() = Failure;
 }

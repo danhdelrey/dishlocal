@@ -211,10 +211,12 @@ class Loading implements ViewPostState {
 /// @nodoc
 
 class Success implements ViewPostState {
-  const Success({required this.post, required this.currentUserId});
+  const Success(
+      {required this.post, required this.currentUserId, required this.author});
 
   final Post post;
   final String currentUserId;
+  final AppUser author;
 
   /// Create a copy of ViewPostState
   /// with the given fields replaced by the non-null parameter values.
@@ -230,15 +232,16 @@ class Success implements ViewPostState {
             other is Success &&
             (identical(other.post, post) || other.post == post) &&
             (identical(other.currentUserId, currentUserId) ||
-                other.currentUserId == currentUserId));
+                other.currentUserId == currentUserId) &&
+            (identical(other.author, author) || other.author == author));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, post, currentUserId);
+  int get hashCode => Object.hash(runtimeType, post, currentUserId, author);
 
   @override
   String toString() {
-    return 'ViewPostState.success(post: $post, currentUserId: $currentUserId)';
+    return 'ViewPostState.success(post: $post, currentUserId: $currentUserId, author: $author)';
   }
 }
 
@@ -248,9 +251,10 @@ abstract mixin class $SuccessCopyWith<$Res>
   factory $SuccessCopyWith(Success value, $Res Function(Success) _then) =
       _$SuccessCopyWithImpl;
   @useResult
-  $Res call({Post post, String currentUserId});
+  $Res call({Post post, String currentUserId, AppUser author});
 
   $PostCopyWith<$Res> get post;
+  $AppUserCopyWith<$Res> get author;
 }
 
 /// @nodoc
@@ -266,6 +270,7 @@ class _$SuccessCopyWithImpl<$Res> implements $SuccessCopyWith<$Res> {
   $Res call({
     Object? post = null,
     Object? currentUserId = null,
+    Object? author = null,
   }) {
     return _then(Success(
       post: null == post
@@ -276,6 +281,10 @@ class _$SuccessCopyWithImpl<$Res> implements $SuccessCopyWith<$Res> {
           ? _self.currentUserId
           : currentUserId // ignore: cast_nullable_to_non_nullable
               as String,
+      author: null == author
+          ? _self.author
+          : author // ignore: cast_nullable_to_non_nullable
+              as AppUser,
     ));
   }
 
@@ -286,6 +295,16 @@ class _$SuccessCopyWithImpl<$Res> implements $SuccessCopyWith<$Res> {
   $PostCopyWith<$Res> get post {
     return $PostCopyWith<$Res>(_self.post, (value) {
       return _then(_self.copyWith(post: value));
+    });
+  }
+
+  /// Create a copy of ViewPostState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppUserCopyWith<$Res> get author {
+    return $AppUserCopyWith<$Res>(_self.author, (value) {
+      return _then(_self.copyWith(author: value));
     });
   }
 }

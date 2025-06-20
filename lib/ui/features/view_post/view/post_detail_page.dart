@@ -3,6 +3,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_input.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_section.dart';
@@ -108,7 +109,7 @@ class PostDetailPage extends StatelessWidget {
                                   builder: (context, state) {
                                     return switch (state) {
                                       Loading() => const Center(child: CustomLoadingIndicator(indicatorSize: 40)),
-                                      Success() => _buildMainContent(context, state.post, state.currentUserId),
+                                      Success() => _buildMainContent(context, state.post, state.currentUserId, state.author),
                                       Failure() => const Center(child: Text('Có lỗi xảy ra')),
                                     };
                                   },
@@ -135,7 +136,7 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
-  Column _buildMainContent(BuildContext context, Post post, String currentUserId) {
+  Column _buildMainContent(BuildContext context, Post post, String currentUserId, AppUser author) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -202,7 +203,7 @@ class PostDetailPage extends StatelessWidget {
         ),
         FadeSlideUp(
           delay: const Duration(milliseconds: 500),
-          child: _buildAuthorInfo(post, context, currentUserId),
+          child: _buildAuthorInfo(post, context, currentUserId, author),
         ),
         if (post.insight != null)
           FadeSlideUp(
@@ -247,7 +248,7 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAuthorInfo(Post post, BuildContext context, String currentUserId) {
+  Widget _buildAuthorInfo(Post post, BuildContext context, String currentUserId, AppUser author) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -283,7 +284,7 @@ class PostDetailPage extends StatelessWidget {
               ],
             ),
           ),
-          if (post.authorUserId != currentUserId) const FollowButton(),
+          if (post.authorUserId != currentUserId)  FollowButton(targetUser: author,),
         ],
       ),
     );
