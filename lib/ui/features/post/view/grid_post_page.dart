@@ -2,6 +2,7 @@ import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
+import 'package:dishlocal/ui/widgets/animated_widgets/fade_slide_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -38,7 +39,10 @@ class _GridPostPageState extends State<GridPostPage> {
                         );
                   },
                   builderDelegate: PagedChildBuilderDelegate<Post>(
-                    itemBuilder: (context, post, index) => SmallPost(post: post),
+                    itemBuilder: (context, post, index) => FadeSlideUp(
+                      delay: Duration(milliseconds: index * 100),
+                      child: SmallPost(post: post),
+                    ),
                     firstPageProgressIndicatorBuilder: (_) => const Center(
                       child: CircularProgressIndicator(),
                     ),
