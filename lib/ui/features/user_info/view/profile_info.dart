@@ -71,6 +71,9 @@ class ProfileInfo extends StatelessWidget {
                   FollowButton(
                     targetUser: state.appUser,
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                 ],
               ),
             ),
