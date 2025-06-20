@@ -22,6 +22,9 @@ mixin _$AppUser {
   String? get displayName;
   String? get photoUrl;
   String? get bio;
+  int get followerCount;
+  int get followingCount;
+  bool? get isFollowing;
 
   /// Create a copy of AppUser
   /// with the given fields replaced by the non-null parameter values.
@@ -48,17 +51,33 @@ mixin _$AppUser {
                 other.displayName == displayName) &&
             (identical(other.photoUrl, photoUrl) ||
                 other.photoUrl == photoUrl) &&
-            (identical(other.bio, bio) || other.bio == bio));
+            (identical(other.bio, bio) || other.bio == bio) &&
+            (identical(other.followerCount, followerCount) ||
+                other.followerCount == followerCount) &&
+            (identical(other.followingCount, followingCount) ||
+                other.followingCount == followingCount) &&
+            (identical(other.isFollowing, isFollowing) ||
+                other.isFollowing == isFollowing));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, userId, originalDisplayname,
-      email, username, displayName, photoUrl, bio);
+  int get hashCode => Object.hash(
+      runtimeType,
+      userId,
+      originalDisplayname,
+      email,
+      username,
+      displayName,
+      photoUrl,
+      bio,
+      followerCount,
+      followingCount,
+      isFollowing);
 
   @override
   String toString() {
-    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio)';
+    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing)';
   }
 }
 
@@ -74,7 +93,10 @@ abstract mixin class $AppUserCopyWith<$Res> {
       String? username,
       String? displayName,
       String? photoUrl,
-      String? bio});
+      String? bio,
+      int followerCount,
+      int followingCount,
+      bool? isFollowing});
 }
 
 /// @nodoc
@@ -96,6 +118,9 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
     Object? displayName = freezed,
     Object? photoUrl = freezed,
     Object? bio = freezed,
+    Object? followerCount = null,
+    Object? followingCount = null,
+    Object? isFollowing = freezed,
   }) {
     return _then(_self.copyWith(
       userId: null == userId
@@ -126,6 +151,18 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
           ? _self.bio
           : bio // ignore: cast_nullable_to_non_nullable
               as String?,
+      followerCount: null == followerCount
+          ? _self.followerCount
+          : followerCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      followingCount: null == followingCount
+          ? _self.followingCount
+          : followingCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      isFollowing: freezed == isFollowing
+          ? _self.isFollowing
+          : isFollowing // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -140,7 +177,10 @@ class _AppUser implements AppUser {
       this.username,
       this.displayName,
       this.photoUrl,
-      this.bio});
+      this.bio,
+      this.followerCount = 0,
+      this.followingCount = 0,
+      this.isFollowing});
   factory _AppUser.fromJson(Map<String, dynamic> json) =>
       _$AppUserFromJson(json);
 
@@ -158,6 +198,14 @@ class _AppUser implements AppUser {
   final String? photoUrl;
   @override
   final String? bio;
+  @override
+  @JsonKey()
+  final int followerCount;
+  @override
+  @JsonKey()
+  final int followingCount;
+  @override
+  final bool? isFollowing;
 
   /// Create a copy of AppUser
   /// with the given fields replaced by the non-null parameter values.
@@ -189,17 +237,33 @@ class _AppUser implements AppUser {
                 other.displayName == displayName) &&
             (identical(other.photoUrl, photoUrl) ||
                 other.photoUrl == photoUrl) &&
-            (identical(other.bio, bio) || other.bio == bio));
+            (identical(other.bio, bio) || other.bio == bio) &&
+            (identical(other.followerCount, followerCount) ||
+                other.followerCount == followerCount) &&
+            (identical(other.followingCount, followingCount) ||
+                other.followingCount == followingCount) &&
+            (identical(other.isFollowing, isFollowing) ||
+                other.isFollowing == isFollowing));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, userId, originalDisplayname,
-      email, username, displayName, photoUrl, bio);
+  int get hashCode => Object.hash(
+      runtimeType,
+      userId,
+      originalDisplayname,
+      email,
+      username,
+      displayName,
+      photoUrl,
+      bio,
+      followerCount,
+      followingCount,
+      isFollowing);
 
   @override
   String toString() {
-    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio)';
+    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing)';
   }
 }
 
@@ -216,7 +280,10 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
       String? username,
       String? displayName,
       String? photoUrl,
-      String? bio});
+      String? bio,
+      int followerCount,
+      int followingCount,
+      bool? isFollowing});
 }
 
 /// @nodoc
@@ -238,6 +305,9 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
     Object? displayName = freezed,
     Object? photoUrl = freezed,
     Object? bio = freezed,
+    Object? followerCount = null,
+    Object? followingCount = null,
+    Object? isFollowing = freezed,
   }) {
     return _then(_AppUser(
       userId: null == userId
@@ -268,6 +338,18 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
           ? _self.bio
           : bio // ignore: cast_nullable_to_non_nullable
               as String?,
+      followerCount: null == followerCount
+          ? _self.followerCount
+          : followerCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      followingCount: null == followingCount
+          ? _self.followingCount
+          : followingCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      isFollowing: freezed == isFollowing
+          ? _self.isFollowing
+          : isFollowing // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }

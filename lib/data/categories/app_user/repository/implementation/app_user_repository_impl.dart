@@ -220,7 +220,7 @@ class UserRepositoryImpl implements AppUserRepository {
       return const Left(UnknownFailure());
     }
   }
-  
+
   @override
   Future<Either<AppUserFailure, AppUser>> getUserWithId(String userId) async {
     try {
@@ -232,7 +232,7 @@ class UserRepositoryImpl implements AppUserRepository {
       return const Left(UnknownFailure());
     }
   }
-  
+
   @override
   Future<Either<AppUserFailure, void>> followUser({
     required String targetUserId,
