@@ -51,15 +51,13 @@ class _GridPostPageState extends State<GridPostPage> {
                       highlightColor: appColorScheme(context).outline,
                       child: Column(
                         children: List.generate(
-                          5,
-                          (_) => Expanded(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildShimmeringSmallPost(),
-                                _buildShimmeringSmallPost(),
-                              ],
-                            ),
+                          2,
+                          (_) => Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildShimmeringSmallPost(),
+                              _buildShimmeringSmallPost(),
+                            ],
                           ),
                         ),
                       ),
