@@ -211,9 +211,10 @@ class Loading implements ViewPostState {
 /// @nodoc
 
 class Success implements ViewPostState {
-  const Success({required this.post});
+  const Success({required this.post, required this.currentUserId});
 
   final Post post;
+  final String currentUserId;
 
   /// Create a copy of ViewPostState
   /// with the given fields replaced by the non-null parameter values.
@@ -227,15 +228,17 @@ class Success implements ViewPostState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is Success &&
-            (identical(other.post, post) || other.post == post));
+            (identical(other.post, post) || other.post == post) &&
+            (identical(other.currentUserId, currentUserId) ||
+                other.currentUserId == currentUserId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, post);
+  int get hashCode => Object.hash(runtimeType, post, currentUserId);
 
   @override
   String toString() {
-    return 'ViewPostState.success(post: $post)';
+    return 'ViewPostState.success(post: $post, currentUserId: $currentUserId)';
   }
 }
 
@@ -245,7 +248,7 @@ abstract mixin class $SuccessCopyWith<$Res>
   factory $SuccessCopyWith(Success value, $Res Function(Success) _then) =
       _$SuccessCopyWithImpl;
   @useResult
-  $Res call({Post post});
+  $Res call({Post post, String currentUserId});
 
   $PostCopyWith<$Res> get post;
 }
@@ -262,12 +265,17 @@ class _$SuccessCopyWithImpl<$Res> implements $SuccessCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   $Res call({
     Object? post = null,
+    Object? currentUserId = null,
   }) {
     return _then(Success(
       post: null == post
           ? _self.post
           : post // ignore: cast_nullable_to_non_nullable
               as Post,
+      currentUserId: null == currentUserId
+          ? _self.currentUserId
+          : currentUserId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 

@@ -108,7 +108,7 @@ class PostDetailPage extends StatelessWidget {
                                   builder: (context, state) {
                                     return switch (state) {
                                       Loading() => const Center(child: CustomLoadingIndicator(indicatorSize: 40)),
-                                      Success() => _buildMainContent(context, state.post),
+                                      Success() => _buildMainContent(context, state.post, state.currentUserId),
                                       Failure() => const Center(child: Text('Có lỗi xảy ra')),
                                     };
                                   },
@@ -135,7 +135,7 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
-  Column _buildMainContent(BuildContext context, Post post) {
+  Column _buildMainContent(BuildContext context, Post post, String currentUserId) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -232,43 +232,44 @@ class PostDetailPage extends StatelessWidget {
                   ],
                 ),
               ),
-              const FollowButton(),
+              if (post.authorUserId != currentUserId) const FollowButton(),
             ],
           ),
         ),
-        const SizedBox(
-          height: 15,
-        ),
-        FadeSlideUp(
-          delay: const Duration(milliseconds: 600),
-          child: Text(
-            post.insight ?? '',
-            style: appTextTheme(context).bodyMedium,
+        if (post.insight != null)
+          FadeSlideUp(
+            delay: const Duration(milliseconds: 600),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 15),
+              child: Text(
+                post.insight!,
+                style: appTextTheme(context).bodyMedium,
+              ),
+            ),
           ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
         BlocProvider(
           create: (context) => getIt<PostReactionBarBloc>(param1: post),
           child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
             builder: (context, state) {
               return FadeSlideUp(
                 delay: const Duration(milliseconds: 700),
-                child: ReactionBar(
-                  likeColor: Colors.pink,
-                  saveColor: Colors.amber,
-                  isLiked: state.isLiked,
-                  likeCount: state.likeCount,
-                  isSaved: state.isSaved,
-                  saveCount: state.saveCount,
-                  // Khi nhấn, gửi event đến BLoC
-                  onLikeTap: () {
-                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
-                  },
-                  onSaveTap: () {
-                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: ReactionBar(
+                    likeColor: Colors.pink,
+                    saveColor: Colors.amber,
+                    isLiked: state.isLiked,
+                    likeCount: state.likeCount,
+                    isSaved: state.isSaved,
+                    saveCount: state.saveCount,
+                    // Khi nhấn, gửi event đến BLoC
+                    onLikeTap: () {
+                      context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
+                    },
+                    onSaveTap: () {
+                      context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
+                    },
+                  ),
                 ),
               );
             },

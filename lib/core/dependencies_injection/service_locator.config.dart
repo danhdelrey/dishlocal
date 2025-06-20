@@ -133,11 +133,13 @@ _i174.GetIt init(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
       ));
+  gh.factory<_i10.ViewPostBloc>(() => _i10.ViewPostBloc(
+        gh<_i480.PostRepository>(),
+        gh<_i749.AppUserRepository>(),
+      ));
   gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i913.PostBloc>(() => _i913.PostBloc(gh<_i480.PostRepository>()));
-  gh.factory<_i10.ViewPostBloc>(
-      () => _i10.ViewPostBloc(gh<_i480.PostRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factory<_i511.AuthBloc>(
