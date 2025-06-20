@@ -277,4 +277,72 @@ class RemotePostRepositoryImpl implements PostRepository {
       return left(const UnknownFailure());
     }
   }
+  
+  @override
+  Future<Either<PostFailure, List<Post>>> getPostWithId(String postId) async {
+    _log.info('📥 Bắt đầu lấy post với postId: $postId');
+
+    try {
+      // Bước 1: Lấy thông tin người dùng hiện tại
+      final currentUserId = _authenticationService.getCurrentUserId();
+      _log.fine('🆔 User ID hiện tại: $currentUserId');
+
+      // Bước 2: Lấy dữ liệu bài viết từ Firestore
+      final json = await _databaseService.getDocument(
+        collection: 'posts',
+        docId: postId,
+      );
+
+      if (json == null) {
+        _log.warning('⚠️ Không tìm thấy post với postId: $postId');
+        return right([]); // hoặc có thể return `left(PostNotFound())` nếu bạn định nghĩa thêm loại failure
+      }
+
+      final post = Post.fromJson(json);
+
+      // Bước 3: Trạng thái liked/saved
+      bool isLiked = false;
+      bool isSaved = false;
+
+      if (currentUserId != null && currentUserId.isNotEmpty) {
+        final results = await Future.wait([
+          _databaseService.getDocument(
+            collection: 'users/$currentUserId/likes',
+            docId: postId,
+          ),
+          _databaseService.getDocument(
+            collection: 'users/$currentUserId/savedPosts',
+            docId: postId,
+          ),
+        ]);
+
+        isLiked = results[0] != null;
+        isSaved = results[1] != null;
+      }
+
+      // Bước 4: Tính khoảng cách (nếu có địa chỉ)
+      double? distance;
+      if (post.address?.latitude != null && post.address?.longitude != null) {
+        final userPosition = await _locationService.getCurrentPosition();
+        distance = await _distanceService.calculateDistance(
+          fromLat: userPosition.latitude,
+          fromLong: userPosition.longitude,
+          toLat: post.address!.latitude,
+          toLong: post.address!.longitude,
+        );
+      }
+
+      final enrichedPost = post.copyWith(
+        isLiked: isLiked,
+        isSaved: isSaved,
+        distance: distance,
+      );
+
+      return right([enrichedPost]);
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi khi lấy bài viết với postId: $postId', e, stackTrace);
+      return const Left(UnknownFailure());
+    }
+  }
+
 }

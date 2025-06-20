@@ -10,6 +10,7 @@ abstract class PostRepository {
     int limit = 10,
     DateTime? startAfter,
   });
+  Future<Either<PostFailure, List<Post>>> getPostWithId(String postId);
   Future<Either<PostFailure, void>> likePost({
     required String postId,
     required String userId,
