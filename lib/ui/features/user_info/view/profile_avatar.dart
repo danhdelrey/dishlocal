@@ -15,7 +15,7 @@ class ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested()),
+      create: (context) => getIt<UserInfoBloc>()..add(const UserInfoRequested()),
       child: BlocBuilder<UserInfoBloc, UserInfoState>(
         builder: (context, state) {
           if (state is UserInfoSuccess) {

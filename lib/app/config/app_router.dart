@@ -40,15 +40,26 @@ class AppRouter {
         builder: (context, state) => const AccountSetupPage(),
       ),
       GoRoute(
-        path: '/post_detail',
-        builder: (context, state) {
-          final extraMap = state.extra as Map<String, dynamic>;
-          final Post post = extraMap['post'];
-          return PostDetailPage(
-            post: post,
-          );
-        },
-      ),
+          path: '/post_detail',
+          builder: (context, state) {
+            final extraMap = state.extra as Map<String, dynamic>;
+            final Post post = extraMap['post'];
+            return PostDetailPage(
+              post: post,
+            );
+          },
+          routes: [
+            GoRoute(
+              path: 'profile',
+              builder: (context, state) {
+                final extraMap = state.extra as Map<String, dynamic>;
+                final String userId = extraMap['userId'];
+                return ProfilePage(
+                  userId: userId,
+                );
+              },
+            ),
+          ]),
       GoRoute(
         path: '/camera',
         builder: (context, state) => const CameraPage(),
@@ -180,7 +191,6 @@ class AppRouter {
     _log.warning('❗ Không có điều kiện nào thỏa mãn trong redirect → giữ nguyên.');
     return null;
   }
-
 }
 
 // Helper class để GoRouter lắng nghe stream của BLoC

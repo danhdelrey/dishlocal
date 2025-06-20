@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
@@ -13,9 +14,12 @@ import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_gua
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({super.key, this.userId});
+
+  final String? userId;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,7 @@ class ProfilePage extends StatelessWidget {
       return MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested()),
+            create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested(userId: userId)),
           ),
           BlocProvider(
             create: (context) => getIt<PostBloc>(),
@@ -39,6 +43,16 @@ class ProfilePage extends StatelessWidget {
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   GlassSliverAppBar(
+                    leading: userId != null
+                        ? IconButton(
+                            onPressed: () {
+                              context.pop();
+                            },
+                            icon: AppIcons.left.toSvg(
+                              color: appColorScheme(context).onSurface,
+                            ),
+                          )
+                        : null,
                     pinned: true,
                     floating: true,
                     title: BlocBuilder<UserInfoBloc, UserInfoState>(

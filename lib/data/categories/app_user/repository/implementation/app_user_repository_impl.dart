@@ -214,4 +214,16 @@ class UserRepositoryImpl implements AppUserRepository {
       return const Left(UnknownFailure());
     }
   }
+  
+  @override
+  Future<Either<AppUserFailure, AppUser>> getUserWithId(String userId) async {
+    try {
+      final userData = await _databaseService.getDocument(collection: _usersCollection, docId: userId);
+      final appUser = AppUser.fromJson(userData!);
+      _log.info('Người dùng đang lấy là ${appUser.toString()}');
+      return Right(appUser);
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
 }

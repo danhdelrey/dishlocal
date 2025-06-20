@@ -202,39 +202,7 @@ class PostDetailPage extends StatelessWidget {
         ),
         FadeSlideUp(
           delay: const Duration(milliseconds: 500),
-          child: Row(
-            children: [
-              CachedCircleAvatar(
-                imageUrl: post.authorAvatarUrl ?? '',
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'danhdelrey',
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                    CustomIconWithLabel(
-                      icon: AppIcons.locationCheckFilled.toSvg(
-                        color: Colors.blue,
-                        width: 14,
-                      ),
-                      labelStyle: appTextTheme(context).labelMedium!.copyWith(
-                            color: Colors.blue,
-                          ),
-                      label: TimeFormatter.formatDateTimeFull(post.createdAt),
-                      labelColor: Colors.blue,
-                    ),
-                  ],
-                ),
-              ),
-              if (post.authorUserId != currentUserId) const FollowButton(),
-            ],
-          ),
+          child: _buildAuthorInfo(post, context, currentUserId),
         ),
         if (post.insight != null)
           FadeSlideUp(
@@ -276,6 +244,48 @@ class PostDetailPage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAuthorInfo(Post post, BuildContext context, String currentUserId) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        context.push('/post_detail/profile',extra: {'userId' : post.authorUserId});
+      },
+      child: Row(
+        children: [
+          CachedCircleAvatar(
+            imageUrl: post.authorAvatarUrl ?? '',
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'danhdelrey',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                CustomIconWithLabel(
+                  icon: AppIcons.locationCheckFilled.toSvg(
+                    color: Colors.blue,
+                    width: 14,
+                  ),
+                  labelStyle: appTextTheme(context).labelMedium!.copyWith(
+                        color: Colors.blue,
+                      ),
+                  label: TimeFormatter.formatDateTimeFull(post.createdAt),
+                  labelColor: Colors.blue,
+                ),
+              ],
+            ),
+          ),
+          if (post.authorUserId != currentUserId) const FollowButton(),
+        ],
+      ),
     );
   }
 }
