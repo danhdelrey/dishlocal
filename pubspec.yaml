@@ -84,6 +84,7 @@ dependencies:
   timeago: ^3.7.1
   maps_launcher: ^3.0.0+1
   connectivity_plus: ^6.1.4
+  shimmer: ^3.0.0
   
 
 dev_dependencies:
