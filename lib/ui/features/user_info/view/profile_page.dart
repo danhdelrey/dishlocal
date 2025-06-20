@@ -64,8 +64,8 @@ class ProfilePage extends StatelessWidget {
                       },
                     ),
                     centerTitle: true,
-                    actions: const [
-                      LogoutButton(),
+                    actions: [
+                      userId != null ? const SizedBox() : const LogoutButton(),
                     ],
                   ),
 
