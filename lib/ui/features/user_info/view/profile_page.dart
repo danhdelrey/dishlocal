@@ -5,7 +5,7 @@ import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
-import 'package:dishlocal/ui/features/profile/view/custom_rich_text.dart';
+import 'package:dishlocal/ui/features/user_info/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_info.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
