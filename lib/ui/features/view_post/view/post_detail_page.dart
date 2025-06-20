@@ -35,28 +35,46 @@ class PostDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<ViewPostBloc>()..add(ViewPostEvent.started(post)),
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Scaffold(
-          extendBody: true,
-          body: SafeArea(
-            child: Stack(
-              children: [
-                RefreshIndicator(
-                  onRefresh: () => Future.sync(
-                    () => context.read<ViewPostBloc>().add(
-                          ViewPostEvent.started(post),
-                        ),
-                  ),
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
-                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                    slivers: [
-                      BlocBuilder<ViewPostBloc, ViewPostState>(
-                        builder: (context, state) {
-                          if (state is Success) {
+      child: Builder(builder: (context) {
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Scaffold(
+            extendBody: true,
+            body: SafeArea(
+              child: Stack(
+                children: [
+                  RefreshIndicator(
+                    onRefresh: () => Future.sync(
+                      () => context.read<ViewPostBloc>().add(
+                            ViewPostEvent.started(post),
+                          ),
+                    ),
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                      slivers: [
+                        BlocBuilder<ViewPostBloc, ViewPostState>(
+                          builder: (context, state) {
+                            if (state is Success) {
+                              return GlassSliverAppBar(
+                                floating: true,
+                                pinned: true,
+                                leading: IconButton(
+                                  onPressed: () {
+                                    context.pop();
+                                  },
+                                  icon: AppIcons.left.toSvg(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                ),
+                                actions: const [
+                                  BouncingOverlayMenu(),
+                                ],
+                                title: Text(state.post.dishName ?? ''),
+                              );
+                            }
                             return GlassSliverAppBar(
                               floating: true,
                               pinned: true,
@@ -68,68 +86,52 @@ class PostDetailPage extends StatelessWidget {
                                   color: Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
-                              actions: const [
-                                BouncingOverlayMenu(),
-                              ],
-                              title: Text(state.post.dishName ?? ''),
                             );
-                          }
-                          return GlassSliverAppBar(
-                            floating: true,
-                            pinned: true,
-                            leading: IconButton(
-                              onPressed: () {
-                                context.pop();
-                              },
-                              icon: AppIcons.left.toSvg(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                          },
+                        ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 150),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                BlurredEdgeWidget(
+                                  blurredChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
+                                  clearRadius: 1,
+                                  blurSigma: 100,
+                                  topChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
+                                ),
+                                BlocBuilder<ViewPostBloc, ViewPostState>(
+                                  builder: (context, state) {
+                                    return switch (state) {
+                                      Loading() => const Center(child: CustomLoadingIndicator(indicatorSize: 40)),
+                                      Success() => _buildMainContent(context, state.post),
+                                      Failure() => const Center(child: Text('Có lỗi xảy ra')),
+                                    };
+                                  },
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 150),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              BlurredEdgeWidget(
-                                blurredChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
-                                clearRadius: 1,
-                                blurSigma: 100,
-                                topChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
-                              ),
-                              BlocBuilder<ViewPostBloc, ViewPostState>(
-                                builder: (context, state) {
-                                  return switch (state) {
-                                    Loading() => const Center(child: CustomLoadingIndicator(indicatorSize: 40)),
-                                    Success() => _buildMainContent(context, state.post),
-                                    Failure() => const Center(child: Text('Có lỗi xảy ra')),
-                                  };
-                                },
-                              ),
-                            ],
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                // const Positioned(
-                //   left: 0,
-                //   right: 0,
-                //   bottom: 0,
-                //   child: CommentInput(),
-                // ),
-              ],
+                  // const Positioned(
+                  //   left: 0,
+                  //   right: 0,
+                  //   bottom: 0,
+                  //   child: CommentInput(),
+                  // ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
