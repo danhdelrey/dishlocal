@@ -111,4 +111,14 @@ abstract class DatabaseService {
   /// Phương thức này nhận một list các `BatchOperation` đã được định nghĩa trước.
   /// Nó đảm bảo tất cả các thao tác thành công, hoặc không thao tác nào được thực hiện.
   Future<void> executeBatch(List<BatchOperation> operations);
+
+  /// Lấy tất cả các tài liệu trong một collection có ID nằm trong danh sách `ids` được cung cấp.
+  /// Sử dụng truy vấn 'whereIn' trên FieldPath.documentId để tối ưu hiệu suất.
+  ///
+  /// - `collection`: Đường dẫn đến collection (ví dụ: 'users/userId/likes').
+  /// - `ids`: Danh sách các ID của tài liệu cần lấy.
+  Future<List<Map<String, dynamic>>> getDocumentsWhereIdIn({
+    required String collection,
+    required List<String> ids,
+  });
 }

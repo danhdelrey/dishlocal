@@ -23,6 +23,7 @@ class BatchOperation {
   /// Dữ liệu để ghi. Chỉ cần thiết cho thao tác `set` và `update`.
   final Map<String, dynamic>? data;
 
+
   /// Private constructor để đảm bảo tính hợp lệ.
   BatchOperation._({
     required this.type,
@@ -52,4 +53,6 @@ class BatchOperation {
   }) {
     return BatchOperation._(type: BatchOperationType.delete, path: path);
   }
+
+  
 }

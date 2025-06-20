@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dishlocal/data/services/database_service/exception/database_service_exception.dart';
 import 'package:dishlocal/data/services/database_service/interface/database_service.dart';
 import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
+import 'package:dishlocal/data/services/database_service/model/server_timestamp.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
@@ -320,18 +321,38 @@ class FirestoreServiceImpl implements DatabaseService {
 
     try {
       for (final op in operations) {
-        // Lấy DocumentReference từ đường dẫn string
         final docRef = _firestore.doc(op.path);
 
-        // Thêm thao tác tương ứng vào batch
+        // Hàm helper để dịch các giá trị placeholder thành FieldValue của Firestore
+        Map<String, dynamic> translateData(Map<String, dynamic> originalData) {
+          final translatedData = <String, dynamic>{};
+          for (final entry in originalData.entries) {
+            final value = entry.value;
+            if (value is FieldIncrement) {
+              // Dịch FieldIncrement thành FieldValue.increment
+              translatedData[entry.key] = FieldValue.increment(value.value);
+            } else if (value is ServerTimestamp) {
+              // Dịch ServerTimestamp thành FieldValue.serverTimestamp
+              translatedData[entry.key] = FieldValue.serverTimestamp();
+            } else {
+              // Giữ nguyên các giá trị khác
+              translatedData[entry.key] = value;
+            }
+          }
+          return translatedData;
+        }
+
+        // Switch case bây giờ hoàn toàn chính xác
         switch (op.type) {
           case BatchOperationType.set:
             _log.fine("Batch: Thêm thao tác SET cho đường dẫn '${op.path}'.");
-            batch.set(docRef, op.data!);
+            // Dịch dữ liệu trước khi set
+            batch.set(docRef, translateData(op.data!));
             break;
           case BatchOperationType.update:
             _log.fine("Batch: Thêm thao tác UPDATE cho đường dẫn '${op.path}'.");
-            batch.update(docRef, op.data!);
+            // Dịch dữ liệu trước khi update
+            batch.update(docRef, translateData(op.data!));
             break;
           case BatchOperationType.delete:
             _log.fine("Batch: Thêm thao tác DELETE cho đường dẫn '${op.path}'.");
@@ -340,7 +361,6 @@ class FirestoreServiceImpl implements DatabaseService {
         }
       }
 
-      // Commit tất cả các thao tác
       await batch.commit();
       _log.info("Thực thi batch write thành công.");
     } on FirebaseException catch (e) {
@@ -349,6 +369,44 @@ class FirestoreServiceImpl implements DatabaseService {
     } catch (e, stackTrace) {
       _log.severe("Lỗi không xác định trong quá trình batch write.", e, stackTrace);
       throw DatabaseServiceUnknownException("Lỗi không xác định trong batch write: ${e.toString()}");
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getDocumentsWhereIdIn({
+    required String collection,
+    required List<String> ids,
+  }) async {
+    // Firestore không cho phép truy vấn 'whereIn' với danh sách rỗng.
+    if (ids.isEmpty) {
+      _log.info("Danh sách ID rỗng cho truy vấn 'whereIn' trên collection '$collection', trả về danh sách trống.");
+      return [];
+    }
+
+    _log.info("Bắt đầu truy vấn 'whereIn' trên ${ids.length} ID trong collection '$collection'.");
+    try {
+      // Chia nhỏ danh sách ID nếu nó quá lớn, vì Firestore giới hạn 10 phần tử cho `whereIn`.
+      // (Lưu ý: Giới hạn này đã được nâng lên 30 cho `in`, `not-in`, `array-contains-any` kể từ tháng 11/2022)
+      // Chúng ta sẽ giả sử giới hạn là 30.
+      List<Map<String, dynamic>> results = [];
+      for (var i = 0; i < ids.length; i += 30) {
+        final sublist = ids.sublist(i, i + 30 > ids.length ? ids.length : i + 30);
+        final snapshot = await _firestore.collection(collection).where(FieldPath.documentId, whereIn: sublist).get();
+
+        results.addAll(snapshot.docs.map((doc) {
+          final data = doc.data();
+          data['id'] = doc.id;
+          return data;
+        }));
+      }
+
+      _log.info("Truy vấn 'whereIn' thành công, lấy được ${results.length} tài liệu từ '$collection'.");
+      return results;
+    } on FirebaseException catch (e) {
+      throw _handleFirestoreException(e, collection, "truy vấn 'whereIn'");
+    } catch (e, stackTrace) {
+      _log.severe("Lỗi không xác định khi truy vấn 'whereIn' trên collection '$collection'.", e, stackTrace);
+      throw DatabaseServiceUnknownException("Lỗi không xác định khi truy vấn 'whereIn': ${e.toString()}");
     }
   }
 }

@@ -6,6 +6,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
 import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
+import 'package:dishlocal/data/services/database_service/model/server_timestamp.dart';
 import 'package:dishlocal/data/services/distance_service/interface/distance_service.dart';
 import 'package:dishlocal/data/services/location_service/interface/location_service.dart';
 import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
@@ -25,12 +26,14 @@ class RemotePostRepositoryImpl implements PostRepository {
   final DatabaseService _databaseService;
   final DistanceService _distanceService;
   final LocationService _locationService;
+  final AuthenticationService _authenticationService;
 
   RemotePostRepositoryImpl(
     this._storageService,
     this._databaseService,
     this._distanceService,
     this._locationService,
+    this._authenticationService,
   );
 
   @override
@@ -72,8 +75,21 @@ class RemotePostRepositoryImpl implements PostRepository {
     DateTime? startAfter,
   }) async {
     _log.info('📥 Lấy danh sách post (limit: $limit, startAfter: $startAfter)');
+    // hỏi hàng loạt (batch query)
+    // Lần 1: "Firebase ơi, cho tôi danh sách 10 bài viết mới nhất."
+    // Firebase trả về 10 bài viết.
+    // Bạn lấy ra ID của cả 10 bài viết đó (giống như viết tên sách ra giấy).
+    // Lần 2: "Firebase ơi, trong danh sách 10 ID bài viết này, người dùng của tôi đã thích những bài nào? Cho tôi kết quả."
+    // Firebase chỉ cần tìm 1 lần và trả về, ví dụ: "Người dùng đã thích bài A, D, F".
+    // Lần 3: "Firebase ơi, cũng trong danh sách 10 ID đó, người dùng của tôi đã lưu những bài nào?"
+    // Firebase lại tìm 1 lần và trả về, ví dụ: "Người dùng đã lưu bài B, D, H".
+    //=> Tổng cộng, bạn chỉ phải hỏi Firebase 3 lần (1 lần lấy bài viết, 1 lần lấy danh sách thích, 1 lần lấy danh sách lưu).
 
     try {
+      // BƯỚC 1 & 2: Lấy UserID và danh sách bài viết
+      final currentUserId = _authenticationService.getCurrentUserId();
+      _log.fine('🆔 User ID hiện tại: $currentUserId');
+
       final rawPosts = await _databaseService.getDocuments(
         collection: 'posts',
         orderBy: 'createdAt',
@@ -82,37 +98,75 @@ class RemotePostRepositoryImpl implements PostRepository {
         startAfter: startAfter,
       );
 
+      if (rawPosts.isEmpty) {
+        _log.info('✅ Không có bài viết nào được tìm thấy. Trả về danh sách trống.');
+        return right([]);
+      }
+
       final posts = rawPosts.map((json) => Post.fromJson(json)).toList();
       _log.info('✅ Lấy được ${posts.length} bài viết.');
 
+      // BƯỚC 3: Trích xuất danh sách Post ID
+      final postIds = posts.map((p) => p.postId).toList();
+
+      // BƯỚC 4: Lấy trạng thái Like và Save hàng loạt (chỉ khi user đã đăng nhập)
+      Set<String> likedPostIds = {};
+      Set<String> savedPostIds = {};
+
+      if (currentUserId != null && currentUserId.isNotEmpty) {
+        _log.info('🚀 Bắt đầu lấy trạng thái like/save cho ${postIds.length} bài viết.');
+
+        // Chạy song song 2 truy vấn để tăng tốc độ
+        final results = await Future.wait([
+          _databaseService.getDocumentsWhereIdIn(
+            collection: 'users/$currentUserId/likes',
+            ids: postIds,
+          ),
+          _databaseService.getDocumentsWhereIdIn(
+            collection: 'users/$currentUserId/savedPosts',
+            ids: postIds,
+          ),
+        ]);
+
+        // Dùng Set để tra cứu O(1)
+        likedPostIds = results[0].map((doc) => doc['id'] as String).toSet();
+        savedPostIds = results[1].map((doc) => doc['id'] as String).toSet();
+        _log.fine('👍 Đã thích ${likedPostIds.length} bài viết. 📌 Đã lưu ${savedPostIds.length} bài viết.');
+      } else {
+        _log.info('👤 Người dùng chưa đăng nhập, bỏ qua việc kiểm tra trạng thái like/save.');
+      }
+
       // 🔍 Lấy tọa độ người dùng hiện tại
       final userPosition = await _locationService.getCurrentPosition();
-      final userLat = userPosition.latitude;
-      final userLong = userPosition.longitude;
 
-      // 🔁 Tính khoảng cách cho từng bài viết
-      final postsWithDistance = await Future.wait(posts.map((post) async {
-        final postLat = post.address?.latitude;
-        final postLong = post.address?.longitude;
+      // BƯỚC 5: Tổng hợp tất cả dữ liệu
+      _log.info('🔄 Bắt đầu tổng hợp dữ liệu (khoảng cách, like, save) cho các bài viết.');
+      final postsWithFullData = await Future.wait(posts.map((post) async {
+        // Tính khoảng cách
+        final distance = (post.address?.latitude != null && post.address?.longitude != null)
+            ? await _distanceService.calculateDistance(
+                fromLat: userPosition.latitude,
+                fromLong: userPosition.longitude,
+                toLat: post.address!.latitude,
+                toLong: post.address!.longitude,
+              )
+            : null;
 
-        if (postLat == null || postLong == null) {
-          _log.warning('⚠️ Post ${post.postId} không có tọa độ');
-          return post;
-        }
+        // Kiểm tra trạng thái like/save
+        final isLiked = likedPostIds.contains(post.postId);
+        final isSaved = savedPostIds.contains(post.postId);
 
-        final distance = await _distanceService.calculateDistance(
-          fromLat: userLat,
-          fromLong: userLong,
-          toLat: postLat,
-          toLong: postLong,
+        return post.copyWith(
+          distance: distance,
+          isLiked: isLiked,
+          isSaved: isSaved,
         );
-
-        return post.copyWith(distance: distance);
       }));
 
-      return right(postsWithDistance);
+      _log.info('🎉 Hoàn thành lấy và tổng hợp dữ liệu cho ${postsWithFullData.length} bài viết.');
+      return right(postsWithFullData);
     } catch (e, stackTrace) {
-      _log.severe('❌ Lỗi khi lấy post', e, stackTrace);
+      _log.severe('❌ Lỗi khi lấy danh sách bài viết', e, stackTrace);
       return const Left(UnknownFailure());
     }
   }
@@ -127,49 +181,50 @@ class RemotePostRepositoryImpl implements PostRepository {
     _log.info('🔄 Bắt đầu $action bài viết $postId cho người dùng $userId.');
 
     try {
-      // Định nghĩa các đường dẫn đến tài liệu
-      final postLikePath = 'likes/$postId/users/$userId';
+      // 1. Định nghĩa các đường dẫn cần thao tác
+      final postPath = 'posts/$postId';
       final userLikePath = 'users/$userId/likes/$postId';
+      // (Optional) Đường dẫn để tra cứu ngược, nếu bạn cần
+      // final postLikePath = 'likes/$postId/users/$userId';
 
+      // 2. Chuẩn bị danh sách các thao tác
       final List<BatchOperation> operations = [];
+      final incrementValue = isLiked ? 1 : -1;
+
+      // Thao tác 1: Cập nhật `likeCount` trên tài liệu `post`
+      operations.add(BatchOperation.update(
+        path: postPath,
+        data: {'likeCount': FieldIncrement(incrementValue)},
+      ));
 
       if (isLiked) {
-        // --- HÀNH ĐỘNG: THÍCH BÀI VIẾT ---
-        _log.fine('➕ Chuẩn bị các thao tác SET để thích bài viết.');
-        final likeData = {
-          // Lưu ý: FieldValue.serverTimestamp() là của Firestore.
-          // Để giữ repository độc lập, chúng ta nên xử lý việc này trong service
-          // hoặc chấp nhận một quy ước, ví dụ: một giá trị string đặc biệt.
-          // Cách đơn giản hơn là tạo timestamp ngay tại đây.
-          'likedAt': DateTime.now().toUtc().toIso8601String(),
-        };
-
-        operations.add(BatchOperation.set(path: postLikePath, data: likeData));
-        operations.add(BatchOperation.set(path: userLikePath, data: likeData));
+        // Thao tác 2 (khi thích): Ghi lại rằng user này đã thích bài viết
+        operations.add(BatchOperation.set(
+          path: userLikePath,
+          data: {'likedAt': const ServerTimestamp()},
+        ));
       } else {
-        // --- HÀNH ĐỘNG: BỎ THÍCH BÀI VIẾT ---
-        _log.fine('➖ Chuẩn bị các thao tác DELETE để bỏ thích bài viết.');
-
-        operations.add(BatchOperation.delete(path: postLikePath));
+        // Thao tác 2 (khi bỏ thích): Xóa bản ghi user đã thích bài viết
         operations.add(BatchOperation.delete(path: userLikePath));
       }
 
-      // Gửi danh sách các thao tác đến service để thực thi nguyên tử
+      // 3. Gửi toàn bộ các thao tác đến service để thực thi nguyên tử
       await _databaseService.executeBatch(operations);
 
       _log.info('✅ Hoàn thành $action bài viết $postId thành công.');
       return right(null);
+
     } catch (e, stackTrace) {
-      // Bắt các lỗi từ DatabaseService (ví dụ: DatabaseServiceUnknownException)
       _log.severe(
         '❌ Lỗi khi $action bài viết $postId cho người dùng $userId.',
         e,
         stackTrace,
       );
+      // Bạn có thể tạo một lớp Failure cụ thể hơn nếu cần
       return left(const UnknownFailure());
     }
   }
-  
+
   @override
   Future<Either<PostFailure, void>> savePost({
     required String postId,
@@ -180,54 +235,46 @@ class RemotePostRepositoryImpl implements PostRepository {
     _log.info('🔄 Bắt đầu $action bài viết $postId cho người dùng $userId.');
 
     try {
-      // 1. Định nghĩa các đường dẫn đến tài liệu cần thay đổi
-      // Đường dẫn để đánh dấu bài viết này đã được user lưu
-      final postSavedByPath = 'posts/$postId/savedBy/$userId';
-
-      // Đường dẫn để đánh dấu user này đã lưu bài viết
+      // 1. Định nghĩa các đường dẫn cần thao tác
+      final postPath = 'posts/$postId';
       final userSavedPostPath = 'users/$userId/savedPosts/$postId';
+      // (Optional) Đường dẫn để tra cứu ngược, nếu bạn cần
+      // final postSavedByPath = 'posts/$postId/savedBy/$userId';
 
-      // 2. Chuẩn bị một danh sách các thao tác batch
+      // 2. Chuẩn bị danh sách các thao tác
       final List<BatchOperation> operations = [];
+      final incrementValue = isSaved ? 1 : -1;
+
+      // Thao tác 1: Cập nhật `saveCount` trên tài liệu `post`
+      operations.add(BatchOperation.update(
+        path: postPath,
+        data: {'saveCount': FieldIncrement(incrementValue)},
+      ));
 
       if (isSaved) {
-        // --- HÀNH ĐỘNG: LƯU BÀI VIẾT ---
-        _log.fine('➕ Chuẩn bị các thao tác SET để lưu bài viết.');
-
-        // Dữ liệu có thể chứa thêm thông tin, ví dụ như thời gian lưu
-        final saveData = {
-          'savedAt': DateTime.now().toUtc().toIso8601String(),
-        };
-
-        // Thêm hai thao tác SET vào danh sách
-        operations.add(BatchOperation.set(path: postSavedByPath, data: saveData));
-        operations.add(BatchOperation.set(path: userSavedPostPath, data: saveData));
+        // Thao tác 2 (khi lưu): Ghi lại rằng user này đã lưu bài viết
+        operations.add(BatchOperation.set(
+          path: userSavedPostPath,
+          data: {'savedAt': const ServerTimestamp()},
+        ));
       } else {
-        // --- HÀNH ĐỘNG: BỎ LƯU BÀI VIẾT ---
-        _log.fine('➖ Chuẩn bị các thao tác DELETE để bỏ lưu bài viết.');
-
-        // Thêm hai thao tác DELETE vào danh sách
-        operations.add(BatchOperation.delete(path: postSavedByPath));
+        // Thao tác 2 (khi bỏ lưu): Xóa bản ghi user đã lưu bài viết
         operations.add(BatchOperation.delete(path: userSavedPostPath));
       }
 
-      // 3. Gửi danh sách các thao tác đến service để thực thi nguyên tử
+      // 3. Gửi toàn bộ các thao tác đến service để thực thi nguyên tử
       await _databaseService.executeBatch(operations);
 
       _log.info('✅ Hoàn thành $action bài viết $postId thành công.');
       return right(null);
+      
     } catch (e, stackTrace) {
-      // Bắt các lỗi từ DatabaseService
       _log.severe(
         '❌ Lỗi khi $action bài viết $postId cho người dùng $userId.',
         e,
         stackTrace,
       );
-      // Bạn có thể tạo một lớp Failure cụ thể hơn nếu muốn
-      // ví dụ: return left(const SavePostFailure());
       return left(const UnknownFailure());
     }
   }
-
-  
 }

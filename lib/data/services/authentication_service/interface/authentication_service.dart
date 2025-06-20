@@ -5,4 +5,5 @@ abstract class AuthenticationService {
   Future<void> signOut();
   Stream<User?> get authStateChanges;
   User? getCurrentUser();
+  String? getCurrentUserId();
 }

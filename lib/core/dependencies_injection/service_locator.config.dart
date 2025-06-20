@@ -113,8 +113,8 @@ _i174.GetIt init(
         gh<_i4.DatabaseService>(),
         gh<_i367.DistanceService>(),
         gh<_i473.LocationService>(),
+        gh<_i780.AuthenticationService>(),
       ));
-  gh.factory<_i913.PostBloc>(() => _i913.PostBloc(gh<_i480.PostRepository>()));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
         gh<_i473.LocationService>(),
         gh<_i766.GeocodingService>(),
@@ -131,6 +131,7 @@ _i174.GetIt init(
       ));
   gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
       addressRepository: gh<_i344.AddressRepository>()));
+  gh.factory<_i913.PostBloc>(() => _i913.PostBloc(gh<_i480.PostRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factory<_i511.AuthBloc>(
