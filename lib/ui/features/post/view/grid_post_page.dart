@@ -10,70 +10,70 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:shimmer/shimmer.dart';
 
-class GridPostPage extends StatefulWidget {
-  const GridPostPage({super.key});
+class GridPostPage extends StatelessWidget {
+  // Chuyển thành StatelessWidget vì không còn state nội bộ
+  final String noItemsFoundMessage;
 
-  @override
-  State<GridPostPage> createState() => _GridPostPageState();
-}
+  const GridPostPage({
+    super.key,
+    this.noItemsFoundMessage = "Không có bài viết nào.", // Thêm tham số
+  });
 
-class _GridPostPageState extends State<GridPostPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PostBloc, PagingState<DateTime?, Post>>(
-      builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: () => Future.sync(
-            () => context.read<PostBloc>().add(
-                  const PostEvent.refreshRequested(),
-                ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
-              slivers: [
-                // Grid dạng masonry
-                PagedSliverMasonryGrid<DateTime?, Post>(
-                  state: state,
-                  fetchNextPage: () {
-                    context.read<PostBloc>().add(
-                          const PostEvent.fetchNextPostPageRequested(),
-                        );
-                  },
-                  builderDelegate: PagedChildBuilderDelegate<Post>(
-                    itemBuilder: (context, post, index) => FadeSlideUp(
-                      delay: Duration(milliseconds: index * 100),
-                      child: SmallPost(post: post),
-                    ),
-                    firstPageProgressIndicatorBuilder: (_) => Column(
-                      children: List.generate(
-                        2,
-                        (_) => const Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(child: ShimmeringSmallPost()),
-                            Expanded(child: ShimmeringSmallPost()),
-                          ],
-                        ),
-                      ),
-                    ),
-                    noItemsFoundIndicatorBuilder: (_) => const Center(
-                      child: Text("Không có bài viết nào."),
-                    ),
-                    newPageProgressIndicatorBuilder: (context) => const ShimmeringSmallPost(),
-                  ),
-                  gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  ),
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                ),
-              ],
-            ),
-          ),
-        );
+    // Widget này sẽ tìm BLoC được cung cấp ở cây widget cha của nó
+    final postBloc = context.watch<PostBloc>(); // Dùng watch để rebuild khi state thay đổi
+    final state = postBloc.state;
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        postBloc.add(const PostEvent.refreshRequested());
+        // Có thể thêm một completer hoặc đợi một chút để UI mượt hơn
+        await postBloc.stream.firstWhere((s) => !s.isLoading);
       },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
+          slivers: [
+            PagedSliverMasonryGrid<DateTime?, Post>(
+              state: state, // Lấy state từ BLoC
+              fetchNextPage: () {
+                // Bảo BLoC của nó fetch trang tiếp theo
+                postBloc.add(const PostEvent.fetchNextPostPageRequested());
+              },
+              builderDelegate: PagedChildBuilderDelegate<Post>(
+                itemBuilder: (context, post, index) => FadeSlideUp(
+                  delay: Duration(milliseconds: index * 100),
+                  child: SmallPost(post: post),
+                ),
+                firstPageProgressIndicatorBuilder: (_) => Column(
+                  children: List.generate(
+                    2,
+                    (_) => const Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: ShimmeringSmallPost()),
+                        Expanded(child: ShimmeringSmallPost()),
+                      ],
+                    ),
+                  ),
+                ),
+                // Sử dụng tham số đã truyền vào
+                noItemsFoundIndicatorBuilder: (_) => Center(
+                  child: Text(noItemsFoundMessage),
+                ),
+                newPageProgressIndicatorBuilder: (context) => const ShimmeringSmallPost(),
+              ),
+              gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
