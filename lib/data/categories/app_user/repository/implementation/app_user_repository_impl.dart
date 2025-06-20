@@ -173,6 +173,11 @@ class UserRepositoryImpl implements AppUserRepository {
     }
   }
 
+  @override
+  String? getCurrentUserId() {
+    return _authService.getCurrentUserId();
+  }
+
   Future<Either<AppUserFailure, void>> _updateUserField(
     String fieldName,
     Object? value,

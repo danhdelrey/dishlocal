@@ -1,12 +1,19 @@
 // dining_info_input_bloc.dart
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:dishlocal/ui/features/dining_info_input/form_input/dining_location_name_input.dart';
-import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
-import 'package:dishlocal/ui/features/dining_info_input/form_input/exact_address_input.dart';
-import 'package:dishlocal/ui/features/dining_info_input/form_input/insight_input.dart';
-import 'package:dishlocal/ui/features/dining_info_input/form_input/money_input.dart';
+import 'package:dishlocal/data/categories/address/model/address.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
+import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
+import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
+import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
+import 'package:dishlocal/ui/features/create_post/form_input/dining_location_name_input.dart';
+import 'package:dishlocal/ui/features/create_post/form_input/dish_name_input.dart';
+import 'package:dishlocal/ui/features/create_post/form_input/exact_address_input.dart';
+import 'package:dishlocal/ui/features/create_post/form_input/insight_input.dart';
+import 'package:dishlocal/ui/features/create_post/form_input/money_input.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_extension_methods.dart';
@@ -15,17 +22,25 @@ import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
+import 'package:uuid/uuid.dart';
 
-part 'dining_info_input_event.dart';
-part 'dining_info_input_state.dart';
+part 'create_post_event.dart';
+part 'create_post_state.dart';
 
 @injectable // Đánh dấu để injectable có thể quản lý
-class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputState> {
+class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
   final _log = Logger('DiningInfoInputBloc');
+  static const uuid = Uuid();
+
+  final PostRepository _postRepository;
+  final AppUserRepository _appUserRepository;
 
   // Loại bỏ các trường state private. Nguồn chân lý duy nhất là `state`.
   // Không còn phụ thuộc vào FocusNode.
-  DiningInfoInputBloc() : super(const DiningInfoInputState()) {
+  CreatePostBloc(
+    this._postRepository,
+    this._appUserRepository,
+  ) : super(const CreatePostState()) {
     _log.info('Khởi tạo DiningInfoInputBloc.');
 
     on<DishNameInputChanged>(_onDishNameChanged);
@@ -34,11 +49,11 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     on<InsightInputChanged>(_onInsightInputChanged);
     on<MoneyInputChanged>(_onMoneyInputChanged);
 
-    on<DiningInfoInputSubmitted>(_onSubmitted);
+    on<CreatePostRequested>(_onCreatePostRequested);
     on<FocusRequestHandled>(_onFocusRequestHandled);
   }
 
-  void _onDishNameChanged(DishNameInputChanged event, Emitter<DiningInfoInputState> emit) {
+  void _onDishNameChanged(DishNameInputChanged event, Emitter<CreatePostState> emit) {
     _log.fine('Nhận được sự kiện DishNameInputChanged với giá trị: "${event.dishName}"');
     final dishNameInput = DishNameInput.dirty(value: event.dishName);
 
@@ -50,7 +65,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
 
   void _onDiningLocationNameChanged(
     DiningLocationNameInputChanged event,
-    Emitter<DiningInfoInputState> emit,
+    Emitter<CreatePostState> emit,
   ) {
     _log.fine('Nhận được sự kiện DiningLocationNameInputChanged với giá trị: "${event.diningLocationName}"');
     final diningLocationNameInput = DiningLocationNameInput.dirty(value: event.diningLocationName);
@@ -61,7 +76,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi tên quán ăn.');
   }
 
-  void _onExactAddressInputChanged(ExactAddressInputChanged event, Emitter<DiningInfoInputState> emit) {
+  void _onExactAddressInputChanged(ExactAddressInputChanged event, Emitter<CreatePostState> emit) {
     _log.fine('Nhận được sự kiện ExactAddressInputChanged với giá trị: "${event.exactAddress}"');
     final exactAddressInput = ExactAddressInput.dirty(value: event.exactAddress);
 
@@ -71,7 +86,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi vị trí cụ thể.');
   }
 
-  void _onInsightInputChanged(InsightInputChanged event, Emitter<DiningInfoInputState> emit) {
+  void _onInsightInputChanged(InsightInputChanged event, Emitter<CreatePostState> emit) {
     _log.fine('Nhận được sự kiện InsightInputChanged với giá trị: "${event.insight}"');
     final insightInput = InsightInput.dirty(value: event.insight);
 
@@ -81,7 +96,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi cảm nhận.');
   }
 
-  void _onMoneyInputChanged(MoneyInputChanged event, Emitter<DiningInfoInputState> emit) {
+  void _onMoneyInputChanged(MoneyInputChanged event, Emitter<CreatePostState> emit) {
     _log.fine('Nhận được sự kiện MoneyInputChanged với giá trị: "${event.money}"');
 
     final regex = RegExp(r'[.\sđ]');
@@ -104,7 +119,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     _log.fine('Đã phát ra (emit) trạng thái mới sau khi thay đổi giá tiền.');
   }
 
-  Future<void> _onSubmitted(DiningInfoInputSubmitted event, Emitter<DiningInfoInputState> emit) async {
+  Future<void> _onCreatePostRequested(CreatePostRequested event, Emitter<CreatePostState> emit) async {
     _log.info('Nhận được sự kiện DiningInfoInputSubmitted');
 
     // Tạo các phiên bản "dirty" của các input từ trạng thái hiện tại.
@@ -139,29 +154,62 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
       ));
       _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
       _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}, ${exactAddressInput.value}, ${insightInput.value}, ${moneyInput.value}');
-      try {
-        await Future.delayed(const Duration(seconds: 1));
-        _log.info('Submit dữ liệu thành công');
-        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
-      } catch (e) {
-        _log.severe('Submit thất bại', e);
+
+      final appUserResult = await _appUserRepository.getCurrentUser();
+      if (appUserResult.isLeft()) {
+        _log.severe('Không lấy được user hiện tại.');
         emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+        return;
       }
+      final appUser = appUserResult.getOrElse(() => throw Exception("User null")); // safe vì đã kiểm tra
+
+      final postId = uuid.v4();
+      final createNewPostResult = await _postRepository.createPost(
+        post: Post(
+          postId: postId,
+          authorUserId: appUser.userId,
+          authorUsername: appUser.username!,
+          authorAvatarUrl: appUser.photoUrl,
+          dishName: dishNameInput.value,
+          blurHash: event.blurHash,
+          diningLocationName: diningLocationNameInput.value,
+          address: event.address.copyWith(exactAddress: exactAddressInput.value),
+          price: moneyInput.value,
+          insight: insightInput.value,
+          createdAt: event.createdAt,
+          likeCount: 0,
+          saveCount: 0,
+          isLiked: false,
+          isSaved: false,
+        ),
+        imageFile: File(event.imagePath),
+      );
+
+      createNewPostResult.fold(
+        (failure) {
+          _log.severe('Submit thất bại', failure);
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+        },
+        (_) {
+          _log.info('Submit dữ liệu thành công');
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
+        },
+      );
     } else {
       _log.warning('Form không hợp lệ. Hiển thị lỗi và yêu cầu focus.');
 
       // Xác định trường lỗi đầu tiên để focus
-      DiningInfoInputField? fieldToFocus;
+      CreatePostInputField? fieldToFocus;
       if (dishNameInput.isNotValid) {
-        fieldToFocus = DiningInfoInputField.dishName;
+        fieldToFocus = CreatePostInputField.dishName;
       } else if (moneyInput.isNotValid) {
-        fieldToFocus = DiningInfoInputField.moneyInput;
+        fieldToFocus = CreatePostInputField.moneyInput;
       } else if (diningLocationNameInput.isNotValid) {
-        fieldToFocus = DiningInfoInputField.diningLocationName;
+        fieldToFocus = CreatePostInputField.diningLocationName;
       } else if (exactAddressInput.isNotValid) {
-        fieldToFocus = DiningInfoInputField.exactAddress;
+        fieldToFocus = CreatePostInputField.exactAddress;
       } else if (insightInput.isNotValid) {
-        fieldToFocus = DiningInfoInputField.insightInput;
+        fieldToFocus = CreatePostInputField.insightInput;
       }
 
       // Phát ra trạng thái mới với:
@@ -180,7 +228,7 @@ class DiningInfoInputBloc extends Bloc<DiningInfoInputEvent, DiningInfoInputStat
     }
   }
 
-  void _onFocusRequestHandled(FocusRequestHandled event, Emitter<DiningInfoInputState> emit) {
+  void _onFocusRequestHandled(FocusRequestHandled event, Emitter<CreatePostState> emit) {
     _log.fine('UI đã xử lý yêu cầu focus. Đặt lại trạng thái focus.');
     // Sau khi UI đã focus, xóa yêu cầu để tránh việc focus lại mỗi khi build.
     emit(state.copyWith(fieldToFocus: () => null));

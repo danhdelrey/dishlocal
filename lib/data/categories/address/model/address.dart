@@ -1,26 +1,17 @@
-import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'address.freezed.dart';
 part 'address.g.dart';
 
-@JsonSerializable()
-class Address extends Equatable {
-  final double latitude;
-  final double longitude;
-  final String? displayName;
-
-  const Address({
-    required this.latitude,
-    required this.longitude,
-    this.displayName,
-  });
+@freezed
+abstract class Address with _$Address {
+  @JsonSerializable(explicitToJson: true)
+  const factory Address({
+    required double latitude,
+    required double longitude,
+    String? displayName,
+    String? exactAddress,
+  }) = _Address;
 
   factory Address.fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
-  Map<String, dynamic> toJson() => _$AddressToJson(this);
-
-  @override
-  List<Object?> get props => [
-        latitude,
-        longitude,
-        displayName,
-      ];
 }

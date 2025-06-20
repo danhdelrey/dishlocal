@@ -109,4 +109,9 @@ class FirebaseAuthenticationService implements AuthenticationService {
       throw SignOutException('Lỗi khi đăng xuất: ${e.toString()}');
     }
   }
+
+  @override
+  String? getCurrentUserId() {
+    return _firebaseAuth.currentUser?.uid;
+  }
 }

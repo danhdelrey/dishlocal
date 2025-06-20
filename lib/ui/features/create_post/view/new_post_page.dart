@@ -2,18 +2,18 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
-import 'package:dishlocal/ui/features/dining_info_input/bloc/dining_info_input_bloc.dart';
-import 'package:dishlocal/ui/features/dining_info_input/form_input/dining_location_name_input.dart';
-import 'package:dishlocal/ui/features/dining_info_input/form_input/dish_name_input.dart';
-import 'package:dishlocal/ui/features/dining_info_input/form_input/exact_address_input.dart';
-import 'package:dishlocal/ui/features/dining_info_input/form_input/money_input.dart';
+import 'package:dishlocal/ui/features/create_post/bloc/create_post_bloc.dart';
+import 'package:dishlocal/ui/features/create_post/form_input/dining_location_name_input.dart';
+import 'package:dishlocal/ui/features/create_post/form_input/dish_name_input.dart';
+import 'package:dishlocal/ui/features/create_post/form_input/exact_address_input.dart';
+import 'package:dishlocal/ui/features/create_post/form_input/money_input.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
-import 'package:dishlocal/utils/image_processor.dart';
+import 'package:dishlocal/core/utils/image_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -24,9 +24,10 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:logging/logging.dart';
 
 class NewPostPage extends StatefulWidget {
-  const NewPostPage({super.key, required this.imagePath, required this.address});
+  const NewPostPage({super.key, required this.imagePath, required this.address, required this.blurHash});
 
   final String imagePath;
+  final String blurHash;
   final Address address;
 
   @override
@@ -73,7 +74,7 @@ class _NewPostPageState extends State<NewPostPage> {
     return BlocProvider(
       // 2. Cung cấp BLoC bằng service locator (getIt) thay vì khởi tạo trực tiếp.
       // Constructor của BLoC giờ không cần tham số.
-      create: (context) => getIt<DiningInfoInputBloc>(),
+      create: (context) => getIt<CreatePostBloc>(),
       child: Builder(builder: (context) {
         return LoaderOverlay(
           overlayColor: appColorScheme(context).scrim.withValues(alpha: 0.5),
@@ -85,7 +86,7 @@ class _NewPostPageState extends State<NewPostPage> {
           child: MultiBlocListener(
             listeners: [
               // Listener 1: Lắng nghe trạng thái submit form (giống như code cũ của bạn).
-              BlocListener<DiningInfoInputBloc, DiningInfoInputState>(
+              BlocListener<CreatePostBloc, CreatePostState>(
                 listenWhen: (previous, current) => previous.formzSubmissionStatus != current.formzSubmissionStatus,
                 listener: (context, state) {
                   if (state.formzSubmissionStatus.isSuccess) {
@@ -96,16 +97,10 @@ class _NewPostPageState extends State<NewPostPage> {
                       ..showSnackBar(
                         SnackBar(
                           backgroundColor: appColorScheme(context).surfaceContainer,
-                          content: Text(
+                          content: const Text(
                             'Đăng bài thành công!',
-                            style: appTextTheme(context).titleMedium!.copyWith(
-                                  color: appColorScheme(context).onSurface,
-                                ),
                           ),
                           action: SnackBarAction(label: 'Xem', onPressed: () {}),
-                          duration: const Duration(
-                            days: 1,
-                          ),
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
@@ -117,37 +112,36 @@ class _NewPostPageState extends State<NewPostPage> {
                   }
                   if (state.formzSubmissionStatus.isFailure) {
                     context.loaderOverlay.hide();
-                    // Hiển thị thông báo lỗi nếu cần
-                    // ScaffoldMessenger.of(context)
-                    //   ..hideCurrentSnackBar()
-                    //   ..showSnackBar(const SnackBar(content: Text('Đã có lỗi xảy ra. Vui lòng thử lại.')));
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(const SnackBar(content: Text('Đã có lỗi xảy ra. Vui lòng thử lại.')));
                   }
                 },
               ),
               // Listener 2: Lắng nghe yêu cầu focus từ BLoC.
-              BlocListener<DiningInfoInputBloc, DiningInfoInputState>(
+              BlocListener<CreatePostBloc, CreatePostState>(
                 listenWhen: (previous, current) => previous.fieldToFocus != current.fieldToFocus,
                 listener: (context, state) {
                   if (state.fieldToFocus != null) {
                     switch (state.fieldToFocus!) {
-                      case DiningInfoInputField.dishName:
+                      case CreatePostInputField.dishName:
                         _dishNameFocusNode.requestFocus();
                         break;
-                      case DiningInfoInputField.moneyInput:
+                      case CreatePostInputField.moneyInput:
                         _moneyInputFocusNode.requestFocus();
                         break;
-                      case DiningInfoInputField.diningLocationName:
+                      case CreatePostInputField.diningLocationName:
                         _diningLocationNameFocusNode.requestFocus();
                         break;
-                      case DiningInfoInputField.exactAddress:
+                      case CreatePostInputField.exactAddress:
                         _exactAddressInputFocusNode.requestFocus();
                         break;
-                      case DiningInfoInputField.insightInput:
+                      case CreatePostInputField.insightInput:
                         _insightInputFocusNode.requestFocus();
                         break;
                     }
                     // Báo cho BLoC biết UI đã xử lý yêu cầu focus.
-                    context.read<DiningInfoInputBloc>().add(FocusRequestHandled());
+                    context.read<CreatePostBloc>().add(FocusRequestHandled());
                   }
                 },
               ),
@@ -166,7 +160,14 @@ class _NewPostPageState extends State<NewPostPage> {
                       floating: true,
                       actions: [
                         TextButton(
-                          onPressed: () => context.read<DiningInfoInputBloc>().add(DiningInfoInputSubmitted()),
+                          onPressed: () => context.read<CreatePostBloc>().add(
+                                CreatePostRequested(
+                                  address: widget.address,
+                                  imagePath: widget.imagePath,
+                                  createdAt: now,
+                                  blurHash: widget.blurHash,
+                                ),
+                              ),
                           child: const Text('Đăng'),
                         ),
                       ],
@@ -207,7 +208,7 @@ class _NewPostPageState extends State<NewPostPage> {
                             ),
                             const SizedBox(height: 20),
                             // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
-                            BlocBuilder<DiningInfoInputBloc, DiningInfoInputState>(
+                            BlocBuilder<CreatePostBloc, CreatePostState>(
                               builder: (context, state) {
                                 return Column(
                                   children: [
@@ -221,7 +222,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                       title: 'Tên món ăn*',
                                       hintText: 'Nhập tên món ăn...',
                                       maxLength: 100,
-                                      onChanged: (dishName) => context.read<DiningInfoInputBloc>().add(DishNameInputChanged(dishName: dishName)),
+                                      onChanged: (dishName) => context.read<CreatePostBloc>().add(DishNameInputChanged(dishName: dishName)),
                                       // Sử dụng `displayError` của Formz v0.7.0+ để code gọn hơn
                                       // Hoặc giữ logic cũ của bạn nếu muốn thông báo lỗi tùy chỉnh
                                       errorText: state.dishNameInput.isNotValid && !state.dishNameInput.isPure ? state.dishNameInput.displayError?.getMessage() : null,
@@ -247,7 +248,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                       maxLine: 1,
                                       maxLength: 12,
                                       onChanged: (money) {
-                                        context.read<DiningInfoInputBloc>().add(MoneyInputChanged(money: money));
+                                        context.read<CreatePostBloc>().add(MoneyInputChanged(money: money));
                                       },
                                       errorText: state.moneyInput.isNotValid && !state.moneyInput.isPure ? state.moneyInput.displayError?.getMessage() : null,
                                     ),
@@ -260,7 +261,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                       title: 'Tên quán ăn*',
                                       hintText: 'Nhập tên quán ăn...',
                                       maxLength: 200,
-                                      onChanged: (diningLocationName) => context.read<DiningInfoInputBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
+                                      onChanged: (diningLocationName) => context.read<CreatePostBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
                                       // Thêm errorText cho các trường khác để nhất quán
                                       errorText: state.diningLocationNameInput.isNotValid && !state.diningLocationNameInput.isPure ? state.diningLocationNameInput.displayError?.getMessage() : null,
                                     ),
@@ -272,7 +273,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                       maxLine: 1,
                                       hintText: 'Vd: số nhà, tên đường, nhận biết...',
                                       maxLength: 200,
-                                      onChanged: (exactAddress) => context.read<DiningInfoInputBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
+                                      onChanged: (exactAddress) => context.read<CreatePostBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
                                       errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? state.exactAddressInput.displayError?.getMessage() : null,
                                     ),
                                     const SizedBox(height: 10),
@@ -283,7 +284,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                       maxLength: 2000,
                                       minLine: 10,
                                       maxLine: 1000,
-                                      onChanged: (insight) => context.read<DiningInfoInputBloc>().add(InsightInputChanged(insight: insight)),
+                                      onChanged: (insight) => context.read<CreatePostBloc>().add(InsightInputChanged(insight: insight)),
                                     ),
                                   ],
                                 );

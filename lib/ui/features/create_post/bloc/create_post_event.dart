@@ -1,13 +1,13 @@
-part of 'dining_info_input_bloc.dart';
+part of 'create_post_bloc.dart';
 
-sealed class DiningInfoInputEvent extends Equatable {
-  const DiningInfoInputEvent();
+sealed class CreatePostEvent extends Equatable {
+  const CreatePostEvent();
 
   @override
   List<Object?> get props => [];
 }
 
-final class DishNameInputChanged extends DiningInfoInputEvent {
+final class DishNameInputChanged extends CreatePostEvent {
   const DishNameInputChanged({required this.dishName});
   final String dishName;
 
@@ -15,7 +15,7 @@ final class DishNameInputChanged extends DiningInfoInputEvent {
   List<Object?> get props => [dishName];
 }
 
-final class DiningLocationNameInputChanged extends DiningInfoInputEvent {
+final class DiningLocationNameInputChanged extends CreatePostEvent {
   const DiningLocationNameInputChanged({required this.diningLocationName});
   final String diningLocationName;
 
@@ -23,7 +23,7 @@ final class DiningLocationNameInputChanged extends DiningInfoInputEvent {
   List<Object?> get props => [diningLocationName];
 }
 
-final class ExactAddressInputChanged extends DiningInfoInputEvent {
+final class ExactAddressInputChanged extends CreatePostEvent {
   const ExactAddressInputChanged({required this.exactAddress});
   final String exactAddress;
 
@@ -31,7 +31,7 @@ final class ExactAddressInputChanged extends DiningInfoInputEvent {
   List<Object?> get props => [exactAddress];
 }
 
-final class InsightInputChanged extends DiningInfoInputEvent {
+final class InsightInputChanged extends CreatePostEvent {
   const InsightInputChanged({required this.insight});
   final String insight;
 
@@ -39,7 +39,7 @@ final class InsightInputChanged extends DiningInfoInputEvent {
   List<Object?> get props => [insight];
 }
 
-final class MoneyInputChanged extends DiningInfoInputEvent {
+final class MoneyInputChanged extends CreatePostEvent {
   const MoneyInputChanged({required this.money});
   final String money;
 
@@ -47,7 +47,16 @@ final class MoneyInputChanged extends DiningInfoInputEvent {
   List<Object?> get props => [money];
 }
 
-final class DiningInfoInputSubmitted extends DiningInfoInputEvent {}
+final class CreatePostRequested extends CreatePostEvent {
+  final Address address;
+  final String imagePath;
+  final String blurHash;
+  final DateTime createdAt;
+
+  const CreatePostRequested({required this.address, required this.imagePath, required this.createdAt, required this.blurHash});
+  @override
+  List<Object?> get props => [address, imagePath, createdAt];
+}
 
 // Sự kiện mới để báo hiệu rằng yêu cầu focus đã được UI xử lý
-final class FocusRequestHandled extends DiningInfoInputEvent {}
+final class FocusRequestHandled extends CreatePostEvent {}

@@ -6,7 +6,7 @@ class CachedImage extends StatelessWidget {
   const CachedImage({
     super.key,
     required this.imageUrl,
-    this.blurHash = 'LAHJjM~90h9a14ofr?EN0PNMxZOD',
+    required this.blurHash,
   });
 
   final String imageUrl;

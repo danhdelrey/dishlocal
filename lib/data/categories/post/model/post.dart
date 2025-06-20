@@ -1,34 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dishlocal/core/json_converter/timestamp_converter.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
-import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
+
+part 'post.freezed.dart';
 part 'post.g.dart';
 
-@JsonSerializable()
-class Post extends Equatable {
-  final String postId;
-
-  final String? imageUrl;
-  final String? dishName;
-  final Address? address;
-  final int? price;
-
-  const Post({
-    required this.postId,
-     this.address,
-     this.dishName,
-     this.imageUrl,
-     this.price,
-  });
+@freezed
+abstract class Post with _$Post {
+  @JsonSerializable(explicitToJson: true)
+  const factory Post({
+    required String postId,
+    required String authorUserId,
+    required String authorUsername,
+    String? authorAvatarUrl,
+    String? imageUrl,
+    String? blurHash,
+    String? dishName,
+    String? diningLocationName,
+    Address? address,
+    double? distance,
+    int? price,
+    String? insight,
+    @TimestampConverter() required DateTime createdAt,
+    required int likeCount,
+    required int saveCount,
+    required bool isLiked,
+    required bool isSaved,
+  }) = _Post;
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
-  Map<String, dynamic> toJson() => _$PostToJson(this);
-
-  @override
-  List<Object?> get props => [
-        postId,
-        dishName,
-        imageUrl,
-        address,
-        price,
-      ];
 }
