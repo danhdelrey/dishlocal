@@ -10,4 +10,15 @@ abstract class PostRepository {
     int limit = 10,
     DateTime? startAfter,
   });
+  Future<Either<PostFailure, void>> likePost({
+    required String postId,
+    required String userId,
+    required bool isLiked, // true: like, false: unlike
+  });
+
+  Future<Either<PostFailure, void>> savePost({
+    required String postId,
+    required String userId,
+    required bool isSaved, // true: save, false: unsave
+  });
 }

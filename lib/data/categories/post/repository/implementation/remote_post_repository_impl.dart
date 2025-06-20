@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
@@ -113,5 +114,17 @@ class RemotePostRepositoryImpl implements PostRepository {
       _log.severe('❌ Lỗi khi lấy post', e, stackTrace);
       return const Left(UnknownFailure());
     }
+  }
+
+  @override
+  Future<Either<PostFailure, void>> likePost({required String postId, required String userId, required bool isLiked}) {
+    if (isLiked) {
+    } else {}
+  }
+
+  @override
+  Future<Either<PostFailure, void>> savePost({required String postId, required String userId, required bool isSaved}) {
+    // TODO: implement savePost
+    throw UnimplementedError();
   }
 }
