@@ -72,7 +72,7 @@ class PostDetailPage extends StatelessWidget {
                                 actions: const [
                                   BouncingOverlayMenu(),
                                 ],
-                                title: Text(state.post.dishName ?? ''),
+                                title: FadeSlideUp(child: Text(state.post.dishName ?? '')),
                               );
                             }
                             return GlassSliverAppBar(
@@ -142,89 +142,109 @@ class PostDetailPage extends StatelessWidget {
         const SizedBox(
           height: 10,
         ),
-        CustomIconWithLabel(
-          icon: AppIcons.location1.toSvg(
-            width: 16,
-            color: Theme.of(context).colorScheme.onSurface,
+        FadeSlideUp(
+          child: CustomIconWithLabel(
+            icon: AppIcons.location1.toSvg(
+              width: 16,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            label: 'Khoảng cách: ${NumberFormatter.formatDistance(post.distance)}',
           ),
-          label: 'Khoảng cách: ${NumberFormatter.formatDistance(post.distance)}',
         ),
-        Text(
-          post.diningLocationName ?? '',
-          style: Theme.of(context).textTheme.labelLarge,
+        FadeSlideUp(
+          delay: const Duration(milliseconds: 100),
+          child: Text(
+            post.diningLocationName ?? '',
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
         ),
-        Text(
-          '${post.address?.exactAddress ?? ''}, ${post.address?.displayName ?? ''}',
-          style: Theme.of(context).textTheme.bodyMedium,
+        FadeSlideUp(
+          delay: const Duration(milliseconds: 200),
+          child: Text(
+            '${post.address?.exactAddress ?? ''}, ${post.address?.displayName ?? ''}',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
         ),
         const SizedBox(
           height: 10,
         ),
-        CustomIconWithLabel(
-          icon: AppIcons.wallet4.toSvg(
-            width: 16,
-            color: Theme.of(context).colorScheme.onSurface,
+        FadeSlideUp(
+          delay: const Duration(milliseconds: 300),
+          child: CustomIconWithLabel(
+            icon: AppIcons.wallet4.toSvg(
+              width: 16,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            label: 'Giá: ${NumberFormatter.formatMoney(post.price ?? 0)}',
           ),
-          label: 'Giá: ${NumberFormatter.formatMoney(post.price ?? 0)}',
         ),
         const SizedBox(
           height: 20,
         ),
-        GradientFilledButton(
-          maxWidth: true,
-          icon: AppIcons.location.toSvg(
-            width: 16,
-            color: Colors.white,
+        FadeSlideUp(
+          delay: const Duration(milliseconds: 400),
+          child: GradientFilledButton(
+            maxWidth: true,
+            icon: AppIcons.location.toSvg(
+              width: 16,
+              color: Colors.white,
+            ),
+            label: 'Xem trên bản đồ',
+            onTap: () {
+              if (post.address != null) {
+                MapsLauncher.launchCoordinates(post.address!.latitude, post.address!.longitude);
+              }
+            },
           ),
-          label: 'Xem trên bản đồ',
-          onTap: () {
-            if (post.address != null) {
-              MapsLauncher.launchCoordinates(post.address!.latitude, post.address!.longitude);
-            }
-          },
         ),
         const SizedBox(
           height: 20,
         ),
-        Row(
-          children: [
-            CachedCircleAvatar(
-              imageUrl: post.authorAvatarUrl ?? '',
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'danhdelrey',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                  CustomIconWithLabel(
-                    icon: AppIcons.locationCheckFilled.toSvg(
-                      color: Colors.blue,
-                      width: 14,
-                    ),
-                    labelStyle: appTextTheme(context).labelMedium!.copyWith(
-                          color: Colors.blue,
-                        ),
-                    label: TimeFormatter.formatDateTimeFull(post.createdAt),
-                    labelColor: Colors.blue,
-                  ),
-                ],
+        FadeSlideUp(
+          delay: const Duration(milliseconds: 500),
+          child: Row(
+            children: [
+              CachedCircleAvatar(
+                imageUrl: post.authorAvatarUrl ?? '',
               ),
-            ),
-            const FollowButton(),
-          ],
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'danhdelrey',
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    CustomIconWithLabel(
+                      icon: AppIcons.locationCheckFilled.toSvg(
+                        color: Colors.blue,
+                        width: 14,
+                      ),
+                      labelStyle: appTextTheme(context).labelMedium!.copyWith(
+                            color: Colors.blue,
+                          ),
+                      label: TimeFormatter.formatDateTimeFull(post.createdAt),
+                      labelColor: Colors.blue,
+                    ),
+                  ],
+                ),
+              ),
+              const FollowButton(),
+            ],
+          ),
         ),
         const SizedBox(
           height: 15,
         ),
-        Text(
-          post.insight ?? '',
-          style: appTextTheme(context).bodyMedium,
+        FadeSlideUp(
+          delay: const Duration(milliseconds: 600),
+          child: Text(
+            post.insight ?? '',
+            style: appTextTheme(context).bodyMedium,
+          ),
         ),
         const SizedBox(
           height: 20,
@@ -233,20 +253,23 @@ class PostDetailPage extends StatelessWidget {
           create: (context) => getIt<PostReactionBarBloc>(param1: post),
           child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
             builder: (context, state) {
-              return ReactionBar(
-                likeColor: Colors.pink,
-                saveColor: Colors.amber,
-                isLiked: state.isLiked,
-                likeCount: state.likeCount,
-                isSaved: state.isSaved,
-                saveCount: state.saveCount,
-                // Khi nhấn, gửi event đến BLoC
-                onLikeTap: () {
-                  context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
-                },
-                onSaveTap: () {
-                  context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
-                },
+              return FadeSlideUp(
+                delay: const Duration(milliseconds: 700),
+                child: ReactionBar(
+                  likeColor: Colors.pink,
+                  saveColor: Colors.amber,
+                  isLiked: state.isLiked,
+                  likeCount: state.likeCount,
+                  isSaved: state.isSaved,
+                  saveCount: state.saveCount,
+                  // Khi nhấn, gửi event đến BLoC
+                  onLikeTap: () {
+                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
+                  },
+                  onSaveTap: () {
+                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
+                  },
+                ),
               );
             },
           ),
