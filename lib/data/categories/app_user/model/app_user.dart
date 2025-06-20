@@ -13,6 +13,8 @@ abstract class AppUser with _$AppUser {
     String? displayName,
     String? photoUrl,
     String? bio,
+    @Default(0) required int followerCount, 
+    @Default(0) required int followingCount,
   }) = _AppUser;
 
   factory AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);

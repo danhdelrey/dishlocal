@@ -19,6 +19,11 @@ abstract class AppUserRepository {
   Future<Either<AppUserFailure, void>> updateBio(String? bio);
   Future<Either<AppUserFailure, void>> updateDisplayName(String displayName);
 
+  Future<Either<AppUserFailure, void>> followUser({
+    required String targetUserId,
+    required bool isFollowing,
+  });
+
   // Đăng xuất
   // THAY ĐỔI: Trả về Either<Failure, void>
   Future<Either<AppUserFailure, void>> signOut();
