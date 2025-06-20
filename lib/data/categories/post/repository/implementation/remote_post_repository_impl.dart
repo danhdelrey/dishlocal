@@ -36,6 +36,62 @@ class RemotePostRepositoryImpl implements PostRepository {
     this._authenticationService,
   );
 
+  Future<List<Post>> _enrichPostsWithUserData(List<Post> posts) async {
+    if (posts.isEmpty) return [];
+
+    // Lấy ID người dùng hiện tại
+    final currentUserId = _authenticationService.getCurrentUserId();
+
+    // Trích xuất danh sách Post ID
+    final postIds = posts.map((p) => p.postId).toList();
+
+    // Lấy trạng thái Like và Save hàng loạt (chỉ khi user đã đăng nhập)
+    Set<String> likedPostIds = {};
+    Set<String> savedPostIds = {};
+
+    if (currentUserId != null && currentUserId.isNotEmpty) {
+      final results = await Future.wait([
+        _databaseService.getDocumentsWhereIdIn(
+          collection: 'users/$currentUserId/likes',
+          ids: postIds,
+        ),
+        _databaseService.getDocumentsWhereIdIn(
+          collection: 'users/$currentUserId/savedPosts',
+          ids: postIds,
+        ),
+      ]);
+      likedPostIds = results[0].map((doc) => doc['id'] as String).toSet();
+      savedPostIds = results[1].map((doc) => doc['id'] as String).toSet();
+    }
+
+    // Lấy tọa độ người dùng hiện tại
+    final userPosition = await _locationService.getCurrentPosition();
+
+    // Tổng hợp tất cả dữ liệu
+    final postsWithFullData = await Future.wait(posts.map((post) async {
+      final distance = (post.address?.latitude != null && post.address?.longitude != null)
+          ? await _distanceService.calculateDistance(
+              fromLat: userPosition.latitude,
+              fromLong: userPosition.longitude,
+              toLat: post.address!.latitude,
+              toLong: post.address!.longitude,
+            )
+          : null;
+
+      final isLiked = likedPostIds.contains(post.postId);
+      final isSaved = savedPostIds.contains(post.postId);
+
+      return post.copyWith(
+        distance: distance,
+        isLiked: isLiked,
+        isSaved: isSaved,
+      );
+    }));
+
+    return postsWithFullData;
+  }
+
+
   @override
   Future<Either<PostFailure, void>> createPost({
     required Post post,
@@ -74,23 +130,9 @@ class RemotePostRepositoryImpl implements PostRepository {
     int limit = 10,
     DateTime? startAfter,
   }) async {
-    _log.info('📥 Lấy danh sách post (limit: $limit, startAfter: $startAfter)');
-    // hỏi hàng loạt (batch query)
-    // Lần 1: "Firebase ơi, cho tôi danh sách 10 bài viết mới nhất."
-    // Firebase trả về 10 bài viết.
-    // Bạn lấy ra ID của cả 10 bài viết đó (giống như viết tên sách ra giấy).
-    // Lần 2: "Firebase ơi, trong danh sách 10 ID bài viết này, người dùng của tôi đã thích những bài nào? Cho tôi kết quả."
-    // Firebase chỉ cần tìm 1 lần và trả về, ví dụ: "Người dùng đã thích bài A, D, F".
-    // Lần 3: "Firebase ơi, cũng trong danh sách 10 ID đó, người dùng của tôi đã lưu những bài nào?"
-    // Firebase lại tìm 1 lần và trả về, ví dụ: "Người dùng đã lưu bài B, D, H".
-    //=> Tổng cộng, bạn chỉ phải hỏi Firebase 3 lần (1 lần lấy bài viết, 1 lần lấy danh sách thích, 1 lần lấy danh sách lưu).
-
+    _log.info('📥 Lấy danh sách post MỚI NHẤT...');
     try {
-      // BƯỚC 1 & 2: Lấy UserID và danh sách bài viết
-      final currentUserId = _authenticationService.getCurrentUserId();
-      _log.fine('🆔 User ID hiện tại: $currentUserId');
-
-      final rawPosts = await _databaseService.getDocuments(
+      final rawPostsData = await _databaseService.getDocuments(
         collection: 'posts',
         orderBy: 'createdAt',
         descending: true,
@@ -98,75 +140,19 @@ class RemotePostRepositoryImpl implements PostRepository {
         startAfter: startAfter,
       );
 
-      if (rawPosts.isEmpty) {
-        _log.info('✅ Không có bài viết nào được tìm thấy. Trả về danh sách trống.');
+      if (rawPostsData.isEmpty) {
         return right([]);
       }
 
-      final posts = rawPosts.map((json) => Post.fromJson(json)).toList();
-      _log.info('✅ Lấy được ${posts.length} bài viết.');
+      final posts = rawPostsData.map((json) => Post.fromJson(json)).toList();
 
-      // BƯỚC 3: Trích xuất danh sách Post ID
-      final postIds = posts.map((p) => p.postId).toList();
+      // Gọi hàm helper để làm giàu dữ liệu
+      final enrichedPosts = await _enrichPostsWithUserData(posts);
 
-      // BƯỚC 4: Lấy trạng thái Like và Save hàng loạt (chỉ khi user đã đăng nhập)
-      Set<String> likedPostIds = {};
-      Set<String> savedPostIds = {};
-
-      if (currentUserId != null && currentUserId.isNotEmpty) {
-        _log.info('🚀 Bắt đầu lấy trạng thái like/save cho ${postIds.length} bài viết.');
-
-        // Chạy song song 2 truy vấn để tăng tốc độ
-        final results = await Future.wait([
-          _databaseService.getDocumentsWhereIdIn(
-            collection: 'users/$currentUserId/likes',
-            ids: postIds,
-          ),
-          _databaseService.getDocumentsWhereIdIn(
-            collection: 'users/$currentUserId/savedPosts',
-            ids: postIds,
-          ),
-        ]);
-
-        // Dùng Set để tra cứu O(1)
-        likedPostIds = results[0].map((doc) => doc['id'] as String).toSet();
-        savedPostIds = results[1].map((doc) => doc['id'] as String).toSet();
-        _log.fine('👍 Đã thích ${likedPostIds.length} bài viết. 📌 Đã lưu ${savedPostIds.length} bài viết.');
-      } else {
-        _log.info('👤 Người dùng chưa đăng nhập, bỏ qua việc kiểm tra trạng thái like/save.');
-      }
-
-      // 🔍 Lấy tọa độ người dùng hiện tại
-      final userPosition = await _locationService.getCurrentPosition();
-
-      // BƯỚC 5: Tổng hợp tất cả dữ liệu
-      _log.info('🔄 Bắt đầu tổng hợp dữ liệu (khoảng cách, like, save) cho các bài viết.');
-      final postsWithFullData = await Future.wait(posts.map((post) async {
-        // Tính khoảng cách
-        final distance = (post.address?.latitude != null && post.address?.longitude != null)
-            ? await _distanceService.calculateDistance(
-                fromLat: userPosition.latitude,
-                fromLong: userPosition.longitude,
-                toLat: post.address!.latitude,
-                toLong: post.address!.longitude,
-              )
-            : null;
-
-        // Kiểm tra trạng thái like/save
-        final isLiked = likedPostIds.contains(post.postId);
-        final isSaved = savedPostIds.contains(post.postId);
-
-        return post.copyWith(
-          distance: distance,
-          isLiked: isLiked,
-          isSaved: isSaved,
-        );
-      }));
-
-      _log.info('🎉 Hoàn thành lấy và tổng hợp dữ liệu cho ${postsWithFullData.length} bài viết.');
-      return right(postsWithFullData);
+      _log.info('🎉 Hoàn thành lấy và tổng hợp dữ liệu cho ${enrichedPosts.length} bài viết mới nhất.');
+      return right(enrichedPosts);
     } catch (e, stackTrace) {
-      _log.severe('❌ Lỗi khi lấy danh sách bài viết', e, stackTrace);
+      _log.severe('❌ Lỗi khi lấy danh sách bài viết mới nhất', e, stackTrace);
       return const Left(UnknownFailure());
     }
   }
