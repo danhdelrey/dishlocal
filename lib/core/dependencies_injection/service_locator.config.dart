@@ -65,6 +65,7 @@ import '../../ui/features/post/bloc/post_bloc.dart' as _i913;
 import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
     as _i144;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
+import '../../ui/features/view_post/bloc/view_post_bloc.dart' as _i10;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
 import '../utils/image_processor.dart' as _i19;
 import '../utils/number_formatter.dart' as _i660;
@@ -135,6 +136,8 @@ _i174.GetIt init(
   gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i913.PostBloc>(() => _i913.PostBloc(gh<_i480.PostRepository>()));
+  gh.factory<_i10.ViewPostBloc>(
+      () => _i10.ViewPostBloc(gh<_i480.PostRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factory<_i511.AuthBloc>(

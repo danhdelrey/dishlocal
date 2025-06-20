@@ -279,7 +279,7 @@ class RemotePostRepositoryImpl implements PostRepository {
   }
   
   @override
-  Future<Either<PostFailure, List<Post>>> getPostWithId(String postId) async {
+  Future<Either<PostFailure, Post>> getPostWithId(String postId) async {
     _log.info('📥 Bắt đầu lấy post với postId: $postId');
 
     try {
@@ -295,7 +295,7 @@ class RemotePostRepositoryImpl implements PostRepository {
 
       if (json == null) {
         _log.warning('⚠️ Không tìm thấy post với postId: $postId');
-        return right([]); // hoặc có thể return `left(PostNotFound())` nếu bạn định nghĩa thêm loại failure
+        return left(const UnknownFailure()); // Bạn có thể định nghĩa PostNotFound() nếu chưa có
       }
 
       final post = Post.fromJson(json);
@@ -320,7 +320,7 @@ class RemotePostRepositoryImpl implements PostRepository {
         isSaved = results[1] != null;
       }
 
-      // Bước 4: Tính khoảng cách (nếu có địa chỉ)
+      // Bước 4: Tính khoảng cách nếu có địa chỉ
       double? distance;
       if (post.address?.latitude != null && post.address?.longitude != null) {
         final userPosition = await _locationService.getCurrentPosition();
@@ -338,11 +338,13 @@ class RemotePostRepositoryImpl implements PostRepository {
         distance: distance,
       );
 
-      return right([enrichedPost]);
+      _log.info('✅ Lấy bài viết thành công: $postId');
+      return right(enrichedPost);
     } catch (e, stackTrace) {
       _log.severe('❌ Lỗi khi lấy bài viết với postId: $postId', e, stackTrace);
       return const Left(UnknownFailure());
     }
   }
+
 
 }

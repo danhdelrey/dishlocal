@@ -11,7 +11,7 @@ import 'package:dishlocal/ui/features/create_post/view/new_post_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_page.dart';
 import 'package:dishlocal/ui/features/account_setup/view/account_setup_page.dart';
-import 'package:dishlocal/ui/features/post/view/post_detail_page.dart';
+import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';

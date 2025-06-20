@@ -1,5 +1,5 @@
 import 'package:dishlocal/app/theme/theme.dart';
-import 'package:dishlocal/ui/features/post/view/post_detail_page.dart';
+import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:flutter/material.dart';
 
