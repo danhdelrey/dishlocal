@@ -171,9 +171,62 @@ class RemotePostRepositoryImpl implements PostRepository {
   }
   
   @override
-  Future<Either<PostFailure, void>> savePost({required String postId, required String userId, required bool isSaved}) {
-    // TODO: implement savePost
-    throw UnimplementedError();
+  Future<Either<PostFailure, void>> savePost({
+    required String postId,
+    required String userId,
+    required bool isSaved,
+  }) async {
+    final action = isSaved ? "lưu" : "bỏ lưu";
+    _log.info('🔄 Bắt đầu $action bài viết $postId cho người dùng $userId.');
+
+    try {
+      // 1. Định nghĩa các đường dẫn đến tài liệu cần thay đổi
+      // Đường dẫn để đánh dấu bài viết này đã được user lưu
+      final postSavedByPath = 'posts/$postId/savedBy/$userId';
+
+      // Đường dẫn để đánh dấu user này đã lưu bài viết
+      final userSavedPostPath = 'users/$userId/savedPosts/$postId';
+
+      // 2. Chuẩn bị một danh sách các thao tác batch
+      final List<BatchOperation> operations = [];
+
+      if (isSaved) {
+        // --- HÀNH ĐỘNG: LƯU BÀI VIẾT ---
+        _log.fine('➕ Chuẩn bị các thao tác SET để lưu bài viết.');
+
+        // Dữ liệu có thể chứa thêm thông tin, ví dụ như thời gian lưu
+        final saveData = {
+          'savedAt': DateTime.now().toUtc().toIso8601String(),
+        };
+
+        // Thêm hai thao tác SET vào danh sách
+        operations.add(BatchOperation.set(path: postSavedByPath, data: saveData));
+        operations.add(BatchOperation.set(path: userSavedPostPath, data: saveData));
+      } else {
+        // --- HÀNH ĐỘNG: BỎ LƯU BÀI VIẾT ---
+        _log.fine('➖ Chuẩn bị các thao tác DELETE để bỏ lưu bài viết.');
+
+        // Thêm hai thao tác DELETE vào danh sách
+        operations.add(BatchOperation.delete(path: postSavedByPath));
+        operations.add(BatchOperation.delete(path: userSavedPostPath));
+      }
+
+      // 3. Gửi danh sách các thao tác đến service để thực thi nguyên tử
+      await _databaseService.executeBatch(operations);
+
+      _log.info('✅ Hoàn thành $action bài viết $postId thành công.');
+      return right(null);
+    } catch (e, stackTrace) {
+      // Bắt các lỗi từ DatabaseService
+      _log.severe(
+        '❌ Lỗi khi $action bài viết $postId cho người dùng $userId.',
+        e,
+        stackTrace,
+      );
+      // Bạn có thể tạo một lớp Failure cụ thể hơn nếu muốn
+      // ví dụ: return left(const SavePostFailure());
+      return left(const UnknownFailure());
+    }
   }
 
   
