@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:dishlocal/app/config/main_shell.dart';
-import 'package:dishlocal/app/config/splash_page.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
@@ -23,14 +22,10 @@ class AppRouter {
   final _log = Logger('AppRouter');
 
   late final router = GoRouter(
-    initialLocation: '/splash',
+    initialLocation: '/home',
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: redirect,
     routes: [
-      GoRoute(
-        path: '/splash',
-        builder: (context, state) => const SplashPage(),
-      ),
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginPage(),
@@ -142,7 +137,6 @@ class AppRouter {
     final authState = authBloc.state;
     final currentLocation = state.matchedLocation;
 
-    final isSplash = currentLocation == '/splash';
     final isLogin = currentLocation == '/login';
     final isSetup = currentLocation == '/account_setup';
 
@@ -150,19 +144,7 @@ class AppRouter {
     _log.info('📍 Vị trí hiện tại: $currentLocation');
     _log.info('🔐 Trạng thái xác thực hiện tại: ${authState.runtimeType}');
 
-    // ⏳ 1. Nếu đang loading auth (chưa xác định trạng thái)
-    if (authState is AuthLoading) {
-      _log.info('⏳ AuthBloc đang ở trạng thái Loading. Hiển thị trang splash.');
-
-      // Nếu chưa ở splash → chuyển sang splash
-      if (!isSplash) {
-        _log.info('➡️ Chuyển hướng tới /splash để hiển thị loading indicator.');
-        return '/splash';
-      }
-
-      _log.info('✅ Đã ở /splash → giữ nguyên.');
-      return null;
-    }
+    
 
     // 🔐 2. Người dùng chưa đăng nhập
     if (authState is Unauthenticated) {
@@ -186,8 +168,8 @@ class AppRouter {
 
     // 🏠 4. Người dùng đã đăng nhập hoàn chỉnh
     if (authState is Authenticated) {
-      if (isLogin || isSetup || isSplash) {
-        _log.info('🔓 Người dùng đã đăng nhập hoàn chỉnh. Rời khỏi login/setup/splash → chuyển về /home.');
+      if (isLogin || isSetup) {
+        _log.info('🔓 Người dùng đã đăng nhập hoàn chỉnh. Rời khỏi login/setup → chuyển về /home.');
         return '/home';
       }
 
