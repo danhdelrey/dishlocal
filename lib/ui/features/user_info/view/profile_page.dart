@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
+import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
@@ -16,90 +17,169 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key, this.userId});
 
   final String? userId;
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
+  // 2. Khai báo các controller và BLoC, y hệt HomePage
+  late final TabController _tabController;
+  final ScrollController _mainScrollController = ScrollController();
+  final List<ScrollController> _tabScrollControllers = [
+    ScrollController(), // Controller cho Tab "Bài viết"
+    ScrollController(), // Controller cho Tab "Đã lưu"
+  ];
+  late final List<PostBloc> _postBlocs;
+  int _currentTabIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+
+    // Khởi tạo các BLoC cho từng tab
+    // Giả sử Tab 1 là bài viết của user, Tab 2 là bài viết user đã lưu
+    final postRepository = getIt<PostRepository>();
+    _postBlocs = [
+      // BLoC cho tab "Bài viết của user"
+      // TODO: Cập nhật event và repository method phù hợp (ví dụ: getPostsByUserId)
+      PostBloc(postRepository.getPosts)..add(PostEvent.fetchNextPostPageRequested()),
+
+      // BLoC cho tab "Bài viết đã lưu"
+      // TODO: Cập nhật event và repository method phù hợp
+      PostBloc(postRepository.getSavedPosts)..add(const PostEvent.fetchNextPostPageRequested()),
+    ];
+  }
+
+  // 3. Sao chép logic xử lý nhấn tab
+  void _scrollToTopAndRefresh(int index) {
+    // 1. Cuộn NestedScrollView chính (SliverAppBar) về đầu
+    if (_mainScrollController.hasClients) {
+      _mainScrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+    // 2. Cuộn CustomScrollView của tab tương ứng về đầu
+    if (_tabScrollControllers[index].hasClients) {
+      _tabScrollControllers[index].animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+    // 3. Gửi sự kiện refresh đến BLoC tương ứng
+    // TODO: Đảm bảo PostBloc của bạn có event 'refreshRequested'
+    _postBlocs[index].add(const PostEvent.refreshRequested());
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _mainScrollController.dispose();
+    for (var controller in _tabScrollControllers) {
+      controller.dispose();
+    }
+    for (var bloc in _postBlocs) {
+      bloc.close();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // DefaultTabController phải bọc toàn bộ widget sử dụng TabController
     return ConnectivityAndLocationGuard(builder: (context) {
-      return MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested(userId: userId)),
-          ),
-          BlocProvider(
-            create: (context) => getIt<PostBloc>(),
-          ),
-        ],
-        child: DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            // Sử dụng NestedScrollView làm body của Scaffold
-            body: NestedScrollView(
-              // 1. headerSliverBuilder: chứa các widget ở trên cùng (phần header)
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  GlassSliverAppBar(
-                    leading: userId != null
-                        ? IconButton(
-                            onPressed: () {
-                              context.pop();
-                            },
-                            icon: AppIcons.left.toSvg(
-                              color: appColorScheme(context).onSurface,
-                            ),
-                          )
-                        : null,
-                    pinned: true,
-                    floating: true,
-                    title: BlocBuilder<UserInfoBloc, UserInfoState>(
-                      builder: (context, state) {
-                        if (state is UserInfoSuccess) {
-                          return Text(state.appUser.username ?? 'error');
+      // UserInfoBloc được cung cấp riêng cho phần header
+      return BlocProvider(
+        create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId)),
+        child: Scaffold(
+          body: NestedScrollView(
+            // Gán controller chính
+            controller: _mainScrollController,
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                GlassSliverAppBar(
+                  leading: widget.userId != null
+                      ? IconButton(
+                          onPressed: () {
+                            context.pop();
+                          },
+                          icon: AppIcons.left.toSvg(
+                            color: appColorScheme(context).onSurface,
+                          ),
+                        )
+                      : null,
+                  pinned: true,
+                  floating: true,
+                  title: BlocBuilder<UserInfoBloc, UserInfoState>(
+                    builder: (context, state) {
+                      if (state is UserInfoSuccess) {
+                        return Text(state.appUser.username ?? 'error');
+                      }
+                      return const SizedBox();
+                    },
+                  ),
+                  centerTitle: true,
+                  actions: [
+                    widget.userId != null ? const SizedBox() : const LogoutButton(),
+                  ],
+                ),
+                const SliverToBoxAdapter(
+                  child: ProfileInfo(),
+                ),
+                SliverPersistentHeader(
+                  delegate: _SliverAppBarDelegate(
+                    TabBar(
+                      // 4. Gán TabController và thêm logic onTap
+                      controller: _tabController,
+                      onTap: (index) {
+                        if (index == _currentTabIndex) {
+                          _scrollToTopAndRefresh(index);
+                        } else {
+                          // Cập nhật lại tab index hiện tại
+                          setState(() {
+                            _currentTabIndex = index;
+                          });
                         }
-                        return const SizedBox();
                       },
+                      dividerColor: Colors.white.withAlpha(25), // withValues is deprecated
+                      tabs: const [
+                        Tab(icon: Icon(Icons.grid_view_rounded)),
+                        Tab(icon: Icon(Icons.bookmark_rounded)),
+                      ],
                     ),
-                    centerTitle: true,
-                    actions: [
-                      userId != null ? const SizedBox() : const LogoutButton(),
-                    ],
                   ),
-
-                  // SliverToBoxAdapter để bọc các widget không phải là Sliver
-                  const SliverToBoxAdapter(
-                    child: ProfileInfo(),
+                  pinned: true,
+                ),
+              ];
+            },
+            body: TabBarView(
+              // 5. Cập nhật TabBarView
+              controller: _tabController,
+              children: [
+                // --- TAB 1: Bài viết của user ---
+                BlocProvider.value(
+                  value: _postBlocs[0],
+                  child: GridPostPage(
+                    scrollController: _tabScrollControllers[0],
+                    noItemsFoundMessage: 'Chưa có bài viết nào.',
                   ),
-
-                  // SliverPersistentHeader để "ghim" TabBar ở trên cùng khi cuộn
-                  SliverPersistentHeader(
-                    delegate: _SliverAppBarDelegate(
-                      TabBar(
-                        dividerColor: Colors.white.withValues(alpha: 0.1),
-                        tabs: const [
-                          Tab(
-                            icon: Icon(Icons.grid_view_rounded),
-                          ),
-                          Tab(
-                            icon: Icon(Icons.bookmark_rounded),
-                          ),
-                        ],
-                      ),
-                    ),
-                    pinned: true,
+                ),
+                // --- TAB 2: Bài viết đã lưu ---
+                BlocProvider.value(
+                  value: _postBlocs[1],
+                  child: GridPostPage(
+                    scrollController: _tabScrollControllers[1],
+                    noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
                   ),
-                ];
-              },
-              // 2. body: chứa nội dung chính có thể cuộn (TabBarView)
-              body: const TabBarView(
-                children: [
-                  GridPostPage(),
-                  GridPostPage(),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -108,7 +188,7 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-// Lớp helper để tạo SliverPersistentHeader cho TabBar
+// Giữ nguyên _SliverAppBarDelegate để không thay đổi giao diện
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
 
