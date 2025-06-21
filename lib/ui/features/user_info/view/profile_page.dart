@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
+import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
@@ -46,7 +47,7 @@ class _ProfilePageContent extends StatefulWidget {
 
 /// BƯỚC 3: State logic được chuyển hết vào đây.
 class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTickerProviderStateMixin {
-   late final TabController _tabController;
+  late final TabController _tabController;
   final ScrollController _mainScrollController = ScrollController();
   late final List<PostBloc> _postBlocs;
   late final UserInfoBloc _userInfoBloc;
@@ -128,6 +129,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
 
   @override
   Widget build(BuildContext context) {
+    final currentUserId = getIt<AppUserRepository>().getCurrentUserId();
     // Cung cấp UserInfoBloc đã được tạo cho cây widget bên dưới
     return BlocProvider.value(
       value: _userInfoBloc,
@@ -156,7 +158,30 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
                 ),
                 centerTitle: true,
                 actions: [
-                  widget.userId != null ? const SizedBox() : const LogoutButton(),
+                  // Bọc actions trong BlocBuilder để có thể quyết định hiển thị nút nào
+                  BlocBuilder<UserInfoBloc, UserInfoState>(
+                    builder: (context, state) {
+                      // Chỉ hiển thị nút khi đã có thông tin người dùng
+                      if (state is UserInfoSuccess) {
+                        // So sánh ID người xem với ID của người trên trang profile
+                        final bool isMyProfile = currentUserId == state.appUser.userId;
+
+                        if (isMyProfile) {
+                          // Nếu là trang của tôi, hiển thị nút Logout
+                          return const LogoutButton();
+                        } else {
+                          // Nếu là trang của người khác, hiển thị nút More
+                          // TODO: Tạo widget MoreButton hoặc dùng IconButton
+                          return IconButton(
+                            icon: const Icon(Icons.more_horiz),
+                            onPressed: () {},
+                          );
+                        }
+                      }
+                      // Khi đang loading hoặc lỗi, không hiển thị gì cả
+                      return const SizedBox();
+                    },
+                  ),
                 ],
               ),
               const SliverToBoxAdapter(
