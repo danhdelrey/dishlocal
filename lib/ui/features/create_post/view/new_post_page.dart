@@ -1,7 +1,10 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/core/utils/number_formatter.dart';
+import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
+import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/create_post/bloc/create_post_bloc.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/dish_name_input.dart';
@@ -10,6 +13,7 @@ import 'package:dishlocal/ui/features/create_post/form_input/money_input.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/rounded_corner_image_file.dart';
@@ -24,11 +28,24 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:logging/logging.dart';
 
 class NewPostPage extends StatefulWidget {
-  const NewPostPage({super.key, required this.imagePath, required this.address, required this.blurHash});
+  const NewPostPage.create({super.key, required this.imagePath, required this.address, required this.blurHash})
+      : postToUpdate = null,
+        inEditMode = false;
 
+  const NewPostPage.edit({
+    super.key,
+    required this.postToUpdate,
+  })  : inEditMode = true,
+        imagePath = '',
+        blurHash = '',
+        address = const Address(latitude: 1, longitude: 1);
+
+  final Post? postToUpdate;
   final String imagePath;
   final String blurHash;
   final Address address;
+
+  final bool inEditMode;
 
   @override
   State<NewPostPage> createState() => _NewPostPageState();
@@ -154,21 +171,27 @@ class _NewPostPageState extends State<NewPostPage> {
                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   slivers: [
                     GlassSliverAppBar(
-                      title: const Text('Bài đăng mới'),
+                      title: Text(widget.inEditMode ? 'Chỉnh sửa bài đăng' : 'Bài đăng mới'),
                       centerTitle: true,
                       pinned: true,
                       floating: true,
                       actions: [
                         TextButton(
-                          onPressed: () => context.read<CreatePostBloc>().add(
-                                CreatePostRequested(
-                                  address: widget.address,
-                                  imagePath: widget.imagePath,
-                                  createdAt: now,
-                                  blurHash: widget.blurHash,
-                                ),
-                              ),
-                          child: const Text('Đăng'),
+                          onPressed: () {
+                            if (widget.inEditMode) {
+                              context.read<CreatePostBloc>().add(UpdatePostRequested(postToUpdate: widget.postToUpdate!));
+                            } else {
+                              context.read<CreatePostBloc>().add(
+                                    CreatePostRequested(
+                                      address: widget.address,
+                                      imagePath: widget.imagePath,
+                                      createdAt: now,
+                                      blurHash: widget.blurHash,
+                                    ),
+                                  );
+                            }
+                          },
+                          child: Text(widget.inEditMode ? 'Cập nhật' : 'Đăng bài'),
                         ),
                       ],
                       leading: IconButton(
@@ -182,15 +205,22 @@ class _NewPostPageState extends State<NewPostPage> {
                         child: Column(
                           children: [
                             const SizedBox(height: 20),
-                            BlurredEdgeWidget(
-                              blurSigma: 100,
-                              clearRadius: 1,
-                              blurredChild: RoundedCornerImageFile(imagePath: widget.imagePath),
-                              topChild: RoundedCornerImageFile(imagePath: widget.imagePath),
-                            ),
+                            widget.inEditMode
+                                ? BlurredEdgeWidget(
+                                    blurredChild: CachedImage(blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? ''),
+                                    clearRadius: 1,
+                                    blurSigma: 100,
+                                    topChild: CachedImage(blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? ''),
+                                  )
+                                : BlurredEdgeWidget(
+                                    blurSigma: 100,
+                                    clearRadius: 1,
+                                    blurredChild: RoundedCornerImageFile(imagePath: widget.imagePath),
+                                    topChild: RoundedCornerImageFile(imagePath: widget.imagePath),
+                                  ),
                             const SizedBox(height: 20),
                             Text(
-                              formatted,
+                              widget.inEditMode ? TimeFormatter.formatDateTimeFull(widget.postToUpdate?.createdAt ?? now) : formatted,
                               style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
@@ -199,7 +229,7 @@ class _NewPostPageState extends State<NewPostPage> {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 50),
                               child: Text(
-                                widget.address.displayName ?? '',
+                                widget.inEditMode ? (widget.postToUpdate?.address?.displayName ?? '') : (widget.address.displayName ?? ''),
                                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                       color: Theme.of(context).colorScheme.onSurface,
                                     ),
@@ -213,7 +243,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                 return Column(
                                   children: [
                                     AppTextField(
-                                      // Gắn FocusNode của Widget vào đây
+                                      initialValue: widget.inEditMode ? widget.postToUpdate?.dishName : null,
                                       focusNode: _dishNameFocusNode,
                                       keyboardType: TextInputType.name,
                                       maxLine: 1,
@@ -229,6 +259,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                     ),
                                     const SizedBox(height: 10),
                                     AppTextField(
+                                      initialValue: widget.inEditMode ? NumberFormatter.formatMoney(widget.postToUpdate?.price ?? 0) : null,
                                       leadingIcon: AppIcons.wallet4.toSvg(
                                         width: 16,
                                         color: appColorScheme(context).onSurface,
@@ -254,7 +285,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                     ),
                                     const SizedBox(height: 10),
                                     AppTextField(
-                                      // Gắn FocusNode tương ứng
+                                      initialValue: widget.inEditMode ? widget.postToUpdate?.diningLocationName : null,
                                       focusNode: _diningLocationNameFocusNode,
                                       keyboardType: TextInputType.name,
                                       maxLine: 1,
@@ -267,6 +298,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                     ),
                                     const SizedBox(height: 10),
                                     AppTextField(
+                                      initialValue: widget.inEditMode ? widget.postToUpdate?.address?.exactAddress : null,
                                       focusNode: _exactAddressInputFocusNode,
                                       title: 'Địa chỉ cụ thể của quán ăn',
                                       keyboardType: TextInputType.name,
@@ -278,6 +310,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                     ),
                                     const SizedBox(height: 10),
                                     AppTextField(
+                                      initialValue: widget.inEditMode ? widget.postToUpdate?.insight : null,
                                       focusNode: _insightInputFocusNode,
                                       title: 'Cảm nhận',
                                       hintText: 'Nêu cảm nhận của bạn...',

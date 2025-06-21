@@ -58,5 +58,13 @@ final class CreatePostRequested extends CreatePostEvent {
   List<Object?> get props => [address, imagePath, createdAt];
 }
 
+final class UpdatePostRequested extends CreatePostEvent {
+  final Post postToUpdate;
+
+  const UpdatePostRequested({required this.postToUpdate});
+  @override
+  List<Object?> get props => [postToUpdate];
+}
+
 // Sự kiện mới để báo hiệu rằng yêu cầu focus đã được UI xử lý
 final class FocusRequestHandled extends CreatePostEvent {}

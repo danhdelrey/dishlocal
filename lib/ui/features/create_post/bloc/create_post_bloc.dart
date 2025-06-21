@@ -51,7 +51,10 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
 
     on<CreatePostRequested>(_onCreatePostRequested);
     on<FocusRequestHandled>(_onFocusRequestHandled);
+    on<UpdatePostRequested>(_onUpdatePostRequested);
   }
+
+  
 
   void _onDishNameChanged(DishNameInputChanged event, Emitter<CreatePostState> emit) {
     _log.fine('Nhận được sự kiện DishNameInputChanged với giá trị: "${event.dishName}"');
@@ -226,6 +229,10 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         fieldToFocus: () => fieldToFocus,
       ));
     }
+  }
+
+  void _onUpdatePostRequested(UpdatePostRequested event, Emitter<CreatePostState> emit) {
+    
   }
 
   void _onFocusRequestHandled(FocusRequestHandled event, Emitter<CreatePostState> emit) {
