@@ -23,23 +23,43 @@ import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
-class PostDetailPage extends StatelessWidget {
+class PostDetailPage extends StatefulWidget {
   const PostDetailPage({super.key, required this.post});
 
   final Post post;
 
   @override
+  State<PostDetailPage> createState() => _PostDetailPageState();
+}
+
+class _PostDetailPageState extends State<PostDetailPage> {
+  late final BouncingOverlayMenuController _menuController;
+
+  @override
+  void initState() {
+    super.initState();
+    _menuController = BouncingOverlayMenuController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<ViewPostBloc>()..add(ViewPostEvent.started(post)),
+      create: (context) => getIt<ViewPostBloc>()..add(ViewPostEvent.started(widget.post)),
       child: Builder(builder: (context) {
         return GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
+            _menuController.hideIfVisible();
           },
           child: Scaffold(
             extendBody: true,
@@ -49,16 +69,62 @@ class PostDetailPage extends StatelessWidget {
                   RefreshIndicator(
                     onRefresh: () => Future.sync(
                       () => context.read<ViewPostBloc>().add(
-                            ViewPostEvent.started(post),
+                            ViewPostEvent.started(widget.post),
                           ),
                     ),
-                    child: CustomScrollView(
-                      physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
-                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                      slivers: [
-                        BlocBuilder<ViewPostBloc, ViewPostState>(
-                          builder: (context, state) {
-                            if (state is Success) {
+                    child: NotificationListener<ScrollStartNotification>(
+                      onNotification: (notification) {
+                        _menuController.hideIfVisible(); // 👈 Ẩn ngay khi bắt đầu chạm kéo
+                        return false; // không chặn event
+                      },
+                      child: CustomScrollView(
+                        physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
+                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                        slivers: [
+                          BlocBuilder<ViewPostBloc, ViewPostState>(
+                            builder: (context, state) {
+                              if (state is Success) {
+                                return GlassSliverAppBar(
+                                  floating: true,
+                                  pinned: true,
+                                  leading: IconButton(
+                                    onPressed: () {
+                                      context.pop();
+                                    },
+                                    icon: AppIcons.left.toSvg(
+                                      color: Theme.of(context).colorScheme.onSurface,
+                                    ),
+                                  ),
+                                  actions: [
+                                    BouncingOverlayMenu(
+                                      controller: _menuController,
+                                      menuItems: [
+                                        MenuActionItem(
+                                          icon: Icons.edit,
+                                          label: 'Chỉnh sửa bài viết',
+                                          onTap: () {},
+                                        ),
+                                        MenuActionItem(
+                                          icon: Icons.delete,
+                                          label: 'Xóa bài viết',
+                                          onTap: () {},
+                                        ),
+                                        MenuActionItem(
+                                          icon: Icons.report,
+                                          label: 'Báo cáo bài viết',
+                                          onTap: () {},
+                                        ),
+                                        MenuActionItem(
+                                          icon: Icons.link,
+                                          label: 'Sao chép liên kết',
+                                          onTap: () {},
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                  title: FadeSlideUp(child: Text(state.post.dishName ?? '')),
+                                );
+                              }
                               return GlassSliverAppBar(
                                 floating: true,
                                 pinned: true,
@@ -70,78 +136,39 @@ class PostDetailPage extends StatelessWidget {
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
-                                actions: [
-                                  BouncingOverlayMenu(
-                                    menuItems: [
-                                      MenuActionItem(
-                                        icon: Icons.edit,
-                                        label: 'Chỉnh sửa bài viết',
-                                        onTap: () {},
-                                      ),
-                                      MenuActionItem(
-                                        icon: Icons.delete,
-                                        label: 'Xóa bài viết',
-                                        onTap: () {},
-                                      ),
-                                      MenuActionItem(
-                                        icon: Icons.report,
-                                        label: 'Báo cáo bài viết',
-                                        onTap: () {},
-                                      ),
-                                      MenuActionItem(
-                                        icon: Icons.link,
-                                        label: 'Sao chép liên kết',
-                                        onTap: () {},
-                                      ),
-                                    ],
-                                  )
-                                ],
-                                title: FadeSlideUp(child: Text(state.post.dishName ?? '')),
                               );
-                            }
-                            return GlassSliverAppBar(
-                              floating: true,
-                              pinned: true,
-                              leading: IconButton(
-                                onPressed: () {
-                                  context.pop();
-                                },
-                                icon: AppIcons.left.toSvg(
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                ),
+                            },
+                          ),
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 150),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  BlurredEdgeWidget(
+                                    blurredChild: CachedImage(blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
+                                    clearRadius: 1,
+                                    blurSigma: 100,
+                                    topChild: CachedImage(blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
+                                  ),
+                                  BlocBuilder<ViewPostBloc, ViewPostState>(
+                                    builder: (context, state) {
+                                      return switch (state) {
+                                        Loading() => const Center(child: CustomLoadingIndicator(indicatorSize: 40)),
+                                        Success() => _buildMainContent(context, state.post, state.currentUserId, state.author),
+                                        Failure() => const Center(child: Text('Có lỗi xảy ra')),
+                                      };
+                                    },
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                        ),
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 150),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                BlurredEdgeWidget(
-                                  blurredChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
-                                  clearRadius: 1,
-                                  blurSigma: 100,
-                                  topChild: CachedImage(blurHash: post.blurHash ?? '', imageUrl: post.imageUrl ?? ''),
-                                ),
-                                BlocBuilder<ViewPostBloc, ViewPostState>(
-                                  builder: (context, state) {
-                                    return switch (state) {
-                                      Loading() => const Center(child: CustomLoadingIndicator(indicatorSize: 40)),
-                                      Success() => _buildMainContent(context, state.post, state.currentUserId, state.author),
-                                      Failure() => const Center(child: Text('Có lỗi xảy ra')),
-                                    };
-                                  },
-                                ),
-                              ],
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   // const Positioned(

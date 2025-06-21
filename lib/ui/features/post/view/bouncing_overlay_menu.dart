@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 class MenuActionItem {
   final IconData icon;
@@ -15,21 +16,36 @@ class MenuActionItem {
   });
 }
 
+class BouncingOverlayMenuController {
+  VoidCallback? _hide;
+
+  void _attach(VoidCallback hideCallback) {
+    _hide = hideCallback;
+  }
+
+  void hideIfVisible() {
+    _hide?.call();
+  }
+}
+
 class BouncingOverlayMenu extends StatefulWidget {
   const BouncingOverlayMenu({
     super.key,
     required this.menuItems,
+    required this.controller,
     this.position = const Offset(50, 50),
   });
 
   final List<MenuActionItem> menuItems;
   final Offset position;
+  final BouncingOverlayMenuController controller;
 
   @override
   State<BouncingOverlayMenu> createState() => _BouncingOverlayMenuState();
 }
 
 class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTickerProviderStateMixin {
+  final _log = Logger('_BouncingOverlayMenuState');
   final _overlayPortalController = OverlayPortalController();
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
@@ -40,9 +56,11 @@ class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTi
   void initState() {
     super.initState();
 
+    widget.controller._attach(_hideIfVisible);
+
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 150),
     );
 
     _scaleAnimation = TweenSequence<double>([
@@ -60,6 +78,12 @@ class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTi
         _isShowing = false;
       }
     });
+  }
+
+  void _hideIfVisible() {
+    if (_overlayPortalController.isShowing) {
+      _toggleOverlay();
+    }
   }
 
   void _toggleOverlay() async {
@@ -133,6 +157,7 @@ class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTi
             ? null
             : () async {
                 if (_isProcessing) return;
+                _log.info('Nhấn vào item trong menu');
 
                 setState(() {
                   _isProcessing = true;
@@ -141,7 +166,9 @@ class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTi
                 _toggleOverlay();
 
                 try {
+                  _log.info('Bắt đầu xử lý');
                   await Future.microtask(item.onTap);
+                  _log.info('Kết thúc xử lý');
                 } catch (_) {}
 
                 Future.delayed(const Duration(milliseconds: 500), () {
