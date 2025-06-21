@@ -6,18 +6,45 @@ part of 'post.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Post _$PostFromJson(Map<String, dynamic> json) => Post(
+_Post _$PostFromJson(Map<String, dynamic> json) => _Post(
       postId: json['postId'] as String,
-      address: Address.fromJson(json['address'] as Map<String, dynamic>),
-      dishName: json['dishName'] as String,
-      imageUrl: json['imageUrl'] as String,
-      price: (json['price'] as num).toInt(),
+      authorUserId: json['authorUserId'] as String,
+      authorUsername: json['authorUsername'] as String,
+      authorAvatarUrl: json['authorAvatarUrl'] as String?,
+      imageUrl: json['imageUrl'] as String?,
+      blurHash: json['blurHash'] as String?,
+      dishName: json['dishName'] as String?,
+      diningLocationName: json['diningLocationName'] as String?,
+      address: json['address'] == null
+          ? null
+          : Address.fromJson(json['address'] as Map<String, dynamic>),
+      distance: (json['distance'] as num?)?.toDouble(),
+      price: (json['price'] as num?)?.toInt(),
+      insight: json['insight'] as String?,
+      createdAt:
+          const TimestampConverter().fromJson(json['createdAt'] as Timestamp),
+      likeCount: (json['likeCount'] as num).toInt(),
+      saveCount: (json['saveCount'] as num).toInt(),
+      isLiked: json['isLiked'] as bool,
+      isSaved: json['isSaved'] as bool,
     );
 
-Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
+Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'postId': instance.postId,
+      'authorUserId': instance.authorUserId,
+      'authorUsername': instance.authorUsername,
+      'authorAvatarUrl': instance.authorAvatarUrl,
       'imageUrl': instance.imageUrl,
+      'blurHash': instance.blurHash,
       'dishName': instance.dishName,
-      'address': instance.address,
+      'diningLocationName': instance.diningLocationName,
+      'address': instance.address?.toJson(),
+      'distance': instance.distance,
       'price': instance.price,
+      'insight': instance.insight,
+      'createdAt': const TimestampConverter().toJson(instance.createdAt),
+      'likeCount': instance.likeCount,
+      'saveCount': instance.saveCount,
+      'isLiked': instance.isLiked,
+      'isSaved': instance.isSaved,
     };

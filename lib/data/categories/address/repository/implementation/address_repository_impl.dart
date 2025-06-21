@@ -1,13 +1,16 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
+
 import 'package:dishlocal/data/categories/address/failure/address_failure.dart' as address_failure;
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/address/repository/interface/address_repository.dart';
+import 'package:dishlocal/data/services/distance_service/interface/distance_service.dart';
 import 'package:dishlocal/data/services/geocoding_service/exception/geocoding_service_exception.dart';
 import 'package:dishlocal/data/services/geocoding_service/interface/geocoding_service.dart';
-import 'package:dishlocal/data/services/location_service/interface/location_service.dart';
-import 'package:injectable/injectable.dart';
-import 'package:logging/logging.dart';
 import 'package:dishlocal/data/services/location_service/exception/location_service_exception.dart' as location_service_exception;
+import 'package:dishlocal/data/services/location_service/interface/location_service.dart';
 
 @LazySingleton(as: AddressRepository)
 class AddressRepositoryImpl implements AddressRepository {
@@ -17,11 +20,10 @@ class AddressRepositoryImpl implements AddressRepository {
   final LocationService _locationService;
   final GeocodingService _geocodingService;
 
-  AddressRepositoryImpl({
-    required LocationService locationService,
-    required GeocodingService geocodingService,
-  })  : _locationService = locationService,
-        _geocodingService = geocodingService;
+  AddressRepositoryImpl(
+    this._locationService,
+    this._geocodingService,
+  );
 
   @override
   Future<Either<address_failure.AddressFailure, Address>> getCurrentAddress() async {
@@ -65,4 +67,6 @@ class AddressRepositoryImpl implements AddressRepository {
       return const Left(address_failure.UnknownFailure());
     }
   }
+
+  
 }

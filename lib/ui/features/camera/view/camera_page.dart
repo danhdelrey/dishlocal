@@ -60,6 +60,7 @@ class CameraPage extends StatelessWidget {
                         context.pushReplacement('/camera/new_post', extra: {
                           'imagePath': state.imagePath,
                           'address': address,
+                          'blurHash' : state.blurHash,
                         });
                       }
                       if (state is CameraCaptureInProgress) {
@@ -123,7 +124,7 @@ class CameraPage extends StatelessWidget {
             height: 10,
           ),
           Text(
-            address.displayName,
+            address.displayName ?? '',
             style: Theme.of(context).textTheme.labelMedium!.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),

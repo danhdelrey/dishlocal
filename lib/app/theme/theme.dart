@@ -5,12 +5,15 @@ TextTheme appTextTheme(context) => Theme.of(context).textTheme;
 ColorScheme appColorScheme(context) => Theme.of(context).colorScheme;
 
 final darkTheme = ThemeData.dark().copyWith(
-    colorScheme: colorScheme,
-    textTheme: textTheme,
-    pageTransitionsTheme: const PageTransitionsTheme(builders: {
+  colorScheme: colorScheme,
+  textTheme: textTheme,
+  pageTransitionsTheme: const PageTransitionsTheme(
+    builders: {
       TargetPlatform.android: CupertinoPageTransitionsBuilder(),
       TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-    }));
+    },
+  ),
+);
 
 const colorScheme = ColorScheme(
   brightness: Brightness.dark,
