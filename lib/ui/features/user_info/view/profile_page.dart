@@ -212,16 +212,26 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
             children: [
               BlocProvider.value(
                 value: _postBlocs[0],
-                child: const GridPostPage(
-                  key: PageStorageKey<String>('profilePosts'),
-                  noItemsFoundMessage: 'Chưa có bài viết nào.',
+                child: const SafeArea(
+                  top: false,
+                  left: false,
+                  right: false,
+                  child: GridPostPage(
+                    key: PageStorageKey<String>('profilePosts'),
+                    noItemsFoundMessage: 'Chưa có bài viết nào.',
+                  ),
                 ),
               ),
               BlocProvider.value(
                 value: _postBlocs[1],
-                child: const GridPostPage(
-                  key: PageStorageKey<String>('profileSavedPosts'),
-                  noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
+                child: const SafeArea(
+                  top: false,
+                  left: false,
+                  right: false,
+                  child: GridPostPage(
+                    key: PageStorageKey<String>('profileSavedPosts'),
+                    noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
+                  ),
                 ),
               ),
             ],

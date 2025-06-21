@@ -32,7 +32,7 @@ class GridPostPage extends StatelessWidget {
         await postBloc.stream.firstWhere((s) => !s.isLoading);
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
           slivers: [
