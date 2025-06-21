@@ -489,5 +489,37 @@ class RemotePostRepositoryImpl implements PostRepository {
     }
   }
 
+  @override
+  Future<Either<PostFailure, void>> updatePost(Post post) async {
+    _log.info('🔄 Bắt đầu cập nhật bài viết với postId: ${post.postId}');
+    try {
+      // Chúng ta chỉ cập nhật các trường có thể thay đổi,
+      // không ghi đè toàn bộ document để tránh xóa nhầm các trường
+      // được quản lý bởi server như likeCount, saveCount.
+      final Map<String, dynamic> dataToUpdate = {
+        'address' : post.address?.toJson(),
+        'diningLocationName' : post.diningLocationName,
+        'dishName' : post.dishName,
+        'insight' : post.insight,
+        'price' : post.price,
+      };
+
+      // Nếu người dùng có thể thay đổi cả ảnh, logic sẽ phức tạp hơn một chút
+      // (xóa ảnh cũ, upload ảnh mới, lấy url mới rồi cập nhật vào dataToUpdate)
+      // Nhưng ở đây ta giả định chỉ cập nhật dữ liệu text.
+
+      await _databaseService.updateDocument(
+        collection: 'posts',
+        docId: post.postId,
+        data: dataToUpdate,
+      );
+
+      _log.info('✅ Cập nhật bài viết ${post.postId} thành công.');
+      return right(null);
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi khi cập nhật bài viết ${post.postId}', e, stackTrace);
+      return left(const UnknownFailure());
+    }
+  }
 
 }

@@ -45,4 +45,6 @@ abstract class PostRepository {
     int limit = 10,
     DateTime? startAfter,
   });
+
+  Future<Either<PostFailure, void>> updatePost(Post post);
 }

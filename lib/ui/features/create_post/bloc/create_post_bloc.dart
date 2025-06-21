@@ -43,6 +43,8 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
   ) : super(const CreatePostState()) {
     _log.info('Khởi tạo DiningInfoInputBloc.');
 
+    on<CreatePostInitialized>(_onCreatePostInitialized);
+
     on<DishNameInputChanged>(_onDishNameChanged);
     on<DiningLocationNameInputChanged>(_onDiningLocationNameChanged);
     on<ExactAddressInputChanged>(_onExactAddressInputChanged);
@@ -51,6 +53,24 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
 
     on<CreatePostRequested>(_onCreatePostRequested);
     on<FocusRequestHandled>(_onFocusRequestHandled);
+  }
+
+  void _onCreatePostInitialized(CreatePostInitialized event, Emitter<CreatePostState> emit) {
+    if (event.postToUpdate != null) {
+      final dishNameInput = DishNameInput.dirty(value: event.postToUpdate!.dishName ?? '');
+      final diningLocationNameInput = DiningLocationNameInput.dirty(value: event.postToUpdate!.diningLocationName ?? '');
+      final exactAddressInput = ExactAddressInput.dirty(value: event.postToUpdate!.address?.exactAddress ?? '');
+      final insightInput = InsightInput.dirty(value: event.postToUpdate!.insight ?? '');
+      final moneyInput = MoneyInput.dirty(value: event.postToUpdate!.price);
+
+      emit(state.copyWith(
+        dishNameInput: dishNameInput,
+        diningLocationNameInput: diningLocationNameInput,
+        exactAddressInput: exactAddressInput,
+        insightInput: insightInput,
+        moneyInput: moneyInput,
+      ));
+    }
   }
 
   void _onDishNameChanged(DishNameInputChanged event, Emitter<CreatePostState> emit) {
@@ -155,46 +175,70 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
       _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}, ${exactAddressInput.value}, ${insightInput.value}, ${moneyInput.value}');
 
-      final appUserResult = await _appUserRepository.getCurrentUser();
-      if (appUserResult.isLeft()) {
-        _log.severe('Không lấy được user hiện tại.');
-        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
-        return;
-      }
-      final appUser = appUserResult.getOrElse(() => throw Exception("User null")); // safe vì đã kiểm tra
+      if (event.postToUpdate != null) {
+        final updateResult = await _postRepository.updatePost(
+          event.postToUpdate!.copyWith(
+            address: event.postToUpdate!.address?.copyWith(
+              exactAddress: state.exactAddressInput.value,
+            ),
+            diningLocationName: state.diningLocationNameInput.value,
+            dishName: state.dishNameInput.value,
+            insight: state.insightInput.value,
+            price: state.moneyInput.value,
+          ),
+        );
+        updateResult.fold(
+          (failure) {
+            _log.severe('Cập nhật post thất bại', failure);
+            emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+          },
+          (_) {
+            _log.info('Cập nhật post thành công');
+            emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
+          },
+        );
 
-      final postId = uuid.v4();
-      final createNewPostResult = await _postRepository.createPost(
-        post: Post(
-          postId: postId,
-          authorUserId: appUser.userId,
-          authorUsername: appUser.username!,
-          authorAvatarUrl: appUser.photoUrl,
-          dishName: dishNameInput.value,
-          blurHash: event.blurHash,
-          diningLocationName: diningLocationNameInput.value,
-          address: event.address.copyWith(exactAddress: exactAddressInput.value),
-          price: moneyInput.value,
-          insight: insightInput.value,
-          createdAt: event.createdAt,
-          likeCount: 0,
-          saveCount: 0,
-          isLiked: false,
-          isSaved: false,
-        ),
-        imageFile: File(event.imagePath),
-      );
-
-      createNewPostResult.fold(
-        (failure) {
-          _log.severe('Submit thất bại', failure);
+      } else {
+        final appUserResult = await _appUserRepository.getCurrentUser();
+        if (appUserResult.isLeft()) {
+          _log.severe('Không lấy được user hiện tại.');
           emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
-        },
-        (_) {
-          _log.info('Submit dữ liệu thành công');
-          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
-        },
-      );
+          return;
+        }
+        final appUser = appUserResult.getOrElse(() => throw Exception("User null")); // safe vì đã kiểm tra
+
+        final postId = uuid.v4();
+        final createNewPostResult = await _postRepository.createPost(
+          post: Post(
+            postId: postId,
+            authorUserId: appUser.userId,
+            authorUsername: appUser.username!,
+            authorAvatarUrl: appUser.photoUrl,
+            dishName: dishNameInput.value,
+            blurHash: event.blurHash,
+            diningLocationName: diningLocationNameInput.value,
+            address: event.address.copyWith(exactAddress: exactAddressInput.value),
+            price: moneyInput.value,
+            insight: insightInput.value,
+            createdAt: event.createdAt,
+            likeCount: 0,
+            saveCount: 0,
+            isLiked: false,
+            isSaved: false,
+          ),
+          imageFile: File(event.imagePath),
+        );
+        createNewPostResult.fold(
+          (failure) {
+            _log.severe('Submit thất bại', failure);
+            emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+          },
+          (_) {
+            _log.info('Submit dữ liệu thành công');
+            emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
+          },
+        );
+      }
     } else {
       _log.warning('Form không hợp lệ. Hiển thị lỗi và yêu cầu focus.');
 
