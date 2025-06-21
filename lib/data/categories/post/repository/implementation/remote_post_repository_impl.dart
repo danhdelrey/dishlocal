@@ -497,6 +497,9 @@ class RemotePostRepositoryImpl implements PostRepository {
       // không ghi đè toàn bộ document để tránh xóa nhầm các trường
       // được quản lý bởi server như likeCount, saveCount.
       final Map<String, dynamic> dataToUpdate = {
+        'address' : {
+          'exactAddress' : post.address?.exactAddress,
+        },
         'diningLocationName' : post.diningLocationName,
         'dishName' : post.dishName,
         'insight' : post.insight,
