@@ -17,36 +17,55 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class ProfilePage extends StatefulWidget {
+/// BƯỚC 1: ProfilePage trở thành container đơn giản, truyền userId xuống.
+/// Nó có thể là StatelessWidget vì không còn quản lý state nào.
+class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key, this.userId});
 
   final String? userId;
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  Widget build(BuildContext context) {
+    // Guard sẽ gọi _ProfilePageContent khi điều kiện được đáp ứng,
+    // và truyền userId qua cho nó.
+    return ConnectivityAndLocationGuard(
+      builder: (context) => _ProfilePageContent(userId: userId),
+    );
+  }
 }
 
-class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
+/// BƯỚC 2: Widget nội dung chính, chứa toàn bộ logic và giao diện.
+class _ProfilePageContent extends StatefulWidget {
+  const _ProfilePageContent({this.userId});
+
+  final String? userId;
+
+  @override
+  State<_ProfilePageContent> createState() => _ProfilePageContentState();
+}
+
+/// BƯỚC 3: State logic được chuyển hết vào đây.
+class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   final ScrollController _mainScrollController = ScrollController();
-
-  // KHÔNG CẦN _tabScrollControllers nữa
-  // final List<ScrollController> _tabScrollControllers = ...
-
   late final List<PostBloc> _postBlocs;
+
+  // THÊM: Khai báo UserInfoBloc ở đây để có thể truy cập trong cả initState và build
+  late final UserInfoBloc _userInfoBloc;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
+    // BLoCs GIỜ ĐƯỢC KHỞI TẠO Ở ĐÂY!
+    _userInfoBloc = getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId));
+
     final postRepository = getIt<PostRepository>();
     _postBlocs = [
       PostBloc(
-        // Vì getPostsByUserId cần tham số `userId`, chúng ta phải bọc nó
-        // trong một hàm ẩn danh để khớp với kiểu PostFetcher
         ({required int limit, DateTime? startAfter}) => postRepository.getPostsByUserId(
-          userId: widget.userId, // Lấy userId từ widget của trang Profile
+          userId: widget.userId,
           limit: limit,
           startAfter: startAfter,
         ),
@@ -55,29 +74,16 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     ];
   }
 
-  // SỬA LẠI HÀM NÀY
   void _scrollToTopAndRefresh(int index) {
-    // 1. Cuộn NestedScrollView chính (SliverAppBar) về đầu -> GIỮ NGUYÊN
     if (_mainScrollController.hasClients) {
-      _mainScrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
 
-    // 2. Tìm và cuộn PrimaryScrollController của tab đang hoạt động
-    // Đây là mấu chốt để điều khiển được grid bên trong mà không phá vỡ liên kết
     final innerController = PrimaryScrollController.of(context);
     if (innerController.hasClients) {
-      innerController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      innerController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
 
-    // 3. Gửi sự kiện refresh đến BLoC tương ứng -> GIỮ NGUYÊN
     _postBlocs[index].add(const PostEvent.refreshRequested());
   }
 
@@ -85,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   void dispose() {
     _tabController.dispose();
     _mainScrollController.dispose();
-    // KHÔNG CẦN dispose _tabScrollControllers nữa
+    _userInfoBloc.close(); // Đừng quên đóng UserInfoBloc
     for (var bloc in _postBlocs) {
       bloc.close();
     }
@@ -94,92 +100,82 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return ConnectivityAndLocationGuard(builder: (context) {
-      return BlocProvider(
-        create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId)),
-        child: Scaffold(
-          // Sử dụng lại cấu trúc ban đầu của bạn, nó đã đúng
-          body: NestedScrollView(
-            controller: _mainScrollController,
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                GlassSliverAppBar(
-                  leading: widget.userId != null
-                      ? IconButton(
-                          onPressed: () => context.pop(),
-                          icon: AppIcons.left.toSvg(color: appColorScheme(context).onSurface),
-                        )
-                      : null,
-                  pinned: true,
-                  floating: true,
-                  title: BlocBuilder<UserInfoBloc, UserInfoState>(
-                    builder: (context, state) {
-                      if (state is UserInfoSuccess) {
-                        return Text(state.appUser.username ?? 'error');
+    // Cung cấp UserInfoBloc đã được tạo cho cây widget bên dưới
+    return BlocProvider.value(
+      value: _userInfoBloc,
+      child: Scaffold(
+        body: NestedScrollView(
+          controller: _mainScrollController,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              GlassSliverAppBar(
+                leading: widget.userId != null
+                    ? IconButton(
+                        onPressed: () => context.pop(),
+                        icon: AppIcons.left.toSvg(color: appColorScheme(context).onSurface),
+                      )
+                    : null,
+                pinned: true,
+                floating: true,
+                title: BlocBuilder<UserInfoBloc, UserInfoState>(
+                  // Không cần builder ở đây nữa vì _userInfoBloc đã được cung cấp
+                  builder: (context, state) {
+                    if (state is UserInfoSuccess) {
+                      return Text(state.appUser.username ?? 'error');
+                    }
+                    return const SizedBox();
+                  },
+                ),
+                centerTitle: true,
+                actions: [
+                  widget.userId != null ? const SizedBox() : const LogoutButton(),
+                ],
+              ),
+              const SliverToBoxAdapter(
+                child: ProfileInfo(),
+              ),
+              SliverPersistentHeader(
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                    controller: _tabController,
+                    onTap: (index) {
+                      if (_tabController.indexIsChanging == false) {
+                        _scrollToTopAndRefresh(index);
                       }
-                      return const SizedBox();
                     },
-                  ),
-                  centerTitle: true,
-                  actions: [
-                    widget.userId != null ? const SizedBox() : const LogoutButton(),
-                  ],
-                ),
-                const SliverToBoxAdapter(
-                  child: ProfileInfo(),
-                ),
-                SliverPersistentHeader(
-                  delegate: _SliverAppBarDelegate(
-                    TabBar(
-                      controller: _tabController,
-                      onTap: (index) {
-                        // Logic onTap vẫn đúng. Nó kiểm tra xem người dùng
-                        // có nhấn vào tab đang được chọn hay không.
-                        if (_tabController.indexIsChanging == false) {
-                          _scrollToTopAndRefresh(index);
-                        }
-                      },
-                      dividerColor: Colors.white.withAlpha(25),
-                      tabs: const [
-                        Tab(icon: Icon(Icons.grid_view_rounded)),
-                        Tab(icon: Icon(Icons.bookmark_rounded)),
-                      ],
-                    ),
-                  ),
-                  pinned: true,
-                ),
-              ];
-            },
-            // Đưa TabBarView trở lại body
-            body: TabBarView(
-              controller: _tabController,
-              children: [
-                // --- TAB 1: Bài viết của user ---
-                BlocProvider.value(
-                  value: _postBlocs[0],
-                  child: const GridPostPage(
-                    // QUAN TRỌNG: Cung cấp một key duy nhất để lưu trạng thái cuộn
-                    key: PageStorageKey<String>('profilePosts'),
-                    // KHÔNG TRUYỀN SCROLL CONTROLLER NỮA
-                    noItemsFoundMessage: 'Chưa có bài viết nào.',
+                    dividerColor: Colors.white.withAlpha(25),
+                    tabs: const [
+                      Tab(icon: Icon(Icons.grid_view_rounded)),
+                      Tab(icon: Icon(Icons.bookmark_rounded)),
+                    ],
                   ),
                 ),
-                // --- TAB 2: Bài viết đã lưu ---
-                BlocProvider.value(
-                  value: _postBlocs[1],
-                  child: const GridPostPage(
-                    // QUAN TRỌNG: Cung cấp một key duy nhất khác
-                    key: PageStorageKey<String>('profileSavedPosts'),
-                    // KHÔNG TRUYỀN SCROLL CONTROLLER NỮA
-                    noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
-                  ),
+                pinned: true,
+              ),
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              BlocProvider.value(
+                value: _postBlocs[0],
+                child: const GridPostPage(
+                  key: PageStorageKey<String>('profilePosts'),
+                  noItemsFoundMessage: 'Chưa có bài viết nào.',
                 ),
-              ],
-            ),
+              ),
+              BlocProvider.value(
+                value: _postBlocs[1],
+                child: const GridPostPage(
+                  key: PageStorageKey<String>('profileSavedPosts'),
+                  noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
+                ),
+              ),
+            ],
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 }
 
