@@ -72,7 +72,14 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
           startAfter: startAfter,
         ),
       ),
-      PostBloc(postRepository.getSavedPosts),
+      PostBloc(
+        // Bọc trong hàm ẩn danh và truyền userId
+        ({required int limit, DateTime? startAfter}) => postRepository.getSavedPosts(
+          userId: widget.userId,
+          limit: limit,
+          startAfter: startAfter,
+        ),
+      ),
     ];
 
     // BƯỚC 3: Fetch cho tab đầu tiên.

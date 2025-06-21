@@ -252,7 +252,7 @@ class PostDetailPage extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        context.push('/post_detail/profile', extra: {'userId': post.authorUserId});
+        context.push('/post_detail/profile', extra: {'userId': author.userId});
       },
       child: Row(
         children: [

@@ -28,6 +28,7 @@ abstract class PostRepository {
   /// Hỗ trợ phân trang bằng [limit] và [startAfter].
   /// [startAfter] là giá trị `savedAt` của bài viết cuối cùng trong trang trước đó.
   Future<Either<PostFailure, List<Post>>> getSavedPosts({
+    String? userId,
     int limit = 10,
     DateTime? startAfter,
   });
