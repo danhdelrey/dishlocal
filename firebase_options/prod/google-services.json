@@ -12,12 +12,7 @@
           "package_name": "com.brighttorchstudio.dishlocal"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "413476207561-46kugp9duef4fsfseha6qull2epoik5o.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyAqYD4F7cb4TIGf1Acn98O6S87w4HxZBmw"
@@ -25,12 +20,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "413476207561-46kugp9duef4fsfseha6qull2epoik5o.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

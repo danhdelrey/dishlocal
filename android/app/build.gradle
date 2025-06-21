@@ -40,6 +40,28 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+    flavorDimensions "app"
+
+    productFlavors {
+        // Định nghĩa hương vị "dev"
+        dev {
+            dimension "app"
+            // GHI ĐÈ applicationId cho hương vị này
+            applicationId "com.brighttorchstudio.dishlocal.dev"
+            // Bạn có thể thêm tên khác cho app dev để dễ nhận biết trên điện thoại
+            resValue "string", "app_name", "DishLocal Dev"
+        }
+
+        // Định nghĩa hương vị "prod"
+        prod {
+            dimension "app"
+            // GHI ĐÈ applicationId cho hương vị này
+            applicationId "com.brighttorchstudio.dishlocal"
+            // Tên ứng dụng chính thức
+            resValue "string", "app_name", "DishLocal"
+        }
+    }
 }
 
 flutter {

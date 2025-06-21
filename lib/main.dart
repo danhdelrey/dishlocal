@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'firebase_options_dev.dart' as dev_options;
+import 'firebase_options_prod.dart' as prod_options;
+
 import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:dishlocal/app/config/app_router.dart';
 import 'package:dishlocal/app/theme/theme.dart';
@@ -21,8 +24,24 @@ Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
+  const String environment = String.fromEnvironment(
+    'ENVIRONMENT',
+    defaultValue: 'dev',
+  );
+
+  // Chọn đúng FirebaseOptions dựa trên môi trường
+  final log = Logger('main()');
+  FirebaseOptions options;
+  if (environment == 'prod') {
+    options = prod_options.DefaultFirebaseOptions.currentPlatform;
+    log.info('🚀 App đang chạy ở môi trường PRODUCTION');
+  } else {
+    options = dev_options.DefaultFirebaseOptions.currentPlatform;
+    log.info('👨‍🍳 App đang chạy ở môi trường DEVELOPMENT');
+  }
+
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: options,
   );
   await dotenv.load(fileName: ".env"); //final String apiKey = dotenv.env['API_KEY_WEATHER'] ?? 'Không tìm thấy key';
   timeago.setLocaleMessages('vi', ShortViMessages());
@@ -43,7 +62,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  
   @override
   void initState() {
     super.initState();
