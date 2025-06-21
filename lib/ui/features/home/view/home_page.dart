@@ -41,45 +41,59 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
   final ScrollController _mainScrollController = ScrollController();
   late final List<PostBloc> _postBlocs;
 
+  // BƯỚC 1: Thêm một Set để theo dõi các tab đã được khởi tạo.
+  final Set<int> _initializedTabs = {};
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // BLoCs GIỜ ĐƯỢC KHỞI TẠO Ở ĐÂY!
-    // Tại thời điểm này, chúng ta đã chắc chắn có kết nối mạng và vị trí.
     final postRepository = getIt<PostRepository>();
+
+    // BƯỚC 2: Khởi tạo các BLoC nhưng KHÔNG fetch dữ liệu ngay.
     _postBlocs = [
-      PostBloc(postRepository.getPosts)..add(const PostEvent.fetchNextPostPageRequested()),
-      PostBloc(postRepository.getFollowingPosts)..add(const PostEvent.fetchNextPostPageRequested()),
+      PostBloc(postRepository.getPosts),
+      PostBloc(postRepository.getFollowingPosts),
     ];
+
+    // BƯỚC 3: Fetch dữ liệu cho tab đầu tiên (tab 0) một cách tường minh.
+    if (_postBlocs.isNotEmpty) {
+      _postBlocs[0].add(const PostEvent.fetchNextPostPageRequested());
+      _initializedTabs.add(0);
+    }
+
+    // BƯỚC 4: Thêm listener để xử lý việc chuyển tab.
+    _tabController.addListener(_handleTabSelection);
+  }
+
+  // BƯỚC 5: Tạo hàm xử lý cho listener.
+  void _handleTabSelection() {
+    final index = _tabController.index;
+    // Nếu tab này chưa được khởi tạo trước đó...
+    if (!_initializedTabs.contains(index)) {
+      // ...thì gửi event fetch và đánh dấu là đã khởi tạo.
+      _postBlocs[index].add(const PostEvent.fetchNextPostPageRequested());
+      _initializedTabs.add(index);
+    }
   }
 
   void _scrollToTopAndRefresh(int index) {
+    // Logic này không thay đổi
     if (_mainScrollController.hasClients) {
-      _mainScrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
-
-    // Lưu ý: PrimaryScrollController.of(context) vẫn hoạt động bình thường
-    // vì nó lấy context từ phương thức build của State này.
     final innerController = PrimaryScrollController.of(context);
     if (innerController.hasClients) {
-      innerController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      innerController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
-
     _postBlocs[index].add(const PostEvent.refreshRequested());
   }
 
   @override
   void dispose() {
+    // BƯỚC 6: Đừng quên gỡ listener.
+    _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
     _mainScrollController.dispose();
     for (var bloc in _postBlocs) {
@@ -90,7 +104,7 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
 
   @override
   Widget build(BuildContext context) {
-    // Giao diện Scaffold và NestedScrollView được đặt ở đây.
+    // Toàn bộ phần UI trong build() không cần thay đổi
     return Scaffold(
       extendBody: true,
       body: NestedScrollView(
@@ -104,16 +118,13 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
                 shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
                 child: const Text(
                   'DishLocal',
-                  style: TextStyle(
-                    fontFamily: 'SFProDisplay',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 24,
-                  ),
+                  style: TextStyle(fontFamily: 'SFProDisplay', fontWeight: FontWeight.w700, fontSize: 24),
                 ),
               ),
               bottom: TabBar(
                 controller: _tabController,
                 onTap: (index) {
+                  // Logic refresh-on-tap giữ nguyên
                   if (!_tabController.indexIsChanging) {
                     _scrollToTopAndRefresh(index);
                   }

@@ -46,22 +46,24 @@ class _ProfilePageContent extends StatefulWidget {
 
 /// BƯỚC 3: State logic được chuyển hết vào đây.
 class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
+   late final TabController _tabController;
   final ScrollController _mainScrollController = ScrollController();
   late final List<PostBloc> _postBlocs;
-
-  // THÊM: Khai báo UserInfoBloc ở đây để có thể truy cập trong cả initState và build
   late final UserInfoBloc _userInfoBloc;
+
+  // BƯỚC 1: Thêm Set để theo dõi.
+  final Set<int> _initializedTabs = {};
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // BLoCs GIỜ ĐƯỢC KHỞI TẠO Ở ĐÂY!
     _userInfoBloc = getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId));
 
     final postRepository = getIt<PostRepository>();
+
+    // BƯỚC 2: Khởi tạo BLoCs nhưng không fetch.
     _postBlocs = [
       PostBloc(
         ({required int limit, DateTime? startAfter}) => postRepository.getPostsByUserId(
@@ -69,29 +71,48 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
           limit: limit,
           startAfter: startAfter,
         ),
-      )..add(const PostEvent.fetchNextPostPageRequested()),
-      PostBloc(postRepository.getSavedPosts)..add(const PostEvent.fetchNextPostPageRequested()),
+      ),
+      PostBloc(postRepository.getSavedPosts),
     ];
+
+    // BƯỚC 3: Fetch cho tab đầu tiên.
+    if (_postBlocs.isNotEmpty) {
+      _postBlocs[0].add(const PostEvent.fetchNextPostPageRequested());
+      _initializedTabs.add(0);
+    }
+
+    // BƯỚC 4: Thêm listener.
+    _tabController.addListener(_handleTabSelection);
   }
 
+  // BƯỚC 5: Tạo hàm xử lý listener.
+  void _handleTabSelection() {
+    final index = _tabController.index;
+    if (!_initializedTabs.contains(index)) {
+      _postBlocs[index].add(const PostEvent.fetchNextPostPageRequested());
+      _initializedTabs.add(index);
+    }
+  }
+
+  // _scrollToTopAndRefresh không thay đổi
   void _scrollToTopAndRefresh(int index) {
     if (_mainScrollController.hasClients) {
       _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
-
     final innerController = PrimaryScrollController.of(context);
     if (innerController.hasClients) {
       innerController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
-
     _postBlocs[index].add(const PostEvent.refreshRequested());
   }
 
   @override
   void dispose() {
+    // BƯỚC 6: Gỡ listener.
+    _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
     _mainScrollController.dispose();
-    _userInfoBloc.close(); // Đừng quên đóng UserInfoBloc
+    _userInfoBloc.close();
     for (var bloc in _postBlocs) {
       bloc.close();
     }
