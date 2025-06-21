@@ -102,7 +102,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                         MenuActionItem(
                                           icon: Icons.edit,
                                           label: 'Chỉnh sửa bài viết',
-                                          onTap: () {},
+                                          onTap: () async {
+                                            final result = await context.push('/edit_post', extra: widget.post);
+                                            if (result == true) {
+                                              //do sth
+                                            }
+                                          },
                                         ),
                                         MenuActionItem(
                                           icon: Icons.delete,

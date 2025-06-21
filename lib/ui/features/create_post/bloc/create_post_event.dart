@@ -10,7 +10,7 @@ sealed class CreatePostEvent extends Equatable {
 final class CreatePostInitialized extends CreatePostEvent {
   final Post? postToUpdate;
 
-  const CreatePostInitialized({required this.postToUpdate});
+  const CreatePostInitialized({ this.postToUpdate});
   @override
   List<Object?> get props => [postToUpdate];
 }

@@ -89,9 +89,13 @@ class _NewPostPageState extends State<NewPostPage> {
     final formatted = DateFormat('H:mm dd/MM/yyyy').format(now);
 
     return BlocProvider(
-      // 2. Cung cấp BLoC bằng service locator (getIt) thay vì khởi tạo trực tiếp.
-      // Constructor của BLoC giờ không cần tham số.
-      create: (context) => getIt<CreatePostBloc>(),
+      create: (context) {
+        if (widget.inEditMode) {
+          return getIt<CreatePostBloc>()..add(CreatePostInitialized(postToUpdate: widget.postToUpdate));
+        } else {
+          return getIt<CreatePostBloc>()..add(const CreatePostInitialized());
+        }
+      },
       child: Builder(builder: (context) {
         return LoaderOverlay(
           overlayColor: appColorScheme(context).scrim.withValues(alpha: 0.5),
@@ -121,7 +125,7 @@ class _NewPostPageState extends State<NewPostPage> {
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
-                    context.pop();
+                    context.pop(true);
                   }
                   if (state.formzSubmissionStatus.isInProgress) {
                     FocusScope.of(context).unfocus();
@@ -178,18 +182,15 @@ class _NewPostPageState extends State<NewPostPage> {
                       actions: [
                         TextButton(
                           onPressed: () {
-                            if (widget.inEditMode) {
-                              context.read<CreatePostBloc>().add(UpdatePostRequested(postToUpdate: widget.postToUpdate!));
-                            } else {
-                              context.read<CreatePostBloc>().add(
-                                    CreatePostRequested(
-                                      address: widget.address,
-                                      imagePath: widget.imagePath,
-                                      createdAt: now,
-                                      blurHash: widget.blurHash,
-                                    ),
-                                  );
-                            }
+                            context.read<CreatePostBloc>().add(
+                                  CreatePostRequested(
+                                    address: widget.address,
+                                    imagePath: widget.imagePath,
+                                    createdAt: now,
+                                    blurHash: widget.blurHash,
+                                    postToUpdate: widget.inEditMode ? widget.postToUpdate : null,
+                                  ),
+                                );
                           },
                           child: Text(widget.inEditMode ? 'Cập nhật' : 'Đăng bài'),
                         ),

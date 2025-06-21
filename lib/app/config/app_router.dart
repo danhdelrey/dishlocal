@@ -71,7 +71,7 @@ class AppRouter {
               final String imagePath = extraMap['imagePath'];
               final Address address = extraMap['address'];
               final String blurHash = extraMap['blurHash'];
-              return NewPostPage(
+              return NewPostPage.create(
                 imagePath: imagePath,
                 address: address,
                 blurHash: blurHash,
@@ -79,6 +79,14 @@ class AppRouter {
             },
           ),
         ],
+      ),
+
+      GoRoute(
+        path: '/edit_post',
+        builder: (context, state) {
+          final postToUpdate = state.extra as Post;
+          return NewPostPage.edit(postToUpdate: postToUpdate);
+        },
       ),
 
       // Sử dụng MainShell thay vì PersistentTabView.router
