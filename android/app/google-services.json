@@ -7,12 +7,72 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:994917582362:android:d583b019d6817e921b73a3",
+        "android_client_info": {
+          "package_name": "com.brighttorchstudio.dishlocal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "994917582362-7q59e4c8e15fjos34mhuc3qcq6fcika1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brighttorchstudio.dishlocal",
+            "certificate_hash": "129f3f0d162088fd6d5ef4cc314f624003eef30e"
+          }
+        },
+        {
+          "client_id": "994917582362-o342i7dbn5svp3d51fg54j658upcrnfg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brighttorchstudio.dishlocal",
+            "certificate_hash": "19dcdc885a33b99329e81effd60abee09cfd30bc"
+          }
+        },
+        {
+          "client_id": "994917582362-of3lhbikvpjtst2jsnqmd98u0q32ehmh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJhHofI60k0FjtcEoYVDcrqo4ERDrgkK0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994917582362-of3lhbikvpjtst2jsnqmd98u0q32ehmh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "994917582362-ujdqlafp24o6ort57e5qjtnrr0eko6hp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dishlocal"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:994917582362:android:1c0767d93f555d7b1b73a3",
         "android_client_info": {
           "package_name": "com.example.dishlocal"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "994917582362-0mvsihm07dnlecg4rj5rf908di9t5bb2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dishlocal",
+            "certificate_hash": "19dcdc885a33b99329e81effd60abee09cfd30bc"
+          }
+        },
         {
           "client_id": "994917582362-9b0c857jqt605jnb5e2prkdf9dkuh756.apps.googleusercontent.com",
           "client_type": 1,
