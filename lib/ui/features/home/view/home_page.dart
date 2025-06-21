@@ -12,8 +12,6 @@ import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_gua
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -35,22 +33,22 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   // Danh sách các BLoC cho từng tab
   late final List<PostBloc> _postBlocs;
-  
+
   int _previousTabIndex = 0;
+  int _currentTabIndex = 0;
+
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    
+
     // Khởi tạo các BLoC
     final postRepository = getIt<PostRepository>();
     _postBlocs = [
       PostBloc(postRepository.getPosts)..add(const PostEvent.fetchNextPostPageRequested()),
       PostBloc(postRepository.getSavedPosts)..add(const PostEvent.fetchNextPostPageRequested()),
     ];
-    
-    _tabController.addListener(_handleTabSelection);
   }
 
   void _handleTabSelection() {
@@ -60,7 +58,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     }
     _previousTabIndex = _tabController.index;
   }
-  
+
   void _scrollToTopAndRefresh(int index) {
     // 1. Cuộn NestedScrollView chính (SliverAppBar) về đầu
     if (_mainScrollController.hasClients) {
@@ -122,12 +120,17 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ),
                 ),
                 bottom: TabBar(
-                  controller: _tabController, // GÁN TAB CONTROLLER
-                  dividerColor: Colors.white.withValues(alpha: 0.1),
-                  indicatorSize: TabBarIndicatorSize.tab,
+                  controller: _tabController,
+                  onTap: (index) {
+                    if (index == _currentTabIndex) {
+                      _scrollToTopAndRefresh(index);
+                    } else {
+                      _currentTabIndex = index;
+                    }
+                  },
                   tabs: const [
                     Tab(text: 'Dành cho bạn'),
-                    Tab(text: 'Đang theo dõi'), // Hoặc 'Đã lưu' như logic
+                    Tab(text: 'Đang theo dõi'),
                   ],
                 ),
                 floating: true,
