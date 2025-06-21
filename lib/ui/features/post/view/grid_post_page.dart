@@ -13,11 +13,10 @@ import 'package:shimmer/shimmer.dart';
 class GridPostPage extends StatelessWidget {
   // Chuyển thành StatelessWidget vì không còn state nội bộ
   final String noItemsFoundMessage;
-  final ScrollController? scrollController;
 
   const GridPostPage({
     super.key,
-    this.noItemsFoundMessage = "Không có bài viết nào.", this.scrollController, // Thêm tham số
+    this.noItemsFoundMessage = "Không có bài viết nào.", // Thêm tham số
   });
 
   @override
@@ -35,7 +34,6 @@ class GridPostPage extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         child: CustomScrollView(
-          controller: scrollController,
           physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
           slivers: [
             PagedSliverMasonryGrid<DateTime?, Post>(

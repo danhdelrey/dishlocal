@@ -27,38 +27,29 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
-  // 2. Khai báo các controller và BLoC, y hệt HomePage
   late final TabController _tabController;
   final ScrollController _mainScrollController = ScrollController();
-  final List<ScrollController> _tabScrollControllers = [
-    ScrollController(), // Controller cho Tab "Bài viết"
-    ScrollController(), // Controller cho Tab "Đã lưu"
-  ];
+
+  // KHÔNG CẦN _tabScrollControllers nữa
+  // final List<ScrollController> _tabScrollControllers = ...
+
   late final List<PostBloc> _postBlocs;
-  int _currentTabIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // Khởi tạo các BLoC cho từng tab
-    // Giả sử Tab 1 là bài viết của user, Tab 2 là bài viết user đã lưu
     final postRepository = getIt<PostRepository>();
     _postBlocs = [
-      // BLoC cho tab "Bài viết của user"
-      // TODO: Cập nhật event và repository method phù hợp (ví dụ: getPostsByUserId)
-      PostBloc(postRepository.getPosts)..add(PostEvent.fetchNextPostPageRequested()),
-
-      // BLoC cho tab "Bài viết đã lưu"
-      // TODO: Cập nhật event và repository method phù hợp
+      PostBloc(postRepository.getPosts)..add(const PostEvent.fetchNextPostPageRequested()),
       PostBloc(postRepository.getSavedPosts)..add(const PostEvent.fetchNextPostPageRequested()),
     ];
   }
 
-  // 3. Sao chép logic xử lý nhấn tab
+  // SỬA LẠI HÀM NÀY
   void _scrollToTopAndRefresh(int index) {
-    // 1. Cuộn NestedScrollView chính (SliverAppBar) về đầu
+    // 1. Cuộn NestedScrollView chính (SliverAppBar) về đầu -> GIỮ NGUYÊN
     if (_mainScrollController.hasClients) {
       _mainScrollController.animateTo(
         0.0,
@@ -66,16 +57,19 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         curve: Curves.easeOut,
       );
     }
-    // 2. Cuộn CustomScrollView của tab tương ứng về đầu
-    if (_tabScrollControllers[index].hasClients) {
-      _tabScrollControllers[index].animateTo(
+
+    // 2. Tìm và cuộn PrimaryScrollController của tab đang hoạt động
+    // Đây là mấu chốt để điều khiển được grid bên trong mà không phá vỡ liên kết
+    final innerController = PrimaryScrollController.of(context);
+    if (innerController.hasClients) {
+      innerController.animateTo(
         0.0,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
     }
-    // 3. Gửi sự kiện refresh đến BLoC tương ứng
-    // TODO: Đảm bảo PostBloc của bạn có event 'refreshRequested'
+
+    // 3. Gửi sự kiện refresh đến BLoC tương ứng -> GIỮ NGUYÊN
     _postBlocs[index].add(const PostEvent.refreshRequested());
   }
 
@@ -83,9 +77,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   void dispose() {
     _tabController.dispose();
     _mainScrollController.dispose();
-    for (var controller in _tabScrollControllers) {
-      controller.dispose();
-    }
+    // KHÔNG CẦN dispose _tabScrollControllers nữa
     for (var bloc in _postBlocs) {
       bloc.close();
     }
@@ -95,24 +87,19 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return ConnectivityAndLocationGuard(builder: (context) {
-      // UserInfoBloc được cung cấp riêng cho phần header
       return BlocProvider(
         create: (context) => getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId)),
         child: Scaffold(
+          // Sử dụng lại cấu trúc ban đầu của bạn, nó đã đúng
           body: NestedScrollView(
-            // Gán controller chính
             controller: _mainScrollController,
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 GlassSliverAppBar(
                   leading: widget.userId != null
                       ? IconButton(
-                          onPressed: () {
-                            context.pop();
-                          },
-                          icon: AppIcons.left.toSvg(
-                            color: appColorScheme(context).onSurface,
-                          ),
+                          onPressed: () => context.pop(),
+                          icon: AppIcons.left.toSvg(color: appColorScheme(context).onSurface),
                         )
                       : null,
                   pinned: true,
@@ -136,19 +123,15 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 SliverPersistentHeader(
                   delegate: _SliverAppBarDelegate(
                     TabBar(
-                      // 4. Gán TabController và thêm logic onTap
                       controller: _tabController,
                       onTap: (index) {
-                        if (index == _currentTabIndex) {
+                        // Logic onTap vẫn đúng. Nó kiểm tra xem người dùng
+                        // có nhấn vào tab đang được chọn hay không.
+                        if (_tabController.indexIsChanging == false) {
                           _scrollToTopAndRefresh(index);
-                        } else {
-                          // Cập nhật lại tab index hiện tại
-                          setState(() {
-                            _currentTabIndex = index;
-                          });
                         }
                       },
-                      dividerColor: Colors.white.withAlpha(25), // withValues is deprecated
+                      dividerColor: Colors.white.withAlpha(25),
                       tabs: const [
                         Tab(icon: Icon(Icons.grid_view_rounded)),
                         Tab(icon: Icon(Icons.bookmark_rounded)),
@@ -159,23 +142,27 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 ),
               ];
             },
+            // Đưa TabBarView trở lại body
             body: TabBarView(
-              // 5. Cập nhật TabBarView
               controller: _tabController,
               children: [
                 // --- TAB 1: Bài viết của user ---
                 BlocProvider.value(
                   value: _postBlocs[0],
-                  child: GridPostPage(
-                    scrollController: _tabScrollControllers[0],
+                  child: const GridPostPage(
+                    // QUAN TRỌNG: Cung cấp một key duy nhất để lưu trạng thái cuộn
+                    key: PageStorageKey<String>('profilePosts'),
+                    // KHÔNG TRUYỀN SCROLL CONTROLLER NỮA
                     noItemsFoundMessage: 'Chưa có bài viết nào.',
                   ),
                 ),
                 // --- TAB 2: Bài viết đã lưu ---
                 BlocProvider.value(
                   value: _postBlocs[1],
-                  child: GridPostPage(
-                    scrollController: _tabScrollControllers[1],
+                  child: const GridPostPage(
+                    // QUAN TRỌNG: Cung cấp một key duy nhất khác
+                    key: PageStorageKey<String>('profileSavedPosts'),
+                    // KHÔNG TRUYỀN SCROLL CONTROLLER NỮA
                     noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
                   ),
                 ),
@@ -188,10 +175,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   }
 }
 
-// Giữ nguyên _SliverAppBarDelegate để không thay đổi giao diện
+// Lớp _SliverAppBarDelegate không đổi
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
-
   final TabBar _tabBar;
 
   @override
@@ -210,7 +196,5 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
-  }
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => false;
 }

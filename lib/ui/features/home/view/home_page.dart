@@ -21,46 +21,38 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-
-  // Controller cho NestedScrollView chính (quản lý việc cuộn của SliverAppBar)
   final ScrollController _mainScrollController = ScrollController();
 
-  // ScrollController cho từng tab riêng lẻ
-  final List<ScrollController> _tabScrollControllers = [
-    ScrollController(), // Controller cho Tab 0
-    ScrollController(), // Controller cho Tab 1
-  ];
+  // 1. LOẠI BỎ danh sách ScrollController cho từng tab
+  // final List<ScrollController> _tabScrollControllers = ...
 
-  // Danh sách các BLoC cho từng tab
   late final List<PostBloc> _postBlocs;
 
-  int _previousTabIndex = 0;
-  int _currentTabIndex = 0;
-
+  // LOẠI BỎ các biến state không cần thiết
+  // int _previousTabIndex = 0;
+  // int _currentTabIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // Khởi tạo các BLoC
     final postRepository = getIt<PostRepository>();
     _postBlocs = [
       PostBloc(postRepository.getPosts)..add(const PostEvent.fetchNextPostPageRequested()),
       PostBloc(postRepository.getSavedPosts)..add(const PostEvent.fetchNextPostPageRequested()),
     ];
+
+    // LOẠI BỎ listener không cần thiết, chúng ta sẽ dùng onTap trực tiếp
+    // _tabController.addListener(_handleTabSelection);
   }
 
-  void _handleTabSelection() {
-    // Nếu người dùng nhấn vào tab đang hoạt động
-    if (!_tabController.indexIsChanging && _tabController.index == _previousTabIndex) {
-      _scrollToTopAndRefresh(_tabController.index);
-    }
-    _previousTabIndex = _tabController.index;
-  }
+  // LOẠI BỎ hàm _handleTabSelection
+  // void _handleTabSelection() { ... }
 
+  // 2. CẬP NHẬT hàm _scrollToTopAndRefresh
   void _scrollToTopAndRefresh(int index) {
-    // 1. Cuộn NestedScrollView chính (SliverAppBar) về đầu
+    // a. Cuộn NestedScrollView chính (SliverAppBar) về đầu -> Giữ nguyên
     if (_mainScrollController.hasClients) {
       _mainScrollController.animateTo(
         0.0,
@@ -68,26 +60,29 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         curve: Curves.easeOut,
       );
     }
-    // 2. Cuộn CustomScrollView của tab tương ứng về đầu
-    if (_tabScrollControllers[index].hasClients) {
-      _tabScrollControllers[index].animateTo(
+
+    // b. Tìm và cuộn PrimaryScrollController của tab đang hoạt động
+    final innerController = PrimaryScrollController.of(context);
+    if (innerController.hasClients) {
+      innerController.animateTo(
         0.0,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
     }
-    // 3. Gửi sự kiện refresh đến BLoC tương ứng
+
+    // c. Gửi sự kiện refresh đến BLoC tương ứng -> Giữ nguyên
     _postBlocs[index].add(const PostEvent.refreshRequested());
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_handleTabSelection);
+    // LOẠI BỎ removeListener
+    // _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
     _mainScrollController.dispose();
-    for (var controller in _tabScrollControllers) {
-      controller.dispose();
-    }
+    // LOẠI BỎ vòng lặp dispose các controller của tab
+    // for (var controller in _tabScrollControllers) { ... }
     for (var bloc in _postBlocs) {
       bloc.close();
     }
@@ -97,12 +92,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return ConnectivityAndLocationGuard(builder: (context) {
-      // Không cần BlocProvider ở đây nữa vì chúng ta dùng BlocProvider.value bên dưới
-      // Không cần DefaultTabController nữa
       return Scaffold(
         extendBody: true,
         body: NestedScrollView(
-          controller: _mainScrollController, // GÁN CONTROLLER CHÍNH
+          controller: _mainScrollController,
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               GlassSliverAppBar(
@@ -121,11 +114,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
                 bottom: TabBar(
                   controller: _tabController,
+                  // 3. CẬP NHẬT logic onTap cho đơn giản và chính xác
                   onTap: (index) {
-                    if (index == _currentTabIndex) {
+                    // Chỉ thực hiện hành động khi người dùng nhấn vào tab đang được chọn
+                    if (!_tabController.indexIsChanging) {
                       _scrollToTopAndRefresh(index);
-                    } else {
-                      _currentTabIndex = index;
                     }
                   },
                   tabs: const [
@@ -140,13 +133,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             ];
           },
           body: TabBarView(
-            controller: _tabController, // GÁN TAB CONTROLLER
+            controller: _tabController,
             children: [
               // --- TAB 1 ---
               BlocProvider.value(
                 value: _postBlocs[0],
-                child: GridPostPage(
-                  scrollController: _tabScrollControllers[0], // Truyền controller của tab
+                child: const GridPostPage(
+                  // 4. THÊM PageStorageKey và LOẠI BỎ scrollController
+                  key: PageStorageKey<String>('homeForYouTab'),
                   noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
                 ),
               ),
@@ -154,9 +148,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               // --- TAB 2 ---
               BlocProvider.value(
                 value: _postBlocs[1],
-                child: GridPostPage(
-                  scrollController: _tabScrollControllers[1], // Truyền controller của tab
-                  noItemsFoundMessage: 'Bạn chưa theo dõi ai.', // Hoặc 'chưa lưu bài viết nào'
+                child: const GridPostPage(
+                  // 4. THÊM PageStorageKey và LOẠI BỎ scrollController
+                  key: PageStorageKey<String>('homeFollowingTab'),
+                  noItemsFoundMessage: 'Bạn chưa theo dõi ai.',
                 ),
               ),
             ],
