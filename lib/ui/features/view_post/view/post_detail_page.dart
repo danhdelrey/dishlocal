@@ -105,7 +105,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                           onTap: () async {
                                             final result = await context.push('/edit_post', extra: widget.post);
                                             if (result == true) {
-                                              //do sth
+                                              if (!context.mounted) {
+                                                return;
+                                              }
+                                              context.read<ViewPostBloc>().add(
+                                                    ViewPostEvent.started(widget.post),
+                                                  );
                                             }
                                           },
                                         ),

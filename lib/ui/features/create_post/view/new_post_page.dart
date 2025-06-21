@@ -117,9 +117,8 @@ class _NewPostPageState extends State<NewPostPage> {
                       ..hideCurrentSnackBar()
                       ..showSnackBar(
                         SnackBar(
-                          backgroundColor: appColorScheme(context).surfaceContainer,
-                          content: const Text(
-                            'Đăng bài thành công!',
+                          content: Text(
+                            widget.inEditMode ? 'Đã chỉnh sửa thành công!' : 'Đăng bài thành công!',
                           ),
                           action: SnackBarAction(label: 'Xem', onPressed: () {}),
                           behavior: SnackBarBehavior.floating,
