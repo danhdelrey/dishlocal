@@ -42,7 +42,15 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
     final postRepository = getIt<PostRepository>();
     _postBlocs = [
-      PostBloc(postRepository.getPosts)..add(const PostEvent.fetchNextPostPageRequested()),
+      PostBloc(
+        // Vì getPostsByUserId cần tham số `userId`, chúng ta phải bọc nó
+        // trong một hàm ẩn danh để khớp với kiểu PostFetcher
+        ({required int limit, DateTime? startAfter}) => postRepository.getPostsByUserId(
+          userId: widget.userId, // Lấy userId từ widget của trang Profile
+          limit: limit,
+          startAfter: startAfter,
+        ),
+      )..add(const PostEvent.fetchNextPostPageRequested()),
       PostBloc(postRepository.getSavedPosts)..add(const PostEvent.fetchNextPostPageRequested()),
     ];
   }

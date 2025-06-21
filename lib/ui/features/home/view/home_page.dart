@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final postRepository = getIt<PostRepository>();
     _postBlocs = [
       PostBloc(postRepository.getPosts)..add(const PostEvent.fetchNextPostPageRequested()),
-      PostBloc(postRepository.getSavedPosts)..add(const PostEvent.fetchNextPostPageRequested()),
+      PostBloc(postRepository.getFollowingPosts)..add(const PostEvent.fetchNextPostPageRequested()),
     ];
 
     // LOẠI BỎ listener không cần thiết, chúng ta sẽ dùng onTap trực tiếp

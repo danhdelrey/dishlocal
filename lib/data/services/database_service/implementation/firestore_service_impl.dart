@@ -409,4 +409,62 @@ class FirestoreServiceImpl implements DatabaseService {
       throw DatabaseServiceUnknownException("Lỗi không xác định khi truy vấn 'whereIn': ${e.toString()}");
     }
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> getDocumentsWhere({
+    required String collection,
+    required String field,
+    required List<dynamic> values,
+    String? orderBy,
+    bool descending = false,
+    int limit = 10,
+    dynamic startAfter,
+  }) async {
+    // Firestore không cho phép truy vấn 'whereIn' với danh sách rỗng.
+    if (values.isEmpty) {
+      _log.info("Danh sách giá trị rỗng cho truy vấn 'whereIn' trên collection '$collection', trả về danh sách trống.");
+      return [];
+    }
+
+    final path = collection;
+    _log.info("Bắt đầu truy vấn 'whereIn' trên trường '$field' trong collection: '$path'");
+    _log.fine("Tham số truy vấn: orderBy='$orderBy', descending=$descending, limit=$limit, startAfter=$startAfter");
+
+    try {
+      // Chia nhỏ danh sách giá trị nếu nó quá lớn (giới hạn của Firestore là 30 cho 'in')
+      List<Map<String, dynamic>> results = [];
+      for (var i = 0; i < values.length; i += 30) {
+        final sublist = values.sublist(i, i + 30 > values.length ? values.length : i + 30);
+
+        Query query = _firestore.collection(collection).where(field, whereIn: sublist);
+
+        if (orderBy != null) {
+          query = query.orderBy(orderBy, descending: descending);
+          if (startAfter != null) {
+            query = query.startAfter([startAfter]);
+          }
+        }
+        query = query.limit(limit);
+
+        final snapshot = await query.get();
+        _log.info("Lấy được ${snapshot.docs.length} tài liệu từ truy vấn con.");
+
+        results.addAll(snapshot.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          data['id'] = doc.id;
+          return data;
+        }));
+      }
+
+      _log.info("Truy vấn 'whereIn' thành công, tổng cộng lấy được ${results.length} tài liệu từ '$collection'.");
+      // Lưu ý: Kết quả từ nhiều truy vấn con có thể cần được sắp xếp lại và giới hạn ở phía client nếu cần.
+      // Tuy nhiên, trong trường hợp phân trang, cách tiếp cận này là đủ tốt.
+      return results;
+    } on FirebaseException catch (e) {
+      throw _handleFirestoreException(e, path, "truy vấn 'whereIn' trên trường '$field'");
+    } catch (e, stackTrace) {
+      _log.severe("Lỗi không xác định khi truy vấn 'whereIn' trên '$path'.", e, stackTrace);
+      throw DatabaseServiceUnknownException("Lỗi không xác định khi truy vấn 'whereIn': ${e.toString()}");
+    }
+  }
 }

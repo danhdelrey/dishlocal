@@ -397,5 +397,104 @@ class RemotePostRepositoryImpl implements PostRepository {
     }
   }
 
+  @override
+  Future<Either<PostFailure, List<Post>>> getFollowingPosts({
+    int limit = 10,
+    DateTime? startAfter,
+  }) async {
+    _log.info('📥 Bắt đầu lấy danh sách bài viết từ những người đang theo dõi...');
+    try {
+      // Bước 1: Lấy ID người dùng hiện tại
+      final currentUserId = _authenticationService.getCurrentUserId();
+      if (currentUserId == null || currentUserId.isEmpty) {
+        _log.warning('⚠️ Người dùng chưa đăng nhập. Không thể lấy bài viết đang theo dõi.');
+        return right([]);
+      }
+
+      // Bước 2: Lấy danh sách ID của những người mà user này đang theo dõi
+      final followingDocs = await _databaseService.getDocuments(
+        collection: 'users/$currentUserId/following',
+        limit: 1000, // Lấy tối đa 1000 người đang theo dõi
+      );
+      final followingUserIds = followingDocs.map((doc) => doc['id'] as String).toList();
+
+      if (followingUserIds.isEmpty) {
+        _log.info('✅ Người dùng chưa theo dõi ai. Trả về danh sách trống.');
+        return right([]);
+      }
+      _log.fine('🔍 Người dùng đang theo dõi ${followingUserIds.length} người.');
+
+      // Bước 3: Sử dụng hàm mới getDocumentsWhere để lấy bài viết có authorId nằm trong danh sách
+      final rawPostsData = await _databaseService.getDocumentsWhere(
+        collection: 'posts',
+        field: 'authorUserId', // Tên trường chứa ID của người đăng bài
+        values: followingUserIds,
+        orderBy: 'createdAt',
+        descending: true,
+        limit: limit,
+        startAfter: startAfter,
+      );
+
+      final posts = rawPostsData.map((json) => Post.fromJson(json)).toList();
+
+      // Bước 4: Làm giàu dữ liệu (tính khoảng cách, trạng thái like/save)
+      final enrichedPosts = await _enrichPostsWithUserData(posts);
+
+      _log.info('🎉 Lấy thành công ${enrichedPosts.length} bài viết từ những người đang theo dõi.');
+      return right(enrichedPosts);
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi khi lấy danh sách bài viết đang theo dõi', e, stackTrace);
+      return const Left(UnknownFailure());
+    }
+  }
+
+  /// IMPLEMENT TÍNH NĂNG MỚI: LẤY BÀI VIẾT CỦA MỘT USER
+  @override
+  Future<Either<PostFailure, List<Post>>> getPostsByUserId({
+    required String? userId,
+    int limit = 10,
+    DateTime? startAfter,
+  }) async {
+    // --- BẮT ĐẦU SỬA ĐỔI ---
+
+    // Bước 1: Xác định ID mục tiêu
+    // Nếu userId được cung cấp, dùng nó. Nếu không, lấy ID của người dùng đang đăng nhập.
+    final String? targetUserId = userId ?? _authenticationService.getCurrentUserId();
+
+    _log.info('📥 Bắt đầu lấy bài viết của người dùng: $targetUserId');
+
+    // Bước 2: Kiểm tra lại ID mục tiêu. Nếu vẫn rỗng (VD: chưa đăng nhập và cũng không có userId) thì dừng lại.
+    if (targetUserId == null || targetUserId.isEmpty) {
+      _log.warning('⚠️ UserID mục tiêu rỗng. Không thể lấy bài viết.');
+      return right([]);
+    }
+
+    try {
+      // Sử dụng `targetUserId` đã được xác định cho truy vấn
+      final rawPostsData = await _databaseService.getDocumentsWhere(
+        collection: 'posts',
+        field: 'authorUserId',
+        values: [targetUserId], // Sử dụng targetUserId ở đây
+        orderBy: 'createdAt',
+        descending: true,
+        limit: limit,
+        startAfter: startAfter,
+      );
+
+      // --- KẾT THÚC SỬA ĐỔI --- (Phần còn lại giữ nguyên)
+
+      final posts = rawPostsData.map((json) => Post.fromJson(json)).toList();
+
+      // Làm giàu dữ liệu
+      final enrichedPosts = await _enrichPostsWithUserData(posts);
+
+      _log.info('🎉 Lấy thành công ${enrichedPosts.length} bài viết của người dùng $targetUserId.');
+      return right(enrichedPosts);
+    } catch (e, stackTrace) {
+      _log.severe('❌ Lỗi khi lấy bài viết của người dùng $targetUserId', e, stackTrace);
+      return const Left(UnknownFailure());
+    }
+  }
+
 
 }

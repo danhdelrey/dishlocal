@@ -121,4 +121,14 @@ abstract class DatabaseService {
     required String collection,
     required List<String> ids,
   });
+
+  Future<List<Map<String, dynamic>>> getDocumentsWhere({
+    required String collection,
+    required String field,
+    required List<dynamic> values, // Danh sách giá trị cho 'whereIn'
+    String? orderBy,
+    bool descending = false,
+    int limit = 10,
+    dynamic startAfter,
+  });
 }
