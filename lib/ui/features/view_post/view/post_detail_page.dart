@@ -108,9 +108,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                               if (!context.mounted) {
                                                 return;
                                               }
-                                              context.read<ViewPostBloc>().add(
-                                                    ViewPostEvent.started(widget.post),
-                                                  );
+                                              context.pop();
                                             }
                                           },
                                         ),
