@@ -99,29 +99,32 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                     BouncingOverlayMenu(
                                       controller: _menuController,
                                       menuItems: [
-                                        MenuActionItem(
-                                          icon: Icons.edit,
-                                          label: 'Chỉnh sửa bài viết',
-                                          onTap: () async {
-                                            final result = await context.push('/edit_post', extra: widget.post);
-                                            if (result == true) {
-                                              if (!context.mounted) {
-                                                return;
+                                        if (state.currentUserId == widget.post.authorUserId)
+                                          MenuActionItem(
+                                            icon: Icons.edit,
+                                            label: 'Chỉnh sửa bài viết',
+                                            onTap: () async {
+                                              final result = await context.push('/edit_post', extra: widget.post);
+                                              if (result == true) {
+                                                if (!context.mounted) {
+                                                  return;
+                                                }
+                                                context.pop();
                                               }
-                                              context.pop();
-                                            }
-                                          },
-                                        ),
-                                        MenuActionItem(
-                                          icon: Icons.delete,
-                                          label: 'Xóa bài viết',
-                                          onTap: () {},
-                                        ),
-                                        MenuActionItem(
-                                          icon: Icons.report,
-                                          label: 'Báo cáo bài viết',
-                                          onTap: () {},
-                                        ),
+                                            },
+                                          ),
+                                        if (state.currentUserId == widget.post.authorUserId)
+                                          MenuActionItem(
+                                            icon: Icons.delete,
+                                            label: 'Xóa bài viết',
+                                            onTap: () {},
+                                          ),
+                                        if (state.currentUserId != widget.post.authorUserId)
+                                          MenuActionItem(
+                                            icon: Icons.report,
+                                            label: 'Báo cáo bài viết',
+                                            onTap: () {},
+                                          ),
                                         MenuActionItem(
                                           icon: Icons.link,
                                           label: 'Sao chép liên kết',
