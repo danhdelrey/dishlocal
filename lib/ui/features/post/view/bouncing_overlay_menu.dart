@@ -103,10 +103,18 @@ class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTi
                 borderRight: true,
                 borderRadius: 20,
                 backgroundColor: Colors.black,
+                backgroundAlpha: 0.5,
                 blur: 50,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: widget.menuItems.map((item) => _buildMenuItem(context, item)).toList(),
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ...widget.menuItems.map((item) => _buildMenuItem(context, item)),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -146,16 +154,22 @@ class _BouncingOverlayMenuState extends State<BouncingOverlayMenu> with SingleTi
               },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(item.icon, size: 16, color: Colors.white),
-              const SizedBox(width: 8),
-              Text(
-                item.label,
-                style: appTextTheme(context).labelLarge?.copyWith(color: Colors.white),
-              ),
-            ],
+          child: SizedBox(
+            width: 150,
+            child: Row(
+              children: [
+                Icon(item.icon, size: 16, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    item.label,
+                    style: appTextTheme(context).labelLarge?.copyWith(color: Colors.white),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
