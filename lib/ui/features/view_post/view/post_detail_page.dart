@@ -70,8 +70,31 @@ class PostDetailPage extends StatelessWidget {
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
-                                actions: const [
-                                  BouncingOverlayMenu(),
+                                actions: [
+                                  BouncingOverlayMenu(
+                                    menuItems: [
+                                      MenuActionItem(
+                                        icon: Icons.edit,
+                                        label: 'Chỉnh sửa bài viết',
+                                        onTap: () {},
+                                      ),
+                                      MenuActionItem(
+                                        icon: Icons.delete,
+                                        label: 'Xóa bài viết',
+                                        onTap: () {},
+                                      ),
+                                      MenuActionItem(
+                                        icon: Icons.report,
+                                        label: 'Báo cáo bài viết',
+                                        onTap: () {},
+                                      ),
+                                      MenuActionItem(
+                                        icon: Icons.link,
+                                        label: 'Sao chép liên kết',
+                                        onTap: () {},
+                                      ),
+                                    ],
+                                  )
                                 ],
                                 title: FadeSlideUp(child: Text(state.post.dishName ?? '')),
                               );
