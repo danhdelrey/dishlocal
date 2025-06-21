@@ -145,26 +145,16 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
           children: [
             BlocProvider.value(
               value: _postBlocs[0],
-              child: const SafeArea(
-                top: false,
-                left: false,
-                right: false,
-                child: GridPostPage(
-                  key: PageStorageKey<String>('homeForYouTab'),
-                  noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
-                ),
+              child: const GridPostPage(
+                key: PageStorageKey<String>('homeForYouTab'),
+                noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
               ),
             ),
             BlocProvider.value(
               value: _postBlocs[1],
-              child: const SafeArea(
-                top: false,
-                left: false,
-                right: false,
-                child: GridPostPage(
-                  key: PageStorageKey<String>('homeFollowingTab'),
-                  noItemsFoundMessage: 'Bạn chưa theo dõi ai.',
-                ),
+              child: const GridPostPage(
+                key: PageStorageKey<String>('homeFollowingTab'),
+                noItemsFoundMessage: 'Bạn chưa theo dõi ai.',
               ),
             ),
           ],

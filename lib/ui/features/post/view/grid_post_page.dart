@@ -71,6 +71,11 @@ class GridPostPage extends StatelessWidget {
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
             ),
+            const SliverToBoxAdapter(
+              child: SizedBox(
+                height: kBottomNavigationBarHeight + 15,
+              ),
+            ),
           ],
         ),
       ),
