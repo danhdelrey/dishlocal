@@ -10,7 +10,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
-
 class FirebaseAuthenticationService implements AuthenticationService {
   final _log = Logger('FirebaseAuthenticationService');
   final GoogleSignIn _googleSignIn;
@@ -23,20 +22,42 @@ class FirebaseAuthenticationService implements AuthenticationService {
     _log.info('Khởi tạo FirebaseAuthenticationService.');
   }
 
+  AppUserCredential? _mapFirebaseUserToAppUserCredential(User? user) {
+    // Nếu user là null, trả về null ngay lập tức.
+    if (user == null) {
+      return null;
+    }
+
+    // Lấy providerId từ danh sách providerData.
+    // Thường thì provider đầu tiên là provider chính mà người dùng đã dùng để đăng nhập.
+    final providerId = user.providerData.isNotEmpty ? user.providerData.first.providerId : 'unknown'; // Hoặc null, tùy theo logic của bạn
+
+    return AppUserCredential(
+      // --- Thông tin cơ bản ---
+      uid: user.uid,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+
+      // --- Trạng thái xác thực ---
+      isEmailVerified: user.emailVerified,
+      isAnonymous: user.isAnonymous,
+
+      // --- Metadata từ User và Provider ---
+      displayName: user.displayName,
+      photoUrl: user.photoURL, // Lưu ý: Firebase dùng photoURL với chữ 'URL' viết hoa
+      providerId: providerId,
+
+      // --- Dấu vết thời gian từ metadata ---
+      creationTime: user.metadata.creationTime,
+      lastSignInTime: user.metadata.lastSignInTime,
+    );
+  }
+
   @override
   Stream<AppUserCredential?> get authStateChanges {
     _log.info('Truy cập vào luồng (stream) theo dõi thay đổi trạng thái xác thực.');
-    
-    return _firebaseAuth.authStateChanges().map(_userToAppUserCredential);
-  }
-  AppUserCredential? _userToAppUserCredential(User? user) {
-    if (user == null) return null;
-    return AppUserCredential(
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoUrl: user.photoURL,
-    );
+
+    return _firebaseAuth.authStateChanges().map(_mapFirebaseUserToAppUserCredential);
   }
 
   @override
@@ -45,7 +66,7 @@ class FirebaseAuthenticationService implements AuthenticationService {
     final user = _firebaseAuth.currentUser;
     if (user != null) {
       _log.info('Tìm thấy người dùng hiện tại. UID: ${user.uid}');
-      return AppUserCredential(uid: user.uid, email: user.email, displayName: user.displayName);
+      return _mapFirebaseUserToAppUserCredential(user);
     } else {
       _log.warning('Không có người dùng nào đang đăng nhập (currentUser là null).');
       return null;
@@ -53,7 +74,7 @@ class FirebaseAuthenticationService implements AuthenticationService {
   }
 
   @override
-  Future<AppUserCredential> signInWithGoogle() async {
+  Future<AppUserCredential?> signInWithGoogle() async {
     _log.info('Bắt đầu quá trình đăng nhập với Google.');
     try {
       _log.fine('Đang yêu cầu đăng nhập tài khoản Google...');
@@ -79,16 +100,7 @@ class FirebaseAuthenticationService implements AuthenticationService {
       final userCredential = await _firebaseAuth.signInWithCredential(credential);
       _log.info('Đăng nhập vào Firebase thành công. UID người dùng: ${userCredential.user?.uid}');
 
-      if (userCredential.user != null) {
-        return AppUserCredential(
-          uid: userCredential.user!.uid,
-          displayName: userCredential.user!.displayName,
-          email: userCredential.user!.email,
-          photoUrl: userCredential.user!.photoURL,
-        );
-      } else {
-        throw AuthenticationServiceUnknownException('unknown');
-      }
+      return _mapFirebaseUserToAppUserCredential(userCredential.user);
     }
     // THAY ĐỔI: Bắt các loại lỗi cụ thể hơn để throw exception tương ứng.
     on FirebaseAuthException catch (e, stackTrace) {

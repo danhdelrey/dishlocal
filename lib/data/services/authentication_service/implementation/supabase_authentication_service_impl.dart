@@ -14,13 +14,34 @@ class SupabaseAuthenticationServiceImpl implements AuthenticationService {
   final _supabase = Supabase.instance.client;
 
   // Helper private để map từ Supabase User sang AppUserCredential
+  /// Helper private để map từ Supabase User sang AppUserCredential đầy đủ.
   AppUserCredential _mapSupabaseUserToAppUserCredential(User user) {
+    // Supabase trả về thời gian dưới dạng chuỗi ISO 8601, cần parse sang DateTime.
+    final creationTime = DateTime.tryParse(user.createdAt);
+    final lastSignInTime = user.lastSignInAt != null ? DateTime.tryParse(user.lastSignInAt!) : null;
+
     return AppUserCredential(
+      // --- Thông tin cơ bản ---
       uid: user.id,
       email: user.email,
-      // Dữ liệu từ Google thường được lưu trong user_metadata
+      phoneNumber: user.phone,
+
+      // --- Trạng thái xác thực ---
+      // Supabase dùng `emailConfirmedAt` để chỉ báo email đã được xác thực.
+      isEmailVerified: user.emailConfirmedAt != null,
+      isAnonymous: user.isAnonymous,
+
+      // --- Metadata ---
+      // Tên và ảnh đại diện từ OAuth thường nằm trong userMetadata.
       displayName: user.userMetadata?['full_name'] ?? user.userMetadata?['name'],
       photoUrl: user.userMetadata?['avatar_url'],
+
+      // `appMetadata` chứa thông tin về nhà cung cấp.
+      providerId: user.appMetadata['provider'],
+
+      // --- Dấu vết thời gian ---
+      creationTime: creationTime,
+      lastSignInTime: lastSignInTime,
     );
   }
 

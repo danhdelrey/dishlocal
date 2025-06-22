@@ -74,6 +74,9 @@ class UserRepositoryImpl implements AppUserRepository {
     try {
       _log.fine('Đang gọi _authService.signInWithGoogle()...');
       final userCredential = await _authService.signInWithGoogle();
+      if (userCredential == null) {
+        return const Left(UnknownFailure());
+      }
 
       final userId = userCredential.uid;
       _log.info('Đăng nhập xác thực thành công. UID: $userId. Đang kiểm tra dữ liệu trong Firestore.');
@@ -229,7 +232,7 @@ class UserRepositoryImpl implements AppUserRepository {
 
       if (userData == null) {
         _log.warning('⚠️ Không tìm thấy người dùng với ID: $userId');
-        return Left(const UnknownFailure(message: 'User not found'));
+        return const Left(UnknownFailure(message: 'User not found'));
       }
 
       final appUser = AppUser.fromJson(userData);
