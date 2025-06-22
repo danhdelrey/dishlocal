@@ -30,18 +30,18 @@ class UserRepositoryImpl implements AppUserRepository {
   @override
   Stream<AppUser?> get user {
     _log.info('Bắt đầu lắng nghe luồng (stream) thay đổi của người dùng.');
-    return _authService.authStateChanges.asyncMap((firebaseUser) async {
-      final userId = firebaseUser?.uid;
+    return _authService.authStateChanges.asyncMap((userCredential) async {
+      final userId = userCredential?.uid;
       _log.fine('Luồng authStateChanges phát ra một sự kiện mới. UID: ${userId ?? "null"}.');
 
-      if (firebaseUser == null) {
-        _log.info('Người dùng đã đăng xuất (firebaseUser là null). Phát ra giá trị null trong luồng người dùng.');
+      if (userCredential == null) {
+        _log.info('Người dùng đã đăng xuất (userCredential là null). Phát ra giá trị null trong luồng người dùng.');
         return null;
       }
 
       try {
         _log.fine('Đang lấy dữ liệu người dùng từ Firestore cho UID: $userId');
-        final userData = await _databaseService.getDocument(collection: _usersCollection, docId: firebaseUser.uid);
+        final userData = await _databaseService.getDocument(collection: _usersCollection, docId: userCredential.uid);
 
         if (userData != null) {
           _log.info('Tìm thấy dữ liệu người dùng trong Firestore cho UID: $userId. Đang tạo đối tượng AppUser từ dữ liệu.');
@@ -49,11 +49,11 @@ class UserRepositoryImpl implements AppUserRepository {
         } else {
           _log.warning('Không tìm thấy dữ liệu trong Firestore cho UID: $userId. Đây có thể là người dùng mới. Đang tạo đối tượng AppUser tạm thời từ dữ liệu xác thực.');
           return AppUser(
-            userId: firebaseUser.uid,
-            originalDisplayname: firebaseUser.displayName!,
-            email: firebaseUser.email!,
-            photoUrl: firebaseUser.photoURL,
-            displayName: firebaseUser.displayName,
+            userId: userCredential.uid,
+            originalDisplayname: userCredential.displayName!,
+            email: userCredential.email!,
+            photoUrl: userCredential.photoUrl,
+            displayName: userCredential.displayName,
             followerCount: 0,
             followingCount: 0,
           );
@@ -74,15 +74,8 @@ class UserRepositoryImpl implements AppUserRepository {
     try {
       _log.fine('Đang gọi _authService.signInWithGoogle()...');
       final userCredential = await _authService.signInWithGoogle();
-      final firebaseUser = userCredential.user;
 
-      if (firebaseUser == null) {
-        // Trường hợp này rất hiếm, nhưng nên xử lý
-        _log.severe('signInWithGoogle từ authService trả về credential nhưng không có user object.');
-        return const Left(UnknownFailure(message: 'Không nhận được thông tin người dùng sau khi đăng nhập.'));
-      }
-
-      final userId = firebaseUser.uid;
+      final userId = userCredential.uid;
       _log.info('Đăng nhập xác thực thành công. UID: $userId. Đang kiểm tra dữ liệu trong Firestore.');
 
       final userData = await _databaseService.getDocument(collection: _usersCollection, docId: userId);
@@ -91,10 +84,10 @@ class UserRepositoryImpl implements AppUserRepository {
         _log.info('Người dùng với UID $userId chưa tồn tại trong Firestore. Đang tiến hành tạo mới.');
         final newUser = AppUser(
           userId: userId,
-          originalDisplayname: firebaseUser.displayName!,
-          email: firebaseUser.email!,
-          photoUrl: firebaseUser.photoURL,
-          displayName: firebaseUser.displayName,
+          originalDisplayname: userCredential.displayName!,
+          email: userCredential.email!,
+          photoUrl: userCredential.photoUrl,
+          displayName: userCredential.displayName,
           followerCount: 0,
           followingCount: 0,
         );

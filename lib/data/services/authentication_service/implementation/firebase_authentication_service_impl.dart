@@ -3,6 +3,7 @@
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
 // THÊM IMPORT MỚI
 import 'package:dishlocal/data/services/authentication_service/exception/authentication_service_exception.dart';
+import 'package:dishlocal/data/services/authentication_service/model/app_user_credential.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart'; // Cần cho PlatformException
 import 'package:google_sign_in/google_sign_in.dart';
@@ -23,25 +24,36 @@ class FirebaseAuthenticationService implements AuthenticationService {
   }
 
   @override
-  Stream<User?> get authStateChanges {
+  Stream<AppUserCredential?> get authStateChanges {
     _log.info('Truy cập vào luồng (stream) theo dõi thay đổi trạng thái xác thực.');
-    return _firebaseAuth.authStateChanges();
+    
+    return _firebaseAuth.authStateChanges().map(_userToAppUserCredential);
+  }
+  AppUserCredential? _userToAppUserCredential(User? user) {
+    if (user == null) return null;
+    return AppUserCredential(
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoUrl: user.photoURL,
+    );
   }
 
   @override
-  User? getCurrentUser() {
+  AppUserCredential? getCurrentUser() {
     _log.info('Bắt đầu lấy thông tin người dùng hiện tại.');
     final user = _firebaseAuth.currentUser;
     if (user != null) {
       _log.info('Tìm thấy người dùng hiện tại. UID: ${user.uid}');
+      return AppUserCredential(uid: user.uid, email: user.email, displayName: user.displayName);
     } else {
       _log.warning('Không có người dùng nào đang đăng nhập (currentUser là null).');
+      return null;
     }
-    return user;
   }
 
   @override
-  Future<UserCredential> signInWithGoogle() async {
+  Future<AppUserCredential> signInWithGoogle() async {
     _log.info('Bắt đầu quá trình đăng nhập với Google.');
     try {
       _log.fine('Đang yêu cầu đăng nhập tài khoản Google...');
@@ -67,7 +79,16 @@ class FirebaseAuthenticationService implements AuthenticationService {
       final userCredential = await _firebaseAuth.signInWithCredential(credential);
       _log.info('Đăng nhập vào Firebase thành công. UID người dùng: ${userCredential.user?.uid}');
 
-      return userCredential;
+      if (userCredential.user != null) {
+        return AppUserCredential(
+          uid: userCredential.user!.uid,
+          displayName: userCredential.user!.displayName,
+          email: userCredential.user!.email,
+          photoUrl: userCredential.user!.photoURL,
+        );
+      } else {
+        throw AuthenticationServiceUnknownException('unknown');
+      }
     }
     // THAY ĐỔI: Bắt các loại lỗi cụ thể hơn để throw exception tương ứng.
     on FirebaseAuthException catch (e, stackTrace) {
