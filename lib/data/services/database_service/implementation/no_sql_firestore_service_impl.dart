@@ -2,25 +2,25 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 // THÊM IMPORT MỚI
-import 'package:dishlocal/data/services/database_service/exception/database_service_exception.dart';
-import 'package:dishlocal/data/services/database_service/interface/database_service.dart';
+import 'package:dishlocal/data/services/database_service/exception/no_sql_database_service_exception.dart';
+import 'package:dishlocal/data/services/database_service/interface/no_sql_database_service.dart';
 import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
 import 'package:dishlocal/data/services/database_service/model/server_timestamp.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
-@LazySingleton(as: DatabaseService)
-class FirestoreServiceImpl implements DatabaseService {
+@LazySingleton(as: NoSqlDatabaseService)
+class NoSqlFirestoreServiceImpl implements NoSqlDatabaseService {
   final _log = Logger('FirestoreServiceImpl');
   final FirebaseFirestore _firestore;
 
-  FirestoreServiceImpl(this._firestore) {
+  NoSqlFirestoreServiceImpl(this._firestore) {
     _log.info('Khởi tạo FirestoreServiceImpl.');
   }
 
   /// PHƯƠNG THỨC HELPER ĐỂ XỬ LÝ LỖI MỘT CÁCH NHẤT QUÁN
   /// Giúp tránh lặp lại code trong các khối catch.
-  DatabaseServiceException _handleFirestoreException(FirebaseException e, String path, String operation) {
+  NoSqlDatabaseServiceException _handleFirestoreException(FirebaseException e, String path, String operation) {
     _log.severe("Đã xảy ra lỗi FirebaseException khi $operation tài liệu '$path'.", e, e.stackTrace);
     switch (e.code) {
       case 'permission-denied':

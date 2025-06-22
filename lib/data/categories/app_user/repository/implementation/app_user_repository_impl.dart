@@ -6,8 +6,8 @@ import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_f
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/services/authentication_service/exception/authentication_service_exception.dart';
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
-import 'package:dishlocal/data/services/database_service/exception/database_service_exception.dart' as db_exception;
-import 'package:dishlocal/data/services/database_service/interface/database_service.dart';
+import 'package:dishlocal/data/services/database_service/exception/no_sql_database_service_exception.dart' as db_exception;
+import 'package:dishlocal/data/services/database_service/interface/no_sql_database_service.dart';
 import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
 import 'package:dishlocal/data/services/database_service/model/server_timestamp.dart';
 import 'package:injectable/injectable.dart';
@@ -17,7 +17,7 @@ import 'package:logging/logging.dart';
 class UserRepositoryImpl implements AppUserRepository {
   final _log = Logger('UserRepositoryImpl');
   final AuthenticationService _authService;
-  final DatabaseService _databaseService;
+  final NoSqlDatabaseService _databaseService;
   static const String _usersCollection = 'users';
 
   UserRepositoryImpl(
@@ -120,7 +120,7 @@ class UserRepositoryImpl implements AppUserRepository {
     } on FirebaseSignInException catch (e) {
       _log.severe('Bắt được FirebaseSignInException: ${e.message}');
       return Left(SignInServiceFailure(e.message));
-    } on db_exception.DatabaseServiceException catch (e) {
+    } on db_exception.NoSqlDatabaseServiceException catch (e) {
       _log.severe('Bắt được DatabaseServiceException trong lúc đăng nhập: ${e.message}');
       return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi thiết lập người dùng: ${e.message}'));
     } catch (e, stackTrace) {
@@ -212,7 +212,7 @@ class UserRepositoryImpl implements AppUserRepository {
     } on db_exception.PermissionDeniedException catch (e) {
       _log.severe("Lỗi quyền khi cập nhật $fieldName: ${e.message}");
       return const Left(UpdatePermissionDeniedFailure());
-    } on db_exception.DatabaseServiceException catch (e) {
+    } on db_exception.NoSqlDatabaseServiceException catch (e) {
       _log.severe("Lỗi database khi cập nhật $fieldName: ${e.message}");
       return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi cập nhật $fieldName: ${e.message}'));
     } catch (e, stackTrace) {
@@ -264,7 +264,7 @@ class UserRepositoryImpl implements AppUserRepository {
       final enrichedUser = appUser.copyWith(isFollowing: isFollowing);
 
       return Right(enrichedUser);
-    } on db_exception.DatabaseServiceException catch (e, stackTrace) {
+    } on db_exception.NoSqlDatabaseServiceException catch (e, stackTrace) {
       _log.severe('❌ Lỗi Database Service khi lấy người dùng $userId.', e, stackTrace);
       return Left(DatabaseFailure(e.message));
     } catch (e, stackTrace) {
@@ -343,7 +343,7 @@ class UserRepositoryImpl implements AppUserRepository {
 
       _log.info('✅ Hoàn thành $action người dùng $targetUserId thành công.');
       return right(null);
-    } on db_exception.DatabaseServiceException catch (e, stackTrace) {
+    } on db_exception.NoSqlDatabaseServiceException catch (e, stackTrace) {
       _log.severe('❌ Lỗi Database Service khi $action người dùng $targetUserId.', e, stackTrace);
       return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi $action: ${e.message}'));
     } catch (e, stackTrace) {

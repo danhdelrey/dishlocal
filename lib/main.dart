@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'firebase_options_dev.dart' as dev_options;
 import 'firebase_options_prod.dart' as prod_options;
@@ -26,10 +27,11 @@ Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   _setupLogging();
-
+  configureDependencies();
+  await dotenv.load(fileName: ".env"); //final String apiKey = dotenv.env['API_KEY_WEATHER'] ?? 'Không tìm thấy key';
+  timeago.setLocaleMessages('vi', ShortViMessages());
   final packageInfo = await PackageInfo.fromPlatform();
   final appId = packageInfo.packageName;
-  
 
   const String environment = String.fromEnvironment(
     'ENVIRONMENT',
@@ -52,11 +54,11 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: options,
   );
-  await dotenv.load(fileName: ".env"); //final String apiKey = dotenv.env['API_KEY_WEATHER'] ?? 'Không tìm thấy key';
-  timeago.setLocaleMessages('vi', ShortViMessages());
 
-  configureDependencies();
-  
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL'] ?? 'Không tìm thấy key',
+    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? 'Không tìm thấy key',
+  );
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());

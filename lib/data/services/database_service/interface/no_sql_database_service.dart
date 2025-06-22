@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
 
-abstract class DatabaseService {
+abstract class NoSqlDatabaseService {
   //----------------------------------------------------//
   //--- THAO TÁC VỚI DOCUMENT GỐC (TOP-LEVEL) ---//
   //----------------------------------------------------//

@@ -16,14 +16,14 @@ import 'package:logging/logging.dart';
 import 'package:dishlocal/data/categories/post/failure/post_failure.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
-import 'package:dishlocal/data/services/database_service/interface/database_service.dart';
+import 'package:dishlocal/data/services/database_service/interface/no_sql_database_service.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 
 @LazySingleton(as: PostRepository)
 class RemotePostRepositoryImpl implements PostRepository {
   final _log = Logger('RemotePostRepositoryImpl');
   final StorageService _storageService;
-  final DatabaseService _databaseService;
+  final NoSqlDatabaseService _databaseService;
   final DistanceService _distanceService;
   final LocationService _locationService;
   final AuthenticationService _authenticationService;
@@ -90,7 +90,6 @@ class RemotePostRepositoryImpl implements PostRepository {
 
     return postsWithFullData;
   }
-
 
   @override
   Future<Either<PostFailure, void>> createPost({
@@ -199,7 +198,6 @@ class RemotePostRepositoryImpl implements PostRepository {
 
       _log.info('✅ Hoàn thành $action bài viết $postId thành công.');
       return right(null);
-
     } catch (e, stackTrace) {
       _log.severe(
         '❌ Lỗi khi $action bài viết $postId cho người dùng $userId.',
@@ -253,7 +251,6 @@ class RemotePostRepositoryImpl implements PostRepository {
 
       _log.info('✅ Hoàn thành $action bài viết $postId thành công.');
       return right(null);
-      
     } catch (e, stackTrace) {
       _log.severe(
         '❌ Lỗi khi $action bài viết $postId cho người dùng $userId.',
@@ -263,7 +260,7 @@ class RemotePostRepositoryImpl implements PostRepository {
       return left(const UnknownFailure());
     }
   }
-  
+
   @override
   Future<Either<PostFailure, Post>> getPostWithId(String postId) async {
     _log.info('📥 Bắt đầu lấy post với postId: $postId');
@@ -497,11 +494,11 @@ class RemotePostRepositoryImpl implements PostRepository {
       // không ghi đè toàn bộ document để tránh xóa nhầm các trường
       // được quản lý bởi server như likeCount, saveCount.
       final Map<String, dynamic> dataToUpdate = {
-        'address' : post.address?.toJson(),
-        'diningLocationName' : post.diningLocationName,
-        'dishName' : post.dishName,
-        'insight' : post.insight,
-        'price' : post.price,
+        'address': post.address?.toJson(),
+        'diningLocationName': post.diningLocationName,
+        'dishName': post.dishName,
+        'insight': post.insight,
+        'price': post.price,
       };
 
       // Nếu người dùng có thể thay đổi cả ảnh, logic sẽ phức tạp hơn một chút
@@ -521,5 +518,4 @@ class RemotePostRepositoryImpl implements PostRepository {
       return left(const UnknownFailure());
     }
   }
-
 }
