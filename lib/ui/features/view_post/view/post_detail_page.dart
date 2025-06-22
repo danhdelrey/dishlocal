@@ -119,17 +119,17 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                             label: 'Xóa bài viết',
                                             onTap: () {},
                                           ),
-                                        if (state.currentUserId != widget.post.authorUserId)
-                                          MenuActionItem(
-                                            icon: Icons.report,
-                                            label: 'Báo cáo bài viết',
-                                            onTap: () {},
-                                          ),
-                                        MenuActionItem(
-                                          icon: Icons.link,
-                                          label: 'Sao chép liên kết',
-                                          onTap: () {},
-                                        ),
+                                        // if (state.currentUserId != widget.post.authorUserId)
+                                        //   MenuActionItem(
+                                        //     icon: Icons.report,
+                                        //     label: 'Báo cáo bài viết',
+                                        //     onTap: () {},
+                                        //   ),
+                                        // MenuActionItem(
+                                        //   icon: Icons.link,
+                                        //   label: 'Sao chép liên kết',
+                                        //   onTap: () {},
+                                        // ),
                                       ],
                                     )
                                   ],

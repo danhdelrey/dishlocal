@@ -120,7 +120,6 @@ class _NewPostPageState extends State<NewPostPage> {
                           content: Text(
                             widget.inEditMode ? 'Đã chỉnh sửa thành công!' : 'Đăng bài thành công!',
                           ),
-                          action: SnackBarAction(label: 'Xem', onPressed: () {}),
                           behavior: SnackBarBehavior.floating,
                         ),
                       );

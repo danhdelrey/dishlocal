@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -66,6 +57,37 @@ class DefaultFirebaseOptions {
     androidClientId: '994917582362-0mvsihm07dnlecg4rj5rf908di9t5bb2.apps.googleusercontent.com',
     iosClientId: '994917582362-ujdqlafp24o6ort57e5qjtnrr0eko6hp.apps.googleusercontent.com',
     iosBundleId: 'com.example.dishlocal',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBDmSODs0VWRkedqXQGNrl2VUnJ8ZLpqzc',
+    appId: '1:994917582362:web:93e4c219766981b21b73a3',
+    messagingSenderId: '994917582362',
+    projectId: 'dishlocal-dev',
+    authDomain: 'dishlocal-dev.firebaseapp.com',
+    storageBucket: 'dishlocal-dev.firebasestorage.app',
+    measurementId: 'G-8G6YKJX1NL',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyAIbp0CVdWSv4iwv8xYesIDiHA4b6-1JHI',
+    appId: '1:994917582362:ios:4aff2a5aa4ccadd11b73a3',
+    messagingSenderId: '994917582362',
+    projectId: 'dishlocal-dev',
+    storageBucket: 'dishlocal-dev.firebasestorage.app',
+    androidClientId: '994917582362-0mvsihm07dnlecg4rj5rf908di9t5bb2.apps.googleusercontent.com',
+    iosClientId: '994917582362-ujdqlafp24o6ort57e5qjtnrr0eko6hp.apps.googleusercontent.com',
+    iosBundleId: 'com.example.dishlocal',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBDmSODs0VWRkedqXQGNrl2VUnJ8ZLpqzc',
+    appId: '1:994917582362:web:3d37fd16a826f5ee1b73a3',
+    messagingSenderId: '994917582362',
+    projectId: 'dishlocal-dev',
+    authDomain: 'dishlocal-dev.firebaseapp.com',
+    storageBucket: 'dishlocal-dev.firebasestorage.app',
+    measurementId: 'G-B27R7BV1J3',
   );
 
 }
