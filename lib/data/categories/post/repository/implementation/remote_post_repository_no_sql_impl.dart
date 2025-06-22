@@ -19,8 +19,7 @@ import 'package:dishlocal/data/categories/post/repository/interface/post_reposit
 import 'package:dishlocal/data/services/database_service/interface/no_sql_database_service.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 
-@LazySingleton(as: PostRepository)
-class RemotePostRepositoryImpl implements PostRepository {
+class RemotePostRepositoryNoSqlImpl implements PostRepository {
   final _log = Logger('RemotePostRepositoryImpl');
   final StorageService _storageService;
   final NoSqlDatabaseService _databaseService;
@@ -28,7 +27,7 @@ class RemotePostRepositoryImpl implements PostRepository {
   final LocationService _locationService;
   final AuthenticationService _authenticationService;
 
-  RemotePostRepositoryImpl(
+  RemotePostRepositoryNoSqlImpl(
     this._storageService,
     this._databaseService,
     this._distanceService,

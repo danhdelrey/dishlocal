@@ -26,8 +26,8 @@ import '../../data/categories/app_user/repository/implementation/app_user_reposi
 import '../../data/categories/app_user/repository/interface/app_user_repository.dart'
     as _i749;
 import '../../data/categories/post/model/post.dart' as _i1028;
-import '../../data/categories/post/repository/implementation/remote_post_repository_impl.dart'
-    as _i95;
+import '../../data/categories/post/repository/implementation/remote_post_repository_sql_impl.dart'
+    as _i181;
 import '../../data/categories/post/repository/interface/post_repository.dart'
     as _i480;
 import '../../data/services/authentication_service/implementation/supabase_authentication_service_impl.dart'
@@ -36,8 +36,12 @@ import '../../data/services/authentication_service/interface/authentication_serv
     as _i780;
 import '../../data/services/database_service/implementation/no_sql_firestore_service_impl.dart'
     as _i959;
+import '../../data/services/database_service/implementation/sql_supabase_service_impl.dart'
+    as _i876;
 import '../../data/services/database_service/interface/no_sql_database_service.dart'
     as _i60;
+import '../../data/services/database_service/interface/sql_database_service.dart'
+    as _i178;
 import '../../data/services/distance_service/implementation/haversine_distance_service.dart'
     as _i1015;
 import '../../data/services/distance_service/interface/distance_service.dart'
@@ -104,10 +108,20 @@ _i174.GetIt init(
       () => _i103.SupabaseAuthenticationServiceImpl());
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());
+  gh.lazySingleton<_i178.SqlDatabaseService>(
+      () => _i876.SqlSupabaseServiceImpl());
   gh.factory<_i889.CameraBloc>(
       () => _i889.CameraBloc(imageProcessor: gh<_i19.ImageProcessor>()));
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
+  gh.lazySingleton<_i480.PostRepository>(
+      () => _i181.RemotePostRepositorySqlImpl(
+            gh<_i1045.StorageService>(),
+            gh<_i178.SqlDatabaseService>(),
+            gh<_i367.DistanceService>(),
+            gh<_i473.LocationService>(),
+            gh<_i780.AuthenticationService>(),
+          ));
   gh.lazySingleton<_i60.NoSqlDatabaseService>(
       () => _i959.NoSqlFirestoreServiceImpl(gh<_i974.FirebaseFirestore>()));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
@@ -118,15 +132,16 @@ _i174.GetIt init(
         gh<_i780.AuthenticationService>(),
         gh<_i60.NoSqlDatabaseService>(),
       ));
+  gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
+        gh<_i480.PostRepository>(),
+        gh<_i749.AppUserRepository>(),
+      ));
+  gh.factory<_i10.ViewPostBloc>(() => _i10.ViewPostBloc(
+        gh<_i480.PostRepository>(),
+        gh<_i749.AppUserRepository>(),
+      ));
   gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
       addressRepository: gh<_i344.AddressRepository>()));
-  gh.lazySingleton<_i480.PostRepository>(() => _i95.RemotePostRepositoryImpl(
-        gh<_i1045.StorageService>(),
-        gh<_i60.NoSqlDatabaseService>(),
-        gh<_i367.DistanceService>(),
-        gh<_i473.LocationService>(),
-        gh<_i780.AuthenticationService>(),
-      ));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((
@@ -150,14 +165,6 @@ _i174.GetIt init(
       ));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
-  gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
-        gh<_i480.PostRepository>(),
-        gh<_i749.AppUserRepository>(),
-      ));
-  gh.factory<_i10.ViewPostBloc>(() => _i10.ViewPostBloc(
-        gh<_i480.PostRepository>(),
-        gh<_i749.AppUserRepository>(),
-      ));
   return getIt;
 }
 
