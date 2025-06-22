@@ -10,7 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
-@LazySingleton(as: AuthenticationService)
+
 class FirebaseAuthenticationService implements AuthenticationService {
   final _log = Logger('FirebaseAuthenticationService');
   final GoogleSignIn _googleSignIn;

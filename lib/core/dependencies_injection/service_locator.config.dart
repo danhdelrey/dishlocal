@@ -30,8 +30,8 @@ import '../../data/categories/post/repository/implementation/remote_post_reposit
     as _i95;
 import '../../data/categories/post/repository/interface/post_repository.dart'
     as _i480;
-import '../../data/services/authentication_service/implementation/firebase_authentication_service_impl.dart'
-    as _i80;
+import '../../data/services/authentication_service/implementation/supabase_authentication_service_impl.dart'
+    as _i103;
 import '../../data/services/authentication_service/interface/authentication_service.dart'
     as _i780;
 import '../../data/services/database_service/implementation/no_sql_firestore_service_impl.dart'
@@ -101,10 +101,7 @@ _i174.GetIt init(
   gh.lazySingleton<_i1045.StorageService>(
       () => _i1046.CloudinaryStorageServiceImpl());
   gh.lazySingleton<_i780.AuthenticationService>(
-      () => _i80.FirebaseAuthenticationService(
-            gh<_i116.GoogleSignIn>(),
-            gh<_i59.FirebaseAuth>(),
-          ));
+      () => _i103.SupabaseAuthenticationServiceImpl());
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());
   gh.factory<_i889.CameraBloc>(

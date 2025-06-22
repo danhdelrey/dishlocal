@@ -16,10 +16,7 @@ class GoogleSignInException extends AuthenticationServiceException {
   GoogleSignInException(super.message);
 }
 
-/// Bị throw khi có lỗi xảy ra từ phía Firebase Authentication khi đang đăng nhập (ví dụ: credential không hợp lệ).
-class FirebaseSignInException extends AuthenticationServiceException {
-  FirebaseSignInException(super.message);
-}
+
 
 /// Bị throw khi có lỗi xảy ra trong quá trình đăng xuất.
 class SignOutException extends AuthenticationServiceException {
@@ -29,4 +26,14 @@ class SignOutException extends AuthenticationServiceException {
 /// Bị throw khi có một lỗi không xác định xảy ra trong dịch vụ xác thực.
 class AuthenticationServiceUnknownException extends AuthenticationServiceException {
   AuthenticationServiceUnknownException(super.message);
+}
+
+///Bị throw khi có lỗi xảy ra từ phía Supabase
+class SupabaseSignInException extends AuthenticationServiceException {
+  SupabaseSignInException(super.message);
+}
+
+/// Bị throw khi có lỗi xảy ra từ phía Firebase Authentication khi đang đăng nhập (ví dụ: credential không hợp lệ).
+class FirebaseSignInException extends AuthenticationServiceException {
+  FirebaseSignInException(super.message);
 }
