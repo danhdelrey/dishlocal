@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:package_info_plus/package_info_plus.dart';
+
 import 'firebase_options_dev.dart' as dev_options;
 import 'firebase_options_prod.dart' as prod_options;
 
@@ -23,6 +25,11 @@ import 'package:timeago/timeago.dart' as timeago_vi;
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  _setupLogging();
+
+  final packageInfo = await PackageInfo.fromPlatform();
+  final appId = packageInfo.packageName;
+  
 
   const String environment = String.fromEnvironment(
     'ENVIRONMENT',
@@ -35,9 +42,11 @@ Future<void> main() async {
   if (environment == 'prod') {
     options = prod_options.DefaultFirebaseOptions.currentPlatform;
     log.info('🚀 App đang chạy ở môi trường PRODUCTION');
+    log.info('🚀 Package name hiện tại là: $appId');
   } else {
     options = dev_options.DefaultFirebaseOptions.currentPlatform;
     log.info('👨‍🍳 App đang chạy ở môi trường DEVELOPMENT');
+    log.info('👨‍🍳 Package name hiện tại là: $appId');
   }
 
   await Firebase.initializeApp(
@@ -47,7 +56,7 @@ Future<void> main() async {
   timeago.setLocaleMessages('vi', ShortViMessages());
 
   configureDependencies();
-  _setupLogging();
+  
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());
