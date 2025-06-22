@@ -33,13 +33,13 @@ abstract class PostRepository {
     DateTime? startAfter,
   });
 
-  /// THÊM MỚI: Lấy bài viết từ những người dùng đang theo dõi
+  /// Lấy bài viết từ những người dùng đang theo dõi
   Future<Either<PostFailure, List<Post>>> getFollowingPosts({
     int limit = 10,
     DateTime? startAfter,
   });
 
-  /// THÊM MỚI: Lấy bài viết của một user cụ thể (dùng cho trang cá nhân)
+  /// Lấy bài viết của một user cụ thể (dùng cho trang cá nhân)
   Future<Either<PostFailure, List<Post>>> getPostsByUserId({
     required String? userId,
     int limit = 10,
