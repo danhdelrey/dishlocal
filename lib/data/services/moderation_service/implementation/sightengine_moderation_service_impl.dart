@@ -15,9 +15,66 @@ class SightengineModerationServiceImpl implements ModerationService {
   static const String _imageApiUrl = 'https://api.sightengine.com/1.0/check.json';
   // API endpoint cho kiểm duyệt văn bản
   static const String _textApiUrl = 'https://api.sightengine.com/1.0/text/check.json';
-  
+
   final String _apiUser = dotenv.env['SIGHTENGINE_API_USER'] ?? 'Không tìm thấy key';
   final String _apiSecret = dotenv.env['SIGHTENGINE_API_SECRET'] ?? 'Không tìm thấy key';
+
+  void _checkImageSafety(Map<String, dynamic> jsonResponse) {
+    // --- ĐỊNH NGHĨA NGƯỠNG KIỂM DUYỆT ---
+    // Đặt ngưỡng thấp (0.5) vì ứng dụng chỉ dành cho đồ ăn, cần độ an toàn cao.
+    const double sensitiveThreshold = 0.5;
+
+    // --- LẤY CÁC ĐỐI TƯỢNG CON ĐỂ DỄ TRUY CẬP ---
+    // Dùng `as` để Dart biết đây là một Map, giúp code an toàn hơn.
+    final nudity = jsonResponse['nudity'] as Map<String, dynamic>;
+    final offensive = jsonResponse['offensive'] as Map<String, dynamic>;
+
+    // --- ĐIỀU KIỆN IF KIỂM TRA TOÀN DIỆN ---
+    if (
+        // 1. KIỂM TRA KHỎA THÂN & GỢI DỤC
+        // Cách hiệu quả nhất: nếu xác suất "an toàn" (none) thấp, tức là có vấn đề.
+        (nudity['none'] as double) < sensitiveThreshold ||
+
+            // Kiểm tra trực tiếp các mục nhạy cảm nhất để chắc chắn
+            (nudity['suggestive'] as double) > sensitiveThreshold ||
+            (nudity['erotica'] as double) > sensitiveThreshold ||
+            (nudity['sexual_activity'] as double) > sensitiveThreshold ||
+
+            // 2. KIỂM TRA VŨ KHÍ
+            (jsonResponse['weapon'] as double) > sensitiveThreshold ||
+
+            // 3. KIỂM TRA CHẤT CẤM (RƯỢU, BIA, MA TÚY)
+            (jsonResponse['alcohol'] as double) > sensitiveThreshold ||
+            (jsonResponse['drugs'] as double) > sensitiveThreshold ||
+
+            // 4. KIỂM TRA NỘI DUNG XÚC PHẠM
+            (offensive['prob'] as double) > sensitiveThreshold ||
+            (offensive['middle_finger'] as double) > sensitiveThreshold) {
+      // Nếu có bất kỳ vi phạm nào, tạo một thông báo lỗi rõ ràng và ném Exception
+      final reason = _buildUnsafeReason(jsonResponse, sensitiveThreshold);
+      throw ImageUnsafeException('Hình ảnh không phù hợp. Lý do: $reason');
+    }
+
+    // Nếu vượt qua tất cả kiểm tra, hình ảnh được coi là an toàn
+    _log.info('👍 Hình ảnh được xác định là an toàn.');
+  }
+
+  /// Hàm trợ giúp để tìm ra lý do cụ thể hình ảnh bị từ chối.
+  /// Giúp cho việc ghi log và gỡ lỗi dễ dàng hơn.
+  String _buildUnsafeReason(Map<String, dynamic> jsonResponse, double threshold) {
+    final nudity = jsonResponse['nudity'] as Map<String, dynamic>;
+    final offensive = jsonResponse['offensive'] as Map<String, dynamic>;
+
+    if ((nudity['sexual_activity'] as double) > threshold) return 'Chứa hoạt động tình dục';
+    if ((nudity['erotica'] as double) > threshold) return 'Chứa nội dung khiêu dâm';
+    if ((nudity['suggestive'] as double) > threshold) return 'Chứa nội dung gợi dục';
+    if ((jsonResponse['weapon'] as double) > threshold) return 'Phát hiện vũ khí';
+    if ((jsonResponse['alcohol'] as double) > threshold) return 'Phát hiện rượu/bia';
+    if ((jsonResponse['drugs'] as double) > threshold) return 'Phát hiện chất cấm';
+    if ((offensive['prob'] as double) > threshold) return 'Chứa nội dung xúc phạm';
+
+    return 'Nội dung không xác định nhưng bị nghi ngờ là không an toàn';
+  }
 
   @override
   Future<void> checkImage(File imageFile) async {
@@ -39,18 +96,8 @@ class SightengineModerationServiceImpl implements ModerationService {
         final jsonResponse = json.decode(response.body);
         _log.fine('✅ $operationName: Nhận được phản hồi: $jsonResponse');
 
-        // KIỂM TRA VI PHẠM VÀ NÉM EXCEPTION
-        if (jsonResponse['nudity']['safe'] < 0.8) {
-          throw ImageUnsafeException('Nội dung nhạy cảm');
-        }
-        if (jsonResponse['weapon'] > 0.5) {
-          throw ImageUnsafeException('Hình ảnh chứa vũ khí');
-        }
-        if (jsonResponse['offensive']['prob'] > 0.5) {
-          throw ImageUnsafeException('Nội dung gây khó chịu');
-        }
+        _checkImageSafety(jsonResponse);
 
-        _log.info('👍 $operationName: Hình ảnh được xác định là an toàn.');
         // Nếu không có lỗi, hàm kết thúc bình thường (trả về Future<void>)
         return;
       } else {
