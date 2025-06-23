@@ -66,6 +66,7 @@ import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
 import '../../ui/features/create_post/bloc/create_post_bloc.dart' as _i622;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
+import '../../ui/features/delete_post/bloc/delete_post_bloc.dart' as _i204;
 import '../../ui/features/follow/bloc/follow_bloc.dart' as _i501;
 import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
     as _i144;
@@ -142,6 +143,8 @@ _i174.GetIt init(
       ));
   gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
       addressRepository: gh<_i344.AddressRepository>()));
+  gh.factory<_i204.DeletePostBloc>(
+      () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((

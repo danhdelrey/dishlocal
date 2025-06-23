@@ -2,11 +2,11 @@ part of 'view_post_bloc.dart';
 
 @freezed
 sealed class ViewPostState with _$ViewPostState {
-  const factory ViewPostState.loading() = Loading;
+  const factory ViewPostState.loading() = ViewPostLoading;
   const factory ViewPostState.success({
     required Post post,
     required String currentUserId,
     required AppUser author,
-  }) = Success;
-  const factory ViewPostState.failure() = Failure;
+  }) = ViewPostSuccess;
+  const factory ViewPostState.failure() = ViewPostFailure;
 }

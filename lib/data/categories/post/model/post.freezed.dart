@@ -27,7 +27,7 @@ mixin _$Post {
   double? get distance;
   int? get price;
   String? get insight;
-  @TimestampConverter()
+  @DateTimeConverter()
   DateTime get createdAt;
   int get likeCount;
   int get saveCount;
@@ -125,7 +125,7 @@ abstract mixin class $PostCopyWith<$Res> {
       double? distance,
       int? price,
       String? insight,
-      @TimestampConverter() DateTime createdAt,
+      @DateTimeConverter() DateTime createdAt,
       int likeCount,
       int saveCount,
       bool isLiked,
@@ -268,7 +268,7 @@ class _Post implements Post {
       this.distance,
       this.price,
       this.insight,
-      @TimestampConverter() required this.createdAt,
+      @DateTimeConverter() required this.createdAt,
       required this.likeCount,
       required this.saveCount,
       required this.isLiked,
@@ -300,7 +300,7 @@ class _Post implements Post {
   @override
   final String? insight;
   @override
-  @TimestampConverter()
+  @DateTimeConverter()
   final DateTime createdAt;
   @override
   final int likeCount;
@@ -408,7 +408,7 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       double? distance,
       int? price,
       String? insight,
-      @TimestampConverter() DateTime createdAt,
+      @DateTimeConverter() DateTime createdAt,
       int likeCount,
       int saveCount,
       bool isLiked,
