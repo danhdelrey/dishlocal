@@ -5,32 +5,25 @@ sealed class StorageServiceException extends ServiceException {
   StorageServiceException(super.message);
 }
 
-/// Bị throw khi người dùng không có quyền thực hiện thao tác (đọc/ghi/xóa)
-/// dựa trên các quy tắc bảo mật (Security Rules) của Firebase Storage.
-/// Tương ứng với mã lỗi 'unauthorized' hoặc 'unauthenticated'.
-class UnauthorizedException extends StorageServiceException {
-  UnauthorizedException(super.message);
+/// Bị throw khi có lỗi trong quá trình tải tệp lên Cloudinary.
+/// Nguyên nhân có thể là do lỗi mạng, tệp không hợp lệ, hoặc lỗi từ phía server Cloudinary.
+class FileUploadException extends StorageServiceException {
+  FileUploadException(String message) : super('Lỗi khi tải tệp lên: $message');
 }
 
-/// Bị throw khi cố gắng thực hiện thao tác trên một đối tượng không tồn tại.
-/// Tương ứng với mã lỗi 'object-not-found'.
-class ObjectNotFoundException extends StorageServiceException {
-  ObjectNotFoundException(super.message);
+/// Bị throw khi có lỗi trong quá trình xóa tệp khỏi Cloudinary.
+/// Nguyên nhân có thể là do tệp không tồn tại, không có quyền xóa, hoặc lỗi server.
+class FileDeleteException extends StorageServiceException {
+  FileDeleteException(String message) : super('Lỗi khi xóa tệp: $message');
 }
 
-/// Bị throw khi người dùng chủ động hủy một thao tác đang diễn ra (ví dụ: hủy tải lên).
-/// Tương ứng với mã lỗi 'canceled'.
-class OperationCancelledException extends StorageServiceException {
-  OperationCancelledException() : super('Thao tác đã bị người dùng hủy.');
+/// Bị throw khi không thể kết nối đến dịch vụ Cloudinary.
+/// Thường là do lỗi mạng hoặc cấu hình sai.
+class StorageConnectionException extends StorageServiceException {
+  StorageConnectionException() : super('Không thể kết nối đến dịch vụ lưu trữ. Vui lòng kiểm tra kết nối mạng.');
 }
 
-/// Bị throw khi việc tải lên thất bại do các nguyên nhân khác (lỗi mạng, hết thời gian chờ...).
-/// Tương ứng với các mã lỗi không xác định trong quá trình tải lên.
-class UploadFailedException extends StorageServiceException {
-  UploadFailedException(super.message);
-}
-
-/// Bị throw khi có một lỗi không xác định xảy ra trong dịch vụ lưu trữ.
+/// Bị throw khi có một lỗi không xác định xảy ra từ phía dịch vụ lưu trữ.
 class UnknownStorageException extends StorageServiceException {
-  UnknownStorageException(super.message);
+  UnknownStorageException(String message) : super('Lỗi lưu trữ không xác định: $message');
 }

@@ -47,4 +47,5 @@ abstract class PostRepository {
   });
 
   Future<Either<PostFailure, void>> updatePost(Post post);
+  Future<Either<PostFailure, void>> deletePost({required String postId});
 }

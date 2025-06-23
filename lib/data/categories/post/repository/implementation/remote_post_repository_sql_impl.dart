@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/services/database_service/entity/post_entity.dart';
 import 'package:dishlocal/data/services/database_service/exception/sql_database_service_exception.dart';
+import 'package:dishlocal/data/services/storage_service/exception/storage_service_exception.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
@@ -86,7 +87,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
 
       _log.fine('🔄 Đang tải ảnh lên Storage...');
       final imageUrl = await _storageService.uploadFile(
-        path: 'posts', 
+        folder: 'posts', 
         file: imageFile,
         publicId: post.postId,
       );
@@ -293,4 +294,49 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       _log.info('✅ Cập nhật bài viết ${post.postId} thành công.');
     });
   }
+  
+  @override
+  Future<Either<PostFailure, void>> deletePost({required String postId}) {
+    // 1. Sử dụng helper _handleErrors để bọc toàn bộ logic.
+    // Nó sẽ bắt các lỗi nghiêm trọng từ _dbService (như PermissionDenied)
+    // và dịch chúng sang Failure tương ứng.
+    return _handleErrors(() async {
+      _log.info('🗑️ Bắt đầu quá trình xóa bài viết ID: $postId');
+
+      // BƯỚC QUAN TRỌNG: Xóa bản ghi trong cơ sở dữ liệu trước tiên.
+      // Nếu bước này thất bại (ví dụ: không có quyền xóa), _handleErrors sẽ bắt
+      // và ném ra Failure, kết thúc quá trình ngay lập tức.
+      _log.fine('🗃️ Đang xóa bản ghi trong bảng "posts"...');
+      await _dbService.delete(
+        tableName: 'posts',
+        id: postId,
+      );
+      _log.fine('✅ Xóa bản ghi trong database thành công. Các likes/saves liên quan đã được tự động xóa (ON DELETE CASCADE).');
+
+      // BƯỚC DỌN DẸP: Xóa ảnh tương ứng khỏi Cloudinary.
+      // Chúng ta bọc thao tác này trong một khối try-catch riêng để nó không
+      // làm hỏng toàn bộ quá trình nếu có lỗi không nghiêm trọng.
+      try {
+        _log.fine('🖼️ Đang xóa ảnh từ Cloudinary...');
+        await _storageService.deleteFile(
+          folder: 'posts', // Thư mục chứa ảnh bài viết trên Cloudinary
+          publicId: postId,
+        );
+        // Log thành công sẽ được ghi bởi chính StorageService.
+      } on StorageServiceException catch (e, st) {
+        // 2. Ghi nhận lỗi nhưng không ném lại.
+        // Quá trình xóa post vẫn được coi là thành công đối với người dùng
+        // vì bản ghi DB đã biến mất. Lỗi này dành cho đội ngũ phát triển để theo dõi.
+        _log.warning(
+          '⚠️ Lỗi không nghiêm trọng khi xóa ảnh cho postId: $postId. '
+          'Bản ghi DB đã được xóa thành công. Lỗi Storage: ${e.message}',
+          e,
+          st,
+        );
+      }
+
+      _log.info('🎉 Hoàn thành xóa bài viết ID: $postId.');
+    });
+  }
+
 }

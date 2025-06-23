@@ -100,7 +100,7 @@ class RemotePostRepositoryNoSqlImpl implements PostRepository {
     try {
       _log.fine('🔄 Đang tải ảnh lên Storage với postId: ${post.postId}...');
       final url = await _storageService.uploadFile(
-        path: 'path',
+        folder: 'path',
         file: imageFile,
         publicId: post.postId,
       );
@@ -516,5 +516,11 @@ class RemotePostRepositoryNoSqlImpl implements PostRepository {
       _log.severe('❌ Lỗi khi cập nhật bài viết ${post.postId}', e, stackTrace);
       return left(const UnknownFailure());
     }
+  }
+  
+  @override
+  Future<Either<PostFailure, void>> deletePost({required String postId}) {
+    // TODO: implement deletePost
+    throw UnimplementedError();
   }
 }
