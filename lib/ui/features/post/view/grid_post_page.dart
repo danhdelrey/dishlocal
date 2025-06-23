@@ -16,7 +16,7 @@ class GridPostPage extends StatelessWidget {
 
   const GridPostPage({
     super.key,
-    this.noItemsFoundMessage = "Không có bài viết nào.", // Thêm tham số
+    this.noItemsFoundMessage = "Không có bài viết nào.",
   });
 
   @override
@@ -45,7 +45,13 @@ class GridPostPage extends StatelessWidget {
               builderDelegate: PagedChildBuilderDelegate<Post>(
                 itemBuilder: (context, post, index) => FadeSlideUp(
                   delay: Duration(milliseconds: index * 100),
-                  child: SmallPost(post: post),
+                  child: SmallPost(
+                    post: post,
+                    onDeletePostPopBack: () async {
+                      postBloc.add(const PostEvent.refreshRequested());
+                      await postBloc.stream.firstWhere((s) => !s.isLoading);
+                    },
+                  ),
                 ),
                 firstPageProgressIndicatorBuilder: (_) => Column(
                   children: List.generate(

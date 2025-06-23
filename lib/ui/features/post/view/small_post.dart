@@ -13,17 +13,23 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class SmallPost extends StatelessWidget {
-  const SmallPost({super.key, required this.post});
+  const SmallPost({super.key, required this.post, required this.onDeletePostPopBack});
 
   final Post post;
+  final VoidCallback onDeletePostPopBack;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
-      onTap: () => context.push('/post_detail', extra: {
-        "post": post,
-      }),
+      onTap: () async {
+        final result = await context.push('/post_detail', extra: {
+          "post": post,
+        });
+        if (result == true) {
+          onDeletePostPopBack();
+        }
+      },
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
