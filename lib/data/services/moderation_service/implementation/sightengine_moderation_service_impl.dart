@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dishlocal/data/services/moderation_service/exception/moderation_service_exception.dart';
 import 'package:dishlocal/data/services/moderation_service/interface/moderation_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -14,9 +15,9 @@ class SightengineModerationServiceImpl implements ModerationService {
   static const String _imageApiUrl = 'https://api.sightengine.com/1.0/check.json';
   // API endpoint cho kiểm duyệt văn bản
   static const String _textApiUrl = 'https://api.sightengine.com/1.0/text/check.json';
-  //TODO LƯU Ý: Lưu các key này vào file .env, không hard-code!
-  final String _apiUser = 'YOUR_SIGHTENGINE_API_USER';
-  final String _apiSecret = 'YOUR_SIGHTENGINE_API_SECRET';
+  
+  final String _apiUser = dotenv.env['SIGHTENGINE_API_USER'] ?? 'Không tìm thấy key';
+  final String _apiSecret = dotenv.env['SIGHTENGINE_API_SECRET'] ?? 'Không tìm thấy key';
 
   @override
   Future<void> checkImage(File imageFile) async {
