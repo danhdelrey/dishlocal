@@ -6,6 +6,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
+import 'package:dishlocal/data/categories/moderation/repository/interface/moderation_repository.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
@@ -34,12 +35,14 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
 
   final PostRepository _postRepository;
   final AppUserRepository _appUserRepository;
+  final ModerationRepository _moderationRepository;
 
   // Loại bỏ các trường state private. Nguồn chân lý duy nhất là `state`.
   // Không còn phụ thuộc vào FocusNode.
   CreatePostBloc(
     this._postRepository,
     this._appUserRepository,
+    this._moderationRepository,
   ) : super(const CreatePostState()) {
     _log.info('Khởi tạo DiningInfoInputBloc.');
 
@@ -140,17 +143,15 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
   }
 
   Future<void> _onCreatePostRequested(CreatePostRequested event, Emitter<CreatePostState> emit) async {
-    _log.info('Nhận được sự kiện DiningInfoInputSubmitted');
+    _log.info('▶️ Nhận được sự kiện CreatePostRequested.');
 
-    // Tạo các phiên bản "dirty" của các input từ trạng thái hiện tại.
-    // Điều này đảm bảo rằng lỗi sẽ được hiển thị ngay cả khi người dùng chưa từng chạm vào trường đó.
+    // === GIAI ĐOẠN 1: VALIDATE FORM ===
     final dishNameInput = DishNameInput.dirty(value: state.dishNameInput.value);
     final diningLocationNameInput = DiningLocationNameInput.dirty(value: state.diningLocationNameInput.value);
     final exactAddressInput = ExactAddressInput.dirty(value: state.exactAddressInput.value);
     final insightInput = InsightInput.dirty(value: state.insightInput.value);
     final moneyInput = MoneyInput.dirty(value: state.moneyInput.value);
 
-    // Xác thực form với các phiên bản "dirty" này.
     final isFormValid = Formz.validate([
       dishNameInput,
       diningLocationNameInput,
@@ -159,90 +160,10 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       moneyInput,
     ]);
 
-    _log.fine('Kết quả xác thực form khi submit: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}.');
+    _log.fine('🔍 Kết quả xác thực form: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}.');
 
-    if (isFormValid) {
-      // Logic khi form hợp lệ giữ nguyên
-      emit(state.copyWith(
-        formzSubmissionStatus: FormzSubmissionStatus.inProgress,
-        // Cập nhật lại state với các input để đảm bảo nhất quán, dù chúng không thay đổi
-        dishNameInput: dishNameInput,
-        diningLocationNameInput: diningLocationNameInput,
-        exactAddressInput: exactAddressInput,
-        insightInput: insightInput,
-        moneyInput: moneyInput,
-      ));
-      _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
-      _log.info('Dữ liệu đã nhập là: ${dishNameInput.value}, ${diningLocationNameInput.value}, ${exactAddressInput.value}, ${insightInput.value}, ${moneyInput.value}');
-
-      if (event.postToUpdate != null) {
-        final updateResult = await _postRepository.updatePost(
-          event.postToUpdate!.copyWith(
-            address: event.postToUpdate!.address?.copyWith(
-              exactAddress: state.exactAddressInput.value,
-            ),
-            diningLocationName: state.diningLocationNameInput.value,
-            dishName: state.dishNameInput.value,
-            insight: state.insightInput.value,
-            price: state.moneyInput.value,
-          ),
-        );
-        updateResult.fold(
-          (failure) {
-            _log.severe('Cập nhật post thất bại', failure);
-            emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
-          },
-          (_) {
-            _log.info('Cập nhật post thành công');
-            emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
-          },
-        );
-
-      } else {
-        final appUserResult = await _appUserRepository.getCurrentUser();
-        if (appUserResult.isLeft()) {
-          _log.severe('Không lấy được user hiện tại.');
-          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
-          return;
-        }
-        final appUser = appUserResult.getOrElse(() => throw Exception("User null")); // safe vì đã kiểm tra
-
-        final postId = uuid.v4();
-        final createNewPostResult = await _postRepository.createPost(
-          post: Post(
-            postId: postId,
-            authorUserId: appUser.userId,
-            authorUsername: appUser.username!,
-            authorAvatarUrl: appUser.photoUrl,
-            dishName: dishNameInput.value,
-            blurHash: event.blurHash,
-            diningLocationName: diningLocationNameInput.value,
-            address: event.address.copyWith(exactAddress: exactAddressInput.value),
-            price: moneyInput.value,
-            insight: insightInput.value,
-            createdAt: event.createdAt,
-            likeCount: 0,
-            saveCount: 0,
-            isLiked: false,
-            isSaved: false,
-          ),
-          imageFile: File(event.imagePath),
-        );
-        createNewPostResult.fold(
-          (failure) {
-            _log.severe('Submit thất bại', failure);
-            emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
-          },
-          (_) {
-            _log.info('Submit dữ liệu thành công');
-            emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
-          },
-        );
-      }
-    } else {
+    if (!isFormValid) {
       _log.warning('Form không hợp lệ. Hiển thị lỗi và yêu cầu focus.');
-
-      // Xác định trường lỗi đầu tiên để focus
       CreatePostInputField? fieldToFocus;
       if (dishNameInput.isNotValid) {
         fieldToFocus = CreatePostInputField.dishName;
@@ -256,10 +177,6 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         fieldToFocus = CreatePostInputField.insightInput;
       }
 
-      // Phát ra trạng thái mới với:
-      // 1. Các input đã được "làm bẩn" (dirty) để UI hiển thị lỗi.
-      // 2. Trạng thái submission là `failure`.
-      // 3. Yêu cầu focus vào trường lỗi đầu tiên.
       emit(state.copyWith(
         dishNameInput: dishNameInput,
         diningLocationNameInput: diningLocationNameInput,
@@ -269,6 +186,97 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
         formzSubmissionStatus: FormzSubmissionStatus.failure,
         fieldToFocus: () => fieldToFocus,
       ));
+      return; // Thoát khỏi hàm ngay lập tức
+    }
+    // === GIAI ĐOẠN 2: KIỂM DUYỆT & SUBMIT ===
+
+    // [TỐI ƯU HÓA] Emit trạng thái inProgress MỘT LẦN DUY NHẤT ở đây.
+    _log.info('⏳ Form hợp lệ. Bắt đầu quá trình kiểm duyệt và submit...');
+    emit(state.copyWith(
+      formzSubmissionStatus: FormzSubmissionStatus.inProgress,
+      errorMessage: null, // Xóa lỗi cũ trước khi bắt đầu
+    ));
+
+    // -- BƯỚC 2.1: KIỂM DUYỆT NỘI DUNG --
+    final textToModerate = '${dishNameInput.value} ${diningLocationNameInput.value} ${insightInput.value}';
+    _log.info('🛡️ Đang gọi _moderationRepository.moderateText()...');
+    final moderationResult = await _moderationRepository.moderateText(textToModerate);
+
+    final moderationFailure = moderationResult.fold((f) => f, (_) => null);
+    if (moderationFailure != null) {
+      _log.warning('❌ Kiểm duyệt văn bản thất bại. Failure: ${moderationFailure.message}');
+      emit(state.copyWith(
+        formzSubmissionStatus: FormzSubmissionStatus.failure,
+        errorMessage: moderationFailure.message,
+      ));
+      return;
+    }
+    _log.info('👍 Văn bản đã qua kiểm duyệt thành công.');
+
+    // === GIAI ĐOẠN 3: SUBMIT DỮ LIỆU (NẾU KIỂM DUYỆT THÀNH CÔNG) ===
+    _log.info('📤 Đang tiến hành tạo hoặc cập nhật bài viết...');
+    if (event.postToUpdate != null) {
+      final updateResult = await _postRepository.updatePost(
+        event.postToUpdate!.copyWith(
+          address: event.postToUpdate!.address?.copyWith(
+            exactAddress: state.exactAddressInput.value,
+          ),
+          diningLocationName: state.diningLocationNameInput.value,
+          dishName: state.dishNameInput.value,
+          insight: state.insightInput.value,
+          price: state.moneyInput.value,
+        ),
+      );
+      updateResult.fold(
+        (failure) {
+          _log.severe('Cập nhật post thất bại', failure);
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+        },
+        (_) {
+          _log.info('Cập nhật post thành công');
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
+        },
+      );
+    } else {
+      final appUserResult = await _appUserRepository.getCurrentUser();
+      if (appUserResult.isLeft()) {
+        _log.severe('Không lấy được user hiện tại.');
+        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+        return;
+      }
+      final appUser = appUserResult.getOrElse(() => throw Exception("User null")); // safe vì đã kiểm tra
+
+      final postId = uuid.v4();
+      final createNewPostResult = await _postRepository.createPost(
+        post: Post(
+          postId: postId,
+          authorUserId: appUser.userId,
+          authorUsername: appUser.username!,
+          authorAvatarUrl: appUser.photoUrl,
+          dishName: dishNameInput.value,
+          blurHash: event.blurHash,
+          diningLocationName: diningLocationNameInput.value,
+          address: event.address.copyWith(exactAddress: exactAddressInput.value),
+          price: moneyInput.value,
+          insight: insightInput.value,
+          createdAt: event.createdAt,
+          likeCount: 0,
+          saveCount: 0,
+          isLiked: false,
+          isSaved: false,
+        ),
+        imageFile: File(event.imagePath),
+      );
+      createNewPostResult.fold(
+        (failure) {
+          _log.severe('Submit thất bại', failure);
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
+        },
+        (_) {
+          _log.info('Submit dữ liệu thành công');
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
+        },
+      );
     }
   }
 

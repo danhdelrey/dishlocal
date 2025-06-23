@@ -19,7 +19,10 @@ class CreatePostState extends Equatable {
     this.moneyInput = const MoneyInput.pure(),
     this.formzSubmissionStatus = FormzSubmissionStatus.initial,
     this.fieldToFocus,
+    this.errorMessage,
   });
+
+  final String? errorMessage;
 
   //1. Khai báo trường của form
   final DishNameInput dishNameInput;
@@ -35,6 +38,7 @@ class CreatePostState extends Equatable {
   final CreatePostInputField? fieldToFocus;
 
   CreatePostState copyWith({
+    String? errorMessage,
     //4. Thêm trường của form vào copyWith
     DishNameInput? dishNameInput,
     DiningLocationNameInput? diningLocationNameInput,
@@ -46,6 +50,7 @@ class CreatePostState extends Equatable {
     ValueGetter<CreatePostInputField?>? fieldToFocus, //ValueGetter<T?> là một cách hay để cho phép copyWith gán giá trị null. Khi gọi state.copyWith(fieldToFocus: () => null), nó sẽ xóa yêu cầu focus.
   }) {
     return CreatePostState(
+      errorMessage: errorMessage ?? this.errorMessage,
       //5. thêm trường của form vào
       dishNameInput: dishNameInput ?? this.dishNameInput,
       diningLocationNameInput: diningLocationNameInput ?? this.diningLocationNameInput,
@@ -69,5 +74,6 @@ class CreatePostState extends Equatable {
         exactAddressInput,
         insightInput,
         moneyInput,
+        errorMessage,
       ];
 }
