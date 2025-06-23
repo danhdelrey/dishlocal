@@ -67,62 +67,62 @@ class NoSqlAppUserRepositoryImpl implements AppUserRepository {
     });
   }
 
-  @override
-  Future<Either<AppUserFailure, void>> signInWithGoogle() async {
-    _log.info('Bắt đầu quy trình đăng nhập với Google ở tầng Repository.');
-    try {
-      _log.fine('Đang gọi _authService.signInWithGoogle()...');
-      final userCredential = await _authService.signInWithGoogle();
-      if (userCredential == null) {
-        return const Left(UnknownFailure());
-      }
+  // @override
+  // Future<Either<AppUserFailure, void>> signInWithGoogle() async {
+  //   _log.info('Bắt đầu quy trình đăng nhập với Google ở tầng Repository.');
+  //   try {
+  //     _log.fine('Đang gọi _authService.signInWithGoogle()...');
+  //     final userCredential = await _authService.signInWithGoogle();
+  //     if (userCredential == null) {
+  //       return const Left(UnknownFailure());
+  //     }
 
-      final userId = userCredential.uid;
-      _log.info('Đăng nhập xác thực thành công. UID: $userId. Đang kiểm tra dữ liệu trong Firestore.');
+  //     final userId = userCredential.uid;
+  //     _log.info('Đăng nhập xác thực thành công. UID: $userId. Đang kiểm tra dữ liệu trong Firestore.');
 
-      final userData = await _databaseService.getDocument(collection: _usersCollection, docId: userId);
+  //     final userData = await _databaseService.getDocument(collection: _usersCollection, docId: userId);
 
-      if (userData == null) {
-        _log.info('Người dùng với UID $userId chưa tồn tại trong Firestore. Đang tiến hành tạo mới.');
-        final newUser = AppUser(
-          userId: userId,
-          originalDisplayname: userCredential.displayName!,
-          email: userCredential.email!,
-          photoUrl: userCredential.photoUrl,
-          displayName: userCredential.displayName,
-          followerCount: 0,
-          followingCount: 0,
-        );
-        _log.fine('Đang lưu thông tin người dùng mới vào Firestore...');
-        await _databaseService.setDocument(
-          collection: _usersCollection,
-          docId: newUser.userId,
-          data: newUser.toJson(),
-        );
-        _log.info('Tạo người dùng mới trong Firestore thành công cho UID: $userId.');
-      } else {
-        _log.info('Người dùng với UID $userId đã tồn tại trong Firestore. Bỏ qua bước tạo mới.');
-      }
-      return const Right(null); // Thành công
-    }
-    // THAY ĐỔI: Bắt các ServiceException và "dịch" sang Failure
-    on GoogleSignInCancelledException catch (e) {
-      _log.warning('Bắt được GoogleSignInCancelledException: ${e.message}');
-      return const Left(SignInCancelledFailure());
-    } on GoogleSignInException catch (e) {
-      _log.severe('Bắt được GoogleSignInException: ${e.message}');
-      return Left(SignInServiceFailure(e.message));
-    } on FirebaseSignInException catch (e) {
-      _log.severe('Bắt được FirebaseSignInException: ${e.message}');
-      return Left(SignInServiceFailure(e.message));
-    } on db_exception.NoSqlDatabaseServiceException catch (e) {
-      _log.severe('Bắt được DatabaseServiceException trong lúc đăng nhập: ${e.message}');
-      return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi thiết lập người dùng: ${e.message}'));
-    } catch (e, stackTrace) {
-      _log.severe('Lỗi không xác định xảy ra trong quá trình signInWithGoogle tại Repository.', e, stackTrace);
-      return const Left(UnknownFailure());
-    }
-  }
+  //     if (userData == null) {
+  //       _log.info('Người dùng với UID $userId chưa tồn tại trong Firestore. Đang tiến hành tạo mới.');
+  //       final newUser = AppUser(
+  //         userId: userId,
+  //         originalDisplayname: userCredential.displayName!,
+  //         email: userCredential.email!,
+  //         photoUrl: userCredential.photoUrl,
+  //         displayName: userCredential.displayName,
+  //         followerCount: 0,
+  //         followingCount: 0,
+  //       );
+  //       _log.fine('Đang lưu thông tin người dùng mới vào Firestore...');
+  //       await _databaseService.setDocument(
+  //         collection: _usersCollection,
+  //         docId: newUser.userId,
+  //         data: newUser.toJson(),
+  //       );
+  //       _log.info('Tạo người dùng mới trong Firestore thành công cho UID: $userId.');
+  //     } else {
+  //       _log.info('Người dùng với UID $userId đã tồn tại trong Firestore. Bỏ qua bước tạo mới.');
+  //     }
+  //     return const Right(null); // Thành công
+  //   }
+  //   // THAY ĐỔI: Bắt các ServiceException và "dịch" sang Failure
+  //   on GoogleSignInCancelledException catch (e) {
+  //     _log.warning('Bắt được GoogleSignInCancelledException: ${e.message}');
+  //     return const Left(SignInCancelledFailure());
+  //   } on GoogleSignInException catch (e) {
+  //     _log.severe('Bắt được GoogleSignInException: ${e.message}');
+  //     return Left(SignInServiceFailure(e.message));
+  //   } on FirebaseSignInException catch (e) {
+  //     _log.severe('Bắt được FirebaseSignInException: ${e.message}');
+  //     return Left(SignInServiceFailure(e.message));
+  //   } on db_exception.NoSqlDatabaseServiceException catch (e) {
+  //     _log.severe('Bắt được DatabaseServiceException trong lúc đăng nhập: ${e.message}');
+  //     return Left(DatabaseFailure('Lỗi cơ sở dữ liệu khi thiết lập người dùng: ${e.message}'));
+  //   } catch (e, stackTrace) {
+  //     _log.severe('Lỗi không xác định xảy ra trong quá trình signInWithGoogle tại Repository.', e, stackTrace);
+  //     return const Left(UnknownFailure());
+  //   }
+  // }
 
   @override
   Future<Either<AppUserFailure, void>> updateUsername(String username) async {
@@ -345,5 +345,17 @@ class NoSqlAppUserRepositoryImpl implements AppUserRepository {
       _log.severe('❌ Lỗi không xác định khi $action người dùng $targetUserId.', e, stackTrace);
       return const Left(UnknownFailure());
     }
+  }
+  
+  @override
+  Future<Either<AppUserFailure, void>> completeProfileSetup({required String userId, required String username, String? displayName, String? photoUrl}) {
+    // TODO: implement completeProfileSetup
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<Either<AppUserFailure, SignInResult>> signInWithGoogle() {
+    // TODO: implement signInWithGoogle
+    throw UnimplementedError();
   }
 }
