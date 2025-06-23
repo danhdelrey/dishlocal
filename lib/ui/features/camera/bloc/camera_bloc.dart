@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/image_processor.dart';
+import 'package:dishlocal/data/categories/moderation/repository/interface/moderation_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -18,8 +21,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   CameraController? _controller;
 
   final ImageProcessor imageProcessor;
+  final ModerationRepository _moderationRepository;
 
-  CameraBloc({required this.imageProcessor}) : super(CameraInitial()) {
+  CameraBloc(this._moderationRepository, this.imageProcessor) : super(const CameraInitial()) {
     on<CameraInitialized>(_onCameraInitialized);
     on<CameraStopped>(_onCameraStopped);
     on<CameraCaptureRequested>(_onCameraCaptureRequested);
@@ -30,7 +34,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     _log.info('Event CameraInitialized: Bắt đầu quá trình khởi tạo camera...');
 
     // Emit trạng thái loading ngay lập tức để UI cập nhật
-    emit(CameraInitializationInProgress());
+    emit(const CameraInitializationInProgress());
 
     try {
       // BƯỚC 1: LẤY DANH SÁCH CAMERA
@@ -76,7 +80,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         e,
         stackTrace, // Ghi lại cả stack trace để debug
       );
-      emit(CameraFailure(failureMessage: 'Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.'));
+      emit(const CameraFailure(failureMessage: 'Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.'));
     }
   }
 
@@ -102,7 +106,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       // 5. (Tùy chọn) Emit một trạng thái để reset UI về ban đầu.
       // Điều này hữu ích nếu người dùng có thể quay lại màn hình camera
       // mà không tạo lại BLoC.
-      emit(CameraInitial());
+      emit(const CameraInitial());
     } catch (e, stackTrace) {
       _log.severe('Lỗi khi dispose CameraController: $e', e, stackTrace);
       // Ngay cả khi có lỗi, chúng ta vẫn nên emit một trạng thái ổn định.
@@ -111,56 +115,81 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     }
   }
 
-  Future<void> _onCameraCaptureRequested(event, emit) async {
-    _log.info('Event CameraCaptureRequested: Bắt đầu quá trình chụp ảnh...');
+  Future<void> _onCameraCaptureRequested(
+    CameraCaptureRequested event,
+    Emitter<CameraState> emit,
+  ) async {
+    _log.info('▶️ Event CameraCaptureRequested: Bắt đầu quá trình chụp ảnh và kiểm duyệt...');
 
-    // 1. Kiểm tra điều kiện tiên quyết
-    // Đảm bảo camera đã sẵn sàng và controller không null.
-    // Dùng `state is! CameraReady` để chắc chắn.
     if (state is! CameraReady || _controller == null || !_controller!.value.isInitialized) {
       _log.warning('Cố gắng chụp ảnh khi camera chưa sẵn sàng.');
-      // Không emit gì cả, vì không nên có hành động nào xảy ra.
       return;
     }
 
+    // Lấy ra controller hiện tại để tránh lỗi race condition
+    final currentController = _controller!;
+
     try {
-      // 2. Emit trạng thái "đang xử lý"
-      // UI sẽ dựa vào đây để hiển thị loading indicator và vô hiệu hóa nút chụp
-      emit(CameraCaptureInProgress());
+      // === GIAI ĐOẠN 1: CHỤP VÀ XỬ LÝ ẢNH ===
+      _log.info('⏳ Phát ra trạng thái: [CaptureInProgress]');
+      emit(const CameraCaptureInProgress());
 
-      // 3. Chụp ảnh
-      _log.fine('Đang gọi _controller.takePicture()...');
-      final XFile imageFile = await _controller!.takePicture();
-      _log.info('Ảnh đã được chụp và lưu tại: ${imageFile.path}');
+      _log.fine('📸 Đang gọi controller.takePicture()...');
+      final xFile = await currentController.takePicture();
+      final imageFile = File(xFile.path); // Chuyển đổi XFile sang File
+      _log.info('✅ Ảnh đã được chụp: ${imageFile.path}');
 
-      // 4. Xử lý ảnh (ví dụ: crop)
-      // Tốt nhất là đưa logic này vào một service riêng, ví dụ ImageProcessingService.
-      _log.fine('Đang xử lý crop ảnh...');
-      // Giả sử ImageProcessor là một class bạn đã có
+      _log.fine('🖼️ Đang xử lý crop ảnh và tạo blurhash...');
       await imageProcessor.cropSquare(imageFile.path, imageFile.path, false);
-      _log.info('Crop ảnh thành công.');
-
-      _log.fine('Đang tạo chuỗi blurhash cho ảnh đã chụp...');
       final hash = imageProcessor.encodeImageToBlurhashString(imageFile.path);
-      _log.fine('Tạo chuỗi blurhash thành công và emit vào state: "$hash"');
+      _log.info('✅ Xử lý ảnh và tạo blurhash thành công: "$hash"');
 
-      // 5. Emit trạng thái thành công với đường dẫn ảnh
-      // UI sẽ lắng nghe state này và thực hiện điều hướng
-      emit(CameraCaptureSuccess(
-        imagePath: imageFile.path,
-        blurHash: hash,
-      ));
+      // === GIAI ĐOẠN 2: KIỂM DUYỆT HÌNH ẢNH ===
+      _log.info('⏳ Phát ra trạng thái: [ModerationInProgress]');
+      emit(const CameraModerationInProgress());
 
-      emit(CameraReady(cameraController: _controller!));
+      _log.info('🛡️ Đang gọi _moderationRepository.moderateImage()...');
+      final moderationResult = await _moderationRepository.moderateImage(imageFile);
+
+      // Xử lý kết quả kiểm duyệt
+      await moderationResult.fold(
+        // Trường hợp thất bại (Left): Ảnh không an toàn hoặc có lỗi
+        (failure) async {
+          _log.warning('❌ Kiểm duyệt thất bại. Failure: ${failure.message}');
+
+          // Phát ra trạng thái ModerationFailure để UI hiển thị thông báo
+          emit(CameraModerationFailure(failureMessage: failure.message));
+
+          // [QUAN TRỌNG] Sau khi báo lỗi, quay lại trạng thái Ready để người dùng thử lại
+          _log.info('🔄 Quay lại trạng thái [Ready] sau khi kiểm duyệt thất bại.');
+          emit(CameraReady(cameraController: currentController));
+        },
+
+        // Trường hợp thành công (Right): Ảnh an toàn
+        (_) async {
+          _log.info('👍 Kiểm duyệt thành công. Ảnh an toàn.');
+
+          // === GIAI ĐOẠN 3: HOÀN TẤT ===
+          _log.info('🎉 Phát ra trạng thái: [CaptureSuccess] với đường dẫn ảnh.');
+          emit(CameraCaptureSuccess(
+            imagePath: imageFile.path,
+            blurHash: hash,
+          ));
+
+          // Sau khi thành công, có thể quay lại trạng thái Ready
+          // để nếu người dùng quay lại màn hình này, họ có thể chụp tiếp.
+          emit(CameraReady(cameraController: currentController));
+        },
+      );
     } on CameraException catch (e, stackTrace) {
-      _log.severe('Lỗi CameraException khi chụp ảnh: ${e.code} - ${e.description}', e, stackTrace);
-      emit(CameraCaptureFailure(failureMessage: 'Không thể chụp ảnh. Lỗi: ${e.description}'));
-      // Sau khi báo lỗi, có thể quay lại trạng thái Ready để người dùng thử lại
-      emit(CameraReady(cameraController: _controller!));
+      _log.severe('❌ Lỗi CameraException khi chụp ảnh: ${e.code} - ${e.description}', e, stackTrace);
+      emit(CameraFailure(failureMessage: 'Không thể chụp ảnh. Lỗi: ${e.description}'));
+      // Sau khi báo lỗi, quay lại trạng thái Ready để người dùng thử lại
+      emit(CameraReady(cameraController: currentController));
     } catch (e, stackTrace) {
-      _log.severe('Lỗi không xác định khi chụp ảnh: $e', e, stackTrace);
-      emit(CameraCaptureFailure(failureMessage: 'Đã xảy ra lỗi không mong muốn khi xử lý ảnh.'));
-      emit(CameraReady(cameraController: _controller!));
+      _log.severe('❌ Lỗi không xác định khi chụp và xử lý ảnh: $e', e, stackTrace);
+      emit(const CameraFailure(failureMessage: 'Đã xảy ra lỗi không mong muốn.'));
+      emit(CameraReady(cameraController: currentController));
     }
   }
 

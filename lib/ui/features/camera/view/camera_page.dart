@@ -14,9 +14,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:logging/logging.dart';
 
 class CameraPage extends StatelessWidget {
-  const CameraPage({super.key});
+  final _log = Logger('CameraPage');
+
+   CameraPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,19 +58,80 @@ class CameraPage extends StatelessWidget {
                 return BlocProvider(
                   create: (context) => getIt<CameraBloc>()..add(CameraInitialized()),
                   child: BlocListener<CameraBloc, CameraState>(
+                    // (Tùy chọn) listenWhen để tối ưu hóa, chỉ lắng nghe các trạng thái cần hành động.
+                    listenWhen: (previous, current) {
+                      // Chỉ build lại khi các trạng thái này được phát ra, tránh các trạng thái trung gian
+                      // không cần hành động UI như CameraReady.
+                      return current is CameraCaptureInProgress || current is CameraModerationInProgress || current is CameraCaptureSuccess || current is CameraModerationFailure || current is CameraCaptureFailure;
+                    },
                     listener: (context, state) {
-                      if (state is CameraCaptureSuccess) {
-                        context.pushReplacement('/camera/new_post', extra: {
-                          'imagePath': state.imagePath,
-                          'address': address,
-                          'blurHash' : state.blurHash,
-                        });
-                      }
-                      if (state is CameraCaptureInProgress) {
-                        context.loaderOverlay.show();
-                      }
-                      if (state is CameraCaptureSuccess) {
-                        context.loaderOverlay.hide();
+                      _log.info('🎧 BlocListener nhận được state mới: ${state.runtimeType}');
+
+                      // Sử dụng switch để xử lý tất cả các trường hợp một cách tường minh
+                      switch (state) {
+                        // --- TRẠNG THÁI LOADING ---
+                        case CameraCaptureInProgress():
+                          _log.info('⏳ Trạng thái: Chụp ảnh. Đang hiển thị loading cơ bản...');
+                          // Giả sử loaderOverlay của bạn có thể hiển thị một widget tùy chỉnh
+                          context.loaderOverlay.show();
+                          break;
+
+                        case CameraModerationInProgress():
+                          _log.info('⏳ Trạng thái: Kiểm duyệt. Đang cập nhật widget loading...');
+                          // Cập nhật overlay để người dùng biết điều gì đang xảy ra
+                          context.loaderOverlay.show(
+                              // Bạn có thể tạo một widget loading tùy chỉnh
+                              // widget: CustomLoadingWidget(message: 'Đang kiểm tra hình ảnh...'),
+                              );
+                          break;
+
+                        // --- TRẠNG THÁI LỖI ---
+                        case CameraModerationFailure(failureMessage: final msg):
+                          _log.warning('💥 Trạng thái: Kiểm duyệt thất bại. Đang ẩn loading và hiển thị SnackBar.');
+                          context.loaderOverlay.hide();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(msg),
+                              backgroundColor: Colors.orange[800],
+                            ),
+                          );
+                          break;
+
+                        case CameraCaptureFailure(failureMessage: final msg):
+                        case CameraFailure(failureMessage: final msg):
+                          _log.severe('💥 Trạng thái: Lỗi Camera. Đang ẩn loading và hiển thị SnackBar.');
+                          context.loaderOverlay.hide();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(msg),
+                              backgroundColor: Colors.red[800],
+                            ),
+                          );
+                          break;
+
+                        // --- TRẠNG THÁI THÀNH CÔNG ---
+                        case CameraCaptureSuccess(imagePath: final path, blurHash: final hash):
+                          _log.info('🎉 Trạng thái: Thành công! Đang ẩn loading và điều hướng...');
+                          // Rất quan trọng: Ẩn loading TRƯỚC KHI điều hướng
+                          context.loaderOverlay.hide();
+
+                          // Thực hiện điều hướng
+                          context.pushReplacement('/camera/new_post', extra: {
+                            'imagePath': path,
+                            'address': address,
+                            'blurHash': hash,
+                          });
+                          break;
+
+                        // --- CÁC TRẠNG THÁI KHÁC ---
+                        // Các trạng thái như CameraInitial, CameraReady không cần hành động ở đây
+                        // nên chúng ta có thể bỏ qua.
+                        case _:
+                          // Đảm bảo loading được ẩn trong các trường hợp không mong muốn
+                          if (context.loaderOverlay.visible) {
+                            context.loaderOverlay.hide();
+                          }
+                          break;
                       }
                     },
                     child: Column(
