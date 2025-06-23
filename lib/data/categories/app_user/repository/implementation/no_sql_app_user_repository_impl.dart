@@ -13,14 +13,13 @@ import 'package:dishlocal/data/services/database_service/model/server_timestamp.
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
-@LazySingleton(as: AppUserRepository)
-class UserRepositoryImpl implements AppUserRepository {
+class NoSqlAppUserRepositoryImpl implements AppUserRepository {
   final _log = Logger('UserRepositoryImpl');
   final AuthenticationService _authService;
   final NoSqlDatabaseService _databaseService;
   static const String _usersCollection = 'users';
 
-  UserRepositoryImpl(
+  NoSqlAppUserRepositoryImpl(
     this._authService,
     this._databaseService,
   ) {

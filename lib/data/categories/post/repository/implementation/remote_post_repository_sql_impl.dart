@@ -87,7 +87,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
 
       _log.fine('🔄 Đang tải ảnh lên Storage...');
       final imageUrl = await _storageService.uploadFile(
-        folder: 'posts', 
+        folder: 'posts',
         file: imageFile,
         publicId: post.postId,
       );
@@ -133,6 +133,11 @@ class RemotePostRepositorySqlImpl implements PostRepository {
 
     final posts = data.map((json) => Post.fromJson(json as Map<String, dynamic>)).toList();
     _log.info('✅ RPC "$rpcName" thành công, nhận được ${posts.length} bài viết.');
+    _log.info(posts.map(
+      (post) {
+        _log.info('${post.toString()} \n\n');
+      },
+    ));
 
     // Chỉ còn làm giàu khoảng cách, các thông tin khác đã có từ RPC
     return await _enrichPostsWithDistance(posts);
@@ -220,7 +225,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
           .single();
 
       final post = Post.fromJson(data);
-      _log.info('✅ Lấy chi tiết bài viết thành công.');
+      _log.info('✅ Lấy chi tiết bài viết thành công.: ${post.toString()}');
 
       final enrichedList = await _enrichPostsWithDistance([post]);
       return enrichedList.first;
@@ -294,7 +299,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       _log.info('✅ Cập nhật bài viết ${post.postId} thành công.');
     });
   }
-  
+
   @override
   Future<Either<PostFailure, void>> deletePost({required String postId}) {
     // 1. Sử dụng helper _handleErrors để bọc toàn bộ logic.
@@ -338,5 +343,4 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       _log.info('🎉 Hoàn thành xóa bài viết ID: $postId.');
     });
   }
-
 }
