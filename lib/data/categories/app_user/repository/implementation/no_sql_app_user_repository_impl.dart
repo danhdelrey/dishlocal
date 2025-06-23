@@ -348,7 +348,7 @@ class NoSqlAppUserRepositoryImpl implements AppUserRepository {
   }
   
   @override
-  Future<Either<AppUserFailure, void>> completeProfileSetup({required String userId, required String username, String? displayName, String? photoUrl}) {
+  Future<Either<AppUserFailure, void>> updateProfileAfterSetup({required String userId, required String username, String? displayName, String? photoUrl}) {
     // TODO: implement completeProfileSetup
     throw UnimplementedError();
   }

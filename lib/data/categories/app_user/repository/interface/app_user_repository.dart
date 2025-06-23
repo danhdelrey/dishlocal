@@ -47,7 +47,7 @@ abstract class AppUserRepository {
   // THAY ĐỔI: Trả về Either<Failure, void>
   Future<Either<AppUserFailure, void>> signOut();
 
-  Future<Either<AppUserFailure, void>> completeProfileSetup({
+  Future<Either<AppUserFailure, void>> updateProfileAfterSetup({
     required String userId,
     required String username,
     String? displayName,

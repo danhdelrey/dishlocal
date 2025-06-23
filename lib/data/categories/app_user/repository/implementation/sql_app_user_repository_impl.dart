@@ -129,24 +129,32 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   }
 
   @override
-// Thay đổi kiểu trả về để khớp với interface
+// Kiểu trả về vẫn giữ nguyên
   Future<Either<AppUserFailure, SignInResult>> signInWithGoogle() {
-    // Vẫn dùng _handleErrors để xử lý các lỗi chung
     return _handleErrors(() async {
-      // 1. Thực hiện xác thực
+      // 1. Thực hiện xác thực như cũ
       final credential = await _authService.signInWithGoogle();
 
-      // 2. Kiểm tra xem hồ sơ đã tồn tại chưa
-      try {
-        final profile = await _dbService.readSingleById(
-          tableName: _profilesTable,
-          id: credential!.uid,
-          fromJson: ProfileEntity.fromJson,
-        );
+      // 2. Luôn lấy hồ sơ người dùng.
+      // Trigger đã đảm bảo nó tồn tại, nếu không có lỗi ở đây nghĩa là CSDL có vấn đề.
+      final profile = await _dbService.readSingleById(
+        tableName: _profilesTable,
+        id: credential!.uid,
+        fromJson: ProfileEntity.fromJson,
+      );
 
-        _log.info('Người dùng ${credential.uid} đã có hồ sơ. Đăng nhập thành công.');
+      _log.info('Kiểm tra hồ sơ cho người dùng ${credential.uid}. Username hiện tại: ${profile.username}');
 
-        // Nếu tìm thấy, tạo AppUser và trả về SignInSuccess
+      // 3. ĐÂY LÀ LOGIC QUAN TRỌNG:
+      // Kiểm tra xem username có phải là username mặc định do trigger tạo ra không.
+      if (profile.username.startsWith('user')) {
+        // Giả định username mặc định bắt đầu bằng 'user'
+        _log.info('Username là mặc định. Yêu cầu thiết lập hồ sơ.');
+        // Trả về thông tin xác thực để màn hình setup có thể sử dụng
+        return SignInRequiresProfileSetup(credential);
+      } else {
+        _log.info('Người dùng đã có hồ sơ hoàn chỉnh. Đăng nhập thành công.');
+        // Nếu username đã được tuỳ chỉnh, tạo AppUser và trả về thành công
         final appUser = AppUser(
           userId: profile.id,
           username: profile.username,
@@ -158,14 +166,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
           followerCount: profile.followerCount,
           followingCount: profile.followingCount,
         );
-
         return SignInSuccess(appUser);
-      } on RecordNotFoundException {
-        // 3. Nếu không tìm thấy hồ sơ
-        _log.info('Người dùng ${credential!.uid} là người dùng mới. Yêu cầu thiết lập hồ sơ.');
-
-        // Chỉ trả về thông tin xác thực, báo hiệu rằng cần tạo hồ sơ
-        return SignInRequiresProfileSetup(credential);
       }
     });
   }
@@ -285,37 +286,36 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   }
 
   @override
-  Future<Either<AppUserFailure, void>> completeProfileSetup({
+// Đổi tên và logic cho đúng với nghiệp vụ: không phải "tạo" mà là "cập nhật"
+  Future<Either<AppUserFailure, void>> updateProfileAfterSetup({
     required String userId,
     required String username,
     String? displayName,
+    // Giả sử bạn cũng cho phép cập nhật ảnh đại diện ở màn hình này
     String? photoUrl,
   }) {
     return _handleErrors(() async {
-      _log.info('Hoàn tất thiết lập hồ sơ cho người dùng $userId với username: $username');
+      _log.info('Cập nhật hồ sơ cho người dùng $userId với username: $username');
 
-      // Tạo đối tượng ProfileEntity hoàn chỉnh
-      final newProfile = ProfileEntity(
-        id: userId,
-        username: username,
-        displayName: displayName,
-        photoUrl: photoUrl,
-        updatedAt: DateTime.now(), // CSDL sẽ tự quản lý
-      );
+      // Tạo một map chứa các dữ liệu cần cập nhật
+      final dataToUpdate = {
+        'username': username,
+        'display_name': displayName,
+        'photo_url': photoUrl,
+      };
 
-      // Dùng service để tạo bản ghi mới
-      await _dbService.create(
+      // Loại bỏ các giá trị null để không ghi đè dữ liệu hiện có bằng null một cách vô tình
+      dataToUpdate.removeWhere((key, value) => value == null);
+
+      // Dùng service để CẬP NHẬT (UPDATE) bản ghi đã tồn tại
+      await _dbService.update(
         tableName: _profilesTable,
-        // Bỏ các trường mà CSDL sẽ tự động điền hoặc có giá trị mặc định
-        data: newProfile.toJson()
-          ..remove('updated_at')
-          ..remove('follower_count')
-          ..remove('following_count')
-          ..remove('bio'),
+        id: userId,
+        data: dataToUpdate,
         fromJson: (json) => null, // Không cần kết quả trả về
       );
 
-      _log.info('Tạo hồ sơ cho $userId thành công.');
+      _log.info('Cập nhật hồ sơ cho $userId thành công.');
     });
   }
 }
