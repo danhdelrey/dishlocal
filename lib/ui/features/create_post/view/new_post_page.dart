@@ -108,32 +108,55 @@ class _NewPostPageState extends State<NewPostPage> {
             listeners: [
               // Listener 1: Lắng nghe trạng thái submit form (giống như code cũ của bạn).
               BlocListener<CreatePostBloc, CreatePostState>(
+                // listenWhen rất tốt, giữ nguyên nó để tối ưu hóa.
                 listenWhen: (previous, current) => previous.formzSubmissionStatus != current.formzSubmissionStatus,
                 listener: (context, state) {
-                  if (state.formzSubmissionStatus.isSuccess) {
+                  _log.info('🎧 BlocListener nhận được trạng thái submit mới: ${state.formzSubmissionStatus}');
+
+                  // --- KHI BẮT ĐẦU SUBMIT ---
+                  if (state.formzSubmissionStatus.isInProgress) {
+                    _log.info('⏳ Trạng thái: InProgress. Đang ẩn bàn phím và hiển thị loading...');
+                    // Ẩn bàn phím để người dùng không thể nhập thêm khi đang xử lý.
+                    FocusScope.of(context).unfocus();
+                    context.loaderOverlay.show();
+                  }
+
+                  // --- KHI SUBMIT THẤT BẠI ---
+                  if (state.formzSubmissionStatus.isFailure) {
+                    _log.warning('💥 Trạng thái: Failure. Đang ẩn loading và hiển thị SnackBar lỗi.');
                     context.loaderOverlay.hide();
-                    // Hiển thị thông báo thành công nếu cần
+
+                    // [TỐI ƯU HÓA] Ưu tiên hiển thị lỗi cụ thể từ BLoC nếu có.
+                    final errorMessage = state.errorMessage ?? 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+
                     ScaffoldMessenger.of(context)
                       ..hideCurrentSnackBar()
                       ..showSnackBar(
                         SnackBar(
-                          content: Text(
-                            widget.inEditMode ? 'Đã chỉnh sửa thành công!' : 'Đăng bài thành công!',
-                          ),
-                          behavior: SnackBarBehavior.floating,
+                          content: Text(errorMessage),
+                          backgroundColor: Colors.red[800], // Thêm màu để nhấn mạnh lỗi
                         ),
                       );
-                    context.pop(true);
                   }
-                  if (state.formzSubmissionStatus.isInProgress) {
-                    FocusScope.of(context).unfocus();
-                    context.loaderOverlay.show();
-                  }
-                  if (state.formzSubmissionStatus.isFailure) {
+
+                  // --- KHI SUBMIT THÀNH CÔNG ---
+                  if (state.formzSubmissionStatus.isSuccess) {
+                    _log.info('🎉 Trạng thái: Success. Đang ẩn loading, hiển thị thông báo và điều hướng.');
                     context.loaderOverlay.hide();
+
+                    final successMessage = widget.inEditMode ? 'Đã chỉnh sửa thành công!' : 'Đăng bài thành công!';
+
                     ScaffoldMessenger.of(context)
                       ..hideCurrentSnackBar()
-                      ..showSnackBar(const SnackBar(content: Text('Đã có lỗi xảy ra. Vui lòng thử lại.')));
+                      ..showSnackBar(
+                        SnackBar(
+                          content: Text(successMessage),
+                          backgroundColor: Colors.green[700], // Thêm màu cho thông báo thành công
+                        ),
+                      );
+
+                    // context.pop(true) để báo cho màn hình trước đó rằng có sự thay đổi.
+                    context.pop(true);
                   }
                 },
               ),

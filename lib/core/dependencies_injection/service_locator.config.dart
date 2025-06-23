@@ -146,6 +146,7 @@ _i174.GetIt init(
   gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
+        gh<_i886.ModerationRepository>(),
       ));
   gh.factory<_i10.ViewPostBloc>(() => _i10.ViewPostBloc(
         gh<_i480.PostRepository>(),
