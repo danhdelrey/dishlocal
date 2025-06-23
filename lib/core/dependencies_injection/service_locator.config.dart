@@ -15,7 +15,6 @@ import 'package:firebase_storage/firebase_storage.dart' as _i457;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
-import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
 import '../../data/categories/address/repository/implementation/address_repository_impl.dart'
     as _i437;
@@ -124,11 +123,6 @@ _i174.GetIt init(
       () => _i28.SightengineModerationServiceImpl());
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
-  gh.lazySingleton<_i749.AppUserRepository>(() => _i90.SqlAppUserRepositoryImpl(
-        gh<_i780.AuthenticationService>(),
-        gh<_i178.SqlDatabaseService>(),
-        gh<_i454.SupabaseClient>(),
-      ));
   gh.lazySingleton<_i480.PostRepository>(
       () => _i181.RemotePostRepositorySqlImpl(
             gh<_i1045.StorageService>(),
@@ -139,22 +133,14 @@ _i174.GetIt init(
           ));
   gh.lazySingleton<_i60.NoSqlDatabaseService>(
       () => _i959.NoSqlFirestoreServiceImpl(gh<_i974.FirebaseFirestore>()));
-  gh.factory<_i658.AccountSetupBloc>(() =>
-      _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
         gh<_i473.LocationService>(),
         gh<_i766.GeocodingService>(),
       ));
-  gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((
-    user,
-    _,
-  ) =>
-      _i501.FollowBloc(
-        gh<_i749.AppUserRepository>(),
-        user,
+  gh.lazySingleton<_i749.AppUserRepository>(() => _i90.SqlAppUserRepositoryImpl(
+        gh<_i780.AuthenticationService>(),
+        gh<_i178.SqlDatabaseService>(),
       ));
-  gh.factory<_i511.AuthBloc>(
-      () => _i511.AuthBloc(userRepository: gh<_i749.AppUserRepository>()));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,
@@ -181,10 +167,22 @@ _i174.GetIt init(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i204.DeletePostBloc>(
       () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
+  gh.factory<_i658.AccountSetupBloc>(() =>
+      _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
+  gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((
+    user,
+    _,
+  ) =>
+      _i501.FollowBloc(
+        gh<_i749.AppUserRepository>(),
+        user,
+      ));
   gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc(
         gh<_i886.ModerationRepository>(),
         gh<_i19.ImageProcessor>(),
       ));
+  gh.factory<_i511.AuthBloc>(
+      () => _i511.AuthBloc(userRepository: gh<_i749.AppUserRepository>()));
   return getIt;
 }
 

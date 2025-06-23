@@ -16,12 +16,12 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   final _log = Logger('UserRepositorySqlImpl');
   final AuthenticationService _authService;
   final SqlDatabaseService _dbService;
-  final SupabaseClient _supabase; // Dùng cho các thao tác không có trong service chung
+  final  _supabase = Supabase.instance.client; // Dùng cho các thao tác không có trong service chung
 
   static const String _profilesTable = 'profiles';
   static const String _followersTable = 'followers';
 
-  SqlAppUserRepositoryImpl(this._authService, this._dbService, this._supabase) {
+  SqlAppUserRepositoryImpl(this._authService, this._dbService) {
     _log.info('✅ Khởi tạo UserRepositorySqlImpl.');
   }
 
