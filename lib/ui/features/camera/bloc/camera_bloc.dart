@@ -156,9 +156,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         // Trường hợp thất bại (Left): Ảnh không an toàn hoặc có lỗi
         (failure) async {
           _log.warning('❌ Kiểm duyệt thất bại. Failure: ${failure.message}');
-          
+
           imageProcessor.deleteTempImageFile(imageFile.path);
-          _log.info('Đã xóa file ảnh vừa chụp ở đường dẫn: ${imageFile.path}');
 
           // Phát ra trạng thái ModerationFailure để UI hiển thị thông báo
           emit(CameraModerationFailure(failureMessage: failure.message));

@@ -113,54 +113,54 @@ class SightengineModerationServiceImpl implements ModerationService {
     }
   }
 
-  @override
-  Future<void> checkText(String text) async {
-    // Nếu text rỗng, coi như hợp lệ, không cần gọi API
-    if (text.trim().isEmpty) {
-      _log.info('📝 Văn bản rỗng, bỏ qua kiểm duyệt.');
-      return;
-    }
+  // @override
+  // Future<void> checkText(String text) async {
+  //   // Nếu text rỗng, coi như hợp lệ, không cần gọi API
+  //   if (text.trim().isEmpty) {
+  //     _log.info('📝 Văn bản rỗng, bỏ qua kiểm duyệt.');
+  //     return;
+  //   }
 
-    const operationName = 'Kiểm duyệt văn bản';
-    _log.info('👁️ $operationName: Bắt đầu...');
+  //   const operationName = 'Kiểm duyệt văn bản';
+  //   _log.info('👁️ $operationName: Bắt đầu...');
 
-    try {
-      _log.fine('📤 $operationName: Đang gửi văn bản đến Sightengine...');
-      final response = await http.post(
-        Uri.parse(_textApiUrl),
-        body: {
-          'text': text,
-          'mode': 'standard', // Chế độ kiểm duyệt chuẩn
-          'lang': 'vi', // Chỉ định ngôn ngữ là tiếng Việt để tăng độ chính xác
-          'api_user': _apiUser,
-          'api_secret': _apiSecret,
-        },
-      );
+  //   try {
+  //     _log.fine('📤 $operationName: Đang gửi văn bản đến Sightengine...');
+  //     final response = await http.post(
+  //       Uri.parse(_textApiUrl),
+  //       body: {
+  //         'text': text,
+  //         'mode': 'standard', // Chế độ kiểm duyệt chuẩn
+  //         'lang': 'vi', // Chỉ định ngôn ngữ là tiếng Việt để tăng độ chính xác
+  //         'api_user': _apiUser,
+  //         'api_secret': _apiSecret,
+  //       },
+  //     );
 
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        _log.fine('✅ $operationName: Nhận được phản hồi: $jsonResponse');
+  //     if (response.statusCode == 200) {
+  //       final jsonResponse = json.decode(response.body);
+  //       _log.fine('✅ $operationName: Nhận được phản hồi: $jsonResponse');
 
-        // KIỂM TRA VI PHẠM VÀ NÉM EXCEPTION
-        // Kiểm tra xem có bất kỳ sự vi phạm nào được phát hiện không
-        if (jsonResponse['profanity']['matches'] != null && jsonResponse['profanity']['matches'].isNotEmpty) {
-          final firstMatch = jsonResponse['profanity']['matches'][0]['match'];
-          throw TextUnsafeException('Chứa từ ngữ không phù hợp ("$firstMatch...")');
-        }
+  //       // KIỂM TRA VI PHẠM VÀ NÉM EXCEPTION
+  //       // Kiểm tra xem có bất kỳ sự vi phạm nào được phát hiện không
+  //       if (jsonResponse['profanity']['matches'] != null && jsonResponse['profanity']['matches'].isNotEmpty) {
+  //         final firstMatch = jsonResponse['profanity']['matches'][0]['match'];
+  //         throw TextUnsafeException('Chứa từ ngữ không phù hợp ("$firstMatch...")');
+  //       }
 
-        // Bạn có thể thêm các kiểm tra khác ở đây, ví dụ: link, personal info...
+  //       // Bạn có thể thêm các kiểm tra khác ở đây, ví dụ: link, personal info...
 
-        _log.info('👍 $operationName: Văn bản được xác định là an toàn.');
-        return;
-      } else {
-        _log.severe('❌ $operationName: Lỗi từ API. Status: ${response.statusCode}, Body: ${response.body}');
-        throw ModerationRequestException('Lỗi server (${response.statusCode})');
-      }
-    } on TextUnsafeException {
-      rethrow;
-    } catch (e, st) {
-      _log.severe('❌ $operationName: Lỗi không xác định khi gọi API.', e, st);
-      throw ModerationRequestException(e.toString());
-    }
-  }
+  //       _log.info('👍 $operationName: Văn bản được xác định là an toàn.');
+  //       return;
+  //     } else {
+  //       _log.severe('❌ $operationName: Lỗi từ API. Status: ${response.statusCode}, Body: ${response.body}');
+  //       throw ModerationRequestException('Lỗi server (${response.statusCode})');
+  //     }
+  //   } on TextUnsafeException {
+  //     rethrow;
+  //   } catch (e, st) {
+  //     _log.severe('❌ $operationName: Lỗi không xác định khi gọi API.', e, st);
+  //     throw ModerationRequestException(e.toString());
+  //   }
+  // }
 }

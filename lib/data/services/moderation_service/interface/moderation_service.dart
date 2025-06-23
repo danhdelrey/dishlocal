@@ -15,5 +15,5 @@ abstract class ModerationService {
   /// - Hoàn thành bình thường nếu văn bản an toàn.
   /// - Ném ra [TextUnsafeException] nếu văn bản vi phạm chính sách.
   /// - Ném ra [ModerationRequestException] nếu có lỗi khi gọi API.
-  Future<void> checkText(String text);
+  //Future<void> checkText(String text); ẩn vì hiện tại chưa tìm thấy cái nào support tiếng Việt
 }

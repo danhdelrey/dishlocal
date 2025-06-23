@@ -15,5 +15,5 @@ abstract class ModerationRepository {
   ///
   /// - Trả về `Right(null)` nếu văn bản an toàn.
   /// - Trả về `Left(ModerationFailure)` nếu văn bản không an toàn hoặc có lỗi.
-  Future<Either<ModerationFailure, void>> moderateText(String text);
+  //Future<Either<ModerationFailure, void>> moderateText(String text);
 }
