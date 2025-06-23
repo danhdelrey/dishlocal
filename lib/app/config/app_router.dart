@@ -157,7 +157,7 @@ class AppRouter {
     }
 
     // 🧑 3. Người dùng cần setup username
-    if (authState is NeedsUsername) {
+    if (authState is NeedsProfileSetup) {
       if (!isSetup) {
         _log.info('🛠️ Người dùng cần cài đặt username. Chuyển hướng đến /account_setup.');
         return '/account_setup';

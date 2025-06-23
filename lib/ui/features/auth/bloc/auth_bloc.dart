@@ -19,7 +19,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required AppUserRepository userRepository}) // Sửa lại constructor để nhận dependency
       : _userRepository = userRepository,
-        super(AuthLoading()) {
+        super(Unauthenticated()) {
     _log.info('Khởi tạo AuthBloc.');
 
     _log.fine('Bắt đầu lắng nghe luồng (stream) người dùng từ AppUserRepository.');
@@ -60,36 +60,58 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final user = event.user;
     if (user == null) {
       _log.fine('Người dùng là null. Đang phát ra trạng thái Unauthenticated.');
-      emit(Unauthenticated());
+      // Chỉ phát ra Unauthenticated nếu trạng thái hiện tại không phải là Unauthenticated
+      // để tránh emit không cần thiết.
+      if (state is! Unauthenticated) {
+        emit(Unauthenticated());
+      }
     } else {
       _log.fine('Người dùng đã xác thực. UID: ${user.userId}.');
+      // Logic cũ ở đây đã tốt, nhưng có thể bị ghi đè bởi logic từ signInWithGoogle.
+      // Chúng ta sẽ giữ nó để xử lý các thay đổi từ stream (ví dụ: admin xóa username)
       if (user.username == null || user.username!.isEmpty) {
-        _log.fine('Người dùng chưa có username. Đang phát ra trạng thái NeedsUsername.');
-        emit(NeedsUsername(user));
+        _log.fine('Luồng phát hiện người dùng chưa có username. Đang phát ra trạng thái NeedsProfileSetup.');
+        emit(NeedsProfileSetup(user.userId)); // <<< THAY ĐỔI: Chỉ cần userId để thiết lập
       } else {
-        _log.fine('Người dùng đã có username. Đang phát ra trạng thái Authenticated.');
+        _log.fine('Luồng phát hiện người dùng đã có username. Đang phát ra trạng thái Authenticated.');
         emit(Authenticated(user));
       }
     }
   }
 
-  Future<void> _onGoogleSignInRequested(GoogleSignInRequested event, Emitter<AuthState> emit) async {
+   Future<void> _onGoogleSignInRequested(GoogleSignInRequested event, Emitter<AuthState> emit) async {
     _log.info('Bắt đầu xử lý sự kiện GoogleSignInRequested.');
-    _log.fine('Đang phát ra trạng thái AuthLoading.');
     emit(AuthLoading());
 
-    // THAY ĐỔI: Sử dụng Either và fold
+    // <<< THAY ĐỔI: Toàn bộ logic `fold` được viết lại
     final result = await _userRepository.signInWithGoogle();
 
     result.fold(
       (failure) {
+        // Xử lý lỗi
         _log.severe('Đăng nhập Google thất bại. Failure: ${failure.runtimeType}');
         emit(_mapFailureToState(failure));
       },
-      (_) {
-        // Thành công không cần làm gì ở đây.
-        // Stream `user` sẽ tự động nhận được user mới và kích hoạt `AuthStatusChanged`.
-        _log.info('Yêu cầu signInWithGoogle đến repository đã hoàn tất thành công. Chờ cập nhật từ stream...');
+      (signInResult) {
+        // Xử lý các trường hợp thành công
+        _log.info('signInWithGoogle thành công. Kết quả: ${signInResult.runtimeType}');
+        switch (signInResult) {
+          // Trường hợp 1: Đăng nhập thành công và đã có hồ sơ
+          case SignInSuccess success:
+            // Stream `user` sẽ sớm phát ra `AppUser` này,
+            // và `_onAuthStatusChanged` sẽ xử lý việc emit `Authenticated`.
+            // Vì vậy, chúng ta không cần làm gì ở đây, chỉ cần chờ.
+            _log.fine('Kết quả là SignInSuccess. Chờ stream cập nhật...');
+          // Có thể emit Authenticated ngay tại đây nếu muốn phản hồi nhanh hơn
+          // emit(Authenticated(success.user));
+
+          // Trường hợp 2: Đăng nhập thành công nhưng là người dùng mới
+          case SignInRequiresProfileSetup setup:
+            // Đây là lúc chúng ta cần chủ động emit một State mới
+            _log.fine('Kết quả là SignInRequiresProfileSetup. Đang phát ra trạng thái NeedsProfileSetup.');
+            // Chúng ta emit trạng thái này để UI biết phải chuyển đến màn hình tạo username.
+            emit(NeedsProfileSetup(setup.credential.uid));
+        }
       },
     );
   }
