@@ -10,7 +10,10 @@ import 'package:logging/logging.dart';
 @LazySingleton(as: ModerationService)
 class SightengineModerationServiceImpl implements ModerationService {
   final _log = Logger('SightengineModerationServiceImpl');
-  static const String _apiUrl = 'https://api.sightengine.com/1.0/check.json';
+  // API endpoint cho kiểm duyệt ảnh
+  static const String _imageApiUrl = 'https://api.sightengine.com/1.0/check.json';
+  // API endpoint cho kiểm duyệt văn bản
+  static const String _textApiUrl = 'https://api.sightengine.com/1.0/text/check.json';
   //TODO LƯU Ý: Lưu các key này vào file .env, không hard-code!
   final String _apiUser = 'YOUR_SIGHTENGINE_API_USER';
   final String _apiSecret = 'YOUR_SIGHTENGINE_API_SECRET';
@@ -21,7 +24,7 @@ class SightengineModerationServiceImpl implements ModerationService {
     _log.info('👁️ $operationName: Bắt đầu...');
 
     try {
-      var request = http.MultipartRequest('POST', Uri.parse(_apiUrl));
+      var request = http.MultipartRequest('POST', Uri.parse(_imageApiUrl));
       request.fields['models'] = 'nudity-2.0,wad,offensive';
       request.fields['api_user'] = _apiUser;
       request.fields['api_secret'] = _apiSecret;
@@ -55,6 +58,57 @@ class SightengineModerationServiceImpl implements ModerationService {
       }
     } on ImageUnsafeException {
       // Bắt lại để re-throw, tránh bị bắt bởi catch (e) bên dưới
+      rethrow;
+    } catch (e, st) {
+      _log.severe('❌ $operationName: Lỗi không xác định khi gọi API.', e, st);
+      throw ModerationRequestException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> checkText(String text) async {
+    // Nếu text rỗng, coi như hợp lệ, không cần gọi API
+    if (text.trim().isEmpty) {
+      _log.info('📝 Văn bản rỗng, bỏ qua kiểm duyệt.');
+      return;
+    }
+
+    const operationName = 'Kiểm duyệt văn bản';
+    _log.info('👁️ $operationName: Bắt đầu...');
+
+    try {
+      _log.fine('📤 $operationName: Đang gửi văn bản đến Sightengine...');
+      final response = await http.post(
+        Uri.parse(_textApiUrl),
+        body: {
+          'text': text,
+          'mode': 'standard', // Chế độ kiểm duyệt chuẩn
+          'lang': 'vi', // Chỉ định ngôn ngữ là tiếng Việt để tăng độ chính xác
+          'api_user': _apiUser,
+          'api_secret': _apiSecret,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        _log.fine('✅ $operationName: Nhận được phản hồi: $jsonResponse');
+
+        // KIỂM TRA VI PHẠM VÀ NÉM EXCEPTION
+        // Kiểm tra xem có bất kỳ sự vi phạm nào được phát hiện không
+        if (jsonResponse['profanity']['matches'] != null && jsonResponse['profanity']['matches'].isNotEmpty) {
+          final firstMatch = jsonResponse['profanity']['matches'][0]['match'];
+          throw TextUnsafeException('Chứa từ ngữ không phù hợp ("$firstMatch...")');
+        }
+
+        // Bạn có thể thêm các kiểm tra khác ở đây, ví dụ: link, personal info...
+
+        _log.info('👍 $operationName: Văn bản được xác định là an toàn.');
+        return;
+      } else {
+        _log.severe('❌ $operationName: Lỗi từ API. Status: ${response.statusCode}, Body: ${response.body}');
+        throw ModerationRequestException('Lỗi server (${response.statusCode})');
+      }
+    } on TextUnsafeException {
       rethrow;
     } catch (e, st) {
       _log.severe('❌ $operationName: Lỗi không xác định khi gọi API.', e, st);

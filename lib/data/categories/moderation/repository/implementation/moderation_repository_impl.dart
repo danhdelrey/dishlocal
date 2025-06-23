@@ -37,4 +37,27 @@ class ModerationRepositoryImpl implements ModerationRepository {
       return const Left(ModerationRequestFailure('Lỗi không xác định'));
     }
   }
+
+  @override
+  Future<Either<ModerationFailure, void>> moderateText(String text) async {
+    _log.info('🛡️ Bắt đầu luồng kiểm duyệt văn bản trong Repository...');
+    try {
+      await _moderationService.checkText(text);
+
+      _log.info('✅ Văn bản đã qua kiểm duyệt thành công ở tầng Service.');
+      return const Right(null);
+    } on ModerationServiceException catch (e) {
+      _log.warning('⚠️ Dịch ModerationServiceException thành ModerationFailure. Lỗi: ${e.message}');
+
+      // Dịch từ Exception sang Failure
+      if (e is TextUnsafeException) {
+        // Trả về lý do cụ thể cho UI
+        return Left(TextUnsafeFailure(e.message));
+      }
+      return Left(ModerationRequestFailure(e.message));
+    } catch (e, st) {
+      _log.severe('❌ Lỗi không xác định trong Repository, không phải ModerationServiceException.', e, st);
+      return const Left(ModerationRequestFailure('Lỗi không xác định'));
+    }
+  }
 }

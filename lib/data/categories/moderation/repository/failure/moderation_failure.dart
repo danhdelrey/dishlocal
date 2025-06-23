@@ -11,3 +11,8 @@ class ImageUnsafeFailure extends ModerationFailure {
 class ModerationRequestFailure extends ModerationFailure {
   const ModerationRequestFailure(String error) : super('Lỗi khi kiểm duyệt ảnh: $error');
 }
+
+/// Failure khi nội dung văn bản không được chấp nhận.
+class TextUnsafeFailure extends ModerationFailure {
+  const TextUnsafeFailure(super.reason); // Trả về lý do trực tiếp
+}

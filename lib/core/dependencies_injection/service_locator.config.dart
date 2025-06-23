@@ -25,6 +25,10 @@ import '../../data/categories/app_user/repository/implementation/app_user_reposi
     as _i904;
 import '../../data/categories/app_user/repository/interface/app_user_repository.dart'
     as _i749;
+import '../../data/categories/moderation/repository/implementation/moderation_repository_impl.dart'
+    as _i709;
+import '../../data/categories/moderation/repository/interface/moderation_repository.dart'
+    as _i886;
 import '../../data/categories/post/model/post.dart' as _i1028;
 import '../../data/categories/post/repository/implementation/remote_post_repository_sql_impl.dart'
     as _i181;
@@ -56,6 +60,10 @@ import '../../data/services/location_service/implementation/geolocator_wrapper.d
     as _i258;
 import '../../data/services/location_service/interface/location_service.dart'
     as _i473;
+import '../../data/services/moderation_service/implementation/sightengine_moderation_service_impl.dart'
+    as _i28;
+import '../../data/services/moderation_service/interface/moderation_service.dart'
+    as _i692;
 import '../../data/services/storage_service/implementation/cloudinary_storage_service_impl.dart'
     as _i1046;
 import '../../data/services/storage_service/interface/storage_service.dart'
@@ -111,8 +119,8 @@ _i174.GetIt init(
       () => _i3.GeocodingServiceNominatimImpl());
   gh.lazySingleton<_i178.SqlDatabaseService>(
       () => _i876.SqlSupabaseServiceImpl());
-  gh.factory<_i889.CameraBloc>(
-      () => _i889.CameraBloc(imageProcessor: gh<_i19.ImageProcessor>()));
+  gh.lazySingleton<_i692.ModerationService>(
+      () => _i28.SightengineModerationServiceImpl());
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
   gh.lazySingleton<_i480.PostRepository>(
@@ -129,6 +137,8 @@ _i174.GetIt init(
         gh<_i473.LocationService>(),
         gh<_i766.GeocodingService>(),
       ));
+  gh.lazySingleton<_i886.ModerationRepository>(
+      () => _i709.ModerationRepositoryImpl(gh<_i692.ModerationService>()));
   gh.lazySingleton<_i749.AppUserRepository>(() => _i904.UserRepositoryImpl(
         gh<_i780.AuthenticationService>(),
         gh<_i60.NoSqlDatabaseService>(),
@@ -154,6 +164,10 @@ _i174.GetIt init(
       _i501.FollowBloc(
         gh<_i749.AppUserRepository>(),
         user,
+      ));
+  gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc(
+        gh<_i886.ModerationRepository>(),
+        gh<_i19.ImageProcessor>(),
       ));
   gh.factory<_i511.AuthBloc>(
       () => _i511.AuthBloc(userRepository: gh<_i749.AppUserRepository>()));

@@ -10,3 +10,8 @@ class ImageUnsafeException extends ModerationServiceException {
 class ModerationRequestException extends ModerationServiceException {
   ModerationRequestException(String error) : super('Lỗi khi kiểm duyệt ảnh: $error');
 }
+
+/// Bị throw khi nội dung văn bản vi phạm chính sách kiểm duyệt.
+class TextUnsafeException extends ModerationServiceException {
+  TextUnsafeException(String reason) : super('Nội dung không hợp lệ: $reason');
+}

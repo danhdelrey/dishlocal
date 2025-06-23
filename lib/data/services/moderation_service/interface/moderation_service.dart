@@ -9,4 +9,11 @@ abstract class ModerationService {
   /// - Ném ra [ImageUnsafeException] nếu ảnh vi phạm chính sách.
   /// - Ném ra [ModerationRequestException] nếu có lỗi khi gọi API.
   Future<void> checkImage(File imageFile);
+
+  /// Kiểm tra một đoạn văn bản.
+  ///
+  /// - Hoàn thành bình thường nếu văn bản an toàn.
+  /// - Ném ra [TextUnsafeException] nếu văn bản vi phạm chính sách.
+  /// - Ném ra [ModerationRequestException] nếu có lỗi khi gọi API.
+  Future<void> checkText(String text);
 }
