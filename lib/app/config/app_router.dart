@@ -57,7 +57,7 @@ class AppRouter {
           ]),
       GoRoute(
         path: '/camera',
-        builder: (context, state) => const CameraPage(),
+        builder: (context, state) =>  CameraPage(),
         routes: [
           GoRoute(
             path: 'new_post',
