@@ -5,6 +5,7 @@ import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:dishlocal/data/services/storage_service/exception/storage_service_exception.dart';
 import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
 import 'package:cloudinary_api/src/request/model/uploader_params.dart';
+import 'package:dishlocal/main.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -15,6 +16,7 @@ class CloudinaryStorageServiceImpl implements StorageService {
 
   // Khởi tạo Cloudinary client. Đảm bảo bạn đã load dotenv trong main.dart
   late final Cloudinary _cloudinary;
+  final String rootFolder = isInDevelopmentEnvironment() ? 'development' : 'production';
 
   CloudinaryStorageServiceImpl() {
     final cloudinaryUrl = dotenv.env['CLOUDINARY_URL'];
@@ -53,15 +55,15 @@ class CloudinaryStorageServiceImpl implements StorageService {
     required File file,
     required String publicId,
   }) {
-    final operationName = 'Upload to "$folder"';
+    final operationName = 'Upload to "$rootFolder/$folder"';
     return _wrapStorageOperation(operationName, () async {
-      final fullPublicId = '$folder/$publicId';
+      final fullPublicId = '$rootFolder/$folder/$publicId';
       _log.info('➡️ $operationName: Bắt đầu tải tệp lên với publicId: $fullPublicId');
 
       final response = await _cloudinary.uploader().upload(
             file,
             params: UploadParams(
-              folder: folder,
+              folder: '$rootFolder/$folder',
               publicId: publicId,
               uniqueFilename: false, // Để không tự động thêm chuỗi ngẫu nhiên vào tên file
               overwrite: true, // Ghi đè nếu file đã tồn tại
@@ -85,7 +87,7 @@ class CloudinaryStorageServiceImpl implements StorageService {
   Future<void> deleteFile({required String folder, required String publicId}) {
     final operationName = 'Delete from "$folder"';
     return _wrapStorageOperation(operationName, () async {
-      final fullPublicId = '$folder/$publicId';
+      final fullPublicId = '$rootFolder/$folder/$publicId';
       _log.info('🗑️ $operationName: Bắt đầu xóa tệp với publicId: $fullPublicId');
 
       final response = await _cloudinary.uploader().destroy(

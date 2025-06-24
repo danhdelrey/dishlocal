@@ -23,6 +23,14 @@ import 'package:logging/logging.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:timeago/timeago.dart' as timeago_vi;
 
+bool isInDevelopmentEnvironment() {
+  const String environment = String.fromEnvironment(
+    'ENVIRONMENT',
+    defaultValue: 'dev',
+  );
+  return environment == 'dev';
+}
+
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -33,32 +41,30 @@ Future<void> main() async {
   final packageInfo = await PackageInfo.fromPlatform();
   final appId = packageInfo.packageName;
 
-  const String environment = String.fromEnvironment(
-    'ENVIRONMENT',
-    defaultValue: 'dev',
-  );
-
   // Chọn đúng FirebaseOptions dựa trên môi trường
   final log = Logger('main()');
-  FirebaseOptions options;
-  if (environment == 'prod') {
-    options = prod_options.DefaultFirebaseOptions.currentPlatform;
+  //FirebaseOptions options;
+  if (!isInDevelopmentEnvironment()) {
+    await Supabase.initialize(
+      url: dotenv.env['SUPABASE_URL_PROD'] ?? 'Không tìm thấy key',
+      anonKey: dotenv.env['SUPABASE_ANON_KEY_PROD'] ?? 'Không tìm thấy key',
+    );
+    //options = prod_options.DefaultFirebaseOptions.currentPlatform;
     log.info('🚀 App đang chạy ở môi trường PRODUCTION');
     log.info('🚀 Package name hiện tại là: $appId');
   } else {
-    options = dev_options.DefaultFirebaseOptions.currentPlatform;
+    await Supabase.initialize(
+      url: dotenv.env['SUPABASE_URL_DEV'] ?? 'Không tìm thấy key',
+      anonKey: dotenv.env['SUPABASE_ANON_KEY_DEV'] ?? 'Không tìm thấy key',
+    );
+    //options = dev_options.DefaultFirebaseOptions.currentPlatform;
     log.info('👨‍🍳 App đang chạy ở môi trường DEVELOPMENT');
     log.info('👨‍🍳 Package name hiện tại là: $appId');
   }
 
-  await Firebase.initializeApp(
-    options: options,
-  );
-
-  await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL'] ?? 'Không tìm thấy key',
-    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? 'Không tìm thấy key',
-  );
+  // await Firebase.initializeApp(
+  //   options: options,
+  // );
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());
@@ -90,7 +96,7 @@ class _MyAppState extends State<MyApp> {
           title: 'Flutter Demo',
           darkTheme: darkTheme,
           themeMode: ThemeMode.dark,
-          debugShowCheckedModeBanner: false,
+          debugShowCheckedModeBanner: isInDevelopmentEnvironment(),
           routerConfig: router,
         );
       }),
