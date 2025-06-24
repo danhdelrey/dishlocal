@@ -78,6 +78,9 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   Stream<AppUser?> get onCurrentUserChanged => _currentUserController.stream;
 
   @override
+  AppUser? get latestUser => _currentUserController.valueOrNull;
+
+  @override
   String? getCurrentUserId() {
     return _authService.getCurrentUserId();
   }

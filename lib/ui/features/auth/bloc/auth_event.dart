@@ -1,28 +1,19 @@
+
+
 part of 'auth_bloc.dart';
 
-sealed class AuthEvent extends Equatable {
-  const AuthEvent();
+@freezed
+abstract class AuthEvent with _$AuthEvent {
+  /// Event được gọi khi ứng dụng khởi động để kiểm tra trạng thái đăng nhập.
+  /// Hoặc khi muốn lắng nghe sự thay đổi trạng thái auth.
+  const factory AuthEvent.authCheckRequested() = AuthCheckRequested;
 
-  @override
-  List<Object?> get props => [];
+  /// Event được gọi khi người dùng nhấn nút đăng nhập Google.
+  const factory AuthEvent.signInWithGoogleRequested() = SignInWithGoogleRequested;
+
+  /// Event được gọi khi người dùng muốn đăng xuất.
+  const factory AuthEvent.signedOut() = SignedOut;
+
+  /// Event nội bộ, được gọi khi stream từ repository phát ra một AppUser mới.
+  const factory AuthEvent.userChanged(AppUser? user) = _UserChanged;
 }
-
-class AuthStatusChanged extends AuthEvent {
-  final AppUser? user;
-  const AuthStatusChanged(this.user);
-  @override
-  List<Object?> get props => [user];
-}
-
-// THÊM EVENT MỚI
-class AuthStreamErrorOccurred extends AuthEvent {
-  final String errorMessage;
-  const AuthStreamErrorOccurred(this.errorMessage);
-  @override
-  List<Object?> get props => [errorMessage];
-}
-
-class GoogleSignInRequested extends AuthEvent {}
-
-
-class SignOutRequested extends AuthEvent {}

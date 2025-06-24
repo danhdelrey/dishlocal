@@ -23,8 +23,9 @@ class AppRouter {
 
   late final router = GoRouter(
     initialLocation: '/home',
+    debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
-    redirect: redirect,
+    redirect: _redirect,
     routes: [
       GoRoute(
         path: '/login',
@@ -133,52 +134,64 @@ class AppRouter {
     ],
   );
 
-  FutureOr<String?> redirect(BuildContext context, GoRouterState state) {
+  FutureOr<String?> _redirect(BuildContext context, GoRouterState state) {
     final authState = authBloc.state;
     final currentLocation = state.matchedLocation;
 
-    final isLogin = currentLocation == '/login';
-    final isSetup = currentLocation == '/account_setup';
+    // Các đường dẫn được bảo vệ (yêu cầu đăng nhập)
+    final protectedRoutes = ['/home', '/profile', '/camera', '/edit_post'];
 
     _log.info('🔁 [REDIRECT] Đang xử lý điều hướng...');
     _log.info('📍 Vị trí hiện tại: $currentLocation');
     _log.info('🔐 Trạng thái xác thực hiện tại: ${authState.runtimeType}');
 
-    
+    // =====================================================================
+    // Logic điều hướng dựa trên AuthState
+    // =====================================================================
 
-    // 🔐 2. Người dùng chưa đăng nhập
+    // 1. Trạng thái ban đầu hoặc đang xử lý -> không làm gì, đợi state mới
+    // Thường UI sẽ hiển thị một màn hình chờ (Splash/Loading) ở đây.
+    if (authState is Initial || authState is InProgress) {
+      _log.info('⏳ Trạng thái Initial/InProgress. Không điều hướng, đợi state tiếp theo.');
+      return null; // Giữ nguyên vị trí hiện tại
+    }
+
+    // 2. Người dùng CHƯA ĐĂNG NHẬP (Unauthenticated)
+    // Nếu họ đang cố vào một trang được bảo vệ, chuyển hướng về /login
     if (authState is Unauthenticated) {
-      if (!isLogin) {
-        _log.info('🚫 Người dùng chưa đăng nhập. Chuyển hướng về /login.');
+      if (protectedRoutes.contains(currentLocation)) {
+        _log.info('🚫 Người dùng chưa đăng nhập, cố vào trang được bảo vệ. Chuyển hướng về /login.');
         return '/login';
       }
-      _log.info('✅ Người dùng chưa đăng nhập nhưng đã ở /login → giữ nguyên.');
+      _log.info('✅ Người dùng chưa đăng nhập và đang ở trang công khai (login, etc). Giữ nguyên.');
       return null;
     }
 
-    // 🧑 3. Người dùng cần setup username
-    if (authState is NeedsProfileSetup) {
-      if (!isSetup) {
-        _log.info('🛠️ Người dùng cần cài đặt username. Chuyển hướng đến /account_setup.');
+    // 3. Người dùng là NGƯỜI DÙNG MỚI (NewUser), cần setup profile
+    // Bất kể họ đang ở đâu, nếu chưa ở trang setup, hãy đưa họ về đó.
+    if (authState is NewUser) {
+      if (currentLocation != '/account_setup') {
+        _log.info('✨ Người dùng mới, cần setup. Chuyển hướng đến /account_setup.');
         return '/account_setup';
       }
-      _log.info('✅ Người dùng đang ở trang /account_setup → giữ nguyên.');
+      _log.info('✅ Người dùng mới và đã ở trang /account_setup. Giữ nguyên.');
       return null;
     }
 
-    // 🏠 4. Người dùng đã đăng nhập hoàn chỉnh
+    // 4. Người dùng ĐÃ ĐĂNG NHẬP HOÀN CHỈNH (Authenticated)
+    // Nếu họ đang ở trang login hoặc setup, đưa họ vào trong ứng dụng (trang chủ).
     if (authState is Authenticated) {
-      if (isLogin || isSetup) {
-        _log.info('🔓 Người dùng đã đăng nhập hoàn chỉnh. Rời khỏi login/setup → chuyển về /home.');
+      if (currentLocation == '/login' || currentLocation == '/account_setup') {
+        _log.info('🔓 Người dùng đã đăng nhập, rời khỏi trang login/setup. Chuyển hướng về /home.');
         return '/home';
       }
-
-      _log.info('✅ Người dùng đã xác thực và đang ở trang phù hợp → giữ nguyên.');
+      _log.info('✅ Người dùng đã đăng nhập và đang ở trang phù hợp. Giữ nguyên.');
       return null;
     }
 
-    // ❓ 5. Không khớp điều kiện nào
-    _log.warning('❗ Không có điều kiện nào thỏa mãn trong redirect → giữ nguyên.');
+    // 5. Trường hợp có LỖI (Failure) hoặc các trạng thái khác
+    // Thường không cần điều hướng, chỉ giữ nguyên vị trí.
+    _log.warning('❗ Không có điều kiện điều hướng nào được áp dụng. Giữ nguyên.');
     return null;
   }
 }

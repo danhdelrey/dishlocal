@@ -20,6 +20,10 @@ abstract class AppUserRepository {
   /// Trả về [UserNotFoundFailure] nếu người dùng đã đăng nhập nhưng không tìm thấy profile.
   Future<Either<AppUserFailure, AppUser>> getCurrentUser();
 
+  /// Lấy giá trị người dùng hiện tại từ cache của repository một cách đồng bộ.
+  /// Trả về `null` nếu không có ai đăng nhập hoặc chưa có dữ liệu.
+  AppUser? get latestUser;
+
   /// Lấy ID của người dùng hiện tại, trả về null nếu chưa đăng nhập.
   String? getCurrentUserId();
 

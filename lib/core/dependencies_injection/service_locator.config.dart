@@ -167,6 +167,8 @@ _i174.GetIt init(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i204.DeletePostBloc>(
       () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
+  gh.factory<_i511.AuthBloc>(
+      () => _i511.AuthBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((
@@ -181,8 +183,6 @@ _i174.GetIt init(
         gh<_i886.ModerationRepository>(),
         gh<_i19.ImageProcessor>(),
       ));
-  gh.factory<_i511.AuthBloc>(
-      () => _i511.AuthBloc(userRepository: gh<_i749.AppUserRepository>()));
   return getIt;
 }
 

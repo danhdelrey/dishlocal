@@ -1,38 +1,23 @@
 part of 'auth_bloc.dart';
 
-sealed class AuthState extends Equatable {
-  const AuthState();
 
-  @override
-  List<Object?> get props => [];
-}
+@freezed
+abstract class AuthState with _$AuthState {
+  /// Trạng thái ban đầu, ứng dụng chưa biết người dùng đã đăng nhập hay chưa.
+  const factory AuthState.initial() = Initial;
 
-class AuthInitial extends AuthState {}
+  /// Trạng thái đang xử lý một hành động (ví dụ: đang đăng nhập).
+  const factory AuthState.inProgress() = InProgress;
 
-class AuthLoading extends AuthState {}
+  /// Trạng thái người dùng đã được xác thực thành công.
+  const factory AuthState.authenticated(AppUser user) = Authenticated;
 
-class Unauthenticated extends AuthState {}
+  /// Trạng thái người dùng chưa được xác thực (chưa đăng nhập hoặc đã đăng xuất).
+  const factory AuthState.unauthenticated() = Unauthenticated;
 
-// <<< THAY ĐỔI: Đổi tên và đơn giản hóa State này
-class NeedsProfileSetup extends AuthState {
-  // Chỉ cần userId để biết ai cần tạo hồ sơ.
-  // Màn hình setup sẽ dùng ID này để gọi repository.completeProfileSetup
-  final String userId;
-  const NeedsProfileSetup(this.userId);
-  @override
-  List<Object?> get props => [userId];
-}
+  /// Trạng thái người dùng mới, cần hoàn thành setup profile.
+  const factory AuthState.newUser(AppUser user) = NewUser;
 
-class Authenticated extends AuthState {
-  final AppUser user;
-  const Authenticated(this.user);
-  @override
-  List<Object?> get props => [user];
-}
-
-class AuthFailure extends AuthState {
-  final String message;
-  const AuthFailure(this.message);
-  @override
-  List<Object?> get props => [message];
+  /// Trạng thái có lỗi xảy ra.
+  const factory AuthState.failure(AppUserFailure failure) = Failure;
 }
