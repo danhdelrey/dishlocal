@@ -17,16 +17,16 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
       // 🚀 Bắt đầu thực thi, không có lỗi nào được ghi nhận tại thời điểm này.
       return await operation();
     } on PostgrestException catch (e, st) {
-      _log.severe('🚨 PostgrestException trong [$operationName]', e, st);
+      _log.severe('_wrapDbOperation(): 🚨 PostgrestException trong [$operationName]', e, st);
       _handlePostgrestException(e); // Sẽ luôn ném ra lỗi, không bao giờ trả về
     } on SocketException catch (e, st) {
-      _log.severe('🕸️ Lỗi mạng (SocketException) trong [$operationName]', e, st);
+      _log.severe('_wrapDbOperation(): 🕸️ Lỗi mạng (SocketException) trong [$operationName]', e, st);
       throw DatabaseConnectionException();
     } on TypeError catch (e, st) {
-      _log.severe('🧩 Lỗi phân tích dữ liệu (TypeError) trong [$operationName]', e, st);
+      _log.severe('_wrapDbOperation(): 🧩 Lỗi phân tích dữ liệu (TypeError) trong [$operationName]', e, st);
       throw DataParsingException(e.toString());
     } catch (e, st) {
-      _log.severe('❓ Lỗi không xác định trong [$operationName]', e, st);
+      _log.severe('_wrapDbOperation(): ❓ Lỗi không xác định trong [$operationName]', e, st);
       throw UnknownDatabaseException(e.toString());
     }
   }
@@ -39,10 +39,10 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
   }) {
     final operationName = 'CREATE in "$tableName"';
     return _wrapDbOperation(operationName, () async {
-      _log.info('➡️ $operationName: Bắt đầu tạo bản ghi mới.');
+      _log.info('create(): ➡️ $operationName: Bắt đầu tạo bản ghi mới.');
       final result = await _supabase.from(tableName).insert(data).select().single();
 
-      _log.info('✅ $operationName: Tạo bản ghi thành công!');
+      _log.info('create(): ✅ $operationName: Tạo bản ghi thành công!');
       return fromJson(result);
     });
   }
@@ -56,7 +56,7 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
   }) {
     final operationName = 'READ LIST from "$tableName"';
     return _wrapDbOperation(operationName, () async {
-      _log.info('➡️ $operationName: Bắt đầu truy vấn danh sách. Filters: $filters, OrderBy: ${orderBy?.column}');
+      _log.info('readList(): ➡️ $operationName: Bắt đầu truy vấn danh sách. Filters: $filters, OrderBy: ${orderBy?.column}');
 
       // [FIXED] Bắt đầu với kiểu 'PostgrestFilterBuilder' cụ thể.
       // Sử dụng 'var' để Dart tự suy luận kiểu này.
@@ -65,7 +65,7 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
       // 1. Áp dụng tất cả các bộ lọc.
       // Tại đây, 'query' vẫn luôn là 'PostgrestFilterBuilder'.
       if (filters != null) {
-        _log.info('🔍 $operationName: Áp dụng bộ lọc...');
+        _log.info('readList(): 🔍 $operationName: Áp dụng bộ lọc...');
         for (var filter in filters.entries) {
           query = query.eq(filter.key, filter.value);
         }
@@ -77,7 +77,7 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
           ? query.order(orderBy.column, ascending: orderBy.ascending) // Nếu có, kết quả của biểu thức này là PostgrestTransformBuilder
           : query); // Nếu không, chính là PostgrestFilterBuilder
 
-      _log.info('✅ $operationName: Truy vấn thành công, tìm thấy ${result.length} bản ghi.');
+      _log.info('readList(): ✅ $operationName: Truy vấn thành công, tìm thấy ${result.length} bản ghi.');
       return result.map((json) => fromJson(json)).toList();
     });
   }
@@ -90,10 +90,10 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
   }) {
     final operationName = 'READ SINGLE from "$tableName"';
     return _wrapDbOperation(operationName, () async {
-      _log.info('➡️ $operationName: Bắt đầu truy vấn bản ghi với ID: $id');
+      _log.info('readSingleById(): ➡️ $operationName: Bắt đầu truy vấn bản ghi với ID: $id');
       final result = await _supabase.from(tableName).select().eq('id', id).single();
 
-      _log.info('✅ $operationName: Truy vấn bản ghi ID $id thành công!');
+      _log.info('readSingleById():✅ $operationName: Truy vấn bản ghi ID $id thành công!');
       return fromJson(result);
     });
   }
@@ -107,10 +107,10 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
   }) {
     final operationName = 'UPDATE in "$tableName"';
     return _wrapDbOperation(operationName, () async {
-      _log.info('➡️ $operationName: Bắt đầu cập nhật bản ghi ID: $id');
+      _log.info('update(): ➡️ $operationName: Bắt đầu cập nhật bản ghi ID: $id');
       final result = await _supabase.from(tableName).update(data).eq('id', id).select().single();
 
-      _log.info('✅ $operationName: Cập nhật bản ghi ID $id thành công!');
+      _log.info('update(): ✅ $operationName: Cập nhật bản ghi ID $id thành công!');
       return fromJson(result);
     });
   }
@@ -119,9 +119,9 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
   Future<void> delete({required String tableName, required String id}) {
     final operationName = 'DELETE from "$tableName"';
     return _wrapDbOperation(operationName, () async {
-      _log.info('➡️ $operationName: Bắt đầu xóa bản ghi ID: $id');
+      _log.info('delete(): ➡️ $operationName: Bắt đầu xóa bản ghi ID: $id');
       await _supabase.from(tableName).delete().eq('id', id);
-      _log.info('✅ $operationName: Xóa bản ghi ID $id thành công!');
+      _log.info('delete(): ✅ $operationName: Xóa bản ghi ID $id thành công!');
     });
   }
 
@@ -130,30 +130,30 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
     _log.severe('💥 Bắt đầu phân tích PostgrestException: code=${e.code}, message=${e.message}, details=${e.details}');
 
     if (e.code == 'PGRST116') {
-      _log.info('🗺️ Mapping [PGRST116] to RecordNotFoundException.');
+      _log.info('_handlePostgrestException(): 🗺️ Mapping [PGRST116] to RecordNotFoundException.');
       throw RecordNotFoundException(recordType: 'unknown', recordId: 'unknown');
     }
     if (e.code == '23505') {
       final fieldName = _extractFieldNameFromDetail(e.details.toString()) ?? 'unknown';
-      _log.info('🗺️ Mapping [23505] to UniqueConstraintViolationException for field "$fieldName".');
+      _log.info('_handlePostgrestException(): 🗺️ Mapping [23505] to UniqueConstraintViolationException for field "$fieldName".');
       throw UniqueConstraintViolationException(fieldName: fieldName, value: 'đã tồn tại');
     }
     if (e.code == '23503') {
       final fieldName = _extractFieldNameFromDetail(e.details.toString()) ?? 'unknown';
-      _log.info('🗺️ Mapping [23503] to ForeignKeyConstraintViolationException for field "$fieldName".');
+      _log.info('_handlePostgrestException(): 🗺️ Mapping [23503] to ForeignKeyConstraintViolationException for field "$fieldName".');
       throw ForeignKeyConstraintViolationException(fieldName: fieldName, referenceTable: 'unknown');
     }
     if (e.code == '23514') {
       final constraintName = _extractConstraintNameFromDetail(e.details.toString()) ?? 'unknown';
-      _log.info('🗺️ Mapping [23514] to CheckConstraintViolationException for constraint "$constraintName".');
+      _log.info('_handlePostgrestException(): 🗺️ Mapping [23514] to CheckConstraintViolationException for constraint "$constraintName".');
       throw CheckConstraintViolationException(fieldName: 'unknown', constraintName: constraintName);
     }
     if (e.message.contains('violates row-level security policy')) {
-      _log.info('🗺️ Mapping RLS violation message to PermissionDeniedException.');
+      _log.info('_handlePostgrestException(): 🗺️ Mapping RLS violation message to PermissionDeniedException.');
       throw PermissionDeniedException();
     }
 
-    _log.severe('❓ Không thể map PostgrestException. Ném ra lỗi UnknownDatabaseException.');
+    _log.severe('_handlePostgrestException(): ❓ Không thể map PostgrestException. Ném ra lỗi UnknownDatabaseException.');
     throw UnknownDatabaseException(e.message);
   }
 

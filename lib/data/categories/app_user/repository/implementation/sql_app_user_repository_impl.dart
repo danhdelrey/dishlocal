@@ -14,7 +14,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 @LazySingleton(as: AppUserRepository)
 class SqlAppUserRepositoryImpl implements AppUserRepository {
-  final _log = Logger('UserRepositorySqlImpl');
+  final _log = Logger('SqlAppUserRepositoryImpl');
   final AuthenticationService _authService;
   final SqlDatabaseService _dbService;
   // Dùng cho các thao tác chuyên biệt không có trong service chung (stream, rpc, etc.)
@@ -33,7 +33,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
     try {
       return Right(await future());
     } on AuthenticationServiceException catch (e) {
-      _log.severe('❌ Lỗi từ AuthenticationService', e);
+      _log.severe('❌ _handleErrors(): Lỗi từ AuthenticationService', e);
       return Left(switch (e) {
         GoogleSignInCancelledException() => const SignInCancelledFailure(),
         GoogleSignInException() || SupabaseSignInException() => SignInServiceFailure(e.message),
@@ -41,7 +41,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         _ => const UnknownFailure(),
       });
     } on SqlDatabaseServiceException catch (e) {
-      _log.severe('❌ Lỗi từ SqlDatabaseService', e);
+      _log.severe('❌_handleErrors(): Lỗi từ SqlDatabaseService', e);
       return Left(switch (e) {
         RecordNotFoundException() => const UserNotFoundFailure(),
         PermissionDeniedException() => const UpdatePermissionDeniedFailure(),
@@ -50,7 +50,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         _ => DatabaseFailure(e.message),
       });
     } catch (e, st) {
-      _log.severe('❌ Lỗi không xác định trong Repository', e, st);
+      _log.severe('❌_handleErrors(): Lỗi không xác định trong Repository', e, st);
       return const Left(UnknownFailure());
     }
   }
@@ -60,6 +60,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
     return _handleErrors(() async {
       final userId = _authService.getCurrentUserId();
       if (userId == null) {
+        _log.severe('❌ _updateProfileField(): Lỗi không xác định trong Repository');
         throw SupabaseSignInException('Có lỗi xảy ra khi thực hiện đăng nhập');
       }
       // Không cần kết quả trả về, chỉ cần biết nó có thành công hay không.
@@ -81,13 +82,13 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         .switchMap((credential) {
       // TRƯỜNG HỢP 1: Người dùng đã đăng xuất (credential là null)
       if (credential == null) {
-        _log.info('Auth stream: Người dùng đã đăng xuất. Phát ra giá trị null.');
+        _log.info('Stream<AppUser?> get user: Người dùng đã đăng xuất. Phát ra giá trị null.');
         // Trả về một luồng chỉ phát ra giá trị null một lần rồi kết thúc.
         return Stream.value(null);
       }
 
       // TRƯỜNG HỢP 2: Người dùng đã đăng nhập (có credential)
-      _log.info('Auth stream: Người dùng ${credential.uid} đã đăng nhập. Bắt đầu lắng nghe hồ sơ...');
+      _log.info('Stream<AppUser?> get user: Người dùng ${credential.uid} đã đăng nhập. Bắt đầu lắng nghe hồ sơ...');
       // Trả về một luồng mới: luồng lắng nghe sự thay đổi của bảng 'profiles'
       return _supabase
           .from(_profilesTable)
@@ -97,7 +98,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
           .map((profilesData) {
             // profilesData là một List<Map<String, dynamic>>
             if (profilesData.isEmpty) {
-              _log.warning('Stream: Không tìm thấy hồ sơ cho ${credential.uid}. Có thể đang trong quá trình tạo. Phát ra null tạm thời.');
+              _log.warning('Stream<AppUser?> get user: Không tìm thấy hồ sơ cho ${credential.uid}. Có thể đang trong quá trình tạo. Phát ra null tạm thời.');
               // Đây là trường hợp quan trọng, ví dụ user vừa đăng ký và hồ sơ chưa kịp tạo.
               return null;
             }
@@ -122,51 +123,61 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
           });
     }).handleError((error, stackTrace) {
       // Bắt lỗi trên toàn bộ luồng kết hợp để tránh làm sập stream
-      _log.severe('Lỗi trong luồng dữ liệu người dùng (user stream)', error, stackTrace);
+      _log.severe('Stream<AppUser?> get user: Lỗi trong luồng dữ liệu người dùng (user stream)', error, stackTrace);
       // Bạn có thể phát ra một AppUser đặc biệt cho trạng thái lỗi nếu muốn
       // Hoặc để yên để StreamBuilder/Bloc có thể bắt `snapshot.hasError`
     });
   }
 
   @override
-// Kiểu trả về vẫn giữ nguyên
-  Future<Either<AppUserFailure, SignInResult>> signInWithGoogle() {
+  Future<Either<AppUserFailure, SignInResult>> signInWithGoogle()  {
+    // Vẫn dùng _handleErrors để xử lý các lỗi không mong muốn khác (như network, permission...)
     return _handleErrors(() async {
       // 1. Thực hiện xác thực như cũ
       final credential = await _authService.signInWithGoogle();
 
-      // 2. Luôn lấy hồ sơ người dùng.
-      // Trigger đã đảm bảo nó tồn tại, nếu không có lỗi ở đây nghĩa là CSDL có vấn đề.
-      final profile = await _dbService.readSingleById(
-        tableName: _profilesTable,
-        id: credential!.uid,
-        fromJson: ProfileEntity.fromJson,
-      );
+      // Nếu credential là null (ví dụ user hủy đăng nhập), trả về lỗi
+      if (credential == null) {
+        // Bạn có thể định nghĩa một exception/failure cụ thể cho trường hợp này nếu muốn
+        throw  GoogleSignInCancelledException();
+      }
 
-      _log.info('Kiểm tra hồ sơ cho người dùng ${credential.uid}. Username hiện tại: ${profile.username}');
-
-      // 3. ĐÂY LÀ LOGIC QUAN TRỌNG:
-      // Kiểm tra xem username có phải là username mặc định do trigger tạo ra không.
-      if (profile.username.startsWith('user')) {
-        // Giả định username mặc định bắt đầu bằng 'user'
-        _log.info('Username là mặc định. Yêu cầu thiết lập hồ sơ.');
-        // Trả về thông tin xác thực để màn hình setup có thể sử dụng
-        return SignInRequiresProfileSetup(credential);
-      } else {
-        _log.info('Người dùng đã có hồ sơ hoàn chỉnh. Đăng nhập thành công.');
-        // Nếu username đã được tuỳ chỉnh, tạo AppUser và trả về thành công
-        final appUser = AppUser(
-          userId: profile.id,
-          username: profile.username,
-          originalDisplayname: credential.displayName ?? '',
-          email: credential.email ?? '',
-          displayName: profile.displayName,
-          photoUrl: profile.photoUrl,
-          bio: profile.bio,
-          followerCount: profile.followerCount,
-          followingCount: profile.followingCount,
+      try {
+        // 2. Thử đọc hồ sơ người dùng
+        final profile = await _dbService.readSingleById(
+          tableName: _profilesTable,
+          id: credential.uid,
+          fromJson: ProfileEntity.fromJson,
         );
-        return SignInSuccess(appUser);
+
+        _log.info('signInWithGoogle(): Kiểm tra hồ sơ cho người dùng ${credential.uid}. Username hiện tại: ${profile.username}');
+
+        // 3A. NẾU TÌM THẤY HỒ SƠ: Kiểm tra xem nó đã hoàn chỉnh chưa
+        if (profile.username.startsWith('user')) {
+          // Giả định username mặc định do trigger tạo
+          _log.info('signInWithGoogle(): Username là mặc định. Yêu cầu thiết lập hồ sơ.');
+          return SignInRequiresProfileSetup(credential);
+        } else {
+          _log.info('signInWithGoogle(): Người dùng đã có hồ sơ hoàn chỉnh. Đăng nhập thành công.');
+          final appUser = AppUser(
+            userId: profile.id,
+            username: profile.username,
+            originalDisplayname: credential.displayName ?? '',
+            email: credential.email ?? '',
+            displayName: profile.displayName,
+            photoUrl: profile.photoUrl,
+            bio: profile.bio,
+            followerCount: profile.followerCount,
+            followingCount: profile.followingCount,
+          );
+          return SignInSuccess(appUser);
+        }
+      } on RecordNotFoundException {
+        // 3B. NẾU KHÔNG TÌM THẤY HỒ SƠ (do race condition):
+        // Đây là dấu hiệu rõ ràng nhất của một người dùng mới.
+        _log.warning('signInWithGoogle(): Không tìm thấy hồ sơ cho người dùng ${credential.uid} ngay lập tức. Coi đây là người dùng mới.');
+        // Trực tiếp chuyển đến màn hình thiết lập hồ sơ.
+        return SignInRequiresProfileSetup(credential);
       }
     });
   }
@@ -182,7 +193,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   }
 
   @override
-  Future<Either<AppUserFailure, AppUser>> getCurrentUser() {
+  Future<Either<AppUserFailure, AppUser>> getCurrentUser()  {
     return _handleErrors(() async {
       final credential = _authService.getCurrentUser();
       if (credential == null) {
@@ -224,7 +235,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
 
         isFollowing = result.isNotEmpty;
       }
-      _log.info('Người dùng $currentUserId đang xem $userId. Trạng thái follow: $isFollowing');
+      _log.info('getUserWithId(): Người dùng $currentUserId đang xem $userId. Trạng thái follow: $isFollowing');
 
       // 3. Tạo đối tượng AppUser hoàn chỉnh
       return AppUser(
@@ -256,14 +267,14 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
 
       if (isFollowing) {
         // THEO DÕI: Thêm một bản ghi vào bảng 'followers'
-        _log.info('User $currentUserId is following $targetUserId.');
+        _log.info('followUser(): User $currentUserId is following $targetUserId.');
         await _supabase.from(_followersTable).insert({
           'user_id': targetUserId, // người được theo dõi
           'follower_id': currentUserId // người đi theo dõi
         });
       } else {
         // BỎ THEO DÕI: Xóa bản ghi tương ứng
-        _log.info('User $currentUserId is unfollowing $targetUserId.');
+        _log.info('followUser(): User $currentUserId is unfollowing $targetUserId.');
         await _supabase.from(_followersTable).delete().eq('user_id', targetUserId).eq('follower_id', currentUserId);
       }
       // Các trigger trong CSDL sẽ tự động cập nhật follower_count và following_count.
@@ -296,7 +307,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
     String? bio,
   }) {
     return _handleErrors(() async {
-      _log.info('Cập nhật hồ sơ cho người dùng $userId với username: $username');
+      _log.info('updateProfileAfterSetup(): Cập nhật hồ sơ cho người dùng $userId với username: $username');
 
       // Tạo một map chứa các dữ liệu cần cập nhật
       final dataToUpdate = {
@@ -317,7 +328,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         fromJson: (json) => null, // Không cần kết quả trả về
       );
 
-      _log.info('Cập nhật hồ sơ cho $userId thành công.');
+      _log.info('updateProfileAfterSetup(): Cập nhật hồ sơ cho $userId thành công.');
     });
   }
 }
