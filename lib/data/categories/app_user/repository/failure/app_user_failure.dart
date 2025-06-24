@@ -1,39 +1,14 @@
-import 'package:dishlocal/data/error/repository_failure.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+part 'app_user_failure.freezed.dart';
 
-// file: lib/domain/app_user/app_user_failures.dart
-
-sealed class AppUserFailure extends RepositoryFailure {
-  const AppUserFailure(super.message);
-}
-
-class SignInCancelledFailure extends AppUserFailure {
-  const SignInCancelledFailure() : super('Người dùng đã hủy đăng nhập.');
-}
-
-class SignInServiceFailure extends AppUserFailure {
-  const SignInServiceFailure(super.message);
-}
-
-class SignOutFailure extends AppUserFailure {
-  const SignOutFailure(super.message);
-}
-
-class NotAuthenticatedFailure extends AppUserFailure {
-  const NotAuthenticatedFailure() : super('Người dùng chưa được xác thực.');
-}
-
-class DatabaseFailure extends AppUserFailure {
-  const DatabaseFailure(super.message);
-}
-
-class UpdatePermissionDeniedFailure extends AppUserFailure {
-  const UpdatePermissionDeniedFailure() : super('Không có quyền cập nhật thông tin.');
-}
-
-class UserNotFoundFailure extends AppUserFailure {
-  const UserNotFoundFailure() : super('Không tìm thấy người dùng.');
-}
-
-class UnknownFailure extends AppUserFailure {
-  const UnknownFailure({String message = 'Lỗi không xác định'}) : super(message);
+@freezed
+sealed class AppUserFailure with _$AppUserFailure {
+  const factory AppUserFailure.signInCancelled() = SignInCancelledFailure;
+  const factory AppUserFailure.signInServiceFailure(String message) = SignInServiceFailure;
+  const factory AppUserFailure.signOutFailure(String message) = SignOutFailure;
+  const factory AppUserFailure.userNotFound() = UserNotFoundFailure;
+  const factory AppUserFailure.updatePermissionDenied() = UpdatePermissionDeniedFailure;
+  const factory AppUserFailure.databaseFailure(String message) = DatabaseFailure;
+  const factory AppUserFailure.unknown() = UnknownFailure;
+  const factory AppUserFailure.notAuthenticated() = NotAuthenticatedFailure;
 }

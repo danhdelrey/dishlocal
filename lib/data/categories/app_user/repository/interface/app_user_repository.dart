@@ -3,55 +3,44 @@ import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
 import 'package:dishlocal/data/services/authentication_service/model/app_user_credential.dart';
 
-// Dùng sealed class để có thể chứa dữ liệu
-abstract class SignInResult {}
+enum SignInResult {
+  /// Đăng nhập thành công và user đã có profile đầy đủ.
+  success,
 
-// Trường hợp thành công, người dùng đã có hồ sơ đầy đủ
-class SignInSuccess extends SignInResult {
-  final AppUser user;
-  SignInSuccess(this.user);
-}
-
-// Trường hợp thành công, nhưng là người dùng mới và cần thiết lập hồ sơ
-class SignInRequiresProfileSetup extends SignInResult {
-  final AppUserCredential credential;
-  SignInRequiresProfileSetup(this.credential);
+  /// Đăng nhập thành công nhưng đây là user mới, cần qua màn hình setup profile.
+  newUser,
 }
 
 abstract class AppUserRepository {
-  // Stream để lắng nghe trạng thái đăng nhập và thông tin user
-  // Lỗi trong stream sẽ được xử lý bằng cách phát ra một event lỗi.
-  Stream<AppUser?> get user;
+  /// Stream theo dõi sự thay đổi của người dùng hiện tại (đăng nhập/đăng xuất/cập nhật profile).
+  /// Trả về `null` nếu không có ai đăng nhập.
+  Stream<AppUser?> get onCurrentUserChanged;
 
+  /// Lấy người dùng hiện tại một lần.
+  /// Trả về [UserNotFoundFailure] nếu người dùng đã đăng nhập nhưng không tìm thấy profile.
   Future<Either<AppUserFailure, AppUser>> getCurrentUser();
-  Future<Either<AppUserFailure, AppUser>> getUserWithId({
-    required String userId,
-    String? currentUserId,
-  });
+
+  /// Lấy ID của người dùng hiện tại, trả về null nếu chưa đăng nhập.
   String? getCurrentUserId();
 
-  // Đăng nhập và kiểm tra username
-  // THAY ĐỔI: Trả về Either<Failure, void>
+  /// Lấy thông tin của một người dùng bất kỳ bằng ID.
+  Future<Either<AppUserFailure, AppUser>> getUserById(String userId);
+
+  /// Đăng nhập bằng Google.
   Future<Either<AppUserFailure, SignInResult>> signInWithGoogle();
 
-  Future<Either<AppUserFailure, void>> updateUsername(String username);
-  Future<Either<AppUserFailure, void>> updateBio(String? bio);
-  Future<Either<AppUserFailure, void>> updateDisplayName(String displayName);
-
-  Future<Either<AppUserFailure, void>> followUser({
-    required String targetUserId,
-    required bool isFollowing,
-  });
-
-  // Đăng xuất
-  // THAY ĐỔI: Trả về Either<Failure, void>
+  /// Đăng xuất.
   Future<Either<AppUserFailure, void>> signOut();
 
-  Future<Either<AppUserFailure, void>> updateProfileAfterSetup({
-    required String userId,
+  /// Cập nhật profile sau khi người dùng mới hoàn thành màn hình setup.
+  Future<Either<AppUserFailure, void>> completeProfileSetup({
     required String username,
     String? displayName,
-    String? photoUrl,
-    String? bio,
   });
+
+  /// Cập nhật một trường duy nhất trong profile của người dùng hiện tại.
+  Future<Either<AppUserFailure, void>> updateProfileField({required String field, required dynamic value});
+
+  /// Thực hiện hành động follow/unfollow một người dùng.
+  Future<Either<AppUserFailure, void>> followUser({required String targetUserId, required bool isFollowing});
 }

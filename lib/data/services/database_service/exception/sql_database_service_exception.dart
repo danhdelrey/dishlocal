@@ -98,3 +98,9 @@ class ForeignKeyConstraintViolationException extends ConstraintViolationExceptio
 class DataParsingException extends SqlDatabaseServiceException {
   DataParsingException(String message) : super('Lỗi phân tích dữ liệu: $message');
 }
+
+
+// Thêm exception này vào file exceptions.dart của bạn
+class NotAuthenticatedException extends SqlDatabaseServiceException {
+   NotAuthenticatedException() : super('Người dùng chưa được xác thực.');
+}
