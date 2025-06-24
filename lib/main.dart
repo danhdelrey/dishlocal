@@ -43,13 +43,13 @@ Future<void> main() async {
 
   // Chọn đúng FirebaseOptions dựa trên môi trường
   final log = Logger('main()');
-  //FirebaseOptions options;
+  FirebaseOptions options;
   if (!isInDevelopmentEnvironment()) {
     await Supabase.initialize(
       url: dotenv.env['SUPABASE_URL_PROD'] ?? 'Không tìm thấy key',
       anonKey: dotenv.env['SUPABASE_ANON_KEY_PROD'] ?? 'Không tìm thấy key',
     );
-    //options = prod_options.DefaultFirebaseOptions.currentPlatform;
+    options = prod_options.DefaultFirebaseOptions.currentPlatform;
     log.info('🚀 App đang chạy ở môi trường PRODUCTION');
     log.info('🚀 Package name hiện tại là: $appId');
   } else {
@@ -57,14 +57,14 @@ Future<void> main() async {
       url: dotenv.env['SUPABASE_URL_DEV'] ?? 'Không tìm thấy key',
       anonKey: dotenv.env['SUPABASE_ANON_KEY_DEV'] ?? 'Không tìm thấy key',
     );
-    //options = dev_options.DefaultFirebaseOptions.currentPlatform;
+    options = dev_options.DefaultFirebaseOptions.currentPlatform;
     log.info('👨‍🍳 App đang chạy ở môi trường DEVELOPMENT');
     log.info('👨‍🍳 Package name hiện tại là: $appId');
   }
 
-  // await Firebase.initializeApp(
-  //   options: options,
-  // );
+  await Firebase.initializeApp(
+    options: options,
+  );
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());
