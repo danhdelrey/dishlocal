@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
-import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/image_processor.dart';
 import 'package:dishlocal/data/categories/moderation/repository/interface/moderation_repository.dart';
 import 'package:equatable/equatable.dart';

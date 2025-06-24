@@ -4,12 +4,10 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
-import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/moderation/repository/interface/moderation_repository.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
-import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/dish_name_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/exact_address_input.dart';
@@ -21,7 +19,6 @@ import 'package:flutter_multi_formatter/formatters/formatter_extension_methods.d
 import 'package:flutter_multi_formatter/formatters/money_input_enums.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:uuid/uuid.dart';
 

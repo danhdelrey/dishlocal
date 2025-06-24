@@ -1,23 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
 import 'package:dishlocal/data/services/database_service/model/batch_operation.dart';
 import 'package:dishlocal/data/services/database_service/model/server_timestamp.dart';
 import 'package:dishlocal/data/services/distance_service/interface/distance_service.dart';
 import 'package:dishlocal/data/services/location_service/interface/location_service.dart';
 import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
-import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
 import 'package:dishlocal/data/categories/post/failure/post_failure.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/data/services/database_service/interface/no_sql_database_service.dart';
-import 'package:dishlocal/ui/features/post/view/small_post.dart';
 
 class RemotePostRepositoryNoSqlImpl implements PostRepository {
   final _log = Logger('RemotePostRepositoryImpl');

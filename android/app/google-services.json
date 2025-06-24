@@ -1,53 +1,81 @@
 {
   "project_info": {
-    "project_number": "994917582362",
-    "project_id": "dishlocal-dev",
-    "storage_bucket": "dishlocal-dev.firebasestorage.app"
+    "project_number": "413476207561",
+    "project_id": "dishlocal-prod",
+    "storage_bucket": "dishlocal-prod.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:994917582362:android:c602d6259512b3811b73a3",
+        "mobilesdk_app_id": "1:413476207561:android:49397c1e20a3c763a3c618",
         "android_client_info": {
-          "package_name": "com.brighttorchstudio.dishlocal.dev"
+          "package_name": "com.brighttorchstudio.dishlocal"
         }
       },
       "oauth_client": [
         {
-          "client_id": "994917582362-iad3iic1s86e4ouei087sp6n5doe0fo9.apps.googleusercontent.com",
+          "client_id": "413476207561-q7affla1klt4fj8co9374uo0dmh9nmu7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.brighttorchstudio.dishlocal.dev",
-            "certificate_hash": "129f3f0d162088fd6d5ef4cc314f624003eef30e"
+            "package_name": "com.brighttorchstudio.dishlocal",
+            "certificate_hash": "ad6bfdf833caae139492880357a95d3ac4ce4d70"
           }
         },
         {
-          "client_id": "994917582362-rtvgpr3n3302rdp9mb6fe2ae9kvgkffn.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.brighttorchstudio.dishlocal.dev",
-            "certificate_hash": "19dcdc885a33b99329e81effd60abee09cfd30bc"
-          }
-        },
-        {
-          "client_id": "994917582362-of3lhbikvpjtst2jsnqmd98u0q32ehmh.apps.googleusercontent.com",
+          "client_id": "413476207561-7pdq1kf6r5n1lt5j53jihgapd2bdcqjb.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDJhHofI60k0FjtcEoYVDcrqo4ERDrgkK0"
+          "current_key": "AIzaSyAqYD4F7cb4TIGf1Acn98O6S87w4HxZBmw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "994917582362-of3lhbikvpjtst2jsnqmd98u0q32ehmh.apps.googleusercontent.com",
+              "client_id": "413476207561-46kugp9duef4fsfseha6qull2epoik5o.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "994917582362-ujdqlafp24o6ort57e5qjtnrr0eko6hp.apps.googleusercontent.com",
+              "client_id": "413476207561-rien86thp193hsh3mc89ku6sb3euavfc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dishlocal"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413476207561:android:1aa83cc31c965743a3c618",
+        "android_client_info": {
+          "package_name": "com.brighttorchstudio.dishlocal.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413476207561-7pdq1kf6r5n1lt5j53jihgapd2bdcqjb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqYD4F7cb4TIGf1Acn98O6S87w4HxZBmw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413476207561-46kugp9duef4fsfseha6qull2epoik5o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "413476207561-rien86thp193hsh3mc89ku6sb3euavfc.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.example.dishlocal"

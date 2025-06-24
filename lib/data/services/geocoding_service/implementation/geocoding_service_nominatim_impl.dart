@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:dishlocal/data/services/geocoding_service/api_models/geocoding_nominatim_response.dart';
 import 'package:dishlocal/data/services/geocoding_service/exception/geocoding_service_exception.dart';
 import 'package:dishlocal/data/services/geocoding_service/interface/geocoding_service.dart';
-import 'package:geolocator_platform_interface/src/models/position.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 

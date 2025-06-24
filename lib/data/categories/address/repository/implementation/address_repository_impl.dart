@@ -6,7 +6,6 @@ import 'package:logging/logging.dart';
 import 'package:dishlocal/data/categories/address/failure/address_failure.dart' as address_failure;
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/address/repository/interface/address_repository.dart';
-import 'package:dishlocal/data/services/distance_service/interface/distance_service.dart';
 import 'package:dishlocal/data/services/geocoding_service/exception/geocoding_service_exception.dart';
 import 'package:dishlocal/data/services/geocoding_service/interface/geocoding_service.dart';
 import 'package:dishlocal/data/services/location_service/exception/location_service_exception.dart' as location_service_exception;

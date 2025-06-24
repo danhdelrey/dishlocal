@@ -7,7 +7,6 @@ import 'package:dishlocal/data/services/authentication_service/model/app_user_cr
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart'; // Cần cho PlatformException
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
 class FirebaseAuthenticationService implements AuthenticationService {

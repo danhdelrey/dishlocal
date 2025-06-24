@@ -2,11 +2,10 @@ import 'dart:io';
 
 import 'package:cloudinary_api/uploader/cloudinary_uploader.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
+import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:dishlocal/data/services/storage_service/exception/storage_service_exception.dart';
 import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
 import 'package:cloudinary_api/src/request/model/uploader_params.dart';
-import 'package:dishlocal/main.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
@@ -14,17 +13,11 @@ import 'package:logging/logging.dart';
 class CloudinaryStorageServiceImpl implements StorageService {
   final _log = Logger('CloudinaryStorageServiceImpl');
 
-  // Khởi tạo Cloudinary client. Đảm bảo bạn đã load dotenv trong main.dart
   late final Cloudinary _cloudinary;
-  final String rootFolder = isInDevelopmentEnvironment() ? 'development' : 'production';
+  final String rootFolder = AppEnvironment.isInDevelopment ? 'development' : 'production';
 
   CloudinaryStorageServiceImpl() {
-    final cloudinaryUrl = dotenv.env['CLOUDINARY_URL'];
-    if (cloudinaryUrl == null || cloudinaryUrl.isEmpty) {
-      _log.severe('🚨 CLOUDINARY_URL không được tìm thấy trong file .env!');
-      throw Exception('CLOUDINARY_URL is not set in the .env file.');
-    }
-    _cloudinary = Cloudinary.fromStringUrl(cloudinaryUrl);
+    _cloudinary = Cloudinary.fromStringUrl(AppEnvironment.cloudinaryUrl);
     _cloudinary.config.urlConfig.secure = true;
     _log.info('✅ Cloudinary Service đã được khởi tạo thành công.');
   }

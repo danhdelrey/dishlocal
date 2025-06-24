@@ -1,7 +1,6 @@
 import 'package:dishlocal/data/services/geocoding_service/exception/geocoding_service_exception.dart';
 import 'package:dishlocal/data/services/geocoding_service/interface/geocoding_service.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:logging/logging.dart';
 
 

@@ -1,14 +1,11 @@
 import 'package:dishlocal/app/theme/theme.dart';
-import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/widgets/animated_widgets/fade_slide_up.dart';
-import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:shimmer/shimmer.dart';
 
 class GridPostPage extends StatelessWidget {
   // Chuyển thành StatelessWidget vì không còn state nội bộ

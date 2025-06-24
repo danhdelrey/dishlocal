@@ -1,7 +1,6 @@
 // file: lib/data/entities/post_entity.dart
 
 import 'package:dishlocal/core/json_converter/date_time_converter.dart';
-import 'package:dishlocal/core/json_converter/timestamp_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'post_entity.freezed.dart';

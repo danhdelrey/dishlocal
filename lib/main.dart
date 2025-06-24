@@ -1,19 +1,14 @@
 import 'dart:developer';
 
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'firebase_options_dev.dart' as dev_options;
-import 'firebase_options_prod.dart' as prod_options;
 
-import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:dishlocal/app/config/app_router.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
-import 'package:dishlocal/firebase_options.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,50 +16,23 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:logging/logging.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:timeago/timeago.dart' as timeago_vi;
-
-bool isInDevelopmentEnvironment() {
-  const String environment = String.fromEnvironment(
-    'ENVIRONMENT',
-    defaultValue: 'dev',
-  );
-  return environment == 'dev';
-}
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   _setupLogging();
   configureDependencies();
-  await dotenv.load(fileName: ".env"); //final String apiKey = dotenv.env['API_KEY_WEATHER'] ?? 'Không tìm thấy key';
+  await dotenv.load(fileName: ".env");
   timeago.setLocaleMessages('vi', ShortViMessages());
-  final packageInfo = await PackageInfo.fromPlatform();
-  final appId = packageInfo.packageName;
 
-  // Chọn đúng FirebaseOptions dựa trên môi trường
-  final log = Logger('main()');
-  FirebaseOptions options;
-  if (!isInDevelopmentEnvironment()) {
-    await Supabase.initialize(
-      url: dotenv.env['SUPABASE_URL_PROD'] ?? 'Không tìm thấy key',
-      anonKey: dotenv.env['SUPABASE_ANON_KEY_PROD'] ?? 'Không tìm thấy key',
-    );
-    options = prod_options.DefaultFirebaseOptions.currentPlatform;
-    log.info('🚀 App đang chạy ở môi trường PRODUCTION');
-    log.info('🚀 Package name hiện tại là: $appId');
-  } else {
-    await Supabase.initialize(
-      url: dotenv.env['SUPABASE_URL_DEV'] ?? 'Không tìm thấy key',
-      anonKey: dotenv.env['SUPABASE_ANON_KEY_DEV'] ?? 'Không tìm thấy key',
-    );
-    options = dev_options.DefaultFirebaseOptions.currentPlatform;
-    log.info('👨‍🍳 App đang chạy ở môi trường DEVELOPMENT');
-    log.info('👨‍🍳 Package name hiện tại là: $appId');
-  }
-
-  await Firebase.initializeApp(
-    options: options,
+  await Supabase.initialize(
+    url: AppEnvironment.supabaseUrl,
+    anonKey: AppEnvironment.supabaseAnonKey,
   );
+
+  // await Firebase.initializeApp(
+  //   options: AppEnvironment.firebaseOption,
+  // );
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());
@@ -96,7 +64,7 @@ class _MyAppState extends State<MyApp> {
           title: 'Flutter Demo',
           darkTheme: darkTheme,
           themeMode: ThemeMode.dark,
-          debugShowCheckedModeBanner: isInDevelopmentEnvironment(),
+          debugShowCheckedModeBanner: AppEnvironment.isInDevelopment,
           routerConfig: router,
         );
       }),

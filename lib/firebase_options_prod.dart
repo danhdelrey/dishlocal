@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAqYD4F7cb4TIGf1Acn98O6S87w4HxZBmw',
-    appId: '1:413476207561:android:1aa83cc31c965743a3c618',
+    appId: '1:413476207561:android:49397c1e20a3c763a3c618',
     messagingSenderId: '413476207561',
     projectId: 'dishlocal-prod',
     storageBucket: 'dishlocal-prod.firebasestorage.app',

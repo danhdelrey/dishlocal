@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:dishlocal/data/services/moderation_service/exception/moderation_service_exception.dart';
 import 'package:dishlocal/data/services/moderation_service/interface/moderation_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -14,10 +14,10 @@ class SightengineModerationServiceImpl implements ModerationService {
   // API endpoint cho kiểm duyệt ảnh
   static const String _imageApiUrl = 'https://api.sightengine.com/1.0/check.json';
   // API endpoint cho kiểm duyệt văn bản
-  static const String _textApiUrl = 'https://api.sightengine.com/1.0/text/check.json';
+  //static const String _textApiUrl = 'https://api.sightengine.com/1.0/text/check.json';
 
-  final String _apiUser = dotenv.env['SIGHTENGINE_API_USER'] ?? 'Không tìm thấy key';
-  final String _apiSecret = dotenv.env['SIGHTENGINE_API_SECRET'] ?? 'Không tìm thấy key';
+  final String _apiUser = AppEnvironment.sightengineApiUser;
+  final String _apiSecret = AppEnvironment.sightengineApiSecret;
 
   void _checkImageSafety(Map<String, dynamic> jsonResponse) {
     // --- ĐỊNH NGHĨA NGƯỠNG KIỂM DUYỆT ---

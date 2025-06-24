@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:dishlocal/data/services/authentication_service/exception/authentication_service_exception.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
@@ -12,8 +13,7 @@ import 'package:dishlocal/data/services/authentication_service/model/app_user_cr
 class SupabaseAuthenticationServiceImpl implements AuthenticationService {
   final _log = Logger('SupabaseAuthenticationServiceImpl');
   final _supabase = Supabase.instance.client;
-
-  final _googleSignIn = GoogleSignIn(serverClientId: '994917582362-of3lhbikvpjtst2jsnqmd98u0q32ehmh.apps.googleusercontent.com');
+  final _googleSignIn = GoogleSignIn(serverClientId: AppEnvironment.googleWebClientId);
 
   // Helper private để map từ Supabase User sang AppUserCredential
   /// Helper private để map từ Supabase User sang AppUserCredential đầy đủ.

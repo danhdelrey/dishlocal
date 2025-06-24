@@ -10,7 +10,6 @@ import 'package:dishlocal/ui/features/create_post/form_input/dining_location_nam
 import 'package:dishlocal/ui/features/create_post/form_input/dish_name_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/exact_address_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/money_input.dart';
-import 'package:dishlocal/ui/widgets/containers_widgets/glass_space.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';

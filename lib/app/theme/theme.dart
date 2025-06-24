@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 TextTheme appTextTheme(context) => Theme.of(context).textTheme;
 ColorScheme appColorScheme(context) => Theme.of(context).colorScheme;

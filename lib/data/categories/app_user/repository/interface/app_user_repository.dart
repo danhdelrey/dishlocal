@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
-import 'package:dishlocal/data/services/authentication_service/model/app_user_credential.dart';
 
 enum SignInResult {
   /// Đăng nhập thành công và user đã có profile đầy đủ.

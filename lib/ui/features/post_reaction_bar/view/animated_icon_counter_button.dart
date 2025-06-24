@@ -1,8 +1,6 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
-import 'package:dishlocal/ui/features/post_reaction_bar/view/reaction_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class AnimatedIconCounterButton extends StatefulWidget {
   final bool isActive;

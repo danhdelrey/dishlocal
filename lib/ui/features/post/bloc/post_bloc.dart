@@ -1,11 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dishlocal/data/categories/address/repository/interface/address_repository.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
-import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
 import '../../../../data/categories/post/failure/post_failure.dart' as post_failure;

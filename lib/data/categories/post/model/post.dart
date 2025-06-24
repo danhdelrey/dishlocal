@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dishlocal/core/json_converter/date_time_converter.dart';
-import 'package:dishlocal/core/json_converter/timestamp_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 
