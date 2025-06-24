@@ -98,6 +98,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         id: post.postId,
         authorId: post.authorUserId,
         imageUrl: imageUrl,
+        blurHash: post.blurHash,
         dishName: post.dishName,
         locationName: post.diningLocationName,
         locationAddress: post.address?.exactAddress,

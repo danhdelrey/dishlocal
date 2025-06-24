@@ -95,8 +95,10 @@ class CloudinaryStorageServiceImpl implements StorageService {
             ),
           );
 
-      // [FIXED] Kiểm tra trạng thái dựa trên httpStatusCode và nội dung 'result'.
-      if (response.responseCode >= 200 && response.responseCode < 300 && response.data?.secureUrl != null) {
+      _log.info('Response code: ${response.responseCode}');
+      _log.info('secureUrl: ${response.data?.secureUrl}');
+
+      if (response.responseCode >= 200 && response.responseCode < 300) {
         return;
       }
 

@@ -13,6 +13,8 @@ class SupabaseAuthenticationServiceImpl implements AuthenticationService {
   final _log = Logger('SupabaseAuthenticationServiceImpl');
   final _supabase = Supabase.instance.client;
 
+  final _googleSignIn = GoogleSignIn(serverClientId: '994917582362-of3lhbikvpjtst2jsnqmd98u0q32ehmh.apps.googleusercontent.com');
+
   // Helper private để map từ Supabase User sang AppUserCredential
   /// Helper private để map từ Supabase User sang AppUserCredential đầy đủ.
   AppUserCredential _mapSupabaseUserToAppUserCredential(User user) {
@@ -34,7 +36,7 @@ class SupabaseAuthenticationServiceImpl implements AuthenticationService {
       // --- Metadata ---
       // Tên và ảnh đại diện từ OAuth thường nằm trong userMetadata.
       displayName: user.userMetadata?['full_name'] ?? user.userMetadata?['name'],
-      photoUrl: user.userMetadata?['avatar_url'],
+      photoUrl: user.userMetadata?['avatar_url'] ?? 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg',
 
       // `appMetadata` chứa thông tin về nhà cung cấp.
       providerId: user.appMetadata['provider'],
@@ -45,7 +47,7 @@ class SupabaseAuthenticationServiceImpl implements AuthenticationService {
     );
   }
 
-   @override
+  @override
   Stream<AppUserCredential?> get authStateChanges {
     _log.info('Lắng nghe thay đổi trạng thái xác thực (authStateChanges)...');
     // Lắng nghe stream gốc từ Supabase
@@ -84,13 +86,7 @@ class SupabaseAuthenticationServiceImpl implements AuthenticationService {
     _log.info('Bắt đầu quá trình đăng nhập với Google...');
 
     try {
-      // 1. Lấy Web Client ID từ Supabase Dashboard (Authentication -> Providers -> Google)
-      //    !!! Rất quan trọng: Phải dùng Web Client ID, không phải Android/iOS client ID.
-      const webClientId = '994917582362-of3lhbikvpjtst2jsnqmd98u0q32ehmh.apps.googleusercontent.com';
-
-      // 2. Lấy Google ID Token từ phía client
-      final GoogleSignIn googleSignIn = GoogleSignIn(serverClientId: webClientId);
-      final googleUser = await googleSignIn.signIn();
+      final googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
         _log.warning('Người dùng đã hủy quá trình đăng nhập Google.');
@@ -146,6 +142,7 @@ class SupabaseAuthenticationServiceImpl implements AuthenticationService {
     _log.info('Bắt đầu quá trình đăng xuất...');
     try {
       await _supabase.auth.signOut();
+      await _googleSignIn.signOut();
       _log.info('Đăng xuất khỏi Supabase thành công.');
     } catch (e, st) {
       _log.severe('Lỗi khi đăng xuất khỏi Supabase', e, st);
