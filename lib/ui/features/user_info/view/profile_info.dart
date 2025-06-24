@@ -86,7 +86,50 @@ class ProfileInfo extends StatelessWidget {
         // Hiển thị một placeholder loading đơn giản khi chưa có dữ liệu
         // để tránh màn hình trống trơn lúc đầu
         if (state is UserInfoLoading || state is UserInfoInitial) {
-          return const Center(child: CircularProgressIndicator());
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withAlpha(25), // withValues deprecated
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      const CachedCircleAvatar(
+                        circleRadius: 30,
+                        imageUrl: 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg',
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        // Bọc trong Expanded để tránh tràn khi tên quá dài
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '???',
+                              style: Theme.of(context).textTheme.titleMedium,
+                              overflow: TextOverflow.ellipsis, // Thêm để tránh tràn
+                            ),
+                            const SizedBox(height: 5),
+                            const CustomRichText(
+                              label1: '???',
+                              description1: ' người theo dõi • ',
+                              label2: '???',
+                              description2: ' đang theo dõi',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          );
         }
 
         // Trường hợp lỗi có thể hiển thị một thông báo
