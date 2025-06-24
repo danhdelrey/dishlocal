@@ -68,6 +68,18 @@ abstract class SqlDatabaseService {
     required String id,
   });
 
+  /// Xóa các bản ghi khớp với một bộ lọc (filters).
+  ///
+  /// - [tableName]: Tên của bảng.
+  /// - [filters]: Một Map các điều kiện `equals` để xác định dòng nào sẽ bị xóa.
+  ///   Ví dụ: {'user_id': 'abc', 'post_id': 123}
+  ///
+  /// Ném ra [PermissionDeniedException], v.v.
+  Future<void> deleteWhere({
+    required String tableName,
+    required Map<String, dynamic> filters,
+  });
+
   Future<void> rpc(String functionName, {Map<String, dynamic>? params});
 
 }

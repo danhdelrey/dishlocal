@@ -19,7 +19,7 @@ import 'package:logging/logging.dart';
 class CameraPage extends StatelessWidget {
   final _log = Logger('CameraPage');
 
-   CameraPage({super.key});
+  CameraPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +79,7 @@ class CameraPage extends StatelessWidget {
                         case CameraModerationInProgress():
                           _log.info('⏳ Trạng thái: Kiểm duyệt. Đang cập nhật widget loading...');
                           // Cập nhật overlay để người dùng biết điều gì đang xảy ra
-                          context.loaderOverlay.show(
-                              // Bạn có thể tạo một widget loading tùy chỉnh
-                              // widget: CustomLoadingWidget(message: 'Đang kiểm tra hình ảnh...'),
-                              );
+                          context.loaderOverlay.show();
                           break;
 
                         // --- TRẠNG THÁI LỖI ---
@@ -215,11 +212,32 @@ class CameraPage extends StatelessWidget {
                 ),
                 child: const CustomLoadingIndicator(
                   indicatorSize: 40,
+                  indicatorText: 'Khởi tạo máy ảnh...',
                 ),
               ),
             ),
           );
         }
+        if (state is CameraModerationInProgress) {
+          return SizedBox(
+            width: squareSize,
+            height: squareSize,
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const CustomLoadingIndicator(
+                  indicatorSize: 40,
+                  indicatorText: 'Đang kiểm tra hình ảnh...',
+                ),
+              ),
+            ),
+          );
+        }
+
         if (state is CameraReady) {
           return _buildCameraPreview(
             squareSize: squareSize,

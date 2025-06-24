@@ -282,18 +282,14 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         );
       } else {
         // Hành động: Unfollow
-        // Vì PKEY là (user_id, follower_id), ta không thể dùng delete(id).
-        // Cần một phương thức delete với filter trong service.
-        // Giả sử service có phương thức `deleteWhere`.
-        // Nếu không, bạn cần tạo một RPC function trên Supabase.
-        // TẠM THỜI, giả sử bạn sẽ thêm phương thức này vào service:
-        // await _dbService.deleteWhere(
-        //   tableName: 'followers',
-        //   filters: {'user_id': targetUserId, 'follower_id': currentUserId},
-        // );
-        // Nếu chưa có, bạn có thể tạo một RPC function để làm việc này.
-        _log.warning('followUser: Cần triển khai deleteWhere trong SqlDatabaseService hoặc RPC function cho unfollow.');
-        // Tạm thời để trống.
+        _log.info('UNFOLLOW: "$currentUserId" đang unfollow "$targetUserId"');
+        await _dbService.deleteWhere(
+          tableName: 'followers',
+          filters: {
+            'user_id': targetUserId, // Người được theo dõi
+            'follower_id': currentUserId, // Người đi theo dõi
+          },
+        );
       }
     });
   }

@@ -137,6 +137,31 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
     });
   }
 
+  @override
+  Future<void> deleteWhere({
+    required String tableName,
+    required Map<String, dynamic> filters,
+  }) async {
+    return _wrapDbOperation('DELETE WHERE from "$tableName"', () async {
+      _log.info('deleteWhere(): ➡️ DELETE from "$tableName" với filters: $filters');
+      try {
+        var query = _supabase.from(tableName).delete();
+
+        // Áp dụng tất cả các bộ lọc trong map
+        filters.forEach((key, value) {
+          query = query.eq(key, value);
+        });
+
+        // Thực thi lệnh xóa
+        await query;
+
+        _log.info('deleteWhere(): ✅ DELETE from "$tableName" thành công.');
+      } catch (e) {
+        throw _handlePostgrestException(e as PostgrestException);
+      }
+    });
+  }
+
   // --- Helper để phân tích lỗi ---
   Never _handlePostgrestException(PostgrestException e) {
     _log.severe('💥 Bắt đầu phân tích PostgrestException: code=${e.code}, message=${e.message}, details=${e.details}');
