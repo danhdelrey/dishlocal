@@ -174,7 +174,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         params: {
           'p_user_id': currentUserId,
           'p_limit': limit,
-          'p_start_after': startAfter?.toIso8601String() ?? '9999-12-31',
+          'p_start_after': startAfter?.toUtc().toIso8601String() ?? '9999-12-31',
         },
       );
     });
@@ -191,7 +191,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
           'p_user_id': currentUserId,
           'p_is_following_feed': true,
           'p_limit': limit,
-          'p_start_after': startAfter?.toIso8601String() ?? '9999-12-31',
+          'p_start_after': startAfter?.toUtc().toIso8601String() ?? '9999-12-31',
         },
       );
     });
@@ -209,7 +209,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
           'p_user_id': _authenticationService.getCurrentUserId(), // User đang xem
           'p_author_id': targetUserId, // Lọc theo tác giả này
           'p_limit': limit,
-          'p_start_after': startAfter?.toIso8601String() ?? '9999-12-31',
+          'p_start_after': startAfter?.toUtc().toIso8601String() ?? '9999-12-31',
         },
       );
     });
@@ -227,7 +227,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
           'p_user_id': targetUserId, // User đang xem chính là người có bài viết đã lưu
           'p_is_saved_feed': true,
           'p_limit': limit,
-          'p_start_after': startAfter?.toIso8601String() ?? '9999-12-31',
+          'p_start_after': startAfter?.toUtc().toIso8601String() ?? '9999-12-31',
         },
       );
     });
