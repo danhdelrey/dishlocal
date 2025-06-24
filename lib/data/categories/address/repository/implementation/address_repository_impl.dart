@@ -36,7 +36,7 @@ class AddressRepositoryImpl implements AddressRepository {
       _log.info('Lấy tọa độ thành công: ${position.latitude}, ${position.longitude}');
 
       // BƯỚC 2: LẤY ĐỊA CHỈ TỪ GEOCODING SERVICE
-      final addressString = await _geocodingService.getAddressFromPosition(position);
+      final addressString = await _geocodingService.getAddressFromPosition(position.latitude, position.longitude);
       _log.info('Lấy chuỗi địa chỉ thành công: $addressString');
 
       // BƯỚC 3: TẠO ĐỐI TƯỢNG HOÀN CHỈNH VÀ TRẢ VỀ THÀNH CÔNG (RIGHT)
@@ -67,6 +67,4 @@ class AddressRepositoryImpl implements AddressRepository {
       return const Left(address_failure.UnknownFailure());
     }
   }
-
-  
 }

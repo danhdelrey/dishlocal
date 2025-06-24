@@ -123,14 +123,6 @@ _i174.GetIt init(
       () => _i28.SightengineModerationServiceImpl());
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
-  gh.lazySingleton<_i480.PostRepository>(
-      () => _i181.RemotePostRepositorySqlImpl(
-            gh<_i1045.StorageService>(),
-            gh<_i178.SqlDatabaseService>(),
-            gh<_i367.DistanceService>(),
-            gh<_i473.LocationService>(),
-            gh<_i780.AuthenticationService>(),
-          ));
   gh.lazySingleton<_i60.NoSqlDatabaseService>(
       () => _i959.NoSqlFirestoreServiceImpl(gh<_i974.FirebaseFirestore>()));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
@@ -141,6 +133,15 @@ _i174.GetIt init(
         gh<_i780.AuthenticationService>(),
         gh<_i178.SqlDatabaseService>(),
       ));
+  gh.lazySingleton<_i480.PostRepository>(
+      () => _i181.RemotePostRepositorySqlImpl(
+            gh<_i1045.StorageService>(),
+            gh<_i178.SqlDatabaseService>(),
+            gh<_i367.DistanceService>(),
+            gh<_i473.LocationService>(),
+            gh<_i780.AuthenticationService>(),
+            gh<_i766.GeocodingService>(),
+          ));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,

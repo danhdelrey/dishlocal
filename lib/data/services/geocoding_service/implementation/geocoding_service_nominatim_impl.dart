@@ -27,16 +27,16 @@ class GeocodingServiceNominatimImpl implements GeocodingService {
         ));
 
   @override
-  Future<String> getAddressFromPosition(Position position) async {
-    _log.fine('Bắt đầu lấy địa chỉ cho tọa độ: ${position.latitude}, ${position.longitude}');
+  Future<String> getAddressFromPosition(double latitude, double longitude) async {
+    _log.fine('Bắt đầu lấy địa chỉ cho tọa độ: $latitude, $longitude');
     try {
       // Gọi API với đường dẫn tương đối, vì baseUrl đã được thiết lập
       final response = await _dio.get(
         '/reverse',
         queryParameters: {
           'format': 'jsonv2',
-          'lat': position.latitude,
-          'lon': position.longitude,
+          'lat': latitude,
+          'lon': longitude,
           'accept-language': 'vi',
         },
       );

@@ -9,12 +9,12 @@ class GeocodingServiceImpl implements GeocodingService {
   final _log = Logger('GeocodingServiceImpl');
 
   @override
-  Future<String> getAddressFromPosition(Position position) async {
+  Future<String> getAddressFromPosition(double latitude, double longitude) async {
     try {
       _log.fine('Đang chuyển đổi tọa độ thành địa chỉ...');
       List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
+        latitude,
+        longitude,
       );
 
       if (placemarks.isNotEmpty) {

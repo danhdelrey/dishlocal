@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/services/database_service/entity/post_entity.dart';
 import 'package:dishlocal/data/services/database_service/exception/sql_database_service_exception.dart';
+import 'package:dishlocal/data/services/geocoding_service/interface/geocoding_service.dart';
 import 'package:dishlocal/data/services/storage_service/exception/storage_service_exception.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -26,6 +27,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
   final SqlDatabaseService _dbService;
   final DistanceService _distanceService;
   final LocationService _locationService;
+  final GeocodingService _geocodingService;
   final AuthenticationService _authenticationService;
 
   RemotePostRepositorySqlImpl(
@@ -34,6 +36,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
     this._distanceService,
     this._locationService,
     this._authenticationService,
+    this._geocodingService,
   );
 
   // Helper để bắt và dịch lỗi
@@ -73,6 +76,23 @@ class RemotePostRepositorySqlImpl implements PostRepository {
           toLong: post.address!.longitude,
         );
         return post.copyWith(distance: distance);
+      }
+      return post;
+    }));
+    _log.fine('✅ Hoàn thành tính khoảng cách.');
+    return enriched;
+  }
+
+  Future<List<Post>> _enrichPostsWithLocationDisplayName(List<Post> posts) async {
+    if (posts.isEmpty) return [];
+    _log.fine('📏 Bắt đầu lấy tên địa điểm cho ${posts.length} bài viết...');
+    final enriched = await Future.wait(posts.map((post) async {
+      if (post.address?.latitude != null && post.address?.longitude != null) {
+        final name = await _geocodingService.getAddressFromPosition(post.address!.latitude, post.address!.longitude);
+        final address = post.address!.copyWith(
+          displayName: name,
+        );
+        return post.copyWith(address: address);
       }
       return post;
     }));
@@ -140,8 +160,9 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       },
     ));
 
-    // Chỉ còn làm giàu khoảng cách, các thông tin khác đã có từ RPC
     return await _enrichPostsWithDistance(posts);
+
+
   }
 
   @override
@@ -228,7 +249,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       final post = Post.fromJson(data);
       _log.info('✅ Lấy chi tiết bài viết thành công.: ${post.toString()}');
 
-      final enrichedList = await _enrichPostsWithDistance([post]);
+      final enrichedList = await _enrichPostsWithLocationDisplayName( await _enrichPostsWithDistance([post]));
       return enrichedList.first;
     });
   }
