@@ -133,36 +133,31 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
     return _handleErrors(() async {
       final credential = await _authService.signInWithGoogle();
       if (credential == null) {
-        // Trường hợp này đã được bắt bởi GoogleSignInCancelledException
-        // nhưng để đây cho chắc chắn.
         throw AuthenticationServiceUnknownException('Credential trả về null sau khi đăng nhập.');
       }
 
-      // Sau khi đăng nhập, trigger `_onAuthChanged` sẽ chạy.
-      // Chúng ta cần kiểm tra xem profile đã tồn tại chưa để quyết định kết quả.
+      // Luôn lấy profile từ DB để có thông tin mới nhất
+      // Trigger `handle_new_user` đảm bảo profile luôn tồn tại sau khi user được tạo trong `auth.users`
       try {
-        await _dbService.readSingleById(
-          tableName: 'profiles',
-          id: credential.uid,
-          fromJson: (json) => json,
-        );
-        return SignInResult.success;
-      } on RecordNotFoundException {
-        // Đây là user mới, vì trigger `handle_new_user` đã tạo một profile trống.
-        // Việc không tìm thấy profile ở đây là một lỗi bất thường.
-        // Tuy nhiên, logic của bạn là trigger tạo profile, nên ta sẽ giả định
-        // profile đã tồn tại. Nếu bạn muốn kiểm tra user đã setup hay chưa,
-        // có thể thêm một cột `is_setup_completed` vào bảng profiles.
-        // Tạm thời, ta dựa vào username mặc định.
         final profile = await _dbService.readSingleById<ProfileEntity>(
           tableName: 'profiles',
           id: credential.uid,
           fromJson: ProfileEntity.fromJson,
         );
-        if (profile.username.startsWith('user')) {
+
+        // Logic kiểm tra mới: rõ ràng và đáng tin cậy
+        if (profile.isSetupCompleted) {
+          _log.info('Người dùng đã tồn tại và hoàn thành setup. Kết quả: success.');
+          return SignInResult.success;
+        } else {
+          _log.info('Người dùng mới hoặc chưa hoàn thành setup. Kết quả: newUser.');
           return SignInResult.newUser;
         }
-        return SignInResult.success;
+      } on RecordNotFoundException {
+        // Lỗi này không nên xảy ra nếu trigger của bạn hoạt động đúng.
+        // Nó chỉ ra một sự không đồng bộ giữa `auth.users` và `profiles`.
+        _log.severe('Lỗi nghiêm trọng: Profile không tồn tại cho user ${credential.uid} mặc dù đã đăng nhập.');
+        throw UnknownDatabaseException('Không tìm thấy profile tương ứng với tài khoản.');
       }
     });
   }
@@ -179,11 +174,13 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   Future<Either<AppUserFailure, void>> completeProfileSetup({required String username, String? displayName}) {
     return _handleErrors(() async {
       final userId = getCurrentUserId();
-      if (userId == null) throw const AppUserFailure.notAuthenticated();
+      if (userId == null) throw const NotAuthenticatedFailure();
 
       final dataToUpdate = {
         'username': username,
         if (displayName != null) 'display_name': displayName,
+        // Đánh dấu là đã hoàn thành setup!
+        'is_setup_completed': true,
       };
 
       await _dbService.update(
@@ -192,6 +189,10 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         data: dataToUpdate,
         fromJson: (_) => {}, // không cần kết quả trả về
       );
+
+      // Trigger việc cập nhật lại AppUser trong stream
+      // để các widget khác (như home screen) có được thông tin mới nhất.
+      _onAuthChanged(_authService.getCurrentUser());
     });
   }
 

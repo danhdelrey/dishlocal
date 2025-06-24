@@ -17,6 +17,7 @@ _AppUser _$AppUserFromJson(Map<String, dynamic> json) => _AppUser(
       followerCount: (json['followerCount'] as num?)?.toInt() ?? 0,
       followingCount: (json['followingCount'] as num?)?.toInt() ?? 0,
       isFollowing: json['isFollowing'] as bool?,
+      isSetupCompleted: json['isSetupCompleted'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$AppUserToJson(_AppUser instance) => <String, dynamic>{
@@ -30,4 +31,5 @@ Map<String, dynamic> _$AppUserToJson(_AppUser instance) => <String, dynamic>{
       'followerCount': instance.followerCount,
       'followingCount': instance.followingCount,
       'isFollowing': instance.isFollowing,
+      'isSetupCompleted': instance.isSetupCompleted,
     };

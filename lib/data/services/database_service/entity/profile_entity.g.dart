@@ -16,6 +16,7 @@ _ProfileEntity _$ProfileEntityFromJson(Map<String, dynamic> json) =>
       followerCount: (json['follower_count'] as num?)?.toInt() ?? 0,
       followingCount: (json['following_count'] as num?)?.toInt() ?? 0,
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      isSetupCompleted: json['is_setup_completed'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ProfileEntityToJson(_ProfileEntity instance) =>
@@ -28,4 +29,5 @@ Map<String, dynamic> _$ProfileEntityToJson(_ProfileEntity instance) =>
       'follower_count': instance.followerCount,
       'following_count': instance.followingCount,
       'updated_at': instance.updatedAt.toIso8601String(),
+      'is_setup_completed': instance.isSetupCompleted,
     };

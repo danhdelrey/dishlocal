@@ -34,6 +34,8 @@ abstract class ProfileEntity with _$ProfileEntity {
 
     /// Thời điểm hồ sơ được cập nhật lần cuối.
     required DateTime updatedAt,
+
+    @Default(false) bool isSetupCompleted,
   }) = _ProfileEntity;
 
   factory ProfileEntity.fromJson(Map<String, dynamic> json) => _$ProfileEntityFromJson(json);

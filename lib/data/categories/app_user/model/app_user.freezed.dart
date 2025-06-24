@@ -25,6 +25,7 @@ mixin _$AppUser {
   int get followerCount;
   int get followingCount;
   bool? get isFollowing;
+  bool get isSetupCompleted;
 
   /// Create a copy of AppUser
   /// with the given fields replaced by the non-null parameter values.
@@ -57,7 +58,9 @@ mixin _$AppUser {
             (identical(other.followingCount, followingCount) ||
                 other.followingCount == followingCount) &&
             (identical(other.isFollowing, isFollowing) ||
-                other.isFollowing == isFollowing));
+                other.isFollowing == isFollowing) &&
+            (identical(other.isSetupCompleted, isSetupCompleted) ||
+                other.isSetupCompleted == isSetupCompleted));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -73,11 +76,12 @@ mixin _$AppUser {
       bio,
       followerCount,
       followingCount,
-      isFollowing);
+      isFollowing,
+      isSetupCompleted);
 
   @override
   String toString() {
-    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing)';
+    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -96,7 +100,8 @@ abstract mixin class $AppUserCopyWith<$Res> {
       String? bio,
       int followerCount,
       int followingCount,
-      bool? isFollowing});
+      bool? isFollowing,
+      bool isSetupCompleted});
 }
 
 /// @nodoc
@@ -121,6 +126,7 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
     Object? followerCount = null,
     Object? followingCount = null,
     Object? isFollowing = freezed,
+    Object? isSetupCompleted = null,
   }) {
     return _then(_self.copyWith(
       userId: null == userId
@@ -163,6 +169,10 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
           ? _self.isFollowing
           : isFollowing // ignore: cast_nullable_to_non_nullable
               as bool?,
+      isSetupCompleted: null == isSetupCompleted
+          ? _self.isSetupCompleted
+          : isSetupCompleted // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -180,7 +190,8 @@ class _AppUser implements AppUser {
       this.bio,
       this.followerCount = 0,
       this.followingCount = 0,
-      this.isFollowing});
+      this.isFollowing,
+      this.isSetupCompleted = false});
   factory _AppUser.fromJson(Map<String, dynamic> json) =>
       _$AppUserFromJson(json);
 
@@ -206,6 +217,9 @@ class _AppUser implements AppUser {
   final int followingCount;
   @override
   final bool? isFollowing;
+  @override
+  @JsonKey()
+  final bool isSetupCompleted;
 
   /// Create a copy of AppUser
   /// with the given fields replaced by the non-null parameter values.
@@ -243,7 +257,9 @@ class _AppUser implements AppUser {
             (identical(other.followingCount, followingCount) ||
                 other.followingCount == followingCount) &&
             (identical(other.isFollowing, isFollowing) ||
-                other.isFollowing == isFollowing));
+                other.isFollowing == isFollowing) &&
+            (identical(other.isSetupCompleted, isSetupCompleted) ||
+                other.isSetupCompleted == isSetupCompleted));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -259,11 +275,12 @@ class _AppUser implements AppUser {
       bio,
       followerCount,
       followingCount,
-      isFollowing);
+      isFollowing,
+      isSetupCompleted);
 
   @override
   String toString() {
-    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing)';
+    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -283,7 +300,8 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
       String? bio,
       int followerCount,
       int followingCount,
-      bool? isFollowing});
+      bool? isFollowing,
+      bool isSetupCompleted});
 }
 
 /// @nodoc
@@ -308,6 +326,7 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
     Object? followerCount = null,
     Object? followingCount = null,
     Object? isFollowing = freezed,
+    Object? isSetupCompleted = null,
   }) {
     return _then(_AppUser(
       userId: null == userId
@@ -350,6 +369,10 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
           ? _self.isFollowing
           : isFollowing // ignore: cast_nullable_to_non_nullable
               as bool?,
+      isSetupCompleted: null == isSetupCompleted
+          ? _self.isSetupCompleted
+          : isSetupCompleted // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }

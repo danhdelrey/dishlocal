@@ -38,6 +38,7 @@ mixin _$ProfileEntity {
 
   /// Thời điểm hồ sơ được cập nhật lần cuối.
   DateTime get updatedAt;
+  bool get isSetupCompleted;
 
   /// Create a copy of ProfileEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -68,17 +69,28 @@ mixin _$ProfileEntity {
             (identical(other.followingCount, followingCount) ||
                 other.followingCount == followingCount) &&
             (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+                other.updatedAt == updatedAt) &&
+            (identical(other.isSetupCompleted, isSetupCompleted) ||
+                other.isSetupCompleted == isSetupCompleted));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, username, displayName,
-      photoUrl, bio, followerCount, followingCount, updatedAt);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      username,
+      displayName,
+      photoUrl,
+      bio,
+      followerCount,
+      followingCount,
+      updatedAt,
+      isSetupCompleted);
 
   @override
   String toString() {
-    return 'ProfileEntity(id: $id, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, updatedAt: $updatedAt)';
+    return 'ProfileEntity(id: $id, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, updatedAt: $updatedAt, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -96,7 +108,8 @@ abstract mixin class $ProfileEntityCopyWith<$Res> {
       String? bio,
       int followerCount,
       int followingCount,
-      DateTime updatedAt});
+      DateTime updatedAt,
+      bool isSetupCompleted});
 }
 
 /// @nodoc
@@ -120,6 +133,7 @@ class _$ProfileEntityCopyWithImpl<$Res>
     Object? followerCount = null,
     Object? followingCount = null,
     Object? updatedAt = null,
+    Object? isSetupCompleted = null,
   }) {
     return _then(_self.copyWith(
       id: null == id
@@ -154,6 +168,10 @@ class _$ProfileEntityCopyWithImpl<$Res>
           ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      isSetupCompleted: null == isSetupCompleted
+          ? _self.isSetupCompleted
+          : isSetupCompleted // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -170,7 +188,8 @@ class _ProfileEntity implements ProfileEntity {
       this.bio,
       this.followerCount = 0,
       this.followingCount = 0,
-      required this.updatedAt});
+      required this.updatedAt,
+      this.isSetupCompleted = false});
   factory _ProfileEntity.fromJson(Map<String, dynamic> json) =>
       _$ProfileEntityFromJson(json);
 
@@ -207,6 +226,9 @@ class _ProfileEntity implements ProfileEntity {
   /// Thời điểm hồ sơ được cập nhật lần cuối.
   @override
   final DateTime updatedAt;
+  @override
+  @JsonKey()
+  final bool isSetupCompleted;
 
   /// Create a copy of ProfileEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -241,17 +263,28 @@ class _ProfileEntity implements ProfileEntity {
             (identical(other.followingCount, followingCount) ||
                 other.followingCount == followingCount) &&
             (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+                other.updatedAt == updatedAt) &&
+            (identical(other.isSetupCompleted, isSetupCompleted) ||
+                other.isSetupCompleted == isSetupCompleted));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, username, displayName,
-      photoUrl, bio, followerCount, followingCount, updatedAt);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      username,
+      displayName,
+      photoUrl,
+      bio,
+      followerCount,
+      followingCount,
+      updatedAt,
+      isSetupCompleted);
 
   @override
   String toString() {
-    return 'ProfileEntity(id: $id, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, updatedAt: $updatedAt)';
+    return 'ProfileEntity(id: $id, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, updatedAt: $updatedAt, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -271,7 +304,8 @@ abstract mixin class _$ProfileEntityCopyWith<$Res>
       String? bio,
       int followerCount,
       int followingCount,
-      DateTime updatedAt});
+      DateTime updatedAt,
+      bool isSetupCompleted});
 }
 
 /// @nodoc
@@ -295,6 +329,7 @@ class __$ProfileEntityCopyWithImpl<$Res>
     Object? followerCount = null,
     Object? followingCount = null,
     Object? updatedAt = null,
+    Object? isSetupCompleted = null,
   }) {
     return _then(_ProfileEntity(
       id: null == id
@@ -329,6 +364,10 @@ class __$ProfileEntityCopyWithImpl<$Res>
           ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      isSetupCompleted: null == isSetupCompleted
+          ? _self.isSetupCompleted
+          : isSetupCompleted // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }

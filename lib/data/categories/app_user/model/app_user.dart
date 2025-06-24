@@ -16,6 +16,7 @@ abstract class AppUser with _$AppUser {
     @Default(0) int followerCount, 
     @Default(0) int followingCount,
     bool? isFollowing,
+    @Default(false) bool isSetupCompleted,
   }) = _AppUser;
 
   factory AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);
