@@ -52,5 +52,6 @@ abstract class AppUserRepository {
     required String username,
     String? displayName,
     String? photoUrl,
+    String? bio,
   });
 }

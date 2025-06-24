@@ -346,13 +346,19 @@ class NoSqlAppUserRepositoryImpl implements AppUserRepository {
       return const Left(UnknownFailure());
     }
   }
-  
+
   @override
-  Future<Either<AppUserFailure, void>> updateProfileAfterSetup({required String userId, required String username, String? displayName, String? photoUrl}) {
+  Future<Either<AppUserFailure, void>> updateProfileAfterSetup({
+    required String userId,
+    required String username,
+    String? displayName,
+    String? photoUrl,
+    String? bio,
+  }) {
     // TODO: implement completeProfileSetup
     throw UnimplementedError();
   }
-  
+
   @override
   Future<Either<AppUserFailure, SignInResult>> signInWithGoogle() {
     // TODO: implement signInWithGoogle

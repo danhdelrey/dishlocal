@@ -293,6 +293,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
     String? displayName,
     // Giả sử bạn cũng cho phép cập nhật ảnh đại diện ở màn hình này
     String? photoUrl,
+    String? bio,
   }) {
     return _handleErrors(() async {
       _log.info('Cập nhật hồ sơ cho người dùng $userId với username: $username');
@@ -302,6 +303,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         'username': username,
         'display_name': displayName,
         'photo_url': photoUrl,
+        'bio' : bio,
       };
 
       // Loại bỏ các giá trị null để không ghi đè dữ liệu hiện có bằng null một cách vô tình
