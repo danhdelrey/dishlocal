@@ -27,8 +27,12 @@ abstract class AppUserRepository {
   /// Lấy ID của người dùng hiện tại, trả về null nếu chưa đăng nhập.
   String? getCurrentUserId();
 
-  /// Lấy thông tin của một người dùng bất kỳ bằng ID.
-  Future<Either<AppUserFailure, AppUser>> getUserById(String userId);
+  /// Lấy thông tin profile của một người dùng.
+  /// Nếu [userId] được cung cấp, sẽ lấy profile của người đó.
+  /// Nếu [userId] là null, sẽ lấy profile của người dùng đang đăng nhập.
+  Future<Either<AppUserFailure, AppUser>> getUserProfile([String? userId]);
+
+  
 
   /// Đăng nhập bằng Google.
   Future<Either<AppUserFailure, SignInResult>> signInWithGoogle();
@@ -40,6 +44,7 @@ abstract class AppUserRepository {
   Future<Either<AppUserFailure, void>> completeProfileSetup({
     required String username,
     String? displayName,
+    String? bio,
   });
 
   /// Cập nhật một trường duy nhất trong profile của người dùng hiện tại.

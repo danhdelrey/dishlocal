@@ -15,9 +15,11 @@ class AccountSetupState extends Equatable {
     this.bioInput = const BioInput.pure(),
     this.formzSubmissionStatus = FormzSubmissionStatus.initial,
     this.fieldToFocus,
+    this.errorMessage,
   });
 
   final AppUser? appUser;
+  final String? errorMessage;
 
   // Khai báo các trường input của form.
   final UsernameInput usernameInput;
@@ -38,6 +40,7 @@ class AccountSetupState extends Equatable {
     FormzSubmissionStatus? formzSubmissionStatus,
     // ValueGetter<T?> cho phép gán giá trị null để xóa yêu cầu focus.
     ValueGetter<AccountSetupField?>? fieldToFocus,
+    String? errorMessage,
   }) {
     return AccountSetupState(
       appUser: appUser ?? this.appUser,
@@ -47,6 +50,7 @@ class AccountSetupState extends Equatable {
       formzSubmissionStatus: formzSubmissionStatus ?? this.formzSubmissionStatus,
       // Sử dụng ValueGetter để có thể gán giá trị null một cách tường minh.
       fieldToFocus: fieldToFocus != null ? fieldToFocus() : this.fieldToFocus,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
@@ -58,5 +62,6 @@ class AccountSetupState extends Equatable {
         bioInput,
         formzSubmissionStatus,
         fieldToFocus,
+        errorMessage
       ];
 }

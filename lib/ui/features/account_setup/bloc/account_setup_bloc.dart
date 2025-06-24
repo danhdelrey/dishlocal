@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
+import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/bio_input.dart';
 import 'package:dishlocal/ui/features/account_setup/form_input/display_name_input.dart';
@@ -60,14 +61,12 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
   Future<void> _onSubmitted(AccountSetupSubmitted event, Emitter<AccountSetupState> emit) async {
     _log.info('Nhận được sự kiện AccountSetupSubmitted');
 
-    // Tạo các phiên bản "dirty" của các input từ trạng thái hiện tại.
-    // Điều này đảm bảo rằng lỗi sẽ được hiển thị ngay cả khi người dùng chưa từng chạm vào trường đó.
+    // "Làm bẩn" tất cả các input từ trạng thái hiện tại để kích hoạt validation.
     final usernameInput = UsernameInput.dirty(value: state.usernameInput.value);
     final displayNameInput = DisplayNameInput.dirty(value: state.displayNameInput.value);
     final bioInput = BioInput.dirty(value: state.bioInput.value);
 
-    // Xác thực form với các phiên bản "dirty" này.
-    // BioInput sẽ luôn hợp lệ nếu rỗng, nhưng vẫn được kiểm tra lỗi `tooLong`.
+    // Xác thực toàn bộ form.
     final isFormValid = Formz.validate([
       usernameInput,
       displayNameInput,
@@ -77,40 +76,64 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
     _log.fine('Kết quả xác thực form khi submit: ${isFormValid ? 'Hợp lệ' : 'Không hợp lệ'}.');
 
     if (isFormValid) {
+      // Nếu form hợp lệ, chuyển sang trạng thái đang xử lý và xóa lỗi cũ.
       emit(state.copyWith(
         formzSubmissionStatus: FormzSubmissionStatus.inProgress,
+        errorMessage: null,
         usernameInput: usernameInput,
         displayNameInput: displayNameInput,
         bioInput: bioInput,
       ));
-      _log.info('Form hợp lệ. Bắt đầu quá trình submit dữ liệu.');
-      _log.info('Dữ liệu đã nhập: username="${usernameInput.value}", displayName="${displayNameInput.value}", bio="${bioInput.value}"');
 
-      try {
-        await appUserRepository.updateUsername(usernameInput.value);
-        await appUserRepository.updateBio(bioInput.value);
-        await appUserRepository.updateDisplayName(displayNameInput.value);
-        _log.info('Submit dữ liệu thành công.');
-        final appUser = await appUserRepository.getCurrentUser();
-        appUser.fold(
-          (failure) {
-            _log.info('User là null, form success.');
-            emit(state.copyWith(appUser: null, formzSubmissionStatus: FormzSubmissionStatus.success));
-          },
-          (appUser) {
-            _log.info('User đã có, form success.');
-            emit(state.copyWith(appUser: appUser, formzSubmissionStatus: FormzSubmissionStatus.success));
-          },
-        );
-        
-      } catch (e, st) {
-        _log.severe('Submit thất bại', e, st);
-        emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
-      }
+      _log.info('Form hợp lệ. Gọi `completeProfileSetup` từ repository...');
+      _log.info('Dữ liệu gửi đi: username="${usernameInput.value}", displayName="${displayNameInput.value}", bio="${bioInput.value}"');
+
+      // Gọi một phương thức duy nhất trong repository với đầy đủ các trường.
+      final result = await appUserRepository.completeProfileSetup(
+        username: usernameInput.value,
+        displayName: displayNameInput.value,
+        bio: bioInput.value,
+      );
+
+      // Xử lý kết quả trả về từ repository (Thành công hoặc Thất bại).
+      result.fold(
+        (failure) {
+          // Trường hợp thất bại: Dịch lỗi từ Failure sang thông báo cho người dùng.
+          _log.severe('Submit thất bại do lỗi từ repository: $failure');
+
+          final errorMessage = switch (failure) {
+            // Các trường hợp lỗi từ Authentication
+            SignInCancelledFailure() => 'Bạn đã hủy quá trình đăng nhập.',
+            SignInServiceFailure(message: final msg) => msg,
+            SignOutFailure(message: final msg) => msg,
+
+            // Các trường hợp lỗi từ Database
+            UserNotFoundFailure() => 'Không tìm thấy thông tin người dùng.',
+            UpdatePermissionDeniedFailure() => 'Bạn không có quyền thực hiện hành động này.',
+            DatabaseFailure(message: final msg) => msg, // Sẽ hiển thị lỗi cụ thể
+            NotAuthenticatedFailure() => 'Người dùng chưa được xác thực.',
+
+            // Lỗi chung
+            UnknownFailure() => 'Đã có lỗi không mong muốn xảy ra. Vui lòng thử lại.',            
+          };
+
+          emit(state.copyWith(
+            formzSubmissionStatus: FormzSubmissionStatus.failure,
+            errorMessage: errorMessage, // Gửi thông báo lỗi cụ thể cho UI.
+          ));
+        },
+        (_) {
+          // Trường hợp thành công: AuthBloc sẽ tự động xử lý việc điều hướng.
+          _log.info('✅ Submit dữ liệu và hoàn thành setup thành công.');
+          emit(state.copyWith(
+            formzSubmissionStatus: FormzSubmissionStatus.success,
+          ));
+        },
+      );
     } else {
+      // Nếu form không hợp lệ, xác định trường lỗi đầu tiên để focus.
       _log.warning('Form không hợp lệ. Hiển thị lỗi và yêu cầu focus.');
 
-      // Xác định trường lỗi đầu tiên để focus
       AccountSetupField? fieldToFocus;
       if (usernameInput.isNotValid) {
         fieldToFocus = AccountSetupField.username;
@@ -120,16 +143,14 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
         fieldToFocus = AccountSetupField.bio;
       }
 
-      // Phát ra trạng thái mới với:
-      // 1. Các input đã được "làm bẩn" (dirty) để UI hiển thị lỗi.
-      // 2. Trạng thái submission là `failure`.
-      // 3. Yêu cầu focus vào trường lỗi đầu tiên.
+      // Phát ra trạng thái mới với các input đã được "làm bẩn" và yêu cầu focus.
       emit(state.copyWith(
         usernameInput: usernameInput,
         displayNameInput: displayNameInput,
         bioInput: bioInput,
         formzSubmissionStatus: FormzSubmissionStatus.failure,
         fieldToFocus: () => fieldToFocus,
+        errorMessage: 'Vui lòng kiểm tra lại các thông tin đã nhập.', // Thêm một thông báo chung
       ));
     }
   }

@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
 import 'package:flutter/material.dart';
@@ -14,38 +15,41 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
+        // Lắng nghe sự thay đổi trạng thái để hiển thị SnackBar, v.v.
         listener: (context, state) {
-          if (state is AuthFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Đăng nhập thất bại',
+          // Chỉ lắng nghe khi state là Failure
+          // Các trạng thái thành công (Authenticated, NewUser) sẽ được GoRouter xử lý tự động
+          switch (state) {
+            case Failure(failure: final f): // Sử dụng pattern matching
+              // "Dịch" lỗi sang thông báo thân thiện
+              final message = switch (f) {
+                SignInCancelledFailure() => 'Bạn đã hủy đăng nhập.',
+                SignInServiceFailure(message: final msg) => msg,
+                _ => 'Đăng nhập thất bại. Vui lòng thử lại.',
+              };
+
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Theme.of(context).colorScheme.error,
                   ),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-          } else if (state is Authenticated) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Đăng nhập thành công!',
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+                );
+              break;
+            default:
+              // Không làm gì với các state khác
+              break;
           }
         },
         child: BlocBuilder<AuthBloc, AuthState>(
+          // Builder để xây dựng UI dựa trên trạng thái
           builder: (context, state) {
-            if (state is AuthLoading) {
-              return const Center(
-                child: CustomLoadingIndicator(indicatorSize: 40),
-              );
-            }
+            // Nếu đang trong quá trình đăng nhập, hiển thị loading indicator
+            // và vô hiệu hóa nút bấm để tránh người dùng nhấn nhiều lần.
+            final bool isLoading = state is InProgress;
+
             return SizedBox(
               width: double.infinity,
               child: Column(
@@ -56,6 +60,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   Column(
                     children: [
+                      // ... (Toàn bộ phần UI logo và text của bạn giữ nguyên) ...
                       Container(
                         width: 100,
                         height: 100,
@@ -66,12 +71,9 @@ class LoginPage extends StatelessWidget {
                             Radius.circular(28),
                           ),
                         ),
-                        // Màu nền để dễ thấy
                         child: AppIcons.app.toSvg(),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       ShaderMask(
                         shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
                         child: const Text(
@@ -83,9 +85,7 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       Text(
                         'Chia sẻ & Khám phá trực tiếp',
                         style: Theme.of(context).textTheme.titleLarge,
@@ -99,39 +99,45 @@ class LoginPage extends StatelessWidget {
                     ],
                   ),
                   const Expanded(child: SizedBox()),
-                  FilledButton.icon(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(GoogleSignInRequested());
-                    },
-                    label: Text(
-                      'Đăng nhập bằng tài khoản Google',
-                      style: appTextTheme(context).labelLarge!.copyWith(
-                            color: Colors.black,
-                          ),
-                    ),
-                    icon: AppIcons.google.toSvg(
-                      width: 20,
-                    ),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsetsDirectional.only(
-                        top: 10,
-                        bottom: 10,
-                        start: 12,
-                        end: 12,
+
+                  // Nút Đăng nhập
+                  if (isLoading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12.0),
+                      child: CustomLoadingIndicator(indicatorSize: 40),
+                    )
+                  else
+                    FilledButton.icon(
+                      onPressed: () {
+                        // Gửi event đến BLoC
+                        context.read<AuthBloc>().add(const SignInWithGoogleRequested());
+                      },
+                      label: Text(
+                        'Đăng nhập bằng tài khoản Google',
+                        style: appTextTheme(context).labelLarge!.copyWith(
+                              color: Colors.black,
+                            ),
+                      ),
+                      icon: AppIcons.google.toSvg(
+                        width: 20,
+                      ),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        padding: const EdgeInsetsDirectional.only(
+                          top: 10,
+                          bottom: 10,
+                          start: 12,
+                          end: 12,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+
+                  const SizedBox(height: 15),
                   Text(
                     'Đăng nhập để tiếp tục...',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             );

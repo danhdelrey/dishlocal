@@ -25,45 +25,35 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
     UserInfoRequested event,
     Emitter<UserInfoState> emit,
   ) async {
-    final targetUserId = event.userId; // ID của người dùng cần hiển thị thông tin
+    final targetUserId = event.userId;
     _log.info('▶️ Bắt đầu xử lý UserInfoRequested. TargetUserId: ${targetUserId ?? "người dùng hiện tại"}');
-    emit(UserInfoLoading()); // <-- Thay đổi: Sử dụng tên lớp trực tiếp
+    emit( UserInfoLoading()); // Sử dụng constructor của freezed
 
-    try {
-      // BƯỚC 1: Lấy ID của người dùng hiện tại (người đang xem)
-      final currentUserId = _appUserRepository.getCurrentUserId();
-      _log.fine('🆔 Người xem hiện tại (currentUserId): $currentUserId');
+    // Với repository đã được cải tiến, chúng ta chỉ cần một lời gọi duy nhất.
+    // Không cần if-else, không cần try-catch.
+    final result = await _appUserRepository.getUserProfile(targetUserId);
 
-      late final Either<AppUserFailure, AppUser> result;
+    // Xử lý kết quả trả về bằng .fold() một cách an toàn.
+    result.fold(
+      // ---- TRƯỜNG HỢP THẤT BẠI ----
+      (failure) {
+        _log.severe('❌ Lỗi khi lấy thông tin người dùng: $failure');
 
-      // BƯỚC 2: Quyết định phương thức repository cần gọi
-      if (targetUserId != null && targetUserId.isNotEmpty) {
-        // TRƯỜNG HỢP 1: Lấy thông tin của một người dùng cụ thể
-        _log.fine('🔄 Đang lấy thông tin cho người dùng cụ thể: $targetUserId');
-        result = await _appUserRepository.getUserWithId(
-          userId: targetUserId,
-          currentUserId: currentUserId, // <-- ✨ TRUYỀN currentUserId VÀO ĐÂY
-        );
-      } else {
-        // TRƯỜNG HỢP 2: Lấy thông tin của chính người dùng đang đăng nhập
-        _log.fine('🔄 Đang lấy thông tin cho người dùng hiện tại...');
-        result = await _appUserRepository.getCurrentUser();
-      }
+        // Dịch failure thành một thông báo lỗi thân thiện để hiển thị cho người dùng.
+        // final message = switch (failure) {
+        //   UserNotFoundFailure() => 'Không tìm thấy người dùng này.',
+        //   NotAuthenticatedFailure() => 'Bạn cần đăng nhập để xem trang cá nhân.',
+        //   _ => 'Không thể tải thông tin. Vui lòng thử lại sau.',
+        // };
 
-      // BƯỚC 3: Xử lý kết quả trả về
-      result.fold(
-        (failure) {
-          _log.severe('❌ Lỗi khi lấy thông tin người dùng.', failure);
-          emit(UserInfoFailure()); // <-- Thay đổi: Sử dụng tên lớp trực tiếp
-        },
-        (appUser) {
-          _log.info('✅ Lấy thông tin người dùng thành công: ${appUser.displayName}. isFollowing: ${appUser.isFollowing}');
-          emit(UserInfoSuccess(appUser: appUser)); // <-- Thay đổi: Sử dụng tên lớp trực tiếp
-        },
-      );
-    } catch (error, stackTrace) {
-      _log.severe('❌ Đã xảy ra lỗi không xác định trong UserInfoBloc.', error, stackTrace);
-      emit(UserInfoFailure()); // <-- Thay đổi: Sử dụng tên lớp trực tiếp
-    }
+        // Emit trạng thái failure kèm theo thông điệp lỗi.
+        emit(UserInfoFailure());
+      },
+      // ---- TRƯỜDNG HỢP THÀNH CÔNG ----
+      (appUser) {
+        _log.info('✅ Lấy thông tin người dùng thành công: ${appUser.displayName}. isFollowing: ${appUser.isFollowing}');
+        emit(UserInfoSuccess(appUser: appUser));
+      },
+    );
   }
 }

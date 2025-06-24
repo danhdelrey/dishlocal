@@ -291,26 +291,6 @@ class _$DatabaseFailureCopyWithImpl<$Res>
 
 /// @nodoc
 
-class UnknownFailure implements AppUserFailure {
-  const UnknownFailure();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is UnknownFailure);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() {
-    return 'AppUserFailure.unknown()';
-  }
-}
-
-/// @nodoc
-
 class NotAuthenticatedFailure implements AppUserFailure {
   const NotAuthenticatedFailure();
 
@@ -326,6 +306,26 @@ class NotAuthenticatedFailure implements AppUserFailure {
   @override
   String toString() {
     return 'AppUserFailure.notAuthenticated()';
+  }
+}
+
+/// @nodoc
+
+class UnknownFailure implements AppUserFailure {
+  const UnknownFailure();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is UnknownFailure);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'AppUserFailure.unknown()';
   }
 }
 

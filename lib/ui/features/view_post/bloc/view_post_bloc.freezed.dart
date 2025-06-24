@@ -314,20 +314,64 @@ class _$ViewPostSuccessCopyWithImpl<$Res>
 /// @nodoc
 
 class ViewPostFailure implements ViewPostState {
-  const ViewPostFailure();
+  const ViewPostFailure(this.message);
+
+  final String message;
+
+  /// Create a copy of ViewPostState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $ViewPostFailureCopyWith<ViewPostFailure> get copyWith =>
+      _$ViewPostFailureCopyWithImpl<ViewPostFailure>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is ViewPostFailure);
+        (other.runtimeType == runtimeType &&
+            other is ViewPostFailure &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, message);
 
   @override
   String toString() {
-    return 'ViewPostState.failure()';
+    return 'ViewPostState.failure(message: $message)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $ViewPostFailureCopyWith<$Res>
+    implements $ViewPostStateCopyWith<$Res> {
+  factory $ViewPostFailureCopyWith(
+          ViewPostFailure value, $Res Function(ViewPostFailure) _then) =
+      _$ViewPostFailureCopyWithImpl;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class _$ViewPostFailureCopyWithImpl<$Res>
+    implements $ViewPostFailureCopyWith<$Res> {
+  _$ViewPostFailureCopyWithImpl(this._self, this._then);
+
+  final ViewPostFailure _self;
+  final $Res Function(ViewPostFailure) _then;
+
+  /// Create a copy of ViewPostState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(ViewPostFailure(
+      null == message
+          ? _self.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
   }
 }
 

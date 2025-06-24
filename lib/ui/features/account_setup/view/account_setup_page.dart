@@ -67,7 +67,18 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
               BlocListener<AccountSetupBloc, AccountSetupState>(
                 listenWhen: (previous, current) => previous.formzSubmissionStatus != current.formzSubmissionStatus,
                 listener: (context, state) {
-                  if (state.formzSubmissionStatus.isSuccess) {
+                  // ===================================================================
+                  // TRẠNG THÁI: ĐANG XỬ LÝ (inProgress)
+                  // ===================================================================
+                  if (state.formzSubmissionStatus.isInProgress) {
+                    FocusScope.of(context).unfocus(); // Ẩn bàn phím
+                    context.loaderOverlay.show(); // Hiển thị vòng quay loading
+                  }
+                  
+                  // ===================================================================
+                  // TRẠNG THÁI: THÀNH CÔNG (success)
+                  // ===================================================================
+                  else if (state.formzSubmissionStatus.isSuccess) {
                     context.loaderOverlay.hide();
                     ScaffoldMessenger.of(context)
                       ..hideCurrentSnackBar()
@@ -80,17 +91,33 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
                           backgroundColor: appColorScheme(context).inverseSurface,
                         ),
                       );
-                    context.read<AuthBloc>().add(AuthStatusChanged(state.appUser));
+                    // 🔥 KHÔNG CẦN GỌI EVENT NÀO Ở ĐÂY NỮA.
+                    // AuthBloc sẽ tự động nhận được user mới và GoRouter sẽ tự động điều hướng.
+                    // Trang này chỉ cần hiển thị thông báo thành công và chờ được điều hướng đi.
                   }
-                  if (state.formzSubmissionStatus.isInProgress) {
-                    FocusScope.of(context).unfocus();
-                    context.loaderOverlay.show();
-                  }
-                  if (state.formzSubmissionStatus.isFailure) {
+
+                  // ===================================================================
+                  // TRẠNG THÁI: THẤT BẠI (failure)
+                  // ===================================================================
+                  else if (state.formzSubmissionStatus.isFailure) {
                     context.loaderOverlay.hide();
-                    // Có thể hiển thị SnackBar lỗi chung ở đây nếu muốn
+                    // Tận dụng errorMessage đã được thiết lập trong BLoC
+                    if (state.errorMessage != null) {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              state.errorMessage!,
+                              style: appTextTheme(context).bodyMedium?.copyWith(color: appColorScheme(context).onErrorContainer),
+                            ),
+                            backgroundColor: appColorScheme(context).errorContainer,
+                          ),
+                        );
+                    }
                   }
                 },
+
               ),
               // Listener 2: Lắng nghe yêu cầu focus từ BLoC
               BlocListener<AccountSetupBloc, AccountSetupState>(

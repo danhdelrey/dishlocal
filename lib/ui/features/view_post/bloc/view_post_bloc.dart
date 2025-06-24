@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
-import 'package:dishlocal/data/categories/post/failure/post_failure.dart';
+import 'package:dishlocal/data/categories/post/failure/post_failure.dart' as post_failure;
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -34,47 +34,68 @@ class ViewPostBloc extends Bloc<ViewPostEvent, ViewPostState> {
     _log.info('▶️ Bắt đầu xử lý sự kiện Started cho postId: ${event.post.postId}');
     emit(const ViewPostState.loading());
 
-    try {
-      // Bước 1: Lấy thông tin người dùng hiện tại
-      final currentUserId = _appUserRepository.getCurrentUserId()!;
-      _log.fine('🆔 Người dùng hiện tại: $currentUserId');
+    // Bước 1: Lấy thông tin người dùng hiện tại một cách an toàn
+    final currentUserId = _appUserRepository.getCurrentUserId(); // Bỏ dấu '!'
+    _log.fine('🆔 Người dùng hiện tại: ${currentUserId ?? "Chưa đăng nhập"}');
 
-      // Bước 2: Lấy dữ liệu bài viết và tác giả SONG SONG
-      // Đây là tối ưu lớn nhất: hai lệnh gọi mạng chính chạy cùng lúc.
-      _log.fine('🔄 Bắt đầu lấy dữ liệu bài viết và tác giả song song...');
-      final results = await Future.wait([
-        _postRepository.getPostWithId(event.post.postId), // Lấy post (đã có like/save)
-        _appUserRepository.getUserWithId(
-          // Lấy tác giả (đã có follow)
-          userId: event.post.authorUserId,
-          currentUserId: currentUserId, // <-- TRUYỀN currentUserId VÀO ĐÂY
-        ),
-      ]);
+    // Bước 2: Lấy dữ liệu bài viết và tác giả SONG SONG (giữ nguyên, rất tốt!)
+    _log.fine('🔄 Bắt đầu lấy dữ liệu bài viết và tác giả song song...');
+    final results = await Future.wait([
+      _postRepository.getPostWithId(event.post.postId),
+      _appUserRepository.getUserProfile(
+        event.post.authorUserId,
+      ),
+    ]);
 
-      // Bước 3: Xử lý kết quả trả về
-      final postResult = results[0] as Either<PostFailure, Post>;
-      final authorResult = results[1] as Either<AppUserFailure, AppUser>;
+    // Bước 3: Xử lý kết quả trả về một cách an toàn
+    final postResult = results[0] as Either<post_failure.PostFailure, Post>;
+    final authorResult = results[1] as Either<AppUserFailure, AppUser>;
 
-      // Sử dụng getOrElse để xử lý lỗi một cách gọn gàng
-      final post = postResult.getOrElse(() => throw 'Không thể tải bài viết');
-      final author = authorResult.getOrElse(() => throw 'Không thể tải thông tin tác giả');
+    // Bước 4: Sử dụng .fold() để xử lý cả hai trường hợp thành công và thất bại
+    postResult.fold(
+      // ---- TRƯỜNG HỢP 1: Lấy bài viết THẤT BẠI ----
+      (postFailure) {
+        _log.severe('❌ Lấy bài viết thất bại: $postFailure');
 
-      _log.info('✅ Lấy bài viết và tác giả thành công. author.isFollowing: ${author.isFollowing}');
+        final message = switch (postFailure) {
+          // 1. Xử lý trường hợp cụ thể: Bài viết không tìm thấy
+          post_failure.PostNotFoundFailure() => 'Bài viết này không còn tồn tại.',
 
-      // Bước 4: Emit trạng thái thành công
-      _log.info('🎉 Tất cả dữ liệu đã sẵn sàng. Emit trạng thái Success.');
-      emit(ViewPostState.success(
-        post: post,
-        author: author, // <-- Đối tượng author này đã chứa thông tin isFollowing
-        currentUserId: currentUserId,
-      ));
-    } catch (error, stackTrace) {
-      _log.severe(
-        '❌ Đã xảy ra lỗi trong quá trình xử lý sự kiện Started.',
-        error,
-        stackTrace,
-      );
-      emit(const ViewPostState.failure());
-    }
+          // 2. Sử dụng `_` để bắt tất cả các trường hợp lỗi còn lại (Unknown, PermissionDenied, etc.)
+          //    và trả về một thông báo chung.
+          _ => 'Không thể tải được bài viết. Vui lòng thử lại sau.'
+        };
+
+        emit(ViewPostState.failure(message));
+      },
+      // ---- TRƯỜDNG HỢP 2: Lấy bài viết THÀNH CÔNG, tiếp tục xử lý tác giả ----
+      (post) {
+        authorResult.fold(
+          // ---- TRƯỜNG HỢP 2a: Lấy tác giả THẤT BẠI ----
+          (authorFailure) {
+            _log.severe('❌ Lấy tác giả thất bại: $authorFailure');
+
+            // SỬ DỤNG SWITCH EXPRESSION ĐỂ DỊCH LỖI
+            final message = switch (authorFailure) {
+              UserNotFoundFailure() => 'Không tìm thấy thông tin tác giả.',
+              // Thêm các trường hợp lỗi khác của AppUserFailure nếu cần
+              _ => 'Không thể tải thông tin tác giả. Vui lòng thử lại.'
+            };
+
+            emit(ViewPostState.failure(message));
+          },
+          // ---- TRƯỜNG HỢP 2b: Lấy tác giả THÀNH CÔNG -> MỌI THỨ HOÀN HẢO ----
+          (author) {
+            _log.info('✅ Lấy bài viết và tác giả thành công.');
+            _log.info('🎉 Tất cả dữ liệu đã sẵn sàng. Emit trạng thái Success.');
+            emit(ViewPostState.success(
+              post: post,
+              author: author,
+              currentUserId: currentUserId!,
+            ));
+          },
+        );
+      },
+    );
   }
 }

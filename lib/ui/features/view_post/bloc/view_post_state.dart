@@ -8,5 +8,5 @@ sealed class ViewPostState with _$ViewPostState {
     required String currentUserId,
     required AppUser author,
   }) = ViewPostSuccess;
-  const factory ViewPostState.failure() = ViewPostFailure;
+  const factory ViewPostState.failure(String message) = ViewPostFailure; 
 }

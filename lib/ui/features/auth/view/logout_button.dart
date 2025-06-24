@@ -9,7 +9,8 @@ class LogoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        context.read<AuthBloc>().add(SignOutRequested());
+        // Gửi event 'SignedOut' đến AuthBloc để bắt đầu quá trình đăng xuất.
+        context.read<AuthBloc>().add(const AuthEvent.signedOut());
       },
       icon: const Icon(Icons.logout_rounded),
     );

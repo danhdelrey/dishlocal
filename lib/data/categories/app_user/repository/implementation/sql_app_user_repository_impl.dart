@@ -132,6 +132,57 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   }
 
   @override
+  Future<Either<AppUserFailure, AppUser>> getUserProfile([String? userId]) {
+    return _handleErrors(() async {
+      // ---- LOGIC ĐƯỢC TẬP TRUNG VÀO ĐÂY ----
+      // 1. Xác định ID cần lấy
+      final idToFetch = userId ?? _authService.getCurrentUserId();
+
+      // 2. Kiểm tra xem có ID để lấy không
+      if (idToFetch == null) {
+        _log.warning('⚠️ Cố gắng lấy profile nhưng không có userId và cũng chưa đăng nhập.');
+        throw const NotAuthenticatedFailure(); // Ném ra lỗi để _handleErrors bắt
+      }
+
+      _log.fine('🔄 Đang lấy profile cho user ID: $idToFetch');
+
+      // 3. Lấy dữ liệu profile từ DB
+      final profile = await _dbService.readSingleById<ProfileEntity>(
+        tableName: 'profiles',
+        id: idToFetch,
+        fromJson: ProfileEntity.fromJson,
+      );
+
+      // 4. Kiểm tra trạng thái 'isFollowing' (nếu cần)
+      bool isFollowing = false;
+      final currentUserId = _authService.getCurrentUserId();
+      if (currentUserId != null && currentUserId != idToFetch) {
+        final result = await _dbService.readList(
+          tableName: 'followers',
+          fromJson: (json) => json,
+          filters: {'user_id': idToFetch, 'follower_id': currentUserId},
+        );
+        isFollowing = result.isNotEmpty;
+      }
+
+      // 5. Tạo và trả về đối tượng AppUser hoàn chỉnh
+      return AppUser(
+        userId: profile.id,
+        email: (idToFetch == currentUserId) ? (_authService.getCurrentUser()?.email ?? '') : '',
+        username: profile.username,
+        displayName: profile.displayName,
+        photoUrl: profile.photoUrl,
+        bio: profile.bio,
+        followerCount: profile.followerCount,
+        followingCount: profile.followingCount,
+        isSetupCompleted: profile.isSetupCompleted,
+        isFollowing: isFollowing,
+        originalDisplayname: profile.displayName ?? '',
+      );
+    });
+  }
+
+  @override
   Future<Either<AppUserFailure, SignInResult>> signInWithGoogle() {
     return _handleErrors(() async {
       final credential = await _authService.signInWithGoogle();
@@ -174,15 +225,20 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   }
 
   @override
-  Future<Either<AppUserFailure, void>> completeProfileSetup({required String username, String? displayName}) {
+  Future<Either<AppUserFailure, void>> completeProfileSetup({
+    required String username,
+    String? displayName,
+    String? bio, // <-- THÊM VÀO ĐÂY
+  }) {
     return _handleErrors(() async {
       final userId = getCurrentUserId();
       if (userId == null) throw const NotAuthenticatedFailure();
 
       final dataToUpdate = {
         'username': username,
-        if (displayName != null) 'display_name': displayName,
-        // Đánh dấu là đã hoàn thành setup!
+        // Chỉ thêm vào map nếu giá trị không phải là null
+        if (displayName != null && displayName.isNotEmpty) 'display_name': displayName,
+        if (bio != null && bio.isNotEmpty) 'bio': bio, // <-- THÊM VÀO ĐÂY
         'is_setup_completed': true,
       };
 
@@ -190,11 +246,9 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         tableName: 'profiles',
         id: userId,
         data: dataToUpdate,
-        fromJson: (_) => {}, // không cần kết quả trả về
+        fromJson: (_) => {},
       );
 
-      // Trigger việc cập nhật lại AppUser trong stream
-      // để các widget khác (như home screen) có được thông tin mới nhất.
       _onAuthChanged(_authService.getCurrentUser());
     });
   }
