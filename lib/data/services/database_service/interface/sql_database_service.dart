@@ -67,4 +67,7 @@ abstract class SqlDatabaseService {
     required String tableName,
     required String id,
   });
+
+  Future<void> rpc(String functionName, {Map<String, dynamic>? params});
+
 }

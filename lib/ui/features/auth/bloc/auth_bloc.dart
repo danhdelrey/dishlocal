@@ -59,7 +59,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  /// Handler cho event [SignInWithGoogleRequested]
   Future<void> _onSignInWithGoogleRequested(
     SignInWithGoogleRequested event,
     Emitter<AuthState> emit,
@@ -69,19 +68,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final result = await _userRepository.signInWithGoogle();
 
-    // signInWithGoogle sẽ trigger stream `onCurrentUserChanged`,
-    // do đó, _onUserChanged sẽ tự động xử lý và phát ra state Authenticated/NewUser.
-    // Ở đây, chúng ta chỉ cần xử lý trường hợp thất bại.
     result.fold(
       (failure) {
         _log.severe('❌ Đăng nhập Google thất bại: $failure');
         emit(AuthState.failure(failure));
-        // Sau khi báo lỗi, quay về trạng thái chưa đăng nhập.
-        emit(const AuthState.unauthenticated());
+        // AuthBloc không cần tự emit Unauthenticated,
+        // vì nếu _currentUserController là null, GoRouter vẫn sẽ điều hướng đúng.
       },
-      (_) {
-        // Không cần làm gì ở đây, vì _onUserChanged sẽ lo phần còn lại.
-        _log.info('✅ signInWithGoogle trong repository thành công, chờ stream phát ra user mới.');
+      (signInResult) {
+        _log.info('✅ Đăng nhập thành công với kết quả: $signInResult');
+        // 🔥 KHÔNG CẦN LÀM GÌ Ở ĐÂY NỮA!
+        // Repository đã đẩy AppUser mới vào stream,
+        // `_onUserChanged` sẽ được gọi và `emit` state `NewUser` hoặc `Authenticated`.
+        // GoRouter sẽ tự động điều hướng.
       },
     );
   }

@@ -166,4 +166,9 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
     final match = RegExp(r'violates check constraint "(.*?)"').firstMatch(detail);
     return match?.group(1);
   }
+
+  @override
+  Future<void> rpc(String functionName, {Map<String, dynamic>? params}) async {
+    await _supabase.rpc(functionName, params: params);
+  }
 }

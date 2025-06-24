@@ -35,20 +35,29 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
       _log.info('🚪 Người dùng đã đăng xuất.');
       _currentUserController.add(null);
     } else {
-      _log.info('👤 Người dùng đã đăng nhập: ${credential.uid}');
-      // Lấy profile đầy đủ và phát ra stream
-      final result = await _fetchAppUserFromCredential(credential);
-      result.fold(
-        (failure) {
-          _log.severe('❌ Không thể lấy profile sau khi đăng nhập: $failure');
-          // Có thể đăng xuất người dùng ở đây nếu profile là bắt buộc
-          _currentUserController.add(null);
-        },
-        (appUser) {
-          _log.info('✅ Lấy profile thành công, phát ra AppUser.');
-          _currentUserController.add(appUser);
-        },
-      );
+      // 🔥 THAY ĐỔI QUAN TRỌNG:
+      // Khi auth state thay đổi thành "có người dùng", chúng ta không vội vã đọc profile nữa.
+      // Logic này sẽ được xử lý trong các phương thức chủ động như signIn, getCurrentUser, etc.
+      // Ở đây, chúng ta chỉ cần biết là có người dùng đăng nhập.
+      // Chúng ta có thể lấy profile sau đó hoặc đợi một lời gọi chủ động.
+      // Để đơn giản, chúng ta có thể gọi lại logic lấy profile đầy đủ ở đây,
+      // nhưng với một chút độ trễ hoặc kiểm tra lại để tránh race condition.
+      //
+      // CÁCH TỐT HƠN: Chỉ tin vào luồng chủ động.
+      // Khi signInWithGoogle thành công, nó sẽ tự đẩy user vào stream.
+      // Ở đây ta có thể không làm gì cả, hoặc fetch profile một cách an toàn.
+
+      // Giải pháp an toàn nhất:
+      try {
+        final appUserResult = await _fetchAppUserFromCredential(credential);
+        appUserResult.fold(
+          (l) => _log.severe("Không thể fetch profile trong _onAuthChanged", l),
+          (user) => _currentUserController.add(user),
+        );
+      } catch (e) {
+        _log.severe("Lỗi trong _onAuthChanged", e);
+        _currentUserController.add(null);
+      }
     }
   }
 
@@ -95,41 +104,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
     return _fetchAppUserFromCredential(credential);
   }
 
-  @override
-  Future<Either<AppUserFailure, AppUser>> getUserById(String userId) {
-    return _handleErrors(() async {
-      final profile = await _dbService.readSingleById<ProfileEntity>(
-        tableName: 'profiles',
-        id: userId,
-        fromJson: ProfileEntity.fromJson,
-      );
-
-      // Kiểm tra xem người dùng hiện tại có đang follow người này không
-      bool isFollowing = false;
-      final currentUserId = getCurrentUserId();
-      if (currentUserId != null && currentUserId != userId) {
-        final result = await _dbService.readList(
-          tableName: 'followers',
-          fromJson: (json) => json, // không cần convert
-          filters: {'user_id': userId, 'follower_id': currentUserId},
-        );
-        isFollowing = result.isNotEmpty;
-      }
-
-      return AppUser(
-        userId: profile.id,
-        email: '', // Không thể biết email của người khác
-        username: profile.username,
-        displayName: profile.displayName,
-        photoUrl: profile.photoUrl,
-        bio: profile.bio,
-        followerCount: profile.followerCount,
-        followingCount: profile.followingCount,
-        originalDisplayname: profile.displayName ?? '',
-        isFollowing: isFollowing,
-      );
-    });
-  }
+  
 
   @override
   Future<Either<AppUserFailure, AppUser>> getUserProfile([String? userId]) {
@@ -185,34 +160,47 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   @override
   Future<Either<AppUserFailure, SignInResult>> signInWithGoogle() {
     return _handleErrors(() async {
+      // 1. Đăng nhập với Google để lấy credential
       final credential = await _authService.signInWithGoogle();
       if (credential == null) {
         throw AuthenticationServiceUnknownException('Credential trả về null sau khi đăng nhập.');
       }
 
-      // Luôn lấy profile từ DB để có thông tin mới nhất
-      // Trigger `handle_new_user` đảm bảo profile luôn tồn tại sau khi user được tạo trong `auth.users`
-      try {
-        final profile = await _dbService.readSingleById<ProfileEntity>(
-          tableName: 'profiles',
-          id: credential.uid,
-          fromJson: ProfileEntity.fromJson,
-        );
+      // 2. Chủ động tạo profile nếu nó chưa tồn tại
+      _log.info('Chủ động gọi RPC để đảm bảo profile tồn tại...');
+      await _dbService.rpc(
+        'create_profile_if_not_exists',
+        params: {
+          'user_id': credential.uid,
+          'full_name': credential.displayName,
+          'avatar_url': credential.photoUrl,
+        },
+      );
+      _log.info('RPC call hoàn tất.');
 
-        // Logic kiểm tra mới: rõ ràng và đáng tin cậy
-        if (profile.isSetupCompleted) {
-          _log.info('Người dùng đã tồn tại và hoàn thành setup. Kết quả: success.');
-          return SignInResult.success;
-        } else {
-          _log.info('Người dùng mới hoặc chưa hoàn thành setup. Kết quả: newUser.');
-          return SignInResult.newUser;
-        }
-      } on RecordNotFoundException {
-        // Lỗi này không nên xảy ra nếu trigger của bạn hoạt động đúng.
-        // Nó chỉ ra một sự không đồng bộ giữa `auth.users` và `profiles`.
-        _log.severe('Lỗi nghiêm trọng: Profile không tồn tại cho user ${credential.uid} mặc dù đã đăng nhập.');
-        throw UnknownDatabaseException('Không tìm thấy profile tương ứng với tài khoản.');
-      }
+      // 3. Lấy profile đầy đủ sau khi đã đảm bảo nó tồn tại
+      final appUserResult = await _fetchAppUserFromCredential(credential);
+
+      // 4. 🔥 THAY ĐỔI QUAN TRỌNG:
+      // Sau khi có kết quả, chúng ta sẽ đẩy AppUser vào stream VÀ trả về SignInResult.
+      return appUserResult.fold(
+        (failure) {
+          // Nếu không thể lấy profile, coi như đăng nhập thất bại.
+          _currentUserController.add(null);
+          throw failure; // Ném lại lỗi để _handleErrors bắt và dịch
+        },
+        (appUser) {
+          // Đẩy người dùng vào stream để toàn bộ app cập nhật
+          _currentUserController.add(appUser);
+
+          // Trả về kết quả cho màn hình Login
+          if (appUser.isSetupCompleted) {
+            return SignInResult.success;
+          } else {
+            return SignInResult.newUser;
+          }
+        },
+      );
     });
   }
 
