@@ -213,10 +213,10 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   }
 
   @override
-  Future<Either<AppUserFailure, void>> completeProfileSetup({
+  Future<Either<AppUserFailure, AppUser>> completeProfileSetup({
     required String username,
     String? displayName,
-    String? bio, // <-- THÊM VÀO ĐÂY
+    String? bio,
   }) {
     return _handleErrors(() async {
       final userId = getCurrentUserId();
@@ -224,20 +224,40 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
 
       final dataToUpdate = {
         'username': username,
-        // Chỉ thêm vào map nếu giá trị không phải là null
         if (displayName != null && displayName.isNotEmpty) 'display_name': displayName,
-        if (bio != null && bio.isNotEmpty) 'bio': bio, // <-- THÊM VÀO ĐÂY
+        if (bio != null && bio.isNotEmpty) 'bio': bio,
         'is_setup_completed': true,
       };
 
-      await _dbService.update(
+      // 🔥 THAY ĐỔI QUAN TRỌNG:
+      // 1. `_dbService.update` bây giờ sẽ trả về `ProfileEntity` đã được cập nhật.
+      final updatedProfile = await _dbService.update<ProfileEntity>(
         tableName: 'profiles',
         id: userId,
         data: dataToUpdate,
-        fromJson: (_) => {},
+        fromJson: ProfileEntity.fromJson, // Cung cấp hàm chuyển đổi
       );
 
-      _onAuthChanged(_authService.getCurrentUser());
+      // 2. Không cần đọc lại. Lấy credential để có email, full_name...
+      final credential = _authService.getCurrentUser()!;
+
+      // 3. Tạo AppUser từ `updatedProfile` và `credential`
+      final updatedAppUser = AppUser(
+        userId: updatedProfile.id,
+        email: credential.email ?? '',
+        username: updatedProfile.username,
+        displayName: updatedProfile.displayName,
+        photoUrl: updatedProfile.photoUrl,
+        bio: updatedProfile.bio,
+        followerCount: updatedProfile.followerCount,
+        followingCount: updatedProfile.followingCount,
+        isSetupCompleted: updatedProfile.isSetupCompleted, // <-- Sẽ là true
+        originalDisplayname: credential.displayName ?? '',
+      );
+
+      // 4. Cập nhật stream và trả về AppUser mới
+      _currentUserController.add(updatedAppUser);
+      return updatedAppUser;
     });
   }
 

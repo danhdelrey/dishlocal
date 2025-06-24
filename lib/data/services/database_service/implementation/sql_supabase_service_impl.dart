@@ -104,14 +104,25 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
     required String id,
     required Map<String, dynamic> data,
     required T Function(Map<String, dynamic> json) fromJson,
-  }) {
-    final operationName = 'UPDATE in "$tableName"';
-    return _wrapDbOperation(operationName, () async {
-      _log.info('update(): ➡️ $operationName: Bắt đầu cập nhật bản ghi ID: $id');
-      final result = await _supabase.from(tableName).update(data).eq('id', id).select().single();
+  }) async {
+    return _wrapDbOperation('UPDATE in "$tableName"', () async {
+      _log.info('update(): ➡️ UPDATE in "$tableName": Bắt đầu cập nhật bản ghi ID: $id');
+      try {
+        final response = await _supabase
+            .from(tableName)
+            .update(data)
+            .eq('id', id)
+            // 🔥 THAY ĐỔI QUAN TRỌNG:
+            // Yêu cầu Supabase trả về bản ghi MỚI NHẤT sau khi update.
+            .select()
+            .single(); // .single() sẽ đảm bảo chỉ có 1 dòng và trả về dưới dạng Map
 
-      _log.info('update(): ✅ $operationName: Cập nhật bản ghi ID $id thành công!');
-      return fromJson(result);
+        _log.info('update(): ✅ UPDATE in "$tableName": Cập nhật và lấy lại bản ghi ID $id thành công!');
+        return fromJson(response); // Chuyển đổi dữ liệu mới nhất và trả về
+      } catch (e) {
+        // Bắt lỗi và ném lại để _wrapDbOperation xử lý
+        throw _handlePostgrestException(e as PostgrestException);
+      }
     });
   }
 

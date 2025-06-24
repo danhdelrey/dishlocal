@@ -122,9 +122,12 @@ class AccountSetupBloc extends Bloc<AccountSetupEvent, AccountSetupState> {
             errorMessage: errorMessage, // Gửi thông báo lỗi cụ thể cho UI.
           ));
         },
-        (_) {
-          // Trường hợp thành công: AuthBloc sẽ tự động xử lý việc điều hướng.
-          _log.info('✅ Submit dữ liệu và hoàn thành setup thành công.');
+        (updatedAppUser) {
+         // Đã submit thành công! Repository đã cập nhật stream rồi.
+          // AuthBloc sẽ nhận được user mới và GoRouter sẽ tự động điều hướng.
+          _log.info('✅ Submit thành công. AppUser mới có isSetupCompleted: ${updatedAppUser.isSetupCompleted}');
+
+          // Chỉ cần emit trạng thái thành công cho form.
           emit(state.copyWith(
             formzSubmissionStatus: FormzSubmissionStatus.success,
           ));

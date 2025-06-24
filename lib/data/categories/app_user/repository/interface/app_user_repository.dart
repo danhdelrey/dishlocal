@@ -41,7 +41,7 @@ abstract class AppUserRepository {
   Future<Either<AppUserFailure, void>> signOut();
 
   /// Cập nhật profile sau khi người dùng mới hoàn thành màn hình setup.
-  Future<Either<AppUserFailure, void>> completeProfileSetup({
+  Future<Either<AppUserFailure, AppUser>> completeProfileSetup({
     required String username,
     String? displayName,
     String? bio,
