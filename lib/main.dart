@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<AuthBloc>(),
+      create: (context) => getIt<AuthBloc>()..add(const AuthEvent.authCheckRequested()),
       child: Builder(builder: (context) {
         // Sử dụng Builder để lấy context có BlocProvider
         final router = AppRouter(context.read<AuthBloc>()).router;
