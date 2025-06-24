@@ -94,6 +94,7 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
       final result = await _supabase.from(tableName).select().eq('id', id).single();
 
       _log.info('readSingleById():✅ $operationName: Truy vấn bản ghi ID $id thành công!');
+      _log.info('Nội dung của bản ghi là: $result');
       return fromJson(result);
     });
   }

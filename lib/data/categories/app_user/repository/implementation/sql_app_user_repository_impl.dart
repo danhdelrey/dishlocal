@@ -35,19 +35,6 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
       _log.info('🚪 Người dùng đã đăng xuất.');
       _currentUserController.add(null);
     } else {
-      // 🔥 THAY ĐỔI QUAN TRỌNG:
-      // Khi auth state thay đổi thành "có người dùng", chúng ta không vội vã đọc profile nữa.
-      // Logic này sẽ được xử lý trong các phương thức chủ động như signIn, getCurrentUser, etc.
-      // Ở đây, chúng ta chỉ cần biết là có người dùng đăng nhập.
-      // Chúng ta có thể lấy profile sau đó hoặc đợi một lời gọi chủ động.
-      // Để đơn giản, chúng ta có thể gọi lại logic lấy profile đầy đủ ở đây,
-      // nhưng với một chút độ trễ hoặc kiểm tra lại để tránh race condition.
-      //
-      // CÁCH TỐT HƠN: Chỉ tin vào luồng chủ động.
-      // Khi signInWithGoogle thành công, nó sẽ tự đẩy user vào stream.
-      // Ở đây ta có thể không làm gì cả, hoặc fetch profile một cách an toàn.
-
-      // Giải pháp an toàn nhất:
       try {
         final appUserResult = await _fetchAppUserFromCredential(credential);
         appUserResult.fold(
@@ -69,7 +56,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         id: credential.uid,
         fromJson: ProfileEntity.fromJson,
       );
-      return AppUser(
+      final appUser = AppUser(
         userId: credential.uid,
         email: credential.email ?? '',
         username: profile.username,
@@ -79,7 +66,10 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         followerCount: profile.followerCount,
         followingCount: profile.followingCount,
         originalDisplayname: credential.displayName ?? '',
+        isSetupCompleted: profile.isSetupCompleted,
       );
+      _log.info('AppUser được trả về từ _onAuthChanged(AppUserCredential? credential) trong SqlAppUserRepositoryImpl là: ${appUser.toString()}');
+      return appUser;
     });
   }
 
@@ -104,8 +94,6 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
     return _fetchAppUserFromCredential(credential);
   }
 
-  
-
   @override
   Future<Either<AppUserFailure, AppUser>> getUserProfile([String? userId]) {
     return _handleErrors(() async {
@@ -115,11 +103,11 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
 
       // 2. Kiểm tra xem có ID để lấy không
       if (idToFetch == null) {
-        _log.warning('⚠️ Cố gắng lấy profile nhưng không có userId và cũng chưa đăng nhập.');
+        _log.warning('getUserProfile: ⚠️ Cố gắng lấy profile nhưng không có userId và cũng chưa đăng nhập.');
         throw const NotAuthenticatedFailure(); // Ném ra lỗi để _handleErrors bắt
       }
 
-      _log.fine('🔄 Đang lấy profile cho user ID: $idToFetch');
+      _log.fine('getUserProfile: 🔄 Đang lấy profile cho user ID: $idToFetch');
 
       // 3. Lấy dữ liệu profile từ DB
       final profile = await _dbService.readSingleById<ProfileEntity>(
@@ -163,11 +151,11 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
       // 1. Đăng nhập với Google để lấy credential
       final credential = await _authService.signInWithGoogle();
       if (credential == null) {
-        throw AuthenticationServiceUnknownException('Credential trả về null sau khi đăng nhập.');
+        throw AuthenticationServiceUnknownException('signInWithGoogle: Credential trả về null sau khi đăng nhập.');
       }
 
       // 2. Chủ động tạo profile nếu nó chưa tồn tại
-      _log.info('Chủ động gọi RPC để đảm bảo profile tồn tại...');
+      _log.info('signInWithGoogle: Chủ động gọi RPC để đảm bảo profile tồn tại...');
       await _dbService.rpc(
         'create_profile_if_not_exists',
         params: {
@@ -176,7 +164,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
           'avatar_url': credential.photoUrl,
         },
       );
-      _log.info('RPC call hoàn tất.');
+      _log.info('signInWithGoogle: RPC call hoàn tất.');
 
       // 3. Lấy profile đầy đủ sau khi đã đảm bảo nó tồn tại
       final appUserResult = await _fetchAppUserFromCredential(credential);
@@ -304,7 +292,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         //   filters: {'user_id': targetUserId, 'follower_id': currentUserId},
         // );
         // Nếu chưa có, bạn có thể tạo một RPC function để làm việc này.
-        _log.warning('Cần triển khai deleteWhere trong SqlDatabaseService hoặc RPC function cho unfollow.');
+        _log.warning('followUser: Cần triển khai deleteWhere trong SqlDatabaseService hoặc RPC function cho unfollow.');
         // Tạm thời để trống.
       }
     });

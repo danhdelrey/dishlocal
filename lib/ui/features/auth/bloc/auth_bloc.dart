@@ -49,6 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _log.info('🚪 Trạng thái người dùng: Unauthenticated.');
       emit(const AuthState.unauthenticated());
     } else {
+      _log.info('🚪 Thông tin về người dùng trong trạng thái hiện tại: ${user.toString()}');
       if (user.isSetupCompleted) {
         _log.info('👤 Trạng thái người dùng: Authenticated (User: ${user.userId}).');
         emit(AuthState.authenticated(user));
