@@ -445,7 +445,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   text: TextSpan(
                     style: Theme.of(context).textTheme.labelLarge,
                     children: [
-                      const TextSpan(text: 'danhdelrey'),
+                       TextSpan(text: post.authorUsername),
                       if (post.authorUserId != currentUserId && author.isFollowing == true)
                         TextSpan(
                           text: ' • Đang theo dõi',
