@@ -141,6 +141,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                         ),
                                       ),
                                       actions: [
+                                        if (state.currentUserId != widget.post.authorUserId)
                                         BouncingOverlayMenu(
                                           controller: _menuController,
                                           menuItems: [

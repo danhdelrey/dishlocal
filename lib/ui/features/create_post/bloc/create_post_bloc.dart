@@ -194,20 +194,19 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
       errorMessage: null, // Xóa lỗi cũ trước khi bắt đầu
     ));
 
-    // // -- BƯỚC 2.1: KIỂM DUYỆT NỘI DUNG --
-    // final textToModerate = '${dishNameInput.value} ${diningLocationNameInput.value} ${insightInput.value}';
-    // _log.info('🛡️ Đang gọi _moderationRepository.moderateText()...');
-    // final moderationResult = await _moderationRepository.moderateText(textToModerate);
-
-    // final moderationFailure = moderationResult.fold((f) => f, (_) => null);
-    // if (moderationFailure != null) {
-    //   _log.warning('❌ Kiểm duyệt văn bản thất bại. Failure: ${moderationFailure.message}');
-    //   emit(state.copyWith(
-    //     formzSubmissionStatus: FormzSubmissionStatus.failure,
-    //     errorMessage: moderationFailure.message,
-    //   ));
-    //   return;
-    // }
+    // -- BƯỚC 2.1: KIỂM DUYỆT NỘI DUNG --
+    final textToModerate = '${dishNameInput.value} ${diningLocationNameInput.value} ${insightInput.value}';
+    _log.info('🛡️ Đang gọi _moderationRepository.moderateText()...');
+    final moderationResult = await _moderationRepository.moderate(text: textToModerate);
+    final moderationFailure = moderationResult.fold((f) => f, (_) => null);
+    if (moderationFailure != null) {
+      _log.warning('❌ Kiểm duyệt văn bản thất bại. Failure: ${moderationFailure.message}');
+      emit(state.copyWith(
+        formzSubmissionStatus: FormzSubmissionStatus.failure,
+        errorMessage: moderationFailure.message,
+      ));
+      return;
+    }
     _log.info('👍 Văn bản đã qua kiểm duyệt thành công.');
 
     // === GIAI ĐOẠN 3: SUBMIT DỮ LIỆU (NẾU KIỂM DUYỆT THÀNH CÔNG) ===
