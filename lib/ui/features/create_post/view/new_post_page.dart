@@ -126,16 +126,17 @@ class _NewPostPageState extends State<NewPostPage> {
                     context.loaderOverlay.hide();
 
                     // [TỐI ƯU HÓA] Ưu tiên hiển thị lỗi cụ thể từ BLoC nếu có.
-                    final errorMessage = state.errorMessage ?? 'Đã có lỗi xảy ra. Vui lòng thử lại.';
-
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        SnackBar(
-                          content: Text(errorMessage),
-                          backgroundColor: Colors.red[800], // Thêm màu để nhấn mạnh lỗi
-                        ),
-                      );
+                    final errorMessage = state.errorMessage;
+                    if (errorMessage != null) {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(
+                            content: Text(errorMessage),
+                            backgroundColor: Colors.red[800], // Thêm màu để nhấn mạnh lỗi
+                          ),
+                        );
+                    }
                   }
 
                   // --- KHI SUBMIT THÀNH CÔNG ---

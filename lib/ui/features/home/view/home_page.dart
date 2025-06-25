@@ -118,6 +118,7 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
                 ),
               ),
               bottom: TabBar(
+                dividerColor: Colors.white.withValues(alpha: 0.1),
                 controller: _tabController,
                 onTap: (index) {
                   // Logic refresh-on-tap giữ nguyên
