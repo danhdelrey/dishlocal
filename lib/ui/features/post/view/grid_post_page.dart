@@ -97,20 +97,21 @@ class ShimmeringSmallPost extends StatefulWidget {
 class _ShimmeringSmallPostState extends State<ShimmeringSmallPost> with SingleTickerProviderStateMixin {
   // 1. Khai báo AnimationController
   late final AnimationController _controller;
+  late final Animation<double> _opacityAnimation;
 
   @override
   void initState() {
     super.initState();
-    // 2. Khởi tạo controller
     _controller = AnimationController(
-      vsync: this, // Cung cấp Ticker
-      duration: const Duration(milliseconds: 1500), // Thời gian cho một chu kỳ (sáng lên -> dịu xuống)
-    )..repeat(reverse: true); // Lặp lại và đảo ngược animation để tạo hiệu ứng pulse
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+
+    _opacityAnimation = Tween<double>(begin: 0.3, end: 0.8).animate(_controller);
   }
 
   @override
   void dispose() {
-    // 3. Hủy controller khi không cần thiết
     _controller.dispose();
     super.dispose();
   }
@@ -119,10 +120,8 @@ class _ShimmeringSmallPostState extends State<ShimmeringSmallPost> with SingleTi
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      // 4. Sử dụng FadeTransition thay vì Shimmer.fromColors
       child: FadeTransition(
-        // Gắn animation opacity vào controller
-        opacity: _controller,
+        opacity: _opacityAnimation,
         child: _buildPlaceholderContent(),
       ),
     );
