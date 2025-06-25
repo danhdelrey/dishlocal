@@ -226,9 +226,29 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                       BlocBuilder<ViewPostBloc, ViewPostState>(
                                         builder: (context, state) {
                                           return switch (state) {
-                                            ViewPostLoading() => const Center(child: CustomLoadingIndicator(indicatorSize: 40)),
+                                            ViewPostLoading() => const Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 50,
+                                                  ),
+                                                  Center(
+                                                      child: CustomLoadingIndicator(
+                                                    indicatorSize: 40,
+                                                    indicatorText: 'Đang tải nội dung bài viết...',
+                                                  )),
+                                                ],
+                                              ),
                                             ViewPostSuccess() => _buildMainContent(context, state.post, state.currentUserId, state.author),
-                                            ViewPostFailure() => const Center(child: Text('Có lỗi xảy ra')),
+                                            ViewPostFailure() => const Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 50,
+                                                  ),
+                                                  Center(child: Text('Có lỗi xảy ra khi tải bài viết!')),
+                                                ],
+                                              ),
                                           };
                                         },
                                       ),
