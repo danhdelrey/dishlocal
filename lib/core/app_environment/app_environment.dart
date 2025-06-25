@@ -1,5 +1,5 @@
 import 'package:dishlocal/firebase_options_dev.dart' as dev_options;
-import 'package:dishlocal/firebase_options_dev.dart' as prod_options;
+import 'package:dishlocal/firebase_options_prod.dart' as prod_options;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
