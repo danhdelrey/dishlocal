@@ -101,14 +101,18 @@ class SmallPost extends StatelessWidget {
                         child: GlassIconLabelsWrap(
                           iconLabels: [
                             CustomIconWithLabel(
-                              icon: AppIcons.heart1.toSvg(width: 12, color: appColorScheme(context).onSurface),
+                              icon: post.isLiked ? AppIcons.heart.toSvg(width: 12, color: Colors.pink) : AppIcons.heart1.toSvg(width: 12, color: appColorScheme(context).onSurface),
                               label: post.likeCount.toString(),
-                              labelStyle: appTextTheme(context).labelSmall,
+                              labelStyle: appTextTheme(context).labelSmall?.copyWith(
+                                    color: post.isLiked ? Colors.pink : appColorScheme(context).onSurface,
+                                  ),
                             ),
                             CustomIconWithLabel(
-                              icon: AppIcons.bookmark1.toSvg(width: 12, color: appColorScheme(context).onSurface),
+                              icon: post.isSaved ? AppIcons.bookmark.toSvg(width: 12, color: Colors.amber) : AppIcons.bookmark1.toSvg(width: 12, color: appColorScheme(context).onSurface),
                               label: post.saveCount.toString(),
-                              labelStyle: appTextTheme(context).labelSmall,
+                              labelStyle: appTextTheme(context).labelSmall?.copyWith(
+                                    color: post.isSaved ? Colors.amber : appColorScheme(context).onSurface,
+                                  ),
                             ),
                           ],
                         ),
