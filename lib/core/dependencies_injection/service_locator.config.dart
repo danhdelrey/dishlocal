@@ -60,8 +60,8 @@ import '../../data/services/location_service/implementation/geolocator_wrapper.d
     as _i258;
 import '../../data/services/location_service/interface/location_service.dart'
     as _i473;
-import '../../data/services/moderation_service/implementation/sightengine_moderation_service_impl.dart'
-    as _i28;
+import '../../data/services/moderation_service/implementation/openai_moderation_service_impl.dart'
+    as _i884;
 import '../../data/services/moderation_service/interface/moderation_service.dart'
     as _i692;
 import '../../data/services/storage_service/implementation/cloudinary_storage_service_impl.dart'
@@ -117,10 +117,10 @@ _i174.GetIt init(
       () => _i103.SupabaseAuthenticationServiceImpl());
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());
+  gh.lazySingleton<_i692.ModerationService>(
+      () => _i884.SightengineModerationServiceImpl());
   gh.lazySingleton<_i178.SqlDatabaseService>(
       () => _i876.SqlSupabaseServiceImpl());
-  gh.lazySingleton<_i692.ModerationService>(
-      () => _i28.SightengineModerationServiceImpl());
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
   gh.lazySingleton<_i60.NoSqlDatabaseService>(

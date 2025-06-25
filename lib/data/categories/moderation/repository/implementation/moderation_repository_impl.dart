@@ -16,48 +16,40 @@ class ModerationRepositoryImpl implements ModerationRepository {
   ModerationRepositoryImpl(this._moderationService);
 
   @override
-  Future<Either<ModerationFailure, void>> moderateImage(File imageFile) async {
-    _log.info('🛡️ Bắt đầu luồng kiểm duyệt hình ảnh trong Repository...');
+  Future<Either<ModerationFailure, void>> moderate({String? text, File? imageFile}) async {
+    _log.info('Bắt đầu quy trình kiểm duyệt tại Repository...');
+    _log.fine('Dữ liệu đầu vào: text is ${text != null ? "present" : "absent"}, image is ${imageFile != null ? "present" : "absent"}');
+
     try {
-      // Gọi service. Nếu thành công, nó sẽ không trả về gì.
-      await _moderationService.checkImage(imageFile);
+      // Gọi phương thức của service. Nếu nó không ném ra exception,
+      // có nghĩa là nội dung đã được kiểm duyệt và an toàn.
+      await _moderationService.moderate(text: text, imageFile: imageFile);
 
-      _log.info('✅ Hình ảnh đã qua kiểm duyệt thành công ở tầng Service.');
-      return const Right(null);
-    } on ModerationServiceException catch (e) {
-      _log.warning('⚠️ Dịch ModerationServiceException thành ModerationFailure. Lỗi: ${e.message}');
-
-      // Dịch từ Exception sang Failure
-      if (e is ImageUnsafeException) {
-        return Left(ImageUnsafeFailure(e.message));
-      }
-      return Left(ModerationRequestFailure(e.message));
-    } catch (e, st) {
-      _log.severe('❌ Lỗi không xác định trong Repository, không phải ModerationServiceException.', e, st);
-      return const Left(ModerationRequestFailure('Lỗi không xác định'));
+      // Nếu không có lỗi, trả về Right với giá trị void (đại diện bằng null trong fpdart).
+      // Điều này báo hiệu sự thành công cho tầng trên.
+      _log.info('Kiểm duyệt thành công, không có nội dung vi phạm.');
+      return right(null);
+    } on TextUnsafeException catch (e) {
+      // Bắt exception cụ thể khi văn bản không an toàn.
+      _log.warning('Văn bản bị gắn cờ không an toàn. Lý do: ${e.message}. Ánh xạ sang TextUnsafeFailure.', e);
+      // Dịch nó thành TextUnsafeFailure.
+      return left(TextUnsafeFailure(e.message));
+    } on ImageUnsafeException catch (e) {
+      // Bắt exception cụ thể khi ảnh không an toàn.
+      _log.warning('Ảnh bị gắn cờ không an toàn. Lý do: ${e.message}. Ánh xạ sang ImageUnsafeFailure.', e);
+      // Dịch nó thành ImageUnsafeFailure.
+      return left(ImageUnsafeFailure(e.message));
+    } on ModerationRequestException catch (e) {
+      // Bắt các lỗi liên quan đến request (lỗi mạng, API key sai, v.v.).
+      _log.severe('Lỗi yêu cầu kiểm duyệt. Ánh xạ sang ModerationRequestFailure.', e);
+      // Dịch nó thành ModerationRequestFailure chung.
+      return left(ModerationRequestFailure(e.message));
+    } catch (e, stackTrace) {
+      // Bắt tất cả các lỗi không mong muốn khác.
+      // Đây là một "lưới an toàn" quan trọng.
+      _log.severe('Lỗi không xác định xảy ra trong quá trình kiểm duyệt.', e, stackTrace);
+      // Dịch nó thành một Failure chung để tầng trên có thể xử lý.
+      return left(ModerationRequestFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
     }
   }
-
-  // @override
-  // Future<Either<ModerationFailure, void>> moderateText(String text) async {
-  //   _log.info('🛡️ Bắt đầu luồng kiểm duyệt văn bản trong Repository...');
-  //   try {
-  //     await _moderationService.checkText(text);
-
-  //     _log.info('✅ Văn bản đã qua kiểm duyệt thành công ở tầng Service.');
-  //     return const Right(null);
-  //   } on ModerationServiceException catch (e) {
-  //     _log.warning('⚠️ Dịch ModerationServiceException thành ModerationFailure. Lỗi: ${e.message}');
-
-  //     // Dịch từ Exception sang Failure
-  //     if (e is TextUnsafeException) {
-  //       // Trả về lý do cụ thể cho UI
-  //       return Left(TextUnsafeFailure(e.message));
-  //     }
-  //     return Left(ModerationRequestFailure(e.message));
-  //   } catch (e, st) {
-  //     _log.severe('❌ Lỗi không xác định trong Repository, không phải ModerationServiceException.', e, st);
-  //     return const Left(ModerationRequestFailure('Lỗi không xác định'));
-  //   }
-  // }
 }

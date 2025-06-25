@@ -1,19 +1,12 @@
 import 'dart:io';
-import 'package:dishlocal/data/services/moderation_service/exception/moderation_service_exception.dart';
 
-/// Interface cho dịch vụ kiểm duyệt hình ảnh.
+/// Dịch vụ kiểm duyệt nội dung, bao gồm văn bản và/hoặc hình ảnh.
 abstract class ModerationService {
-  /// Kiểm tra một tệp hình ảnh.
+  /// Kiểm duyệt nội dung được cung cấp.
   ///
-  /// - Hoàn thành bình thường nếu ảnh an toàn.
-  /// - Ném ra [ImageUnsafeException] nếu ảnh vi phạm chính sách.
-  /// - Ném ra [ModerationRequestException] nếu có lỗi khi gọi API.
-  Future<void> checkImage(File imageFile);
-
-  /// Kiểm tra một đoạn văn bản.
-  ///
-  /// - Hoàn thành bình thường nếu văn bản an toàn.
-  /// - Ném ra [TextUnsafeException] nếu văn bản vi phạm chính sách.
-  /// - Ném ra [ModerationRequestException] nếu có lỗi khi gọi API.
-  //Future<void> checkText(String text); ẩn vì hiện tại chưa tìm thấy cái nào support tiếng Việt
+  /// Có thể kiểm duyệt chỉ văn bản, chỉ ảnh, hoặc cả hai.
+  /// Ném ra một [ModerationRequestException] nếu cả `text` và `imageFile` đều là null.
+  /// Ném ra các Exception cụ thể như [TextUnsafeException], [ImageUnsafeException],
+  /// hoặc [ModerationRequestException] nếu nội dung vi phạm hoặc có lỗi xảy ra.
+  Future<void> moderate({String? text, File? imageFile});
 }

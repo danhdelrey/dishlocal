@@ -72,6 +72,14 @@ class AppEnvironment {
     return dotenv.env['SIGHTENGINE_API_SECRET'] ?? '';
   }
 
+  //OpenAI
+  static String get openAiApiKey {
+    if (isInDevelopment) {
+      return dotenv.env['OPENAI_API_KEY_DEV'] ?? '';
+    }
+    return dotenv.env['OPENAI_API_KEY_PROD'] ?? '';
+  }
+
   //Firebase
   static FirebaseOptions get firebaseOption {
     if (isInDevelopment) {

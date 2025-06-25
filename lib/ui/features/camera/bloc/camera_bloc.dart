@@ -148,7 +148,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       emit(const CameraModerationInProgress());
 
       _log.info('🛡️ Đang gọi _moderationRepository.moderateImage()...');
-      final moderationResult = await _moderationRepository.moderateImage(imageFile);
+      final moderationResult = await _moderationRepository.moderate(imageFile: imageFile);
 
       // Xử lý kết quả kiểm duyệt
       await moderationResult.fold(

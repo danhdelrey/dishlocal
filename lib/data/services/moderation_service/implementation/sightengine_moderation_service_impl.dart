@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
-@LazySingleton(as: ModerationService)
 class SightengineModerationServiceImpl implements ModerationService {
   final _log = Logger('SightengineModerationServiceImpl');
   // API endpoint cho kiểm duyệt ảnh
@@ -111,6 +110,12 @@ class SightengineModerationServiceImpl implements ModerationService {
       _log.severe('❌ $operationName: Lỗi không xác định khi gọi API.', e, st);
       throw ModerationRequestException(e.toString());
     }
+  }
+  
+  @override
+  Future<void> moderate({String? text, File? imageFile}) {
+    // TODO: implement moderate
+    throw UnimplementedError();
   }
 
   // @override
