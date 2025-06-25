@@ -33,35 +33,12 @@ class SmallPost extends StatelessWidget {
         children: [
           Positioned.fill(
             child: ClipRRect(
-              // Clip để bo tròn góc cho lớp nền, khớp với viền của nội dung
               borderRadius: BorderRadius.circular(20),
-              child: ShaderMask(
-                // ShaderMask là widget chính để tạo hiệu ứng gradient opacity
-                shaderCallback: (bounds) {
-                  // Tạo một dải màu gradient tuyến tính từ trên xuống dưới
-                  return RadialGradient(
-                    // Bắt đầu gradient từ chính giữa
-                    center: Alignment.center,
-                    // Bán kính của gradient, 1.0 sẽ vừa khít các cạnh ngắn hơn
-                    // Bạn có thể chỉnh giá trị này để vòng tròn to/nhỏ hơn
-                    radius: 0.8,
-                    // Màu sắc quyết định độ trong suốt
-                    colors: [
-                      Colors.white.withValues(alpha: 0.4), // Rất mờ
-                      Colors.white.withValues(alpha: 0.3),
-                      Colors.white.withValues(alpha: 0.0),
-                    ],
-                    stops: const [0.0, 0.6, 1.0], // Vùng sáng lan tỏa rộng
-                  ).createShader(bounds);
-                },
-                // BlendMode.dstIn sẽ áp dụng alpha (độ trong suốt) của shader
-                // lên child widget (BlurHash)
-                blendMode: BlendMode.dstIn,
+              child: Opacity(
+                opacity: 0.2,
                 child: BlurHash(
-                  // Sử dụng blurhash từ post object của bạn
-                  // Thêm một giá trị mặc định phòng trường hợp post.blurHash là null
                   hash: post.blurHash ?? 'L00000fQfQfQ00fQfQfQ00fQfQfQ',
-                  imageFit: BoxFit.cover, // Đảm bảo blurhash lấp đầy không gian
+                  imageFit: BoxFit.cover,
                 ),
               ),
             ),
