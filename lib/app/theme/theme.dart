@@ -5,7 +5,6 @@ ColorScheme appColorScheme(context) => Theme.of(context).colorScheme;
 
 final darkTheme = ThemeData.dark().copyWith(
   colorScheme: colorScheme,
-  textTheme: textTheme,
   pageTransitionsTheme: const PageTransitionsTheme(
     builders: {
       TargetPlatform.android: CupertinoPageTransitionsBuilder(),

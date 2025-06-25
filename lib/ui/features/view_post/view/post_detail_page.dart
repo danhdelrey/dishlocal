@@ -324,7 +324,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
               width: 16,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-            label: 'Khoảng cách: ${NumberFormatter.formatDistance(post.distance)}',
+            label: 'Khoảng ${NumberFormatter.formatDistance(post.distance)}',
           ),
         ),
         FadeSlideUp(
