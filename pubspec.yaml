@@ -152,7 +152,6 @@ flutter:
   assets:
     - .env
     - assets/
-    - assets/fonts/
     - assets/icons/
     - assets/images/
     - assets/splash/
@@ -180,62 +179,6 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
-  fonts:
-    - family: SFProDisplay # Đây là tên bạn sẽ sử dụng trong code Dart
-      fonts:
-        # Ultralight
-        - asset: assets/fonts/SF-Pro-Display-Ultralight.otf
-          weight: 100 # w100
-        - asset: assets/fonts/SF-Pro-Display-UltralightItalic.otf
-          weight: 100
-          style: italic
-        # Thin
-        - asset: assets/fonts/SF-Pro-Display-Thin.otf
-          weight: 200 # w200 (hoặc 100 nếu Ultralight không dùng, nhưng theo tên thì Thin nặng hơn Ultralight)
-        - asset: assets/fonts/SF-Pro-Display-ThinItalic.otf
-          weight: 200
-          style: italic
-        # Light
-        - asset: assets/fonts/SF-Pro-Display-Light.otf
-          weight: 300 # w300
-        - asset: assets/fonts/SF-Pro-Display-LightItalic.otf
-          weight: 300
-          style: italic
-        # Regular
-        - asset: assets/fonts/SF-Pro-Display-Regular.otf
-          weight: 400 # w400 (Normal/Regular)
-        - asset: assets/fonts/SF-Pro-Display-RegularItalic.otf
-          weight: 400
-          style: italic
-        # Medium
-        - asset: assets/fonts/SF-Pro-Display-Medium.otf
-          weight: 500 # w500
-        - asset: assets/fonts/SF-Pro-Display-MediumItalic.otf
-          weight: 500
-          style: italic
-        # Semibold
-        - asset: assets/fonts/SF-Pro-Display-Semibold.otf
-          weight: 600 # w600
-        - asset: assets/fonts/SF-Pro-Display-SemiboldItalic.otf
-          weight: 600
-          style: italic
-        # Bold
-        - asset: assets/fonts/SF-Pro-Display-Bold.otf
-          weight: 700 # w700
-        - asset: assets/fonts/SF-Pro-Display-BoldItalic.otf
-          weight: 700
-          style: italic
-        # Heavy
-        - asset: assets/fonts/SF-Pro-Display-Heavy.otf
-          weight: 800 # w800
-        - asset: assets/fonts/SF-Pro-Display-HeavyItalic.otf
-          weight: 800
-          style: italic
-        # Black
-        - asset: assets/fonts/SF-Pro-Display-Black.otf
-          weight: 900 # w900
-        - asset: assets/fonts/SF-Pro-Display-BlackItalic.otf
-          weight: 900
-          style: italic
+  
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
