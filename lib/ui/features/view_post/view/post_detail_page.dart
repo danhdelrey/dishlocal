@@ -141,55 +141,55 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                         ),
                                       ),
                                       actions: [
-                                        if (state.currentUserId != widget.post.authorUserId)
-                                        BouncingOverlayMenu(
-                                          controller: _menuController,
-                                          menuItems: [
-                                            if (state.currentUserId == widget.post.authorUserId)
-                                              MenuActionItem(
-                                                icon: Icons.edit,
-                                                label: 'Chỉnh sửa bài viết',
-                                                onTap: () async {
-                                                  final result = await context.push('/edit_post', extra: widget.post);
-                                                  if (result == true) {
-                                                    if (!context.mounted) {
-                                                      return;
-                                                    }
-                                                    context.read<ViewPostBloc>().add(
-                                                          ViewPostEvent.started(widget.post),
-                                                        );
-                                                  }
-                                                },
-                                              ),
-                                            if (state.currentUserId == widget.post.authorUserId)
-                                              MenuActionItem(
-                                                icon: Icons.delete,
-                                                label: 'Xóa bài viết',
-                                                onTap: () async {
-                                                  final bool? confirmed = await _showDeleteConfirmationDialog(context);
-
-                                                  if (confirmed == true) {
-                                                    if (context.mounted) {
-                                                      context.read<DeletePostBloc>().add(
-                                                            DeletePostEvent.deletePostRequested(post: widget.post),
+                                        if (state.currentUserId == widget.post.authorUserId)
+                                          BouncingOverlayMenu(
+                                            controller: _menuController,
+                                            menuItems: [
+                                              if (state.currentUserId == widget.post.authorUserId)
+                                                MenuActionItem(
+                                                  icon: Icons.edit,
+                                                  label: 'Chỉnh sửa bài viết',
+                                                  onTap: () async {
+                                                    final result = await context.push('/edit_post', extra: widget.post);
+                                                    if (result == true) {
+                                                      if (!context.mounted) {
+                                                        return;
+                                                      }
+                                                      context.read<ViewPostBloc>().add(
+                                                            ViewPostEvent.started(widget.post),
                                                           );
                                                     }
-                                                  }
-                                                },
-                                              ),
-                                            // if (state.currentUserId != widget.post.authorUserId)
-                                            //   MenuActionItem(
-                                            //     icon: Icons.report,
-                                            //     label: 'Báo cáo bài viết',
-                                            //     onTap: () {},
-                                            //   ),
-                                            // MenuActionItem(
-                                            //   icon: Icons.link,
-                                            //   label: 'Sao chép liên kết',
-                                            //   onTap: () {},
-                                            // ),
-                                          ],
-                                        )
+                                                  },
+                                                ),
+                                              if (state.currentUserId == widget.post.authorUserId)
+                                                MenuActionItem(
+                                                  icon: Icons.delete,
+                                                  label: 'Xóa bài viết',
+                                                  onTap: () async {
+                                                    final bool? confirmed = await _showDeleteConfirmationDialog(context);
+
+                                                    if (confirmed == true) {
+                                                      if (context.mounted) {
+                                                        context.read<DeletePostBloc>().add(
+                                                              DeletePostEvent.deletePostRequested(post: widget.post),
+                                                            );
+                                                      }
+                                                    }
+                                                  },
+                                                ),
+                                              // if (state.currentUserId != widget.post.authorUserId)
+                                              //   MenuActionItem(
+                                              //     icon: Icons.report,
+                                              //     label: 'Báo cáo bài viết',
+                                              //     onTap: () {},
+                                              //   ),
+                                              // MenuActionItem(
+                                              //   icon: Icons.link,
+                                              //   label: 'Sao chép liên kết',
+                                              //   onTap: () {},
+                                              // ),
+                                            ],
+                                          )
                                       ],
                                       title: FadeSlideUp(child: Text(state.post.dishName ?? '')),
                                     );

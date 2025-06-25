@@ -5,11 +5,11 @@ sealed class ModerationFailure extends RepositoryFailure {
 }
 
 class ImageUnsafeFailure extends ModerationFailure {
-  const ImageUnsafeFailure(String reason) : super('Hình ảnh không hợp lệ: $reason');
+  const ImageUnsafeFailure(super.reason);
 }
 
 class ModerationRequestFailure extends ModerationFailure {
-  const ModerationRequestFailure(String error) : super('Lỗi khi kiểm duyệt ảnh: $error');
+  const ModerationRequestFailure(super.error);
 }
 
 /// Failure khi nội dung văn bản không được chấp nhận.

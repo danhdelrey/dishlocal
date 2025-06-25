@@ -14,42 +14,44 @@ class ModerationRepositoryImpl implements ModerationRepository {
   final ModerationService _moderationService;
 
   ModerationRepositoryImpl(this._moderationService);
-
-  @override
+  
+   @override
   Future<Either<ModerationFailure, void>> moderate({String? text, File? imageFile}) async {
-    _log.info('Bắt đầu quy trình kiểm duyệt tại Repository...');
-    _log.fine('Dữ liệu đầu vào: text is ${text != null ? "present" : "absent"}, image is ${imageFile != null ? "present" : "absent"}');
-
     try {
-      // Gọi phương thức của service. Nếu nó không ném ra exception,
-      // có nghĩa là nội dung đã được kiểm duyệt và an toàn.
+      _log.info('Bắt đầu quy trình kiểm duyệt nội dung...');
+
+      // Gọi service. Nếu thành công, service sẽ không ném ra exception.
       await _moderationService.moderate(text: text, imageFile: imageFile);
 
-      // Nếu không có lỗi, trả về Right với giá trị void (đại diện bằng null trong fpdart).
-      // Điều này báo hiệu sự thành công cho tầng trên.
-      _log.info('Kiểm duyệt thành công, không có nội dung vi phạm.');
-      return right(null);
-    } on TextUnsafeException catch (e) {
-      // Bắt exception cụ thể khi văn bản không an toàn.
-      _log.warning('Văn bản bị gắn cờ không an toàn. Lý do: ${e.message}. Ánh xạ sang TextUnsafeFailure.', e);
-      // Dịch nó thành TextUnsafeFailure.
-      return left(TextUnsafeFailure(e.message));
+      _log.info('✅ Kiểm duyệt thành công. Nội dung hợp lệ.');
+      // Nếu không có lỗi, trả về Right(void). `null` đại diện cho `void`.
+      return const Right(null);
     } on ImageUnsafeException catch (e) {
-      // Bắt exception cụ thể khi ảnh không an toàn.
-      _log.warning('Ảnh bị gắn cờ không an toàn. Lý do: ${e.message}. Ánh xạ sang ImageUnsafeFailure.', e);
-      // Dịch nó thành ImageUnsafeFailure.
-      return left(ImageUnsafeFailure(e.message));
+      _log.warning('☢️ Nội dung hình ảnh không an toàn.', e);
+      // Dịch ImageUnsafeException sang ImageUnsafeFailure
+      return Left(ImageUnsafeFailure(e.message));
+
+      // TODO: Khi bạn implement kiểm duyệt text, hãy thêm đoạn catch này
+      // on TextUnsafeException catch (e) {
+      //   _log.warning('☢️ Nội dung văn bản không an toàn.', e);
+      //   return Left(TextUnsafeFailure(e.reason));
+      // }
     } on ModerationRequestException catch (e) {
-      // Bắt các lỗi liên quan đến request (lỗi mạng, API key sai, v.v.).
-      _log.severe('Lỗi yêu cầu kiểm duyệt. Ánh xạ sang ModerationRequestFailure.', e);
-      // Dịch nó thành ModerationRequestFailure chung.
-      return left(ModerationRequestFailure(e.message));
-    } catch (e, stackTrace) {
-      // Bắt tất cả các lỗi không mong muốn khác.
-      // Đây là một "lưới an toàn" quan trọng.
-      _log.severe('Lỗi không xác định xảy ra trong quá trình kiểm duyệt.', e, stackTrace);
-      // Dịch nó thành một Failure chung để tầng trên có thể xử lý.
-      return left(ModerationRequestFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
+      _log.severe('❌ Lỗi yêu cầu kiểm duyệt (API/Server).', e);
+      // Dịch ModerationRequestException sang ModerationRequestFailure
+      return Left(ModerationRequestFailure(e.message));
+    } on ArgumentError catch (e) {
+      _log.severe('❌ Lỗi đầu vào không hợp lệ.', e);
+      // Lỗi này xảy ra khi cả text và imageFile đều null.
+      // Đây cũng là một lỗi về yêu cầu.
+      return Left(ModerationRequestFailure(e.message));
+    } catch (e, st) {
+      _log.severe('❌ Lỗi không xác định trong quá trình kiểm duyệt.', e, st);
+      // Bắt tất cả các lỗi khác (ví dụ: lỗi mạng không lường trước,...)
+      // và dịch sang một failure chung.
+      return Left(ModerationRequestFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
     }
   }
+
+  
 }
