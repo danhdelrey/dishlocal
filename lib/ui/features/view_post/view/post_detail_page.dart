@@ -277,6 +277,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
     );
   }
 
+  //TODO: Làm cho nó glassy giống cái menu trong bài viết
   // Đặt hàm này bên trong class Widget của bạn, hoặc ở ngoài nếu bạn muốn
   Future<bool?> _showDeleteConfirmationDialog(BuildContext context) {
     return showDialog<bool>(

@@ -168,11 +168,11 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
                           return const LogoutButton();
                         } else {
                           // Nếu là trang của người khác, hiển thị nút More
-                          // TODO: Tạo widget MoreButton hoặc dùng IconButton
-                          return IconButton(
-                            icon: const Icon(Icons.more_horiz),
-                            onPressed: () {},
-                          );
+                          // // TODO: Tạo widget MoreButton hoặc dùng IconButton
+                          // return IconButton(
+                          //   icon: const Icon(Icons.more_horiz),
+                          //   onPressed: () {},
+                          // );
                         }
                       }
                       // Khi đang loading hoặc lỗi, không hiển thị gì cả

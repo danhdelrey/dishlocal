@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class LogoutButton extends StatelessWidget {
   const LogoutButton({super.key});
 
+  //TODO: Làm cho nó glassy giống cái menu trong bài viết
   @override
   Widget build(BuildContext context) {
     return IconButton(

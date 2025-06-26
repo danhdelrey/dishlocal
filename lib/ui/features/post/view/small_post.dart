@@ -115,7 +115,7 @@ class SmallPost extends StatelessWidget {
                             padding: const EdgeInsets.all(5.0),
                             child: GlassIconLabelsWrap(
                               iconLabels: [
-                                CustomIconWithLabel(
+                                CustomIconWithLabel( //TODO: thêm điều kiện chỉ hiển thị màu nếu là của mình đã like/save,còn của người khác like hay save thì mình ko hiện màu vì mình chưa có like/save
                                   icon: post.isLiked ? AppIcons.heart.toSvg(width: 12, color: Colors.pink) : AppIcons.heart1.toSvg(width: 12, color: appColorScheme(context).onSurface),
                                   label: post.likeCount.toString(),
                                   labelStyle: appTextTheme(context).labelSmall?.copyWith(
