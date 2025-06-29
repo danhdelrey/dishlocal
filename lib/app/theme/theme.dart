@@ -11,6 +11,9 @@ final darkTheme = ThemeData.dark().copyWith(
       TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
     },
   ),
+  bottomSheetTheme: const BottomSheetThemeData(
+    backgroundColor: Colors.transparent,
+  ),
 );
 
 const colorScheme = ColorScheme(
