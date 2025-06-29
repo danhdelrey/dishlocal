@@ -5,6 +5,7 @@ import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/delete_post/bloc/delete_post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/bouncing_overlay_menu.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart';
@@ -420,6 +421,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
             },
           ),
         ),
+        TextButton(
+          onPressed: () {
+            showCommentBottomSheet(context, postId: post.postId, totalCommentCount: post.commentCount);
+          },
+          child: const Text('Hiển thị bình luận'),
+        ),
       ],
     );
   }
@@ -446,7 +453,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   text: TextSpan(
                     style: Theme.of(context).textTheme.labelLarge,
                     children: [
-                       TextSpan(text: post.authorUsername),
+                      TextSpan(text: post.authorUsername),
                       if (post.authorUserId != currentUserId && author.isFollowing == true)
                         TextSpan(
                           text: ' • Đang theo dõi',
