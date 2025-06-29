@@ -33,6 +33,7 @@ mixin _$Post {
   int get saveCount;
   bool get isLiked;
   bool get isSaved;
+  int get commentCount;
 
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
@@ -76,7 +77,9 @@ mixin _$Post {
             (identical(other.saveCount, saveCount) ||
                 other.saveCount == saveCount) &&
             (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
-            (identical(other.isSaved, isSaved) || other.isSaved == isSaved));
+            (identical(other.isSaved, isSaved) || other.isSaved == isSaved) &&
+            (identical(other.commentCount, commentCount) ||
+                other.commentCount == commentCount));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -99,11 +102,12 @@ mixin _$Post {
       likeCount,
       saveCount,
       isLiked,
-      isSaved);
+      isSaved,
+      commentCount);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount)';
   }
 }
 
@@ -129,7 +133,8 @@ abstract mixin class $PostCopyWith<$Res> {
       int likeCount,
       int saveCount,
       bool isLiked,
-      bool isSaved});
+      bool isSaved,
+      int commentCount});
 
   $AddressCopyWith<$Res>? get address;
 }
@@ -163,6 +168,7 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
     Object? saveCount = null,
     Object? isLiked = null,
     Object? isSaved = null,
+    Object? commentCount = null,
   }) {
     return _then(_self.copyWith(
       postId: null == postId
@@ -233,6 +239,10 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
           ? _self.isSaved
           : isSaved // ignore: cast_nullable_to_non_nullable
               as bool,
+      commentCount: null == commentCount
+          ? _self.commentCount
+          : commentCount // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 
@@ -272,7 +282,8 @@ class _Post implements Post {
       required this.likeCount,
       required this.saveCount,
       required this.isLiked,
-      required this.isSaved});
+      required this.isSaved,
+      required this.commentCount});
   factory _Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
   @override
@@ -310,6 +321,8 @@ class _Post implements Post {
   final bool isLiked;
   @override
   final bool isSaved;
+  @override
+  final int commentCount;
 
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
@@ -358,7 +371,9 @@ class _Post implements Post {
             (identical(other.saveCount, saveCount) ||
                 other.saveCount == saveCount) &&
             (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
-            (identical(other.isSaved, isSaved) || other.isSaved == isSaved));
+            (identical(other.isSaved, isSaved) || other.isSaved == isSaved) &&
+            (identical(other.commentCount, commentCount) ||
+                other.commentCount == commentCount));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -381,11 +396,12 @@ class _Post implements Post {
       likeCount,
       saveCount,
       isLiked,
-      isSaved);
+      isSaved,
+      commentCount);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount)';
   }
 }
 
@@ -412,7 +428,8 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       int likeCount,
       int saveCount,
       bool isLiked,
-      bool isSaved});
+      bool isSaved,
+      int commentCount});
 
   @override
   $AddressCopyWith<$Res>? get address;
@@ -447,6 +464,7 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
     Object? saveCount = null,
     Object? isLiked = null,
     Object? isSaved = null,
+    Object? commentCount = null,
   }) {
     return _then(_Post(
       postId: null == postId
@@ -517,6 +535,10 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
           ? _self.isSaved
           : isSaved // ignore: cast_nullable_to_non_nullable
               as bool,
+      commentCount: null == commentCount
+          ? _self.commentCount
+          : commentCount // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 

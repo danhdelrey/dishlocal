@@ -53,6 +53,7 @@ mixin _$PostEntity {
 
   /// (Denormalized) Số lượt lưu, được cập nhật bằng triggers.
   int get saveCount;
+  int get commentCount;
 
   /// Thời điểm bài post được tạo.
   @DateTimeConverter()
@@ -96,6 +97,8 @@ mixin _$PostEntity {
                 other.likeCount == likeCount) &&
             (identical(other.saveCount, saveCount) ||
                 other.saveCount == saveCount) &&
+            (identical(other.commentCount, commentCount) ||
+                other.commentCount == commentCount) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -117,11 +120,12 @@ mixin _$PostEntity {
       insight,
       likeCount,
       saveCount,
+      commentCount,
       createdAt);
 
   @override
   String toString() {
-    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, createdAt: $createdAt)';
+    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, createdAt: $createdAt)';
   }
 }
 
@@ -145,6 +149,7 @@ abstract mixin class $PostEntityCopyWith<$Res> {
       String? insight,
       int likeCount,
       int saveCount,
+      int commentCount,
       @DateTimeConverter() DateTime createdAt});
 }
 
@@ -173,6 +178,7 @@ class _$PostEntityCopyWithImpl<$Res> implements $PostEntityCopyWith<$Res> {
     Object? insight = freezed,
     Object? likeCount = null,
     Object? saveCount = null,
+    Object? commentCount = null,
     Object? createdAt = null,
   }) {
     return _then(_self.copyWith(
@@ -228,6 +234,10 @@ class _$PostEntityCopyWithImpl<$Res> implements $PostEntityCopyWith<$Res> {
           ? _self.saveCount
           : saveCount // ignore: cast_nullable_to_non_nullable
               as int,
+      commentCount: null == commentCount
+          ? _self.commentCount
+          : commentCount // ignore: cast_nullable_to_non_nullable
+              as int,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -254,6 +264,7 @@ class _PostEntity implements PostEntity {
       this.insight,
       this.likeCount = 0,
       this.saveCount = 0,
+      this.commentCount = 0,
       @DateTimeConverter() required this.createdAt});
   factory _PostEntity.fromJson(Map<String, dynamic> json) =>
       _$PostEntityFromJson(json);
@@ -311,6 +322,9 @@ class _PostEntity implements PostEntity {
   @override
   @JsonKey()
   final int saveCount;
+  @override
+  @JsonKey()
+  final int commentCount;
 
   /// Thời điểm bài post được tạo.
   @override
@@ -360,6 +374,8 @@ class _PostEntity implements PostEntity {
                 other.likeCount == likeCount) &&
             (identical(other.saveCount, saveCount) ||
                 other.saveCount == saveCount) &&
+            (identical(other.commentCount, commentCount) ||
+                other.commentCount == commentCount) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -381,11 +397,12 @@ class _PostEntity implements PostEntity {
       insight,
       likeCount,
       saveCount,
+      commentCount,
       createdAt);
 
   @override
   String toString() {
-    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, createdAt: $createdAt)';
+    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, createdAt: $createdAt)';
   }
 }
 
@@ -411,6 +428,7 @@ abstract mixin class _$PostEntityCopyWith<$Res>
       String? insight,
       int likeCount,
       int saveCount,
+      int commentCount,
       @DateTimeConverter() DateTime createdAt});
 }
 
@@ -439,6 +457,7 @@ class __$PostEntityCopyWithImpl<$Res> implements _$PostEntityCopyWith<$Res> {
     Object? insight = freezed,
     Object? likeCount = null,
     Object? saveCount = null,
+    Object? commentCount = null,
     Object? createdAt = null,
   }) {
     return _then(_PostEntity(
@@ -493,6 +512,10 @@ class __$PostEntityCopyWithImpl<$Res> implements _$PostEntityCopyWith<$Res> {
       saveCount: null == saveCount
           ? _self.saveCount
           : saveCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      commentCount: null == commentCount
+          ? _self.commentCount
+          : commentCount // ignore: cast_nullable_to_non_nullable
               as int,
       createdAt: null == createdAt
           ? _self.createdAt

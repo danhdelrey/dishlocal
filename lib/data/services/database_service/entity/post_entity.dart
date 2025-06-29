@@ -50,6 +50,8 @@ abstract class PostEntity with _$PostEntity {
     /// (Denormalized) Số lượt lưu, được cập nhật bằng triggers.
     @Default(0) int saveCount,
 
+    @Default(0) int commentCount,
+
     /// Thời điểm bài post được tạo.
     @DateTimeConverter() required DateTime createdAt,
   }) = _PostEntity;

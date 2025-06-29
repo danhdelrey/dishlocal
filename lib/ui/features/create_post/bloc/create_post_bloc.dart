@@ -258,6 +258,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           createdAt: event.createdAt,
           likeCount: 0,
           saveCount: 0,
+          commentCount: 0,
           isLiked: false,
           isSaved: false,
         ),

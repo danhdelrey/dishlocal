@@ -26,6 +26,7 @@ abstract class Post with _$Post {
     required int saveCount,
     required bool isLiked,
     required bool isSaved,
+    required int commentCount,
   }) = _Post;
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
