@@ -12,7 +12,6 @@ import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-
 @LazySingleton(as: CommentRepository)
 class RemoteCommentRepositorySqlImpl implements CommentRepository {
   final _log = Logger('RemoteCommentRepositorySqlImpl');
@@ -90,7 +89,16 @@ class RemoteCommentRepositorySqlImpl implements CommentRepository {
         'p_parent_comment_id': parentCommentId,
         'p_user_id': currentUserId,
         'p_limit': limit,
-        'p_cursor': startAfter?.toUtc().toIso8601String() ?? '9999-12-31',
+
+        // =========================================================================
+        // SỬA ĐỔI Ở ĐÂY: Thay đổi giá trị cursor mặc định cho logic ASC
+        //
+        // TRƯỚC ĐÂY (SAI):
+        // 'p_cursor': startAfter?.toUtc().toIso8601String() ?? '9999-12-31',
+        //
+        // BÂY GIỜ (ĐÚNG):
+        'p_cursor': startAfter?.toUtc().toIso8601String() ?? '1970-01-01',
+        // =========================================================================
       };
 
       _log.fine('   -> Với params: $params');

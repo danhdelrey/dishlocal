@@ -11,8 +11,6 @@ import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:uuid/uuid.dart';
 
-
-
 part 'comment_event.dart';
 part 'comment_state.dart';
 part 'comment_bloc.freezed.dart';
@@ -223,7 +221,16 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     // Thêm reply vào map
     final newRepliesMap = Map<String, List<CommentReply>>.from(state.replies);
     final existingReplies = newRepliesMap[target.parentCommentId] ?? [];
-    newRepliesMap[target.parentCommentId] = [optimisticReply, ...existingReplies];
+
+    // =========================================================================
+    // THAY ĐỔI Ở ĐÂY: Thêm trả lời mới vào CUỐI danh sách thay vì đầu danh sách
+    //
+    // TRƯỚC ĐÂY (Sắp xếp DESC):
+    // newRepliesMap[target.parentCommentId] = [optimisticReply, ...existingReplies];
+    //
+    // BÂY GIỜ (Sắp xếp ASC):
+    newRepliesMap[target.parentCommentId] = [...existingReplies, optimisticReply];
+    // =========================================================================
 
     // Tăng reply_count của comment gốc
     final newComments = state.comments.map((c) {
@@ -238,7 +245,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       comments: newComments,
       replyTarget: null, // Xóa target sau khi submit
     ));
-    _log.fine('✨ Optimistic reply added to UI.');
+    _log.fine('✨ Optimistic reply added to UI at the end of the list.');
 
     // --- NETWORK CALL ---
     final result = await _commentRepository.createReply(
