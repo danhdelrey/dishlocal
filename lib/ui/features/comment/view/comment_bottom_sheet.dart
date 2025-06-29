@@ -84,29 +84,38 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
         backgroundAlpha: 0.5,
         child: SizedBox(
           height: bottomSheetHeight,
-          child: Column(
+          child: Stack(
             children: [
-              // Thanh kéo và tiêu đề
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  width: 40,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: appColorScheme(context).outlineVariant,
-                    borderRadius: BorderRadius.circular(10),
+              Column(
+                children: [
+                  // Thanh kéo và tiêu đề
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: appColorScheme(context).outlineVariant,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
+
+                  Expanded(
+                    child: CommentListView(
+                      scrollController: _scrollController,
+                      postAuthorId: widget.postAuthorId,
+                    ),
+                  ),
+                  // Ô nhập liệu
+                ],
+              ),
+              const Positioned.fill(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: CommentInputField(),
                 ),
               ),
-             
-              Expanded(
-                child: CommentListView(
-                  scrollController: _scrollController,
-                  postAuthorId: widget.postAuthorId,
-                ),
-              ),
-              // Ô nhập liệu
-              const CommentInputField(),
             ],
           ),
         ),

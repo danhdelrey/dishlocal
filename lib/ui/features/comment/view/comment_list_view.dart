@@ -30,6 +30,7 @@ class CommentListView extends StatelessWidget {
         final shouldShowLoadMoreButton = remainingCount > 0 && state.status != CommentStatus.loading;
 
         return ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
           controller: scrollController,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           // +1 cho nút "Xem thêm" nếu cần

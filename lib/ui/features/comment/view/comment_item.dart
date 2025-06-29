@@ -20,7 +20,7 @@ class CommentItem extends StatelessWidget {
     final isAuthor = comment.authorUserId == postAuthorId;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
