@@ -1,0 +1,220 @@
+// file: lib/data/repositories/comment/remote_comment_repository_sql_impl.dart
+
+import 'package:dartz/dartz.dart';
+import 'package:dishlocal/data/categories/comment/model/comment.dart';
+import 'package:dishlocal/data/categories/comment/model/comment_reply.dart';
+import 'package:dishlocal/data/categories/comment/repository/failure/comment_failure.dart';
+import 'package:dishlocal/data/categories/comment/repository/interface/comment_repository.dart';
+import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
+import 'package:dishlocal/data/services/database_service/exception/sql_database_service_exception.dart';
+import 'package:dishlocal/data/services/database_service/interface/sql_database_service.dart';
+import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+
+@LazySingleton(as: CommentRepository)
+class RemoteCommentRepositorySqlImpl implements CommentRepository {
+  final _log = Logger('RemoteCommentRepositorySqlImpl');
+  final _supabase = Supabase.instance.client; // Dùng cho các thao tác RPC
+  final SqlDatabaseService _dbService;
+  final AuthenticationService _authenticationService;
+
+  RemoteCommentRepositorySqlImpl(
+    this._dbService,
+    this._authenticationService,
+  );
+
+  /// Helper để bắt và dịch các lỗi phổ biến sang CommentFailure.
+  Future<Either<CommentFailure, T>> _handleErrors<T>(Future<T> Function() future) async {
+    try {
+      return Right(await future());
+    } on SqlDatabaseServiceException catch (e) {
+      _log.severe('❌ Lỗi từ SqlDatabaseService trong Comment Repository', e);
+      return Left(switch (e) {
+        PermissionDeniedException() => const PermissionCommentFailure(),
+        RecordNotFoundException() => const CommentNotFoundFailure(),
+        UniqueConstraintViolationException() => const CommentOperationFailure('Bạn đã thực hiện hành động này rồi.'),
+        CheckConstraintViolationException() => const CommentOperationFailure('Dữ liệu không hợp lệ.'),
+        DatabaseConnectionException() => const ConnectionCommentFailure(),
+        _ => const UnknownCommentFailure(),
+      });
+    } catch (e, st) {
+      _log.severe('❌ Lỗi không xác định trong Comment Repository', e, st);
+      return const Left(UnknownCommentFailure());
+    }
+  }
+
+  @override
+  Future<Either<CommentFailure, List<Comment>>> getCommentsForPost({
+    required String postId,
+    int limit = 20,
+    DateTime? startAfter,
+  }) {
+    return _handleErrors(() async {
+      final currentUserId = _authenticationService.getCurrentUserId();
+      _log.info('📡 Bắt đầu gọi RPC "get_post_comments" cho postId: $postId...');
+
+      final params = {
+        'p_post_id': postId,
+        'p_user_id': currentUserId,
+        'p_limit': limit,
+        'p_cursor': startAfter?.toUtc().toIso8601String() ?? '9999-12-31',
+      };
+
+      _log.fine('   -> Với params: $params');
+      final data = await _supabase.rpc('get_post_comments', params: params);
+
+      if (data is! List) {
+        _log.warning('⚠️ RPC "get_post_comments" không trả về một List. Kết quả: $data');
+        return [];
+      }
+
+      final comments = data.map((json) => Comment.fromJson(json as Map<String, dynamic>)).toList();
+      _log.info('✅ Lấy thành công ${comments.length} bình luận cho bài viết $postId.');
+      return comments;
+    });
+  }
+
+  @override
+  Future<Either<CommentFailure, List<CommentReply>>> getRepliesForComment({
+    required String parentCommentId,
+    int limit = 10,
+    DateTime? startAfter,
+  }) {
+    return _handleErrors(() async {
+      final currentUserId = _authenticationService.getCurrentUserId();
+      _log.info('📡 Bắt đầu gọi RPC "get_comment_replies" cho parentCommentId: $parentCommentId...');
+
+      final params = {
+        'p_parent_comment_id': parentCommentId,
+        'p_user_id': currentUserId,
+        'p_limit': limit,
+        'p_cursor': startAfter?.toUtc().toIso8601String() ?? '9999-12-31',
+      };
+
+      _log.fine('   -> Với params: $params');
+      final data = await _supabase.rpc('get_comment_replies', params: params);
+
+      if (data is! List) {
+        _log.warning('⚠️ RPC "get_comment_replies" không trả về một List. Kết quả: $data');
+        return [];
+      }
+
+      final replies = data.map((json) => CommentReply.fromJson(json as Map<String, dynamic>)).toList();
+      _log.info('✅ Lấy thành công ${replies.length} trả lời cho bình luận $parentCommentId.');
+      return replies;
+    });
+  }
+
+  @override
+  Future<Either<CommentFailure, void>> createComment({
+    required String postId,
+    required String content,
+  }) {
+    return _handleErrors(() async {
+      final currentUserId = _authenticationService.getCurrentUserId();
+      _log.info('➕ Bắt đầu tạo bình luận mới cho postId: $postId bởi user: $currentUserId');
+
+      await _dbService.create(
+        tableName: 'post_comments',
+        data: {
+          'post_id': postId,
+          'author_id': currentUserId,
+          'content': content,
+        },
+        fromJson: (json) => {}, // Không cần trả về đối tượng
+      );
+      _log.info('🎉 Tạo bình luận thành công!');
+    });
+  }
+
+  @override
+  Future<Either<CommentFailure, void>> createReply({
+    required String parentCommentId,
+    required String replyToUserId,
+    required String content,
+  }) {
+    return _handleErrors(() async {
+      final currentUserId = _authenticationService.getCurrentUserId();
+      _log.info('↪️ Bắt đầu tạo trả lời cho parentCommentId: $parentCommentId bởi user: $currentUserId...');
+      _log.fine('   -> Trả lời cho user: $replyToUserId');
+
+      await _dbService.create(
+        tableName: 'comment_replies',
+        data: {
+          'parent_comment_id': parentCommentId,
+          'author_id': currentUserId,
+          'reply_to_user_id': replyToUserId,
+          'content': content,
+        },
+        fromJson: (json) => {}, // Không cần trả về đối tượng
+      );
+      _log.info('🎉 Tạo trả lời thành công!');
+    });
+  }
+
+  /// Helper chung để xử lý logic thích/bỏ thích
+  Future<void> _handleLikeUnlike({
+    required String tableName,
+    required String entityIdColumnName,
+    required String entityId,
+    required bool isLiked,
+  }) async {
+    final currentUserId = _authenticationService.getCurrentUserId();
+    final action = isLiked ? "thích" : "bỏ thích";
+    _log.info('🔄 Bắt đầu $action $entityIdColumnName: $entityId bởi user: $currentUserId.');
+
+    if (isLiked) {
+      await _dbService.create(
+        tableName: tableName,
+        data: {entityIdColumnName: entityId, 'user_id': currentUserId},
+        fromJson: (json) => {},
+      );
+    } else {
+      await _dbService.deleteWhere(
+        tableName: tableName,
+        filters: {entityIdColumnName: entityId, 'user_id': currentUserId},
+      );
+    }
+    _log.info('✅ Hoàn thành $action thành công.');
+  }
+
+  @override
+  Future<Either<CommentFailure, void>> likeComment({required String commentId, required bool isLiked}) {
+    return _handleErrors(() => _handleLikeUnlike(
+          tableName: 'post_comment_likes',
+          entityIdColumnName: 'comment_id',
+          entityId: commentId,
+          isLiked: isLiked,
+        ));
+  }
+
+  @override
+  Future<Either<CommentFailure, void>> likeReply({required String replyId, required bool isLiked}) {
+    return _handleErrors(() => _handleLikeUnlike(
+          tableName: 'comment_reply_likes',
+          entityIdColumnName: 'reply_id',
+          entityId: replyId,
+          isLiked: isLiked,
+        ));
+  }
+
+  @override
+  Future<Either<CommentFailure, void>> deleteComment({required String commentId}) {
+    return _handleErrors(() async {
+      _log.info('🗑️ Bắt đầu xóa bình luận ID: $commentId...');
+      await _dbService.delete(tableName: 'post_comments', id: commentId);
+      _log.info('✅ Xóa bình luận $commentId thành công.');
+    });
+  }
+
+  @override
+  Future<Either<CommentFailure, void>> deleteReply({required String replyId}) {
+    return _handleErrors(() async {
+      _log.info('🗑️ Bắt đầu xóa trả lời ID: $replyId...');
+      await _dbService.delete(tableName: 'comment_replies', id: replyId);
+      _log.info('✅ Xóa trả lời $replyId thành công.');
+    });
+  }
+}
