@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/comment/model/comment.dart';
 import 'package:dishlocal/data/categories/comment/model/comment_reply.dart';
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
@@ -74,50 +75,42 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
             ..showSnackBar(SnackBar(content: Text(state.failure!.message)));
         }
       },
-      child: Container(
-        height: bottomSheetHeight,
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          children: [
-            // Thanh kéo và tiêu đề
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Container(
-                width: 40,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(10),
+      child: GlassContainer(
+        borderRadius: 20,
+        radiusBottomLeft: false,
+        radiusBottomRight: false,
+        blur: 50,
+        backgroundColor: appColorScheme(context).surface,
+        backgroundAlpha: 0.5,
+        child: SizedBox(
+          height: bottomSheetHeight,
+          child: Column(
+            children: [
+              // Thanh kéo và tiêu đề
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: appColorScheme(context).outlineVariant,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Bình luận',
-                style: Theme.of(context).textTheme.titleLarge,
+             
+              Expanded(
+                child: CommentListView(
+                  scrollController: _scrollController,
+                  postAuthorId: widget.postAuthorId,
+                ),
               ),
-            ),
-            const Divider(),
-            // Danh sách bình luận
-            Expanded(
-              child: CommentListView(
-                scrollController: _scrollController,
-                postAuthorId: widget.postAuthorId,
-              ),
-            ),
-            // Ô nhập liệu
-            const CommentInputField(),
-          ],
+              // Ô nhập liệu
+              const CommentInputField(),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-

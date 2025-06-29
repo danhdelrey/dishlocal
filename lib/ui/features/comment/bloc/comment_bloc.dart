@@ -1,6 +1,7 @@
 // file: lib/application/comment/comment_bloc.dart
 
 import 'package:bloc/bloc.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/comment/model/comment.dart';
 import 'package:dishlocal/data/categories/comment/model/comment_reply.dart';
@@ -43,6 +44,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     emit(state.copyWith(
       postId: event.postId,
       totalCommentCount: event.totalCommentCount,
+      currentUser: _appUserRepository.latestUser,
       status: CommentStatus.loading,
     ));
 

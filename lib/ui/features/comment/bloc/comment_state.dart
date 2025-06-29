@@ -43,6 +43,7 @@ sealed class CommentState with _$CommentState {
     // --- Trạng thái tương tác ---
     /// Lưu thông tin khi người dùng nhấn nút "Trả lời".
     ReplyTarget? replyTarget,
+    AppUser? currentUser,
   }) = _CommentState;
 
   factory CommentState.initial() => const CommentState(
@@ -56,5 +57,6 @@ sealed class CommentState with _$CommentState {
         hasMoreReplies: {},
         replyLoadStatus: {},
         replyTarget: null,
+        currentUser: null,
       );
 }

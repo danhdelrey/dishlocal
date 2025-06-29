@@ -15,15 +15,28 @@ class GlassContainer extends StatelessWidget {
     this.borderTop,
     this.borderLeft,
     this.borderBottom,
-    this.borderRight,  this.backgroundAlpha = 0.1,  this.borderAlpha = 0.1,
+    this.borderRight,
+    this.backgroundAlpha = 0.1,
+    this.borderAlpha = 0.1,
+    this.radiusTopLeft = true,
+    this.radiusTopRight = true,
+    this.radiusBottomLeft = true,
+    this.radiusBottomRight = true,
   });
 
   final Widget child;
   final double? horizontalPadding;
   final double? verticalPadding;
   final double blur;
+
   final double borderRadius;
+  final bool radiusTopLeft;
+  final bool radiusTopRight;
+  final bool radiusBottomLeft;
+  final bool radiusBottomRight;
+
   final double borderAlpha;
+
   final Color backgroundColor;
   final double backgroundAlpha;
   final Gradient? gradient; // Gradient có thể null
@@ -37,7 +50,12 @@ class GlassContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
+      borderRadius: BorderRadius.only(
+        topLeft: radiusTopLeft ? Radius.circular(borderRadius) : Radius.zero,
+        topRight: radiusTopRight ? Radius.circular(borderRadius) : Radius.zero,
+        bottomLeft: radiusBottomLeft ? Radius.circular(borderRadius) : Radius.zero,
+        bottomRight: radiusBottomRight ? Radius.circular(borderRadius) : Radius.zero,
+      ),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(
@@ -51,7 +69,12 @@ class GlassContainer extends StatelessWidget {
             // BoxDecoration không cho phép có cả `color` và `gradient` cùng lúc.
             gradient: gradient,
             color: gradient == null ? backgroundColor.withValues(alpha: backgroundAlpha) : null,
-            borderRadius: BorderRadius.circular(borderRadius),
+            borderRadius: BorderRadius.only(
+              topLeft: radiusTopLeft ? Radius.circular(borderRadius) : Radius.zero,
+              topRight: radiusTopRight ? Radius.circular(borderRadius) : Radius.zero,
+              bottomLeft: radiusBottomLeft ? Radius.circular(borderRadius) : Radius.zero,
+              bottomRight: radiusBottomRight ? Radius.circular(borderRadius) : Radius.zero,
+            ),
             border: Border(
               top: borderTop != null
                   ? BorderSide(

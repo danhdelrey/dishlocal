@@ -907,6 +907,7 @@ mixin _$CommentState {
       get replyLoadStatus; // --- Trạng thái tương tác ---
   /// Lưu thông tin khi người dùng nhấn nút "Trả lời".
   ReplyTarget? get replyTarget;
+  AppUser? get currentUser;
 
   /// Create a copy of CommentState
   /// with the given fields replaced by the non-null parameter values.
@@ -923,7 +924,7 @@ mixin _$CommentState {
             other is CommentState &&
             (identical(other.postId, postId) || other.postId == postId) &&
             (identical(other.status, status) || other.status == status) &&
-            const DeepCollectionEquality().equals(other.failure, failure) &&
+            (identical(other.failure, failure) || other.failure == failure) &&
             const DeepCollectionEquality().equals(other.comments, comments) &&
             (identical(other.hasMoreComments, hasMoreComments) ||
                 other.hasMoreComments == hasMoreComments) &&
@@ -935,7 +936,9 @@ mixin _$CommentState {
             const DeepCollectionEquality()
                 .equals(other.replyLoadStatus, replyLoadStatus) &&
             (identical(other.replyTarget, replyTarget) ||
-                other.replyTarget == replyTarget));
+                other.replyTarget == replyTarget) &&
+            (identical(other.currentUser, currentUser) ||
+                other.currentUser == currentUser));
   }
 
   @override
@@ -943,18 +946,19 @@ mixin _$CommentState {
       runtimeType,
       postId,
       status,
-      const DeepCollectionEquality().hash(failure),
+      failure,
       const DeepCollectionEquality().hash(comments),
       hasMoreComments,
       totalCommentCount,
       const DeepCollectionEquality().hash(replies),
       const DeepCollectionEquality().hash(hasMoreReplies),
       const DeepCollectionEquality().hash(replyLoadStatus),
-      replyTarget);
+      replyTarget,
+      currentUser);
 
   @override
   String toString() {
-    return 'CommentState(postId: $postId, status: $status, failure: $failure, comments: $comments, hasMoreComments: $hasMoreComments, totalCommentCount: $totalCommentCount, replies: $replies, hasMoreReplies: $hasMoreReplies, replyLoadStatus: $replyLoadStatus, replyTarget: $replyTarget)';
+    return 'CommentState(postId: $postId, status: $status, failure: $failure, comments: $comments, hasMoreComments: $hasMoreComments, totalCommentCount: $totalCommentCount, replies: $replies, hasMoreReplies: $hasMoreReplies, replyLoadStatus: $replyLoadStatus, replyTarget: $replyTarget, currentUser: $currentUser)';
   }
 }
 
@@ -974,9 +978,11 @@ abstract mixin class $CommentStateCopyWith<$Res> {
       Map<String, List<CommentReply>> replies,
       Map<String, bool> hasMoreReplies,
       Map<String, CommentStatus> replyLoadStatus,
-      ReplyTarget? replyTarget});
+      ReplyTarget? replyTarget,
+      AppUser? currentUser});
 
   $ReplyTargetCopyWith<$Res>? get replyTarget;
+  $AppUserCopyWith<$Res>? get currentUser;
 }
 
 /// @nodoc
@@ -1001,6 +1007,7 @@ class _$CommentStateCopyWithImpl<$Res> implements $CommentStateCopyWith<$Res> {
     Object? hasMoreReplies = null,
     Object? replyLoadStatus = null,
     Object? replyTarget = freezed,
+    Object? currentUser = freezed,
   }) {
     return _then(_self.copyWith(
       postId: null == postId
@@ -1043,6 +1050,10 @@ class _$CommentStateCopyWithImpl<$Res> implements $CommentStateCopyWith<$Res> {
           ? _self.replyTarget
           : replyTarget // ignore: cast_nullable_to_non_nullable
               as ReplyTarget?,
+      currentUser: freezed == currentUser
+          ? _self.currentUser
+          : currentUser // ignore: cast_nullable_to_non_nullable
+              as AppUser?,
     ));
   }
 
@@ -1057,6 +1068,20 @@ class _$CommentStateCopyWithImpl<$Res> implements $CommentStateCopyWith<$Res> {
 
     return $ReplyTargetCopyWith<$Res>(_self.replyTarget!, (value) {
       return _then(_self.copyWith(replyTarget: value));
+    });
+  }
+
+  /// Create a copy of CommentState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppUserCopyWith<$Res>? get currentUser {
+    if (_self.currentUser == null) {
+      return null;
+    }
+
+    return $AppUserCopyWith<$Res>(_self.currentUser!, (value) {
+      return _then(_self.copyWith(currentUser: value));
     });
   }
 }
@@ -1074,7 +1099,8 @@ class _CommentState implements CommentState {
       required final Map<String, List<CommentReply>> replies,
       required final Map<String, bool> hasMoreReplies,
       required final Map<String, CommentStatus> replyLoadStatus,
-      this.replyTarget})
+      this.replyTarget,
+      this.currentUser})
       : _comments = comments,
         _replies = replies,
         _hasMoreReplies = hasMoreReplies,
@@ -1139,6 +1165,8 @@ class _CommentState implements CommentState {
   /// Lưu thông tin khi người dùng nhấn nút "Trả lời".
   @override
   final ReplyTarget? replyTarget;
+  @override
+  final AppUser? currentUser;
 
   /// Create a copy of CommentState
   /// with the given fields replaced by the non-null parameter values.
@@ -1155,7 +1183,7 @@ class _CommentState implements CommentState {
             other is _CommentState &&
             (identical(other.postId, postId) || other.postId == postId) &&
             (identical(other.status, status) || other.status == status) &&
-            const DeepCollectionEquality().equals(other.failure, failure) &&
+            (identical(other.failure, failure) || other.failure == failure) &&
             const DeepCollectionEquality().equals(other._comments, _comments) &&
             (identical(other.hasMoreComments, hasMoreComments) ||
                 other.hasMoreComments == hasMoreComments) &&
@@ -1167,7 +1195,9 @@ class _CommentState implements CommentState {
             const DeepCollectionEquality()
                 .equals(other._replyLoadStatus, _replyLoadStatus) &&
             (identical(other.replyTarget, replyTarget) ||
-                other.replyTarget == replyTarget));
+                other.replyTarget == replyTarget) &&
+            (identical(other.currentUser, currentUser) ||
+                other.currentUser == currentUser));
   }
 
   @override
@@ -1175,18 +1205,19 @@ class _CommentState implements CommentState {
       runtimeType,
       postId,
       status,
-      const DeepCollectionEquality().hash(failure),
+      failure,
       const DeepCollectionEquality().hash(_comments),
       hasMoreComments,
       totalCommentCount,
       const DeepCollectionEquality().hash(_replies),
       const DeepCollectionEquality().hash(_hasMoreReplies),
       const DeepCollectionEquality().hash(_replyLoadStatus),
-      replyTarget);
+      replyTarget,
+      currentUser);
 
   @override
   String toString() {
-    return 'CommentState(postId: $postId, status: $status, failure: $failure, comments: $comments, hasMoreComments: $hasMoreComments, totalCommentCount: $totalCommentCount, replies: $replies, hasMoreReplies: $hasMoreReplies, replyLoadStatus: $replyLoadStatus, replyTarget: $replyTarget)';
+    return 'CommentState(postId: $postId, status: $status, failure: $failure, comments: $comments, hasMoreComments: $hasMoreComments, totalCommentCount: $totalCommentCount, replies: $replies, hasMoreReplies: $hasMoreReplies, replyLoadStatus: $replyLoadStatus, replyTarget: $replyTarget, currentUser: $currentUser)';
   }
 }
 
@@ -1208,10 +1239,13 @@ abstract mixin class _$CommentStateCopyWith<$Res>
       Map<String, List<CommentReply>> replies,
       Map<String, bool> hasMoreReplies,
       Map<String, CommentStatus> replyLoadStatus,
-      ReplyTarget? replyTarget});
+      ReplyTarget? replyTarget,
+      AppUser? currentUser});
 
   @override
   $ReplyTargetCopyWith<$Res>? get replyTarget;
+  @override
+  $AppUserCopyWith<$Res>? get currentUser;
 }
 
 /// @nodoc
@@ -1237,6 +1271,7 @@ class __$CommentStateCopyWithImpl<$Res>
     Object? hasMoreReplies = null,
     Object? replyLoadStatus = null,
     Object? replyTarget = freezed,
+    Object? currentUser = freezed,
   }) {
     return _then(_CommentState(
       postId: null == postId
@@ -1279,6 +1314,10 @@ class __$CommentStateCopyWithImpl<$Res>
           ? _self.replyTarget
           : replyTarget // ignore: cast_nullable_to_non_nullable
               as ReplyTarget?,
+      currentUser: freezed == currentUser
+          ? _self.currentUser
+          : currentUser // ignore: cast_nullable_to_non_nullable
+              as AppUser?,
     ));
   }
 
@@ -1293,6 +1332,20 @@ class __$CommentStateCopyWithImpl<$Res>
 
     return $ReplyTargetCopyWith<$Res>(_self.replyTarget!, (value) {
       return _then(_self.copyWith(replyTarget: value));
+    });
+  }
+
+  /// Create a copy of CommentState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppUserCopyWith<$Res>? get currentUser {
+    if (_self.currentUser == null) {
+      return null;
+    }
+
+    return $AppUserCopyWith<$Res>(_self.currentUser!, (value) {
+      return _then(_self.copyWith(currentUser: value));
     });
   }
 }

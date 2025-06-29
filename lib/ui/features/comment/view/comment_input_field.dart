@@ -1,8 +1,10 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +53,13 @@ class _CommentInputFieldState extends State<CommentInputField> {
       },
       builder: (context, state) {
         return GlassContainer(
-          // ... các thuộc tính của bạn
+          borderRadius: 0,
+          radiusBottomLeft: false,
+          radiusBottomRight: false,
+          radiusTopLeft: false,
+          radiusTopRight: false,
+          borderTop: true,
+          backgroundColor: Colors.transparent,
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -79,7 +87,7 @@ class _CommentInputFieldState extends State<CommentInputField> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    //const CachedCircleAvatar(imageUrl: '...'), // Lấy avatar user hiện tại
+                    CachedCircleAvatar(imageUrl: state.currentUser?.photoUrl ?? ''),
                     const SizedBox(width: 10),
                     Expanded(
                       child: AppTextField(
