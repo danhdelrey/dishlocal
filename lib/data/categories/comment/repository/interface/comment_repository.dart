@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/comment/model/comment.dart';
 import 'package:dishlocal/data/categories/comment/model/comment_reply.dart';
 import 'package:dishlocal/data/categories/comment/repository/failure/comment_failure.dart';
@@ -27,19 +28,21 @@ abstract class CommentRepository {
   });
 
   /// Tạo một bình luận gốc mới cho một bài viết.
-  Future<Either<CommentFailure, void>> createComment({
+  Future<Either<CommentFailure, Comment>> createComment({
     required String postId,
     required String content,
+    required AppUser currentUser,
   });
 
   /// Tạo một trả lời mới cho một bình luận gốc.
   ///
   /// [replyToUserId] là ID của người dùng mà trả lời này đang nhắm tới.
   /// Đó có thể là tác giả của bình luận gốc, hoặc tác giả của một trả lời khác.
-  Future<Either<CommentFailure, void>> createReply({
+  Future<Either<CommentFailure, CommentReply>> createReply({
     required String parentCommentId,
-    required String replyToUserId,
     required String content,
+    required AppUser currentUser,
+    required AppUser replyToUser,
   });
 
   /// Thích hoặc bỏ thích một bình luận gốc.

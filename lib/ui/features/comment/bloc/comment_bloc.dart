@@ -173,6 +173,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     final result = await _commentRepository.createComment(
       postId: state.postId,
       content: event.content,
+      currentUser: _appUserRepository.latestUser!,
     );
 
     result.fold(
@@ -186,9 +187,18 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
           failure: failure, // Để UI có thể hiển thị snackbar
         ));
       },
-      (_) {
-        _log.info('✅ Comment submitted successfully to backend.');
-        // Có thể re-fetch để lấy comment thật, nhưng tạm thời giữ optimistic là đủ
+      (realComment) {
+        _log.info('✅ Comment submitted. Replacing temp id $tempId with real id ${realComment.commentId}');
+        // --- THAY THẾ ID THẬT ---
+        final finalComments = state.comments.map((comment) {
+          if (comment.commentId == tempId) {
+            // Trả về comment thật từ server với ID đúng
+            return realComment;
+          }
+          return comment;
+        }).toList();
+
+        emit(state.copyWith(comments: finalComments));
       },
     );
   }
@@ -253,10 +263,18 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       replyTarget: null,
     ));
 
+    final targetUserResult = await _appUserRepository.getUserProfile(target.replyToUserId);
+    if (targetUserResult.isLeft()) {
+      _log.severe('❌ Failed to fetch target user profile for reply: ${target.replyToUserId}');
+      return;
+    }
+    final targetUser = targetUserResult.getOrElse(() => throw Exception('Target user not found'));
+
     // --- NETWORK CALL (luôn được thực hiện) ---
     final result = await _commentRepository.createReply(
       parentCommentId: target.parentCommentId,
-      replyToUserId: target.replyToUserId,
+      replyToUser: targetUser,
+      currentUser: currentUser,
       content: event.content,
     );
 
@@ -285,7 +303,22 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
           failure: failure,
         ));
       },
-      (_) => _log.info('✅ Reply submitted successfully to backend.'),
+      (realReply) {
+        _log.info('✅ Reply submitted. Replacing temp id $tempId with real id ${realReply.replyId}');
+        // --- THAY THẾ ID THẬT ---
+        final newRepliesMap = Map<String, List<CommentReply>>.from(state.replies);
+        final repliesForParent = newRepliesMap[target.parentCommentId]!;
+
+        final finalReplies = repliesForParent.map((reply) {
+          if (reply.replyId == tempId) {
+            return realReply;
+          }
+          return reply;
+        }).toList();
+
+        newRepliesMap[target.parentCommentId] = finalReplies;
+        emit(state.copyWith(replies: newRepliesMap));
+      },
     );
   }
 

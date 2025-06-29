@@ -1,11 +1,14 @@
 // file: lib/data/repositories/comment/remote_comment_repository_sql_impl.dart
 
 import 'package:dartz/dartz.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/comment/model/comment.dart';
 import 'package:dishlocal/data/categories/comment/model/comment_reply.dart';
 import 'package:dishlocal/data/categories/comment/repository/failure/comment_failure.dart';
 import 'package:dishlocal/data/categories/comment/repository/interface/comment_repository.dart';
 import 'package:dishlocal/data/services/authentication_service/interface/authentication_service.dart';
+import 'package:dishlocal/data/services/database_service/entity/comment_reply_entity.dart';
+import 'package:dishlocal/data/services/database_service/entity/post_comment_entity.dart';
 import 'package:dishlocal/data/services/database_service/exception/sql_database_service_exception.dart';
 import 'package:dishlocal/data/services/database_service/interface/sql_database_service.dart';
 import 'package:injectable/injectable.dart';
@@ -116,49 +119,82 @@ class RemoteCommentRepositorySqlImpl implements CommentRepository {
   }
 
   @override
-  Future<Either<CommentFailure, void>> createComment({
+  Future<Either<CommentFailure, Comment>> createComment({
     required String postId,
     required String content,
+    required AppUser currentUser,
   }) {
     return _handleErrors(() async {
       final currentUserId = _authenticationService.getCurrentUserId();
       _log.info('➕ Bắt đầu tạo bình luận mới cho postId: $postId bởi user: $currentUserId');
 
-      await _dbService.create(
+      // Bây giờ chúng ta sẽ chờ kết quả trả về
+      final createdData = await _dbService.create(
         tableName: 'post_comments',
         data: {
           'post_id': postId,
           'author_id': currentUserId,
           'content': content,
         },
-        fromJson: (json) => {}, // Không cần trả về đối tượng
+        // Sử dụng fromJson của PostCommentEntity
+        fromJson: PostCommentEntity.fromJson,
       );
-      _log.info('🎉 Tạo bình luận thành công!');
+
+      _log.info('🎉 Tạo bình luận thành công! ID thật: ${createdData.id}');
+
+      
+
+      // Chuyển đổi từ Entity sang Model UI
+      return Comment(
+        commentId: createdData.id,
+        authorUserId: currentUser.userId,
+        authorUsername: currentUser.username!,
+        authorAvatarUrl: currentUser.photoUrl,
+        content: createdData.content,
+        createdAt: createdData.createdAt,
+        likeCount: createdData.likeCount,
+        replyCount: createdData.replyCount,
+        isLiked: false, // Mới tạo nên chưa thể like
+      );
     });
   }
 
   @override
-  Future<Either<CommentFailure, void>> createReply({
+  Future<Either<CommentFailure, CommentReply>> createReply({
     required String parentCommentId,
-    required String replyToUserId,
     required String content,
+    required AppUser currentUser,
+    required AppUser replyToUser,
   }) {
     return _handleErrors(() async {
-      final currentUserId = _authenticationService.getCurrentUserId();
-      _log.info('↪️ Bắt đầu tạo trả lời cho parentCommentId: $parentCommentId bởi user: $currentUserId...');
-      _log.fine('   -> Trả lời cho user: $replyToUserId');
 
-      await _dbService.create(
+      _log.info('↪️ Bắt đầu tạo trả lời cho parentCommentId: $parentCommentId...');
+
+      final createdData = await _dbService.create(
         tableName: 'comment_replies',
         data: {
           'parent_comment_id': parentCommentId,
-          'author_id': currentUserId,
-          'reply_to_user_id': replyToUserId,
+          'author_id': currentUser.userId,
+          'reply_to_user_id': replyToUser.userId,
           'content': content,
         },
-        fromJson: (json) => {}, // Không cần trả về đối tượng
+        fromJson: CommentReplyEntity.fromJson,
       );
-      _log.info('🎉 Tạo trả lời thành công!');
+
+      _log.info('🎉 Tạo trả lời thành công! ID thật: ${createdData.id}');
+
+      return CommentReply(
+        replyId: createdData.id,
+        authorUserId: currentUser.userId,
+        authorUsername: currentUser.username!,
+        authorAvatarUrl: currentUser.photoUrl,
+        replyToUserId: replyToUser.userId,
+        replyToUsername: replyToUser.username!,
+        content: createdData.content,
+        createdAt: createdData.createdAt,
+        likeCount: createdData.likeCount,
+        isLiked: false,
+      );
     });
   }
 
