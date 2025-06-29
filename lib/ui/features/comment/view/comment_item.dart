@@ -20,7 +20,7 @@ class CommentItem extends StatelessWidget {
     final isAuthor = comment.authorUserId == postAuthorId;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.only(top: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -38,7 +38,7 @@ class CommentItem extends StatelessWidget {
                       if (isAuthor)
                         TextSpan(
                           text: ' • Tác giả',
-                          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
+                          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.secondary),
                         ),
                     ],
                   ),

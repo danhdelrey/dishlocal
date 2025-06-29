@@ -21,23 +21,23 @@ class RepliesSection extends StatelessWidget {
         final status = state.replyLoadStatus[parentCommentId] ?? CommentStatus.initial;
         final remainingCount = totalReplyCount - replies.length;
 
-        return Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ...replies.map((reply) => ReplyItem(reply: reply, parentCommentId: parentCommentId, postAuthorId: postAuthorId)),
-              if (status == CommentStatus.loading) const Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
-              if (hasMore && status != CommentStatus.loading && remainingCount > 0)
-                GestureDetector(
-                  onTap: () => context.read<CommentBloc>().add(CommentEvent.repliesRequested(parentCommentId: parentCommentId)),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...replies.map((reply) => ReplyItem(reply: reply, parentCommentId: parentCommentId, postAuthorId: postAuthorId)),
+            if (status == CommentStatus.loading) const Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
+            if (hasMore && status != CommentStatus.loading && remainingCount > 0)
+              GestureDetector(
+                onTap: () => context.read<CommentBloc>().add(CommentEvent.repliesRequested(parentCommentId: parentCommentId)),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 15),
                   child: Text(
                     'Xem $remainingCount trả lời...',
                     style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.outline),
                   ),
-                )
-            ],
-          ),
+                ),
+              )
+          ],
         );
       },
     );

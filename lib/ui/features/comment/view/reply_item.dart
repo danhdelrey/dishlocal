@@ -17,81 +17,84 @@ class ReplyItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isAuthor = reply.authorUserId == postAuthorId;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CachedCircleAvatar(imageUrl: reply.authorAvatarUrl ?? '', circleRadius: 12),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                text: TextSpan(
-                  text: reply.authorUsername,
-                  style: Theme.of(context).textTheme.labelLarge,
-                  children: [
-                    if (isAuthor)
+    return Padding(
+      padding: const EdgeInsets.only(top: 15),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CachedCircleAvatar(imageUrl: reply.authorAvatarUrl ?? '', circleRadius: 12),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    text: reply.authorUsername,
+                    style: Theme.of(context).textTheme.labelLarge,
+                    children: [
+                      if (isAuthor)
+                        TextSpan(
+                          text: ' • Tác giả',
+                          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.secondary),
+                        ),
+                    ],
+                  ),
+                ),
+                RichText(
+                  text: TextSpan(
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    children: [
                       TextSpan(
-                        text: ' • Tác giả',
-                        style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
+                        text: '@${reply.replyToUsername} ',
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
                       ),
-                  ],
+                      TextSpan(text: reply.content),
+                    ],
+                  ),
                 ),
-              ),
-              RichText(
-                text: TextSpan(
-                  style: Theme.of(context).textTheme.bodyMedium,
+                const SizedBox(height: 5),
+                Row(
                   children: [
-                    TextSpan(
-                      text: '@${reply.replyToUsername} ',
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
+                    Text(
+                      timeago.format(reply.createdAt, locale: 'vi'),
+                      style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.outline),
                     ),
-                    TextSpan(text: reply.content),
+                    const SizedBox(width: 15),
+                    GestureDetector(
+                      onTap: () {
+                        context.read<CommentBloc>().add(CommentEvent.replyTargetSet(
+                              target: ReplyTarget(
+                                parentCommentId: parentCommentId,
+                                replyToUserId: reply.authorUserId,
+                                replyToUsername: reply.authorUsername,
+                              ),
+                            ));
+                      },
+                      child: Text(
+                        'Trả lời',
+                        style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () => context.read<CommentBloc>().add(CommentEvent.replyLiked(replyId: reply.replyId, parentCommentId: parentCommentId, isLiked: !reply.isLiked)),
+                      child: CustomIconWithLabel(
+                        icon: AppIcons.heart1.toSvg(
+                          color: reply.isLiked ? Colors.red : Theme.of(context).colorScheme.outline,
+                          width: 14,
+                        ),
+                        label: '${reply.likeCount}',
+                        labelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.outline),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 5),
-              Row(
-                children: [
-                  Text(
-                    timeago.format(reply.createdAt, locale: 'vi'),
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.outline),
-                  ),
-                  const SizedBox(width: 15),
-                  GestureDetector(
-                    onTap: () {
-                      context.read<CommentBloc>().add(CommentEvent.replyTargetSet(
-                            target: ReplyTarget(
-                              parentCommentId: parentCommentId,
-                              replyToUserId: reply.authorUserId,
-                              replyToUsername: reply.authorUsername,
-                            ),
-                          ));
-                    },
-                    child: Text(
-                      'Trả lời',
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.onSurface),
-                    ),
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () => context.read<CommentBloc>().add(CommentEvent.replyLiked(replyId: reply.replyId, parentCommentId: parentCommentId, isLiked: !reply.isLiked)),
-                    child: CustomIconWithLabel(
-                      icon: AppIcons.heart1.toSvg(
-                        color: reply.isLiked ? Colors.red : Theme.of(context).colorScheme.outline,
-                        width: 14,
-                      ),
-                      label: '${reply.likeCount}',
-                      labelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.outline),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
