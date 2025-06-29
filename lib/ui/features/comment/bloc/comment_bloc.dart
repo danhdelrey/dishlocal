@@ -218,21 +218,28 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       isLiked: false,
     );
 
-    // Thêm reply vào map
     final newRepliesMap = Map<String, List<CommentReply>>.from(state.replies);
-    final existingReplies = newRepliesMap[target.parentCommentId] ?? [];
 
     // =========================================================================
-    // THAY ĐỔI Ở ĐÂY: Thêm trả lời mới vào CUỐI danh sách thay vì đầu danh sách
-    //
-    // TRƯỚC ĐÂY (Sắp xếp DESC):
-    // newRepliesMap[target.parentCommentId] = [optimisticReply, ...existingReplies];
-    //
-    // BÂY GIỜ (Sắp xếp ASC):
-    newRepliesMap[target.parentCommentId] = [...existingReplies, optimisticReply];
+    // LOGIC ĐIỀU KIỆN MỚI (PHIÊN BẢN 2)
+    // Kiểm tra xem người dùng đã tải HẾT TẤT CẢ các trả lời chưa
+    // bằng cách kiểm tra cờ `hasMoreReplies` cho bình luận đó.
+    // `hasMoreReplies[key] == false` có nghĩa là đã tải hết.
+    // `hasMoreReplies[key]` là null hoặc true nghĩa là chưa tải hết.
     // =========================================================================
+    final bool allRepliesLoaded = state.hasMoreReplies[target.parentCommentId] == false;
 
-    // Tăng reply_count của comment gốc
+    if (allRepliesLoaded) {
+      // TRƯỜNG HỢP 1: TẤT CẢ replies đã được tải. Thêm reply lạc quan vào UI.
+      _log.fine('✨ All replies are loaded. Adding optimistic reply to UI.');
+      final existingReplies = newRepliesMap[target.parentCommentId] ?? [];
+      newRepliesMap[target.parentCommentId] = [...existingReplies, optimisticReply];
+    } else {
+      // TRƯỜNG HỢP 2: Vẫn còn replies chưa tải. Chỉ tăng bộ đếm.
+      _log.fine('✨ Not all replies are loaded. Only incrementing reply count.');
+    }
+
+    // Luôn luôn tăng bộ đếm `replyCount` của comment gốc.
     final newComments = state.comments.map((c) {
       if (c.commentId == target.parentCommentId) {
         return c.copyWith(replyCount: c.replyCount + 1);
@@ -243,11 +250,10 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     emit(state.copyWith(
       replies: newRepliesMap,
       comments: newComments,
-      replyTarget: null, // Xóa target sau khi submit
+      replyTarget: null,
     ));
-    _log.fine('✨ Optimistic reply added to UI at the end of the list.');
 
-    // --- NETWORK CALL ---
+    // --- NETWORK CALL (luôn được thực hiện) ---
     final result = await _commentRepository.createReply(
       parentCommentId: target.parentCommentId,
       replyToUserId: target.replyToUserId,
@@ -258,9 +264,14 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       (failure) {
         _log.severe('❌ Failed to submit reply. Reverting UI.', failure);
         // --- REVERT UI ON FAILURE ---
-        final revertedReplies = List<CommentReply>.from(state.replies[target.parentCommentId]!)..removeWhere((r) => r.replyId == tempId);
-        newRepliesMap[target.parentCommentId] = revertedReplies;
 
+        // Chỉ revert UI nếu reply lạc quan đã được thêm vào trước đó
+        if (allRepliesLoaded) {
+          final revertedReplies = List<CommentReply>.from(state.replies[target.parentCommentId]!)..removeWhere((r) => r.replyId == tempId);
+          newRepliesMap[target.parentCommentId] = revertedReplies;
+        }
+
+        // Luôn revert bộ đếm
         final revertedComments = state.comments.map((c) {
           if (c.commentId == target.parentCommentId) {
             return c.copyWith(replyCount: c.replyCount - 1);
