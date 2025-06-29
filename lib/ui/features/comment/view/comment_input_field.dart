@@ -46,91 +46,97 @@ class _CommentInputFieldState extends State<CommentInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CommentBloc, CommentState>(
-      listenWhen: (p, c) => p.replyTarget != c.replyTarget,
-      listener: (context, state) {
-        if (state.replyTarget != null) {
-          _focusNode.requestFocus();
-        }
-      },
-      builder: (context, state) {
-        return GlassContainer(
-          borderRadius: 0,
-          radiusBottomLeft: false,
-          radiusBottomRight: false,
-          radiusTopLeft: false,
-          radiusTopRight: false,
-          borderTop: true,
-          backgroundColor: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (state.replyTarget != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Row(
-                      children: [
-                        CustomIconWithLabel(
-                          label: 'Đang trả lời @${state.replyTarget!.replyToUsername}',
-                          labelStyle: Theme.of(context).textTheme.labelMedium,
-                          icon: const Icon(Icons.share),
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () => context.read<CommentBloc>().add(const CommentEvent.replyTargetCleared()),
-                          child: Text('Hủy', style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.primary)),
-                        ),
-                      ],
-                    ),
-                  ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    CachedCircleAvatar(imageUrl: state.currentUser?.photoUrl ?? ''),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: AppTextField(
-                        borderRadius: 20,
-                        controller: _textController,
-                        focusNode: _focusNode,
-                        hintText: 'Viết bình luận...',
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: BlocConsumer<CommentBloc, CommentState>(
+        listenWhen: (p, c) => p.replyTarget != c.replyTarget,
+        listener: (context, state) {
+          if (state.replyTarget != null) {
+            _focusNode.requestFocus();
+          }
+        },
+        builder: (context, state) {
+          return GlassContainer(
+            borderRadius: 0,
+            radiusBottomLeft: false,
+            radiusBottomRight: false,
+            radiusTopLeft: false,
+            radiusTopRight: false,
+            borderTop: true,
+            backgroundColor: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (state.replyTarget != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          CustomIconWithLabel(
+                            icon: AppIcons.shareForward.toSvg(
+                              color: appColorScheme(context).onSurface,
+                              width: 16,
+                            ),
+                            label: 'Đang trả lời @${state.replyTarget!.replyToUsername}',
+                            labelStyle: appTextTheme(context).labelLarge,
+                          ),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () => context.read<CommentBloc>().add(const CommentEvent.replyTargetCleared()),
+                            child: Text('Hủy', style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.primary)),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: primaryGradient,
-                        borderRadius: BorderRadius.circular(1000),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      CachedCircleAvatar(imageUrl: state.currentUser?.photoUrl ?? ''),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: AppTextField(
+                          borderRadius: 20,
+                          controller: _textController,
+                          focusNode: _focusNode,
+                          hintText: 'Viết bình luận...',
+                        ),
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(1000),
-                        child: InkWell(
-                          onTap: _submit,
+                      const SizedBox(width: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: primaryGradient,
                           borderRadius: BorderRadius.circular(1000),
-                          child: SizedBox(
-                            width: 36,
-                            height: 36,
-                            child: Padding(
-                              padding: const EdgeInsets.all(6.0),
-                              child: AppIcons.sendFill.toSvg(
-                                color: Colors.white,
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(1000),
+                          child: InkWell(
+                            onTap: _submit,
+                            borderRadius: BorderRadius.circular(1000),
+                            child: SizedBox(
+                              width: 36,
+                              height: 36,
+                              child: Padding(
+                                padding: const EdgeInsets.all(6.0),
+                                child: AppIcons.sendFill.toSvg(
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

@@ -32,7 +32,7 @@ class CommentListView extends StatelessWidget {
         return ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
           controller: scrollController,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.only(left: 15, right: 15, bottom: kBottomNavigationBarHeight + 15),
           // +1 cho nút "Xem thêm" nếu cần
           itemCount: state.comments.length + (shouldShowLoadMoreButton || state.status == CommentStatus.loading ? 1 : 0),
           itemBuilder: (context, index) {
