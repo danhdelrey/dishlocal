@@ -24,7 +24,7 @@ class AppTextField extends StatefulWidget {
     this.maxLine = 5,
     this.minLine = 1,
     this.keyboardType = TextInputType.multiline,
-    this.inputFormatters,
+    this.inputFormatters, this.controller,
   });
 
   final String? title;
@@ -37,6 +37,7 @@ class AppTextField extends StatefulWidget {
   final int minLine;
   final TextInputType keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+  final TextEditingController? controller;
 
   final String? initialValue;
   final ValueChanged<String>? onChanged;
@@ -146,6 +147,7 @@ class _AppTextFieldState extends State<AppTextField> {
                       ),
                     Expanded(
                       child: TextFormField(
+                        controller: widget.controller,
                         focusNode: widget.enabled ? _focusNode : null,
                         autofocus: widget.autoFocus,
                         enabled: widget.enabled,

@@ -115,16 +115,24 @@ class SmallPost extends StatelessWidget {
                             padding: const EdgeInsets.all(5.0),
                             child: GlassIconLabelsWrap(
                               iconLabels: [
-                                CustomIconWithLabel( //TODO: thêm điều kiện chỉ hiển thị màu nếu là của mình đã like/save,còn của người khác like hay save thì mình ko hiện màu vì mình chưa có like/save
+                                CustomIconWithLabel(
+                                  //TODO: thêm điều kiện chỉ hiển thị màu nếu là của mình đã like/save,còn của người khác like hay save thì mình ko hiện màu vì mình chưa có like/save
                                   icon: post.isLiked ? AppIcons.heart.toSvg(width: 12, color: Colors.pink) : AppIcons.heart1.toSvg(width: 12, color: appColorScheme(context).onSurface),
-                                  label: post.likeCount.toString(),
+                                  label: NumberFormatter.formatCompactNumberStable(post.likeCount),
                                   labelStyle: appTextTheme(context).labelSmall?.copyWith(
                                         color: post.isLiked ? Colors.pink : appColorScheme(context).onSurface,
                                       ),
                                 ),
                                 CustomIconWithLabel(
+                                  icon: AppIcons.comment2.toSvg(width: 12, color: appColorScheme(context).onSurface),
+                                  label: NumberFormatter.formatCompactNumberStable(post.commentCount),
+                                  labelStyle: appTextTheme(context).labelSmall?.copyWith(
+                                        color: appColorScheme(context).onSurface,
+                                      ),
+                                ),
+                                CustomIconWithLabel(
                                   icon: post.isSaved ? AppIcons.bookmark.toSvg(width: 12, color: Colors.amber) : AppIcons.bookmark1.toSvg(width: 12, color: appColorScheme(context).onSurface),
-                                  label: post.saveCount.toString(),
+                                  label: NumberFormatter.formatCompactNumberStable(post.saveCount),
                                   labelStyle: appTextTheme(context).labelSmall?.copyWith(
                                         color: post.isSaved ? Colors.amber : appColorScheme(context).onSurface,
                                       ),

@@ -423,7 +423,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
         ),
         TextButton(
           onPressed: () {
-            showCommentBottomSheet(context, postId: post.postId, totalCommentCount: post.commentCount);
+            showCommentBottomSheet(context, postId: post.postId, postAuthorId: post.authorUserId, totalCommentCount: post.commentCount);
           },
           child: const Text('Hiển thị bình luận'),
         ),
