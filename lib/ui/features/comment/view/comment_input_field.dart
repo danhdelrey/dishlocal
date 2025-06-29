@@ -1,7 +1,9 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
+import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
@@ -91,17 +93,35 @@ class _CommentInputFieldState extends State<CommentInputField> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: AppTextField(
+                        borderRadius: 20,
                         controller: _textController,
                         focusNode: _focusNode,
                         hintText: 'Viết bình luận...',
                       ),
                     ),
                     const SizedBox(width: 10),
-                    InkWell(
-                      onTap: _submit,
-                      child: Container(
-                        // ... style nút gửi
-                        child: AppIcons.sendFill.toSvg(color: Colors.white),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: primaryGradient,
+                        borderRadius: BorderRadius.circular(1000),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(1000),
+                        child: InkWell(
+                          onTap: _submit,
+                          borderRadius: BorderRadius.circular(1000),
+                          child: SizedBox(
+                            width: 36,
+                            height: 36,
+                            child: Padding(
+                              padding: const EdgeInsets.all(6.0),
+                              child: AppIcons.sendFill.toSvg(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
