@@ -25,6 +25,10 @@ import '../../data/categories/app_user/repository/implementation/sql_app_user_re
     as _i90;
 import '../../data/categories/app_user/repository/interface/app_user_repository.dart'
     as _i749;
+import '../../data/categories/comment/repository/implementation/remote_comment_repository_sql_impl.dart'
+    as _i395;
+import '../../data/categories/comment/repository/interface/comment_repository.dart'
+    as _i557;
 import '../../data/categories/moderation/repository/implementation/moderation_repository_impl.dart'
     as _i709;
 import '../../data/categories/moderation/repository/interface/moderation_repository.dart'
@@ -71,6 +75,7 @@ import '../../data/services/storage_service/interface/storage_service.dart'
 import '../../ui/features/account_setup/bloc/account_setup_bloc.dart' as _i658;
 import '../../ui/features/auth/bloc/auth_bloc.dart' as _i511;
 import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
+import '../../ui/features/comment/bloc/comment_bloc.dart' as _i510;
 import '../../ui/features/create_post/bloc/create_post_bloc.dart' as _i622;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
@@ -123,6 +128,11 @@ _i174.GetIt init(
       () => _i28.SightengineModerationServiceImpl());
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
+  gh.lazySingleton<_i557.CommentRepository>(
+      () => _i395.RemoteCommentRepositorySqlImpl(
+            gh<_i178.SqlDatabaseService>(),
+            gh<_i780.AuthenticationService>(),
+          ));
   gh.lazySingleton<_i60.NoSqlDatabaseService>(
       () => _i959.NoSqlFirestoreServiceImpl(gh<_i974.FirebaseFirestore>()));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
@@ -172,6 +182,10 @@ _i174.GetIt init(
       () => _i511.AuthBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i658.AccountSetupBloc>(() =>
       _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
+  gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(
+        gh<_i749.AppUserRepository>(),
+        gh<_i557.CommentRepository>(),
+      ));
   gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((
     user,
     _,
