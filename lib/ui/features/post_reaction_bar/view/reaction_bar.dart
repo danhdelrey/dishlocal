@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/animated_icon_counter_button.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +8,9 @@ class ReactionBar extends StatelessWidget {
   final bool isLiked;
   final VoidCallback onLikeTap;
   final Color likeColor;
+
+  final int commentCount;
+  final VoidCallback onCommentTap;
 
   final int saveCount;
   final bool isSaved;
@@ -23,6 +27,8 @@ class ReactionBar extends StatelessWidget {
     required this.onSaveTap,
     required this.likeColor,
     required this.saveColor,
+    required this.commentCount,
+    required this.onCommentTap,
   });
 
   @override
@@ -37,6 +43,17 @@ class ReactionBar extends StatelessWidget {
           onTap: onLikeTap,
           iconBuilder: (isActive, color) {
             final iconAsset = isActive ? AppIcons.heart : AppIcons.heart1;
+            return iconAsset.toSvg(width: 16, color: color);
+          },
+        ),
+        const SizedBox(width: 20),
+        AnimatedIconCounterButton(
+          activeColor: appColorScheme(context).onSurface,
+          isActive: true,
+          count: commentCount,
+          onTap: onCommentTap,
+          iconBuilder: (isActive, color) {
+            final iconAsset = isActive ? AppIcons.comment2 : AppIcons.comment2;
             return iconAsset.toSvg(width: 16, color: color);
           },
         ),

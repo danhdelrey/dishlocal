@@ -3,6 +3,7 @@ import 'package:dishlocal/data/categories/comment/model/comment.dart';
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/comment/view/replies_section.dart';
+import 'package:dishlocal/ui/features/post_reaction_bar/view/animated_icon_counter_button.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
@@ -71,16 +72,15 @@ class CommentItem extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    GestureDetector(
+                    AnimatedIconCounterButton(
+                      activeColor: Colors.pink,
+                      isActive: comment.isLiked,
+                      count: comment.likeCount,
                       onTap: () => context.read<CommentBloc>().add(CommentEvent.commentLiked(commentId: comment.commentId, isLiked: !comment.isLiked)),
-                      child: CustomIconWithLabel(
-                        icon: AppIcons.heart1.toSvg(
-                          color: comment.isLiked ? Colors.red : Theme.of(context).colorScheme.outline,
-                          width: 14,
-                        ),
-                        label: '${comment.likeCount}',
-                        labelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.outline),
-                      ),
+                      iconBuilder: (isActive, color) {
+                        final iconAsset = isActive ? AppIcons.heart : AppIcons.heart1;
+                        return iconAsset.toSvg(width: 16, color: color);
+                      },
                     ),
                   ],
                 ),

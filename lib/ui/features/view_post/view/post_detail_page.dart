@@ -406,6 +406,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     saveColor: Colors.amber,
                     isLiked: state.isLiked,
                     likeCount: state.likeCount,
+                    commentCount: post.commentCount,
+                    onCommentTap: () {
+                      showCommentBottomSheet(context, postId: post.postId, postAuthorId: post.authorUserId, totalCommentCount: post.commentCount);
+                    },
                     isSaved: state.isSaved,
                     saveCount: state.saveCount,
                     // Khi nhấn, gửi event đến BLoC
@@ -420,12 +424,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
               );
             },
           ),
-        ),
-        TextButton(
-          onPressed: () {
-            showCommentBottomSheet(context, postId: post.postId, postAuthorId: post.authorUserId, totalCommentCount: post.commentCount);
-          },
-          child: const Text('Hiển thị bình luận'),
         ),
       ],
     );
