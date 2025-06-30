@@ -38,7 +38,7 @@ const colorScheme = ColorScheme(
   onError: Colors.black,
   errorContainer: Color(0xFF5C1B1B),
   onErrorContainer: Colors.white,
-  surface: Color(0xFF1A1A1A),
+  surface: Color(0xFF211A18),
   onSurface: Colors.white,
   onSurfaceVariant: Color(0xFFCCCCCC),
   outline: Color(0xFF757575),
