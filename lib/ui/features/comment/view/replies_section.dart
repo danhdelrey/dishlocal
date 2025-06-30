@@ -25,6 +25,9 @@ class RepliesSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(
+              height: 7.5,
+            ),
             ...replies.map(
               (reply) => ReplyItem(
                 currentUserId: state.currentUser!.userId,

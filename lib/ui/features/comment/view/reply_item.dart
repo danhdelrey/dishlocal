@@ -61,7 +61,7 @@ class ReplyItem extends StatelessWidget {
             }
           : null,
       child: Padding(
-        padding: const EdgeInsets.only(top: 15),
+        padding: const EdgeInsets.only(top: 7.5, bottom: 7.5),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -97,7 +97,7 @@ class ReplyItem extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium,
                       children: [
                         TextSpan(
-                          text: '@${reply.replyToUsername} ',
+                          text: '${reply.replyToUsername} ',
                           style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
                         ),
                         TextSpan(text: reply.content),

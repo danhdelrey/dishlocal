@@ -65,7 +65,7 @@ class CommentItem extends StatelessWidget {
             }
           : null,
       child: Padding(
-        padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
+        padding: const EdgeInsets.only(top: 10, left: 15, right: 15, bottom: 10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
