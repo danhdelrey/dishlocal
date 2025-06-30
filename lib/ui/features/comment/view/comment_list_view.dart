@@ -49,16 +49,28 @@ class CommentListView extends StatelessWidget {
               // Nếu không đang tải và còn bình luận, hiển thị nút "Xem thêm"
               if (shouldShowLoadMoreButton) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Center(
-                    child: TextButton(
-                      onPressed: () => context.read<CommentBloc>().add(const CommentEvent.moreCommentsRequested()),
-                      child: Text(
-                        // Hiển thị số lượng còn lại chính xác
-                        'Xem thêm $remainingCount bình luận',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Row(
+                    children: [
+                      TextButton.icon(
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                        ),
+                        onPressed: () => context.read<CommentBloc>().add(const CommentEvent.moreCommentsRequested()),
+                        label: Text(
+                          // Hiển thị số lượng còn lại chính xác
+                          'Xem thêm $remainingCount bình luận...',
+                        ),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.onSurface,
+                          textStyle: Theme.of(context).textTheme.labelMedium,
+                          padding: EdgeInsets.zero,
+
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap, // 👈 Loại bỏ padding mặc định cho hit test
+                          minimumSize: const Size(0, 0), // 👈 Tránh chiều cao tối thiểu mặc định
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 );
               }

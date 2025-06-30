@@ -27,14 +27,28 @@ class RepliesSection extends StatelessWidget {
             ...replies.map((reply) => ReplyItem(reply: reply, parentCommentId: parentCommentId, postAuthorId: postAuthorId)),
             if (status == CommentStatus.loading) const Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
             if (hasMore && status != CommentStatus.loading && remainingCount > 0)
-              GestureDetector(
-                onTap: () => context.read<CommentBloc>().add(CommentEvent.repliesRequested(parentCommentId: parentCommentId)),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 15),
-                  child: Text(
-                    'Xem $remainingCount trả lời...',
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.outline),
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Row(
+                  children: [
+                    TextButton.icon(
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                      ),
+                      onPressed: () => context.read<CommentBloc>().add(CommentEvent.repliesRequested(parentCommentId: parentCommentId)),
+                      label: Text(
+                        'Xem $remainingCount trả lời...',
+                      ),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.onSurface,
+                        textStyle: Theme.of(context).textTheme.labelMedium,
+                        padding: EdgeInsets.zero,
+
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // 👈 Loại bỏ padding mặc định cho hit test
+                        minimumSize: const Size(0, 0), // 👈 Tránh chiều cao tối thiểu mặc định
+                      ),
+                    ),
+                  ],
                 ),
               )
           ],

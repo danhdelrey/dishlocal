@@ -49,7 +49,7 @@ class ReactionBar extends StatelessWidget {
         const SizedBox(width: 20),
         AnimatedIconCounterButton(
           activeColor: appColorScheme(context).onSurface,
-          isActive: true,
+          isActive: false,
           count: commentCount,
           onTap: onCommentTap,
           iconBuilder: (isActive, color) {

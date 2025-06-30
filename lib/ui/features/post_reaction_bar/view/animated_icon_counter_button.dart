@@ -67,7 +67,7 @@ class _AnimatedIconCounterButtonState extends State<AnimatedIconCounterButton> w
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.isActive ? widget.activeColor : appColorScheme(context).onSurface;
+    final color = widget.isActive ? widget.activeColor : appColorScheme(context).outline;
 
     // Sử dụng ValueKey để AnimatedSwitcher nhận biết sự thay đổi của icon
     final icon = KeyedSubtree(
