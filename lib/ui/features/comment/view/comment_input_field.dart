@@ -85,7 +85,11 @@ class _CommentInputFieldState extends State<CommentInputField> {
                           ),
                           const Spacer(),
                           GestureDetector(
-                            onTap: () => context.read<CommentBloc>().add(const CommentEvent.replyTargetCleared()),
+                            onTap: () {
+                              _focusNode.unfocus();
+                              _textController.clear();
+                              context.read<CommentBloc>().add(const CommentEvent.replyTargetCleared());
+                            },
                             child: Text('Hủy', style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.primary)),
                           ),
                         ],
