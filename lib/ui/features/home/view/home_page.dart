@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/custom_colors.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
@@ -112,9 +113,11 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
               hasBorder: false,
               title: ShaderMask(
                 shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                child: const Text(
+                child: Text(
                   'DishLocal',
-                  style: TextStyle(fontFamily: 'SFProDisplay', fontWeight: FontWeight.w700, fontSize: 24),
+                  style: appTextTheme(context).titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
               bottom: TabBar(

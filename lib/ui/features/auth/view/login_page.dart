@@ -75,13 +75,11 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 10),
                       ShaderMask(
                         shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                        child: const Text(
+                        child:  Text(
                           'DishLocal',
-                          style: TextStyle(
-                            fontFamily: 'SFProDisplay',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 40,
-                          ),
+                          style: appTextTheme(context).titleLarge?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
                         ),
                       ),
                       const SizedBox(height: 10),

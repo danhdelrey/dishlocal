@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 TextTheme appTextTheme(context) => Theme.of(context).textTheme;
 ColorScheme appColorScheme(context) => Theme.of(context).colorScheme;
@@ -13,6 +14,9 @@ final darkTheme = ThemeData.dark().copyWith(
   ),
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: Colors.transparent,
+  ),
+  textTheme: GoogleFonts.plusJakartaSansTextTheme(
+    ThemeData.dark().textTheme
   ),
 );
 
