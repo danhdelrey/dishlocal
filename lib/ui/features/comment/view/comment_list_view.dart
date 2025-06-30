@@ -16,87 +16,90 @@ class CommentListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CommentBloc, CommentState>(
-      builder: (context, state) {
-        if (state.status == CommentStatus.initial || (state.status == CommentStatus.loading && state.comments.isEmpty)) {
-          return ListView.builder(
-            itemBuilder: (context, index) => const ShimmeringComment(
-              isReply: false,
-              paddingLeft: 15,
-            ),
-            itemCount: 10,
-          );
-        }
-
-        if (state.comments.isEmpty) {
-          return const Center(child: Text('Chưa có bình luận nào. Hãy là người đầu tiên!'));
-        }
-
-        // TÍNH TOÁN SỐ BÌNH LUẬN CÒN LẠI
-        final remainingCount = state.totalCommentCount - state.comments.length;
-
-        // KIỂM TRA XEM CÓ NÊN HIỂN THỊ NÚT 'XEM THÊM' HAY KHÔNG
-        // Điều kiện: còn bình luận chưa tải VÀ không phải đang trong quá trình tải
-        final shouldShowLoadMoreButton = remainingCount > 0 && state.status != CommentStatus.loading;
-
-        return ListView.builder(
-          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-          controller: scrollController,
-          padding: const EdgeInsets.only(left: 15, right: 15, bottom: kBottomNavigationBarHeight + 15),
-          // +1 cho nút "Xem thêm" nếu cần
-          itemCount: state.comments.length + (shouldShowLoadMoreButton || state.status == CommentStatus.loading ? 1 : 0),
-          itemBuilder: (context, index) {
-            // ----- LOGIC HIỂN THỊ ITEM CUỐI CÙNG -----
-            if (index >= state.comments.length) {
-              // Nếu đang tải, hiển thị vòng quay
-              if (state.status == CommentStatus.loading) {
-                return const ShimmeringComment(
-                  isReply: false,
-                );
-              }
-
-              // Nếu không đang tải và còn bình luận, hiển thị nút "Xem thêm"
-              if (shouldShowLoadMoreButton) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Row(
-                    children: [
-                      TextButton.icon(
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                        ),
-                        onPressed: () => context.read<CommentBloc>().add(const CommentEvent.moreCommentsRequested()),
-                        label: Text(
-                          // Hiển thị số lượng còn lại chính xác
-                          'Xem thêm $remainingCount bình luận...',
-                        ),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.onSurface,
-                          textStyle: Theme.of(context).textTheme.labelMedium,
-                          padding: EdgeInsets.zero,
-
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap, // 👈 Loại bỏ padding mặc định cho hit test
-                          minimumSize: const Size(0, 0), // 👈 Tránh chiều cao tối thiểu mặc định
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-              // Trường hợp không còn gì để hiển thị
-              return const SizedBox.shrink();
-            }
-
-            // ----- LOGIC HIỂN THỊ BÌNH LUẬN GỐC -----
-            final comment = state.comments[index];
-            return CommentItem(
-              currentUserId: state.currentUser!.userId,
-              comment: comment,
-              postAuthorId: postAuthorId,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: BlocBuilder<CommentBloc, CommentState>(
+        builder: (context, state) {
+          if (state.status == CommentStatus.initial || (state.status == CommentStatus.loading && state.comments.isEmpty)) {
+            return ListView.builder(
+              itemBuilder: (context, index) => const ShimmeringComment(
+                isReply: false,
+                paddingLeft: 15,
+              ),
+              itemCount: 5,
             );
-          },
-        );
-      },
+          }
+
+          if (state.comments.isEmpty) {
+            return const Center(child: Text('Chưa có bình luận nào. Hãy là người đầu tiên!'));
+          }
+
+          // TÍNH TOÁN SỐ BÌNH LUẬN CÒN LẠI
+          final remainingCount = state.totalCommentCount - state.comments.length;
+
+          // KIỂM TRA XEM CÓ NÊN HIỂN THỊ NÚT 'XEM THÊM' HAY KHÔNG
+          // Điều kiện: còn bình luận chưa tải VÀ không phải đang trong quá trình tải
+          final shouldShowLoadMoreButton = remainingCount > 0 && state.status != CommentStatus.loading;
+
+          return ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+            controller: scrollController,
+            padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight + 15),
+            // +1 cho nút "Xem thêm" nếu cần
+            itemCount: state.comments.length + (shouldShowLoadMoreButton || state.status == CommentStatus.loading ? 1 : 0),
+            itemBuilder: (context, index) {
+              // ----- LOGIC HIỂN THỊ ITEM CUỐI CÙNG -----
+              if (index >= state.comments.length) {
+                // Nếu đang tải, hiển thị vòng quay
+                if (state.status == CommentStatus.loading) {
+                  return const ShimmeringComment(
+                    isReply: false,
+                  );
+                }
+
+                // Nếu không đang tải và còn bình luận, hiển thị nút "Xem thêm"
+                if (shouldShowLoadMoreButton) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Row(
+                      children: [
+                        TextButton.icon(
+                          icon: const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                          ),
+                          onPressed: () => context.read<CommentBloc>().add(const CommentEvent.moreCommentsRequested()),
+                          label: Text(
+                            // Hiển thị số lượng còn lại chính xác
+                            'Xem thêm $remainingCount bình luận...',
+                          ),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Theme.of(context).colorScheme.onSurface,
+                            textStyle: Theme.of(context).textTheme.labelMedium,
+                            padding: EdgeInsets.zero,
+
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap, // 👈 Loại bỏ padding mặc định cho hit test
+                            minimumSize: const Size(0, 0), // 👈 Tránh chiều cao tối thiểu mặc định
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                // Trường hợp không còn gì để hiển thị
+                return const SizedBox.shrink();
+              }
+
+              // ----- LOGIC HIỂN THỊ BÌNH LUẬN GỐC -----
+              final comment = state.comments[index];
+              return CommentItem(
+                currentUserId: state.currentUser!.userId,
+                comment: comment,
+                postAuthorId: postAuthorId,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -125,7 +128,7 @@ class _ShimmeringCommentState extends State<ShimmeringComment> with SingleTicker
     )..repeat(reverse: true);
 
     _opacityAnimation = Tween<double>(begin: 0.3, end: 0.8).animate(_controller);
-    randomWidth = 100 + Random().nextInt(100);
+    randomWidth = 50 + Random().nextInt(200);
   }
 
   @override
