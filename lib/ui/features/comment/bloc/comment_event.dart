@@ -46,4 +46,7 @@ class CommentEvent with _$CommentEvent {
     required String replyId,
     required String parentCommentId,
   }) = _ReplyDeleted;
+
+  /// Được gọi khi UI đã xử lý xong việc hiển thị lỗi.
+  const factory CommentEvent.errorCleared() = _ErrorCleared;
 }

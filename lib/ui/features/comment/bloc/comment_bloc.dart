@@ -38,6 +38,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     on<_ReplyLiked>(_onReplyLiked);
     on<_CommentDeleted>(_onCommentDeleted);
     on<_ReplyDeleted>(_onReplyDeleted);
+    on<_ErrorCleared>(_onErrorCleared);
   }
 
   Future<void> _onInitialized(_Initialized event, Emitter<CommentState> emit) async {
@@ -456,6 +457,10 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         _log.info('✅ Reply ${event.replyId} deleted successfully from backend.');
       },
     );
+  }
+
+  void _onErrorCleared(_ErrorCleared event, Emitter<CommentState> emit) {
+    emit(state.copyWith(failure: null));
   }
 
 }

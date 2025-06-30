@@ -708,6 +708,26 @@ class __$ReplyDeletedCopyWithImpl<$Res>
 }
 
 /// @nodoc
+
+class _ErrorCleared implements CommentEvent {
+  const _ErrorCleared();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _ErrorCleared);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'CommentEvent.errorCleared()';
+  }
+}
+
+/// @nodoc
 mixin _$ReplyTarget {
   /// ID của bình luận gốc mà trả lời này thuộc về.
   String get parentCommentId;

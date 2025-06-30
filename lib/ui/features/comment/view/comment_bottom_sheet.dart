@@ -60,6 +60,45 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
     super.dispose();
   }
 
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        // Sử dụng dialogContext để đóng dialog
+        return AlertDialog(
+          // Dùng theme để có màu sắc và font chữ nhất quán
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          title: Row(
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                color: Theme.of(context).colorScheme.error,
+              ),
+              const SizedBox(width: 10),
+              const Text('Thông báo'),
+            ],
+          ),
+          content: Text(
+            message,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Đã hiểu'),
+              onPressed: () {
+                // Đóng dialog
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Chiều cao 90% màn hình
@@ -68,11 +107,15 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
 
     return BlocListener<CommentBloc, CommentState>(
       listener: (context, state) {
-        // Hiển thị lỗi bằng SnackBar
-        if (state.failure != null) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(state.failure!.message)));
+        // Sử dụng thuộc tính `failureMessage` như đã thống nhất
+        // hoặc `state.failure.message` nếu bạn vẫn dùng lớp Failure
+        final errorMessage = state.failure?.message;
+        if (errorMessage != null) {
+          // Gọi hàm hiển thị Dialog
+          _showErrorDialog(context, errorMessage);
+          // QUAN TRỌNG: Reset trạng thái lỗi trong BLoC để dialog không hiện lại
+          // khi người dùng đóng nó và state được build lại.
+          context.read<CommentBloc>().add(const CommentEvent.errorCleared());
         }
       },
       child: GlassContainer(
