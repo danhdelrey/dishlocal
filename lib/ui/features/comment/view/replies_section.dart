@@ -1,5 +1,6 @@
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
+import 'package:dishlocal/ui/features/comment/view/comment_list_view.dart';
 import 'package:dishlocal/ui/features/comment/view/reply_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +26,10 @@ class RepliesSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ...replies.map((reply) => ReplyItem(reply: reply, parentCommentId: parentCommentId, postAuthorId: postAuthorId)),
-            if (status == CommentStatus.loading) const Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
+            if (status == CommentStatus.loading)
+              const ShimmeringComment(
+                isReply: true,
+              ),
             if (hasMore && status != CommentStatus.loading && remainingCount > 0)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),

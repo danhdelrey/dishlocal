@@ -1,6 +1,8 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_item.dart';
+import 'package:dishlocal/ui/widgets/animated_widgets/fade_slide_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,7 +17,13 @@ class CommentListView extends StatelessWidget {
     return BlocBuilder<CommentBloc, CommentState>(
       builder: (context, state) {
         if (state.status == CommentStatus.initial || (state.status == CommentStatus.loading && state.comments.isEmpty)) {
-          return const Center(child: CircularProgressIndicator());
+          return ListView.builder(
+            itemBuilder: (context, index) => const ShimmeringComment(
+              isReply: false,
+              paddingLeft: 15,
+            ),
+            itemCount: 10,
+          );
         }
 
         if (state.comments.isEmpty) {
@@ -40,9 +48,8 @@ class CommentListView extends StatelessWidget {
             if (index >= state.comments.length) {
               // Nếu đang tải, hiển thị vòng quay
               if (state.status == CommentStatus.loading) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  child: Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))),
+                return const ShimmeringComment(
+                  isReply: false,
                 );
               }
 
@@ -87,6 +94,80 @@ class CommentListView extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+class ShimmeringComment extends StatefulWidget {
+  const ShimmeringComment({super.key, required this.isReply, this.paddingLeft = 0});
+  final bool isReply;
+  final double paddingLeft;
+
+  @override
+  State<ShimmeringComment> createState() => _ShimmeringCommentState();
+}
+
+class _ShimmeringCommentState extends State<ShimmeringComment> with SingleTickerProviderStateMixin {
+  // 1. Khai báo AnimationController
+  late final AnimationController _controller;
+  late final Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+
+    _opacityAnimation = Tween<double>(begin: 0.3, end: 0.8).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: widget.isReply ? 0 : widget.paddingLeft, top: widget.isReply ? 10 : 20),
+      child: FadeTransition(
+        opacity: _opacityAnimation,
+        child: _buildPlaceholderContent(),
+      ),
+    );
+  }
+
+  // Tách phần nội dung placeholder ra cho dễ đọc
+  Widget _buildPlaceholderContent() {
+    // Màu nền cho các thành phần placeholder
+    final placeholderColor = appColorScheme(context).outlineVariant;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: widget.isReply ? 24 : 36,
+          height: widget.isReply ? 24 : 36,
+          decoration: BoxDecoration(
+            color: placeholderColor,
+            borderRadius: BorderRadius.circular(1000),
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Container(
+          height: widget.isReply ? 30 : 50,
+          width: widget.isReply ? 100 : 150,
+          decoration: BoxDecoration(
+            color: placeholderColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ],
     );
   }
 }
