@@ -90,6 +90,7 @@ class CommentListView extends StatelessWidget {
             // ----- LOGIC HIỂN THỊ BÌNH LUẬN GỐC -----
             final comment = state.comments[index];
             return CommentItem(
+              currentUserId: state.currentUser!.userId,
               comment: comment,
               postAuthorId: postAuthorId,
             );

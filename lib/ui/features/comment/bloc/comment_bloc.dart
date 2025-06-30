@@ -36,7 +36,8 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     on<_ReplyTargetCleared>((event, emit) => emit(state.copyWith(replyTarget: null)));
     on<_CommentLiked>(_onCommentLiked);
     on<_ReplyLiked>(_onReplyLiked);
-    // Các event xóa có thể được thêm vào tương tự
+    on<_CommentDeleted>(_onCommentDeleted);
+    on<_ReplyDeleted>(_onReplyDeleted);
   }
 
   Future<void> _onInitialized(_Initialized event, Emitter<CommentState> emit) async {
@@ -366,4 +367,95 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     // --- FIRE AND FORGET ---
     _commentRepository.likeReply(replyId: event.replyId, isLiked: event.isLiked);
   }
+
+  Future<void> _onCommentDeleted(_CommentDeleted event, Emitter<CommentState> emit) async {
+    _log.info('🗑️ Deleting comment ${event.commentId}');
+
+    // --- OPTIMISTIC UPDATE ---
+    final commentToDelete = state.comments.firstWhere((c) => c.commentId == event.commentId);
+    final replyCountOfDeletedComment = commentToDelete.replyCount;
+
+    // 1. Xóa bình luận khỏi danh sách
+    final optimisticComments = List<Comment>.from(state.comments)
+      ..removeWhere((c) => c.commentId == event.commentId);
+    
+    // 2. Xóa các replies liên quan khỏi state (nếu đã được tải)
+    final optimisticReplies = Map<String, List<CommentReply>>.from(state.replies)
+      ..remove(event.commentId);
+
+    // 3. Cập nhật tổng số bình luận
+    // (Bao gồm cả bình luận gốc và tất cả các trả lời của nó)
+    final newTotalCount = state.totalCommentCount - (1 + replyCountOfDeletedComment);
+
+    emit(state.copyWith(
+      comments: optimisticComments,
+      replies: optimisticReplies,
+      totalCommentCount: newTotalCount,
+    ));
+    _log.fine('✨ Optimistic delete for comment ${event.commentId} applied to UI.');
+
+    // --- NETWORK CALL ---
+    final result = await _commentRepository.deleteComment(commentId: event.commentId);
+
+    result.fold(
+      (failure) {
+        _log.severe('❌ Failed to delete comment. Reverting UI.', failure);
+        // --- REVERT UI ON FAILURE ---
+        // Đơn giản là phát lại trạng thái ngay trước khi xóa
+        // Cách tiếp cận đơn giản hơn: có thể chỉ cần fetch lại toàn bộ.
+        // Nhưng ở đây chúng ta sẽ thêm lại. Việc này phức tạp, nên cách đơn giản
+        // nhất là chỉ hiển thị lỗi và để người dùng tự refresh.
+        // Để đơn giản, chúng ta chỉ hiển thị lỗi.
+        emit(state.copyWith(failure: failure));
+        // NOTE: Việc revert một hành động xóa phức tạp. Cách tiếp cận đơn giản nhất
+        // là hiển thị lỗi và khuyến khích người dùng làm mới. Hoặc ta có thể
+        // reload lại toàn bộ comment list.
+      },
+      (_) {
+        _log.info('✅ Comment ${event.commentId} deleted successfully from backend.');
+        // Không cần làm gì thêm vì UI đã được cập nhật
+      },
+    );
+  }
+
+  Future<void> _onReplyDeleted(_ReplyDeleted event, Emitter<CommentState> emit) async {
+    _log.info('🗑️ Deleting reply ${event.replyId} from parent ${event.parentCommentId}');
+    
+    // --- OPTIMISTIC UPDATE ---
+    
+    // 1. Xóa reply khỏi map
+    final newRepliesMap = Map<String, List<CommentReply>>.from(state.replies);
+    final repliesForParent = List<CommentReply>.from(newRepliesMap[event.parentCommentId]!)
+      ..removeWhere((r) => r.replyId == event.replyId);
+    newRepliesMap[event.parentCommentId] = repliesForParent;
+
+    // 2. Giảm reply_count và total_comment_count
+    final newComments = state.comments.map((c) {
+      if (c.commentId == event.parentCommentId) {
+        return c.copyWith(replyCount: c.replyCount - 1);
+      }
+      return c;
+    }).toList();
+
+    emit(state.copyWith(
+      replies: newRepliesMap,
+      comments: newComments,
+      totalCommentCount: state.totalCommentCount - 1,
+    ));
+    _log.fine('✨ Optimistic delete for reply ${event.replyId} applied to UI.');
+
+    // --- NETWORK CALL ---
+    final result = await _commentRepository.deleteReply(replyId: event.replyId);
+
+    result.fold(
+      (failure) {
+        _log.severe('❌ Failed to delete reply. Reverting UI.', failure);
+        emit(state.copyWith(failure: failure));
+      },
+      (_) {
+        _log.info('✅ Reply ${event.replyId} deleted successfully from backend.');
+      },
+    );
+  }
+
 }

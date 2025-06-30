@@ -25,7 +25,14 @@ class RepliesSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ...replies.map((reply) => ReplyItem(reply: reply, parentCommentId: parentCommentId, postAuthorId: postAuthorId)),
+            ...replies.map(
+              (reply) => ReplyItem(
+                currentUserId: state.currentUser!.userId,
+                reply: reply,
+                parentCommentId: parentCommentId,
+                postAuthorId: postAuthorId,
+              ),
+            ),
             if (status == CommentStatus.loading)
               const ShimmeringComment(
                 isReply: true,
