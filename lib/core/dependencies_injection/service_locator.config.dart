@@ -141,11 +141,6 @@ _i174.GetIt init(
           ));
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
-  gh.lazySingleton<_i557.CommentRepository>(
-      () => _i395.RemoteCommentRepositorySqlImpl(
-            gh<_i178.SqlDatabaseService>(),
-            gh<_i780.AuthenticationService>(),
-          ));
   gh.lazySingleton<_i60.NoSqlDatabaseService>(
       () => _i959.NoSqlFirestoreServiceImpl(gh<_i974.FirebaseFirestore>()));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
@@ -180,6 +175,12 @@ _i174.GetIt init(
       ));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
+  gh.lazySingleton<_i557.CommentRepository>(
+      () => _i395.RemoteCommentRepositorySqlImpl(
+            gh<_i178.SqlDatabaseService>(),
+            gh<_i780.AuthenticationService>(),
+            gh<_i692.ModerationService>(instanceName: 'hive.ai'),
+          ));
   gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),

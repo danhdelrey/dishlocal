@@ -34,3 +34,7 @@ class CommentOperationFailure extends CommentFailure {
 class ConnectionCommentFailure extends CommentFailure {
   const ConnectionCommentFailure() : super('Lỗi kết nối mạng, vui lòng kiểm tra lại.');
 }
+
+class CommentInappropriateFailure extends CommentFailure {
+  const CommentInappropriateFailure(super.message);
+}

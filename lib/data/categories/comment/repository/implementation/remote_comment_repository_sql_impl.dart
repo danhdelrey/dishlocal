@@ -11,6 +11,9 @@ import 'package:dishlocal/data/services/database_service/entity/comment_reply_en
 import 'package:dishlocal/data/services/database_service/entity/post_comment_entity.dart';
 import 'package:dishlocal/data/services/database_service/exception/sql_database_service_exception.dart';
 import 'package:dishlocal/data/services/database_service/interface/sql_database_service.dart';
+import 'package:dishlocal/data/services/moderation_service/exception/moderation_service_exception.dart';
+import 'package:dishlocal/data/services/moderation_service/implementation/hive_ai_moderation_service_impl.dart';
+import 'package:dishlocal/data/services/moderation_service/interface/moderation_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,10 +24,12 @@ class RemoteCommentRepositorySqlImpl implements CommentRepository {
   final _supabase = Supabase.instance.client; // Dùng cho các thao tác RPC
   final SqlDatabaseService _dbService;
   final AuthenticationService _authenticationService;
+  final ModerationService _hiveAiModerationService;
 
   RemoteCommentRepositorySqlImpl(
     this._dbService,
     this._authenticationService,
+    @Named('hive.ai') this._hiveAiModerationService,
   );
 
   /// Helper để bắt và dịch các lỗi phổ biến sang CommentFailure.
@@ -39,6 +44,13 @@ class RemoteCommentRepositorySqlImpl implements CommentRepository {
         UniqueConstraintViolationException() => const CommentOperationFailure('Bạn đã thực hiện hành động này rồi.'),
         CheckConstraintViolationException() => const CommentOperationFailure('Dữ liệu không hợp lệ.'),
         DatabaseConnectionException() => const ConnectionCommentFailure(),
+        _ => const UnknownCommentFailure(),
+      });
+    } on ModerationServiceException catch (e) {
+      _log.warning('☢️ Nội dung không phù hợp trong Comment Repository', e);
+      return Left(switch (e) {
+        ImageUnsafeException() => const CommentInappropriateFailure('Hình ảnh không phù hợp.'),
+        TextUnsafeException() => CommentInappropriateFailure(ModerationViolationTranslator.translate(e.violations)),
         _ => const UnknownCommentFailure(),
       });
     } catch (e, st) {
@@ -125,6 +137,9 @@ class RemoteCommentRepositorySqlImpl implements CommentRepository {
     required AppUser currentUser,
   }) {
     return _handleErrors(() async {
+      _log.fine('🛡️ Starting content moderation...');
+      await _hiveAiModerationService.moderate(text: content);
+
       final currentUserId = _authenticationService.getCurrentUserId();
       _log.info('➕ Bắt đầu tạo bình luận mới cho postId: $postId bởi user: $currentUserId');
 
@@ -141,8 +156,6 @@ class RemoteCommentRepositorySqlImpl implements CommentRepository {
       );
 
       _log.info('🎉 Tạo bình luận thành công! ID thật: ${createdData.id}');
-
-      
 
       // Chuyển đổi từ Entity sang Model UI
       return Comment(
@@ -167,6 +180,8 @@ class RemoteCommentRepositorySqlImpl implements CommentRepository {
     required AppUser replyToUser,
   }) {
     return _handleErrors(() async {
+      _log.fine('🛡️ Starting content moderation...');
+      await _hiveAiModerationService.moderate(text: content);
 
       _log.info('↪️ Bắt đầu tạo trả lời cho parentCommentId: $parentCommentId...');
 
