@@ -17,5 +17,8 @@ class ModerationRequestException extends ModerationServiceException {
 
 /// Bị throw khi nội dung văn bản vi phạm chính sách kiểm duyệt.
 class TextUnsafeException extends ModerationServiceException {
-  TextUnsafeException(super.reason);
+  /// Danh sách các mã vi phạm bằng tiếng Anh (ví dụ: 'sexual', 'bullying').
+  final List<String> violations;
+
+  TextUnsafeException(this.violations) : super('Content violates policies: ${violations.join(', ')}');
 }

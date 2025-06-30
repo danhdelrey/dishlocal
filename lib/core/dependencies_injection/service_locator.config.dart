@@ -64,6 +64,8 @@ import '../../data/services/location_service/implementation/geolocator_wrapper.d
     as _i258;
 import '../../data/services/location_service/interface/location_service.dart'
     as _i473;
+import '../../data/services/moderation_service/implementation/hive_ai_moderation_service_impl.dart'
+    as _i709;
 import '../../data/services/moderation_service/implementation/sightengine_moderation_service_impl.dart'
     as _i28;
 import '../../data/services/moderation_service/interface/moderation_service.dart'
@@ -114,18 +116,29 @@ _i174.GetIt init(
   gh.lazySingleton<_i19.ImageProcessor>(() => _i19.ImageProcessor());
   gh.lazySingleton<_i660.NumberFormatter>(() => _i660.NumberFormatter());
   gh.lazySingleton<_i537.TimeFormatter>(() => _i537.TimeFormatter());
+  gh.lazySingleton<_i692.ModerationService>(
+    () => _i709.HiveAiModerationServiceImpl(),
+    instanceName: 'hive.ai',
+  );
   gh.lazySingleton<_i367.DistanceService>(
       () => _i1015.HaversineDistanceService());
   gh.lazySingleton<_i1045.StorageService>(
       () => _i1046.CloudinaryStorageServiceImpl());
   gh.lazySingleton<_i780.AuthenticationService>(
       () => _i103.SupabaseAuthenticationServiceImpl());
+  gh.lazySingleton<_i692.ModerationService>(
+    () => _i28.SightengineModerationServiceImpl(),
+    instanceName: 'sightengine',
+  );
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());
   gh.lazySingleton<_i178.SqlDatabaseService>(
       () => _i876.SqlSupabaseServiceImpl());
-  gh.lazySingleton<_i692.ModerationService>(
-      () => _i28.SightengineModerationServiceImpl());
+  gh.lazySingleton<_i886.ModerationRepository>(
+      () => _i709.ModerationRepositoryImpl(
+            gh<_i692.ModerationService>(instanceName: 'hive.ai'),
+            gh<_i692.ModerationService>(instanceName: 'sightengine'),
+          ));
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
   gh.lazySingleton<_i557.CommentRepository>(
@@ -138,6 +151,10 @@ _i174.GetIt init(
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
         gh<_i473.LocationService>(),
         gh<_i766.GeocodingService>(),
+      ));
+  gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc(
+        gh<_i886.ModerationRepository>(),
+        gh<_i19.ImageProcessor>(),
       ));
   gh.lazySingleton<_i749.AppUserRepository>(() => _i90.SqlAppUserRepositoryImpl(
         gh<_i780.AuthenticationService>(),
@@ -161,8 +178,6 @@ _i174.GetIt init(
         gh<_i749.AppUserRepository>(),
         post,
       ));
-  gh.lazySingleton<_i886.ModerationRepository>(
-      () => _i709.ModerationRepositoryImpl(gh<_i692.ModerationService>()));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
@@ -193,10 +208,6 @@ _i174.GetIt init(
       _i501.FollowBloc(
         gh<_i749.AppUserRepository>(),
         user,
-      ));
-  gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc(
-        gh<_i886.ModerationRepository>(),
-        gh<_i19.ImageProcessor>(),
       ));
   return getIt;
 }

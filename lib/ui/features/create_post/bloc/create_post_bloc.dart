@@ -195,7 +195,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
     ));
 
     // -- BƯỚC 2.1: KIỂM DUYỆT NỘI DUNG --
-    final textToModerate = '${dishNameInput.value} ${diningLocationNameInput.value} ${insightInput.value}';
+    final textToModerate = '${dishNameInput.value} , ${diningLocationNameInput.value} , ${insightInput.value} , ${exactAddressInput.value}';
     _log.info('🛡️ Đang gọi _moderationRepository.moderateText()...');
     final moderationResult = await _moderationRepository.moderate(text: textToModerate);
     final moderationFailure = moderationResult.fold((f) => f, (_) => null);

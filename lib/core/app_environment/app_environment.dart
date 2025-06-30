@@ -87,4 +87,19 @@ class AppEnvironment {
     }
     return prod_options.DefaultFirebaseOptions.currentPlatform;
   }
+
+  //Hive
+  static String get hiveApiAccessKey {
+    if (isInDevelopment) {
+      return dotenv.env['HIVE_API_ACCESS_KEY'] ?? '';
+    }
+    return dotenv.env['HIVE_API_ACCESS_KEY'] ?? '';
+  }
+  static String get hiveApiSecretKey {
+    if (isInDevelopment) {
+      return dotenv.env['HIVE_API_SECRET_KEY'] ?? '';
+    }
+    return dotenv.env['HIVE_API_SECRET_KEY'] ?? '';
+  }
+
 }
