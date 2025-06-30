@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/comment/model/comment_reply.dart';
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/animated_icon_counter_button.dart';
@@ -58,7 +59,7 @@ class ReplyItem extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      timeago.format(reply.createdAt, locale: 'vi'),
+                      TimeFormatter.formatTimeAgo(reply.createdAt),
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.outline),
                     ),
                     const SizedBox(width: 15),

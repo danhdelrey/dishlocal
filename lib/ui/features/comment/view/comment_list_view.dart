@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
@@ -111,6 +113,7 @@ class _ShimmeringCommentState extends State<ShimmeringComment> with SingleTicker
   // 1. Khai báo AnimationController
   late final AnimationController _controller;
   late final Animation<double> _opacityAnimation;
+  late final int randomWidth;
 
   @override
   void initState() {
@@ -121,6 +124,7 @@ class _ShimmeringCommentState extends State<ShimmeringComment> with SingleTicker
     )..repeat(reverse: true);
 
     _opacityAnimation = Tween<double>(begin: 0.3, end: 0.8).animate(_controller);
+    randomWidth = 100 + Random().nextInt(100);
   }
 
   @override
@@ -161,7 +165,7 @@ class _ShimmeringCommentState extends State<ShimmeringComment> with SingleTicker
         ),
         Container(
           height: widget.isReply ? 30 : 50,
-          width: widget.isReply ? 100 : 150,
+          width: randomWidth.toDouble(),
           decoration: BoxDecoration(
             color: placeholderColor,
             borderRadius: BorderRadius.circular(8),

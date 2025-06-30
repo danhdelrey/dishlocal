@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/comment/model/comment.dart';
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
@@ -63,7 +64,7 @@ class CommentItem extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      timeago.format(comment.createdAt, locale: 'vi'),
+                      TimeFormatter.formatTimeAgo(comment.createdAt),
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.outline),
                     ),
                     const SizedBox(width: 15),
