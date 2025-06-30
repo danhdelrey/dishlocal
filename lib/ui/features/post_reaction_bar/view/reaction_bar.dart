@@ -37,6 +37,7 @@ class ReactionBar extends StatelessWidget {
       children: [
         // Nút Like
         AnimatedIconCounterButton(
+          inactiveColor: appColorScheme(context).onSurface,
           activeColor: likeColor,
           isActive: isLiked,
           count: likeCount,
@@ -48,6 +49,7 @@ class ReactionBar extends StatelessWidget {
         ),
         const SizedBox(width: 20),
         AnimatedIconCounterButton(
+          inactiveColor: appColorScheme(context).onSurface,
           activeColor: appColorScheme(context).onSurface,
           isActive: false,
           count: commentCount,
@@ -60,6 +62,7 @@ class ReactionBar extends StatelessWidget {
         const SizedBox(width: 20),
         // Nút Save/Bookmark
         AnimatedIconCounterButton(
+          inactiveColor: appColorScheme(context).onSurface,
           activeColor: saveColor,
           isActive: isSaved,
           count: saveCount,

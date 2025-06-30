@@ -6,6 +6,7 @@ class AnimatedIconCounterButton extends StatefulWidget {
   final bool isActive;
   final int count;
   final Color activeColor;
+  final Color inactiveColor;
   final Widget Function(bool isActive, Color color) iconBuilder;
   final VoidCallback onTap;
 
@@ -15,7 +16,7 @@ class AnimatedIconCounterButton extends StatefulWidget {
     required this.count,
     required this.iconBuilder,
     required this.onTap,
-    required this.activeColor,
+    required this.activeColor, required this.inactiveColor,
   });
 
   @override
@@ -67,7 +68,7 @@ class _AnimatedIconCounterButtonState extends State<AnimatedIconCounterButton> w
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.isActive ? widget.activeColor : appColorScheme(context).outline;
+    final color = widget.isActive ? widget.activeColor : widget.inactiveColor;
 
     // Sử dụng ValueKey để AnimatedSwitcher nhận biết sự thay đổi của icon
     final icon = KeyedSubtree(

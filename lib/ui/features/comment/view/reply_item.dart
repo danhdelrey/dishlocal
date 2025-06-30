@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/comment/model/comment_reply.dart';
 import 'package:dishlocal/ui/features/comment/bloc/comment_bloc.dart';
@@ -80,6 +81,7 @@ class ReplyItem extends StatelessWidget {
                     ),
                     const Spacer(),
                     AnimatedIconCounterButton(
+                      inactiveColor: appColorScheme(context).outline,
                       activeColor: Colors.pink,
                       isActive: reply.isLiked,
                       count: reply.likeCount,
