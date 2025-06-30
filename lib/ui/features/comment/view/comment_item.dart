@@ -6,8 +6,10 @@ import 'package:dishlocal/ui/features/comment/view/replies_section.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/animated_icon_counter_button.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class CommentItem extends StatelessWidget {
@@ -25,7 +27,12 @@ class CommentItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CachedCircleAvatar(imageUrl: comment.authorAvatarUrl ?? '', circleRadius: 18),
+          GestureDetector(
+            onTap: () {
+              context.push('/post_detail/profile', extra: {'userId': comment.authorUserId});
+            },
+            child: CachedCircleAvatar(imageUrl: comment.authorAvatarUrl ?? '', circleRadius: 18),
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -33,6 +40,10 @@ class CommentItem extends StatelessWidget {
               children: [
                 RichText(
                   text: TextSpan(
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        context.push('/post_detail/profile', extra: {'userId': comment.authorUserId});
+                      },
                     text: comment.authorUsername,
                     style: Theme.of(context).textTheme.labelLarge,
                     children: [
