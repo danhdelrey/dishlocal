@@ -48,4 +48,21 @@ abstract class PostRepository {
 
   Future<Either<PostFailure, void>> updatePost(Post post);
   Future<Either<PostFailure, void>> deletePost({required String postId});
+
+  /// Tìm kiếm các bài viết dựa trên một truy vấn văn bản.
+  ///
+  /// Phương thức này sử dụng một dịch vụ tìm kiếm bên ngoài (ví dụ: Algolia)
+  /// để thực hiện tìm kiếm toàn văn bản hiệu quả.
+  ///
+  /// [query]: Chuỗi văn bản để tìm kiếm.
+  /// [page]: Số trang kết quả, bắt đầu từ 0.
+  /// [hitsPerPage]: Số lượng kết quả trên mỗi trang.
+  ///
+  /// Trả về một `Right` chứa danh sách các `Post` nếu thành công,
+  /// hoặc một `Left` chứa `PostFailure` nếu thất bại.
+  Future<Either<PostFailure, List<Post>>> searchPosts({
+    required String query,
+    int page = 0,
+    int hitsPerPage = 20,
+  });
 }

@@ -5,6 +5,8 @@ import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/services/database_service/entity/post_entity.dart';
 import 'package:dishlocal/data/services/database_service/exception/sql_database_service_exception.dart';
 import 'package:dishlocal/data/services/geocoding_service/interface/geocoding_service.dart';
+import 'package:dishlocal/data/services/search_service/exception/search_service_exception.dart';
+import 'package:dishlocal/data/services/search_service/interface/search_service.dart';
 import 'package:dishlocal/data/services/storage_service/exception/storage_service_exception.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -29,6 +31,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
   final LocationService _locationService;
   final GeocodingService _geocodingService;
   final AuthenticationService _authenticationService;
+  final SearchService _searchService;
 
   RemotePostRepositorySqlImpl(
     this._storageService,
@@ -37,6 +40,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
     this._locationService,
     this._authenticationService,
     this._geocodingService,
+    this._searchService,
   );
 
   // Helper để bắt và dịch lỗi
@@ -161,8 +165,6 @@ class RemotePostRepositorySqlImpl implements PostRepository {
     ));
 
     return await _enrichPostsWithDistance(posts);
-
-
   }
 
   @override
@@ -369,5 +371,55 @@ class RemotePostRepositorySqlImpl implements PostRepository {
 
       _log.info('🎉 Hoàn thành xóa bài viết ID: $postId.');
     });
+  }
+
+  @override
+  Future<Either<PostFailure, List<Post>>> searchPosts({
+    required String query,
+    int page = 0,
+    int hitsPerPage = 20,
+  }) async {
+    _log.info('🔍 Bắt đầu tìm kiếm bài viết với query: "$query"');
+    try {
+      // 1. Ủy quyền công việc tìm kiếm cho SearchService
+      final posts = await _searchService.search<Post>(
+        query: query,
+        index: SearchIndex.posts,
+        fromJson: Post.fromJson,
+        page: page,
+        hitsPerPage: hitsPerPage,
+      );
+      _log.fine('✅ SearchService trả về ${posts.length} kết quả.');
+
+      // 2. Làm giàu dữ liệu với khoảng cách
+      final enrichedPosts = await _enrichPostsWithDistance(posts);
+
+      // 3. Trả về kết quả thành công
+      return Right(enrichedPosts);
+    } on SearchServiceException catch (e, st) {
+      // 4. Bắt các lỗi đã được định nghĩa từ SearchService và ánh xạ chúng sang PostFailure
+      _log.severe('❌ Lỗi từ SearchService: ${e.runtimeType}', e, st);
+
+      // Sử dụng switch expression để ánh xạ một cách gọn gàng và an toàn
+      final failure = switch (e) {
+        // Lỗi kết nối hoặc timeout từ Algolia -> ConnectionFailure
+        SearchConnectionException() => const ConnectionFailure(),
+
+        // Lỗi truy vấn không hợp lệ -> PostOperationFailure
+        InvalidSearchQueryException() => PostOperationFailure(e.message),
+
+        // Lỗi xác thực, không tìm thấy index, lỗi server Algolia -> gom vào một lỗi hoạt động chung
+        // vì từ góc độ người dùng, đây là lỗi hệ thống.
+        SearchApiException() => const PostOperationFailure('Dịch vụ tìm kiếm đang gặp sự cố. Vui lòng thử lại sau.'),
+
+        // Lỗi phân tích dữ liệu -> Lỗi hệ thống/Dữ liệu không nhất quán
+        SearchDataParsingException() => const PostOperationFailure('Không thể đọc dữ liệu tìm kiếm.'),
+      };
+      return Left(failure);
+    } on Exception catch (e, st) {
+      // 5. Bắt tất cả các lỗi không mong muốn khác
+      _log.severe('❌ Lỗi không xác định trong quá trình tìm kiếm', e, st);
+      return const Left(UnknownFailure());
+    }
   }
 }

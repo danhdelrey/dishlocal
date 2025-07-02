@@ -519,4 +519,10 @@ class RemotePostRepositoryNoSqlImpl implements PostRepository {
     // TODO: implement deletePost
     throw UnimplementedError();
   }
+  
+  @override
+  Future<Either<PostFailure, List<Post>>> searchPosts({required String query, int page = 0, int hitsPerPage = 20}) {
+    // TODO: implement searchPosts
+    throw UnimplementedError();
+  }
 }
