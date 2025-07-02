@@ -235,21 +235,26 @@ class RemotePostRepositorySqlImpl implements PostRepository {
 
   @override
   Future<Either<PostFailure, Post>> getPostWithId(String postId) {
+    // _handleErrors là một wrapper tuyệt vời để xử lý lỗi một cách tập trung.
     return _handleErrors(() async {
       _log.info('📥 Bắt đầu lấy chi tiết bài viết ID: $postId');
       final currentUserId = _authenticationService.getCurrentUserId();
 
-      final data = await _supabase
-          .rpc('get_posts_with_details', params: {
-            'p_user_id': currentUserId,
-          })
-          .eq('postId', postId)
-          .single();
+      // SỬA ĐỔI:
+      // 1. Gọi hàm mới: 'get_post_details_by_id'
+      // 2. Truyền postId và userId VÀO BÊN TRONG params, nơi chúng thực sự thuộc về.
+      final data = await _supabase.rpc('get_post_details_by_id', params: {
+        'p_post_id': postId,
+        'p_user_id': currentUserId,
+      }).single(); // Giờ đây .single() sẽ hoạt động chính xác vì hàm RPC
+      // được thiết kế để trả về đúng một dòng.
 
       final post = Post.fromJson(data);
       _log.info('✅ Lấy chi tiết bài viết thành công.: ${post.toString()}');
 
-      final enrichedList = await _enrichPostsWithLocationDisplayName( await _enrichPostsWithDistance([post]));
+      // Các logic enrich (làm giàu dữ liệu) của bạn vẫn được giữ nguyên và hoạt động tốt.
+      final enrichedList = await _enrichPostsWithLocationDisplayName(await _enrichPostsWithDistance([post]));
+
       return enrichedList.first;
     });
   }

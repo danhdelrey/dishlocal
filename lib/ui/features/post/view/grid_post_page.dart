@@ -40,15 +40,12 @@ class GridPostPage extends StatelessWidget {
                 postBloc.add(const PostEvent.fetchNextPostPageRequested());
               },
               builderDelegate: PagedChildBuilderDelegate<Post>(
-                itemBuilder: (context, post, index) => FadeSlideUp(
-                  delay: Duration(milliseconds: index * 100),
-                  child: SmallPost(
-                    post: post,
-                    onDeletePostPopBack: () async {
-                      postBloc.add(const PostEvent.refreshRequested());
-                      await postBloc.stream.firstWhere((s) => !s.isLoading);
-                    },
-                  ),
+                itemBuilder: (context, post, index) => SmallPost(
+                  post: post,
+                  onDeletePostPopBack: () async {
+                    postBloc.add(const PostEvent.refreshRequested());
+                    await postBloc.stream.firstWhere((s) => !s.isLoading);
+                  },
                 ),
                 firstPageProgressIndicatorBuilder: (_) => Column(
                   children: List.generate(

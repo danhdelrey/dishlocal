@@ -24,7 +24,7 @@ class AppRouter {
   final _log = Logger('AppRouter');
 
   late final router = GoRouter(
-    initialLocation: '/search_input',
+    initialLocation: '/home',
     debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: _redirect,
