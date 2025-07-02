@@ -14,6 +14,7 @@ class GlassSliverAppBar extends StatelessWidget {
     this.pinned = false,
     this.snap = false,
     this.bottom,
+    this.titleSpacing,
   });
 
   final Widget? title;
@@ -25,10 +26,12 @@ class GlassSliverAppBar extends StatelessWidget {
   final bool snap;
   final bool pinned;
   final PreferredSizeWidget? bottom;
+  final double? titleSpacing;
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
+      titleSpacing: titleSpacing,
       floating: floating,
       snap: snap,
       pinned: pinned,
