@@ -8,6 +8,8 @@ import 'package:dishlocal/data/services/authentication_service/model/app_user_cr
 import 'package:dishlocal/data/services/database_service/entity/profile_entity.dart';
 import 'package:dishlocal/data/services/database_service/exception/sql_database_service_exception.dart';
 import 'package:dishlocal/data/services/database_service/interface/sql_database_service.dart';
+import 'package:dishlocal/data/services/search_service/exception/search_service_exception.dart';
+import 'package:dishlocal/data/services/search_service/interface/search_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
@@ -17,12 +19,13 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   final _log = Logger('SqlAppUserRepositoryImpl');
   final AuthenticationService _authService;
   final SqlDatabaseService _dbService;
+  final SearchService _searchService;
 
   // Sử dụng BehaviorSubject để lưu trữ và phát ra AppUser hiện tại
   // Nó sẽ giữ lại giá trị cuối cùng cho các subscriber mới.
   final BehaviorSubject<AppUser?> _currentUserController;
 
-  SqlAppUserRepositoryImpl(this._authService, this._dbService) : _currentUserController = BehaviorSubject<AppUser?>() {
+  SqlAppUserRepositoryImpl(this._authService, this._dbService, this._searchService) : _currentUserController = BehaviorSubject<AppUser?>() {
     _log.info('✅ Khởi tạo UserRepositorySqlImpl.');
 
     // Lắng nghe sự thay đổi trạng thái xác thực từ service
@@ -330,6 +333,49 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
     // Bắt tất cả các lỗi còn lại không xác định
     catch (e, st) {
       _log.severe('❌_handleErrors(): Lỗi không xác định trong Repository', e, st);
+      return const Left(AppUserFailure.unknown());
+    }
+  }
+    @override
+  Future<Either<AppUserFailure, List<AppUser>>> searchProfiles({
+    required String query,
+    int page = 0,
+    int hitsPerPage = 20,
+  }) async {
+    _log.info('🔍 Bắt đầu tìm kiếm profile với query: "$query"');
+    try {
+      // 1. Gọi SearchService để lấy danh sách AppUser
+      final profiles = await _searchService.search<AppUser>(
+        query: query,
+        index: SearchIndex.profiles, // Chỉ định index 'profiles'
+        fromJson: AppUser.fromJson, // Cung cấp hàm factory
+        page: page,
+        hitsPerPage: hitsPerPage,
+      );
+      _log.fine('✅ SearchService trả về ${profiles.length} profile.');
+
+      // 2. Tùy chọn: Làm giàu dữ liệu (ví dụ: kiểm tra trạng thái 'isFollowing')
+      // Nếu dữ liệu từ Algolia đã đủ, bạn có thể bỏ qua bước này.
+      // Nếu không, bạn có thể lặp qua 'profiles' và cập nhật 'isFollowing'.
+
+      // 3. Trả về kết quả thành công
+      return Right(profiles);
+    } on SearchServiceException catch (e, st) {
+      // 4. Bắt lỗi từ SearchService và ánh xạ sang AppUserFailure
+      _log.severe('❌ Lỗi từ SearchService khi tìm kiếm profile', e, st);
+
+      final failure = switch (e) {
+        // Lỗi kết nối
+        SearchConnectionException() => AppUserFailure.databaseFailure(e.message),
+        // Lỗi API (hệ thống)
+        SearchApiException() => AppUserFailure.databaseFailure('Dịch vụ tìm kiếm đang gặp sự cố.'),
+        // Các lỗi khác từ search service
+        _ => const AppUserFailure.unknown(),
+      };
+      return Left(failure);
+    } on Exception catch (e, st) {
+      // 5. Bắt các lỗi không mong muốn khác
+      _log.severe('❌ Lỗi không xác định trong quá trình tìm kiếm profile', e, st);
       return const Left(AppUserFailure.unknown());
     }
   }

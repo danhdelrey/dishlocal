@@ -70,6 +70,10 @@ import '../../data/services/moderation_service/implementation/sightengine_modera
     as _i28;
 import '../../data/services/moderation_service/interface/moderation_service.dart'
     as _i692;
+import '../../data/services/search_service/implementation/algolia_search_service_impl.dart'
+    as _i324;
+import '../../data/services/search_service/interface/search_service.dart'
+    as _i310;
 import '../../data/services/storage_service/implementation/cloudinary_storage_service_impl.dart'
     as _i1046;
 import '../../data/services/storage_service/interface/storage_service.dart'
@@ -85,6 +89,7 @@ import '../../ui/features/delete_post/bloc/delete_post_bloc.dart' as _i204;
 import '../../ui/features/follow/bloc/follow_bloc.dart' as _i501;
 import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
     as _i144;
+import '../../ui/features/search/bloc/search_bloc.dart' as _i348;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../../ui/features/view_post/bloc/view_post_bloc.dart' as _i10;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
@@ -120,6 +125,10 @@ _i174.GetIt init(
     () => _i709.HiveAiModerationServiceImpl(),
     instanceName: 'hive.ai',
   );
+  gh.lazySingleton<_i310.SearchService>(
+    () => _i324.AlgoliaSearchServiceImpl(),
+    dispose: (i) => i.dispose(),
+  );
   gh.lazySingleton<_i367.DistanceService>(
       () => _i1015.HaversineDistanceService());
   gh.lazySingleton<_i1045.StorageService>(
@@ -141,20 +150,15 @@ _i174.GetIt init(
           ));
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
-  gh.lazySingleton<_i60.NoSqlDatabaseService>(
-      () => _i959.NoSqlFirestoreServiceImpl(gh<_i974.FirebaseFirestore>()));
-  gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
-        gh<_i473.LocationService>(),
-        gh<_i766.GeocodingService>(),
-      ));
-  gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc(
-        gh<_i886.ModerationRepository>(),
-        gh<_i19.ImageProcessor>(),
-      ));
   gh.lazySingleton<_i749.AppUserRepository>(() => _i90.SqlAppUserRepositoryImpl(
         gh<_i780.AuthenticationService>(),
         gh<_i178.SqlDatabaseService>(),
+        gh<_i310.SearchService>(),
       ));
+  gh.lazySingleton<_i60.NoSqlDatabaseService>(
+      () => _i959.NoSqlFirestoreServiceImpl(gh<_i974.FirebaseFirestore>()));
+  gh.factory<_i658.AccountSetupBloc>(() =>
+      _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.lazySingleton<_i480.PostRepository>(
       () => _i181.RemotePostRepositorySqlImpl(
             gh<_i1045.StorageService>(),
@@ -163,7 +167,28 @@ _i174.GetIt init(
             gh<_i473.LocationService>(),
             gh<_i780.AuthenticationService>(),
             gh<_i766.GeocodingService>(),
+            gh<_i310.SearchService>(),
           ));
+  gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
+        gh<_i473.LocationService>(),
+        gh<_i766.GeocodingService>(),
+      ));
+  gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((
+    user,
+    _,
+  ) =>
+      _i501.FollowBloc(
+        gh<_i749.AppUserRepository>(),
+        user,
+      ));
+  gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc(
+        gh<_i886.ModerationRepository>(),
+        gh<_i19.ImageProcessor>(),
+      ));
+  gh.factory<_i348.SearchBloc>(() => _i348.SearchBloc(
+        gh<_i749.AppUserRepository>(),
+        gh<_i480.PostRepository>(),
+      ));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,
@@ -196,19 +221,9 @@ _i174.GetIt init(
       () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
   gh.factory<_i511.AuthBloc>(
       () => _i511.AuthBloc(gh<_i749.AppUserRepository>()));
-  gh.factory<_i658.AccountSetupBloc>(() =>
-      _i658.AccountSetupBloc(appUserRepository: gh<_i749.AppUserRepository>()));
   gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(
         gh<_i749.AppUserRepository>(),
         gh<_i557.CommentRepository>(),
-      ));
-  gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((
-    user,
-    _,
-  ) =>
-      _i501.FollowBloc(
-        gh<_i749.AppUserRepository>(),
-        user,
       ));
   return getIt;
 }

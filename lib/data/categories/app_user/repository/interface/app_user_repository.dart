@@ -51,4 +51,21 @@ abstract class AppUserRepository {
 
   /// Thực hiện hành động follow/unfollow một người dùng.
   Future<Either<AppUserFailure, void>> followUser({required String targetUserId, required bool isFollowing});
+
+  /// Tìm kiếm hồ sơ người dùng (profiles) dựa trên một truy vấn văn bản.
+  ///
+  /// Phương thức này sử dụng một dịch vụ tìm kiếm bên ngoài (ví dụ: Algolia)
+  /// để tìm kiếm username hoặc display name.
+  ///
+  /// [query]: Chuỗi văn bản để tìm kiếm.
+  /// [page]: Số trang kết quả, bắt đầu từ 0.
+  /// [hitsPerPage]: Số lượng kết quả trên mỗi trang.
+  ///
+  /// Trả về một `Right` chứa danh sách các `AppUser` nếu thành công,
+  /// hoặc một `Left` chứa `AppUserFailure` nếu thất bại.
+  Future<Either<AppUserFailure, List<AppUser>>> searchProfiles({
+    required String query,
+    int page = 0,
+    int hitsPerPage = 20,
+  });
 }
