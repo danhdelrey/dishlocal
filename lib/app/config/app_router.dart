@@ -36,12 +36,11 @@ class AppRouter {
       GoRoute(
         path: '/search_input',
         builder: (context, state) => const SearchInputPage(),
-        routes: [
-          GoRoute(
-          path: 'search_result',
-          builder: (context, state) => const SearchResultPage(),
-        ),
-        ]
+        
+      ),
+       GoRoute(
+        path: '/search_result',
+        builder: (context, state) => const SearchResultPage(),
       ),
 
       GoRoute(

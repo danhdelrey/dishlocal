@@ -25,7 +25,7 @@ class SearchInputPage extends StatelessWidget {
                       color: appColorScheme(context).onSurface,
                     ),
                     onSubmitted: (value) {
-                      context.go('/search_input/search_result');
+                      context.go('/search_result');
                     },
               ),
             ),
