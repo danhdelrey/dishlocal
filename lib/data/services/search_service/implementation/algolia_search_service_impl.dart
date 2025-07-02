@@ -10,18 +10,13 @@ import 'package:logging/logging.dart';
 @LazySingleton(as: SearchService)
 class AlgoliaSearchServiceImpl implements SearchService {
   final _log = Logger('AlgoliaSearchServiceImpl');
-  late final SearchClient _client;
+  final  _searchClient = SearchClient(
+    appId: AppEnvironment.algoliaAppId,
+    apiKey: AppEnvironment.algoliaApiKey,
+  );
 
-  // Sử dụng @factoryMethod để tạo instance và inject các biến môi trường
-  @factoryMethod
-  AlgoliaSearchServiceImpl(
-  ) {
+  AlgoliaSearchServiceImpl() {
     _log.info('Initializing with App ID: ${AppEnvironment.algoliaAppId}');
-    _client = SearchClient(
-      appId: AppEnvironment.algoliaAppId,
-      apiKey: AppEnvironment.algoliaApiKey,
-      
-    );
   }
 
   // Helper để chuyển đổi enum sang tên index thực tế
@@ -34,7 +29,7 @@ class AlgoliaSearchServiceImpl implements SearchService {
     }
   }
 
-   @override
+  @override
   Future<List<T>> search<T>({
     required String query,
     required SearchIndex index,
@@ -57,7 +52,7 @@ class AlgoliaSearchServiceImpl implements SearchService {
         hitsPerPage: hitsPerPage,
       );
 
-      final response = await _client.searchIndex(request: searchRequest);
+      final response = await _searchClient.searchIndex(request: searchRequest);
 
       _log.fine('Search successful. Found ${response.nbHits} hits in ${response.processingTimeMS}ms.');
 
@@ -131,11 +126,5 @@ class AlgoliaSearchServiceImpl implements SearchService {
     }
   }
 
-  // Quan trọng: cung cấp một phương thức để giải phóng tài nguyên khi service không còn được sử dụng
-  // Bạn có thể gọi nó từ dispose của một BLoC/Provider hoặc khi ứng dụng đóng
-  @disposeMethod
-  void dispose() {
-    _log.info('Disposing AlgoliaSearchService and closing the client.');
-    _client.dispose();
-  }
+  
 }

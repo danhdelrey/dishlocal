@@ -89,7 +89,8 @@ import '../../ui/features/delete_post/bloc/delete_post_bloc.dart' as _i204;
 import '../../ui/features/follow/bloc/follow_bloc.dart' as _i501;
 import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
     as _i144;
-import '../../ui/features/search/bloc/search_bloc.dart' as _i348;
+import '../../ui/features/post_search/bloc/post_search_bloc.dart' as _i892;
+import '../../ui/features/profile_search/bloc/profile_search_bloc.dart' as _i32;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../../ui/features/view_post/bloc/view_post_bloc.dart' as _i10;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
@@ -125,10 +126,7 @@ _i174.GetIt init(
     () => _i709.HiveAiModerationServiceImpl(),
     instanceName: 'hive.ai',
   );
-  gh.lazySingleton<_i310.SearchService>(
-    () => _i324.AlgoliaSearchServiceImpl(),
-    dispose: (i) => i.dispose(),
-  );
+  gh.lazySingleton<_i310.SearchService>(() => _i324.AlgoliaSearchServiceImpl());
   gh.lazySingleton<_i367.DistanceService>(
       () => _i1015.HaversineDistanceService());
   gh.lazySingleton<_i1045.StorageService>(
@@ -185,10 +183,6 @@ _i174.GetIt init(
         gh<_i886.ModerationRepository>(),
         gh<_i19.ImageProcessor>(),
       ));
-  gh.factory<_i348.SearchBloc>(() => _i348.SearchBloc(
-        gh<_i749.AppUserRepository>(),
-        gh<_i480.PostRepository>(),
-      ));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,
@@ -198,6 +192,8 @@ _i174.GetIt init(
         gh<_i749.AppUserRepository>(),
         post,
       ));
+  gh.factory<_i32.ProfileSearchBloc>(
+      () => _i32.ProfileSearchBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
   gh.lazySingleton<_i557.CommentRepository>(
@@ -219,6 +215,8 @@ _i174.GetIt init(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i204.DeletePostBloc>(
       () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
+  gh.factory<_i892.PostSearchBloc>(
+      () => _i892.PostSearchBloc(gh<_i480.PostRepository>()));
   gh.factory<_i511.AuthBloc>(
       () => _i511.AuthBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(

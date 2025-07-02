@@ -1,7 +1,7 @@
 
 enum SearchIndex { posts, profiles }
 
-abstract interface class SearchService {
+abstract class SearchService {
   /// Tìm kiếm trên một index cụ thể dựa trên một truy vấn.
   ///
   /// [T]: Kiểu dữ liệu của kết quả trả về (ví dụ: `Post`, `Profile`).
