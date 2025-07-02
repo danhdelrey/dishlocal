@@ -102,4 +102,18 @@ class AppEnvironment {
     return dotenv.env['HIVE_API_SECRET_KEY'] ?? '';
   }
 
+  //Algolia
+  static String get algoliaAppId {
+    if (isInDevelopment) {
+      return dotenv.env['ALGOLIA_APP_ID_DEV'] ?? '';
+    }
+    return dotenv.env['ALGOLIA_APP_ID_PROD'] ?? '';
+  }
+  static String get algoliaApiKey {
+    if (isInDevelopment) {
+      return dotenv.env['ALGOLIA_API_KEY_DEV'] ?? '';
+    }
+    return dotenv.env['ALGOLIA_API_KEY_PROD'] ?? '';
+  }
+
 }
