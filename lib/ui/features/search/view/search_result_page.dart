@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class SearchInputPage extends StatelessWidget {
-  const SearchInputPage({super.key});
+class SearchResultPage extends StatelessWidget {
+  const SearchResultPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+   return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         titleSpacing: 0,
@@ -24,9 +24,6 @@ class SearchInputPage extends StatelessWidget {
                 style: appTextTheme(context).bodyMedium?.copyWith(
                       color: appColorScheme(context).onSurface,
                     ),
-                    onSubmitted: (value) {
-                      context.go('/search_input/search_result');
-                    },
               ),
             ),
             const SizedBox(

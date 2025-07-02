@@ -9,6 +9,7 @@ import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
 import 'package:dishlocal/ui/features/create_post/view/new_post_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/search/view/search_input_page.dart';
+import 'package:dishlocal/ui/features/search/view/search_result_page.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_page.dart';
 import 'package:dishlocal/ui/features/account_setup/view/account_setup_page.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
@@ -35,7 +36,14 @@ class AppRouter {
       GoRoute(
         path: '/search_input',
         builder: (context, state) => const SearchInputPage(),
+        routes: [
+          GoRoute(
+          path: 'search_result',
+          builder: (context, state) => const SearchResultPage(),
+        ),
+        ]
       ),
+
       GoRoute(
         path: '/account_setup',
         builder: (context, state) => const AccountSetupPage(),
