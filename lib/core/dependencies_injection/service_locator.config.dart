@@ -70,6 +70,8 @@ import '../../data/services/moderation_service/implementation/sightengine_modera
     as _i28;
 import '../../data/services/moderation_service/interface/moderation_service.dart'
     as _i692;
+import '../../data/services/search_service/implementation/algolia_search_service_impl.dart'
+    as _i324;
 import '../../data/services/search_service/interface/search_service.dart'
     as _i310;
 import '../../data/services/storage_service/implementation/cloudinary_storage_service_impl.dart'
@@ -124,6 +126,7 @@ _i174.GetIt init(
     () => _i709.HiveAiModerationServiceImpl(),
     instanceName: 'hive.ai',
   );
+  gh.lazySingleton<_i310.SearchService>(() => _i324.AlgoliaSearchServiceImpl());
   gh.lazySingleton<_i367.DistanceService>(
       () => _i1015.HaversineDistanceService());
   gh.lazySingleton<_i1045.StorageService>(

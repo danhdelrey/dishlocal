@@ -19,7 +19,6 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
   final PostRepository _postRepository;
   static const int _hitsPerPage = 15;
 
-  // Biến cục bộ để lưu query hiện tại
   String _currentQuery = '';
 
   PostSearchBloc(this._postRepository) : super(PostSearchState()) {
@@ -37,9 +36,10 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
 
       emit(state.copyWith(isLoading: true));
 
-      // Tính toán trang cần tải. `state.pages` là List<List<Post>>,
-      // nên số trang đã tải là `state.pages?.length ?? 0`.
-      final pageToFetch = state.pages?.length ?? 0;
+      // --- CẢI TIẾN CÁCH TÍNH TRANG CẦN TẢI ---
+      // Lấy page key cuối cùng đã tải, nếu chưa có thì là -1, sau đó +1 để ra trang tiếp theo (0).
+      // Đây là cách làm chuẩn của thư viện.
+      final pageToFetch = (state.keys?.last ?? -1) + 1;
       _log.info('📥 Đang tải trang bài viết số $pageToFetch...');
 
       final result = await _postRepository.searchPosts(
@@ -57,16 +57,19 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
           final isLastPage = newPosts.length < _hitsPerPage;
           _log.info('✅ Tải được ${newPosts.length} bài viết. isLastPage=$isLastPage');
 
+          // --- SỬA LỖI Ở ĐÂY ---
           emit(state.copyWith(
+            // Cập nhật danh sách các trang
             pages: [...?state.pages, newPosts],
-            // Không cần 'keys' vì chúng ta dùng page number
+            // **FIX**: Cập nhật danh sách các key tương ứng
+            keys: [...?state.keys, pageToFetch],
+            // Xác định xem còn trang tiếp theo không
             hasNextPage: !isLastPage,
             isLoading: false,
+            error: null, // Xóa lỗi cũ nếu có
           ));
         },
       );
-    },
-        // Dùng transformer để tránh spam request khi cuộn nhanh
-        transformer: (events, mapper) => events.throttleTime(const Duration(milliseconds: 300)).asyncExpand(mapper));
+    }, transformer: (events, mapper) => events.throttleTime(const Duration(milliseconds: 300)).asyncExpand(mapper));
   }
 }
