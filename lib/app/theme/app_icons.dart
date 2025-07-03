@@ -55,7 +55,9 @@ enum AppIcons {
   appIconGradient('app-icon-gradient'),
   fabGradient('fab_gradient'),
   gridLine('gridLine'),
-  gridFilled('gridFilled');
+  gridFilled('gridFilled'),
+  wifiOffFilled('wifi_off_filled'), // Gốc: wifi_off_filled.svg
+  locationOffFilled('location_off_filled'); // Gốc: location_off_filled.svg
 
   const AppIcons(this.fileName);
   final String fileName;

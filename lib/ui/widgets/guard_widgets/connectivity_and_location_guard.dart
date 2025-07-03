@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/custom_colors.dart';
+import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_filled_button.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -130,27 +134,37 @@ class _ConnectivityAndLocationGuardState extends State<ConnectivityAndLocationGu
 
     return Scaffold(
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.location_off, size: 80, color: Colors.red),
-              const SizedBox(height: 24),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.location_on),
-                label: Text(_locationPermission == LocationPermission.deniedForever ? "Mở Cài Đặt" : "Yêu Cầu Quyền"),
-                onPressed: _requestLocationPermission,
-              ),
-            ],
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppIcons.locationOffFilled.toSvg(
+          width: 80,
+          color: Theme.of(context).colorScheme.primary,
           ),
+          const SizedBox(height: 24),
+          Text(
+          message,
+          textAlign: TextAlign.center,
+          style: appTextTheme(context).titleMedium,
+          ),
+          const SizedBox(height: 24),
+          GradientFilledButton(
+          icon: Icon(
+            _locationPermission == LocationPermission.deniedForever 
+            ? Icons.settings 
+            : Icons.location_on,
+            color: Colors.white,
+          ),
+          label: _locationPermission == LocationPermission.deniedForever 
+            ? "Mở Cài Đặt" 
+            : "Cấp quyền",
+          onTap: _requestLocationPermission,
+          ),
+        ],
         ),
+      ),
       ),
     );
   }
@@ -176,21 +190,28 @@ class _ConnectivityAndLocationGuardState extends State<ConnectivityAndLocationGu
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                !hasInternet ? Icons.wifi_off : Icons.location_off,
-                size: 80,
-                color: Colors.orange,
-              ),
+              // Sử dụng AppIcons thay vì Material Icons
+              !hasInternet
+                  ? AppIcons.wifiOffFilled.toSvg(
+                      width: 80,
+                      color: Theme.of(context).colorScheme.primary,
+                    )
+                  : AppIcons.locationOffFilled.toSvg(
+                      width: 80,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               const SizedBox(height: 24),
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18),
+                style: appTextTheme(context).titleMedium,
               ),
               const SizedBox(height: 24),
-              TextButton(
-                child: const Text("Tải lại"),
-                onPressed: () {
+              // Sử dụng primary gradient cho button
+              GradientFilledButton(
+                icon: const Icon(Icons.refresh, color: Colors.white),
+                label: 'Tải lại',
+                onTap: () {
                   setState(() {
                     _isLoading = true;
                   });
