@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:dishlocal/core/app_environment/app_environment.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 
 import 'package:dishlocal/app/config/app_router.dart';
 import 'package:dishlocal/app/theme/theme.dart';
@@ -34,6 +34,24 @@ Future<void> main() async {
   //   options: AppEnvironment.firebaseOption,
   // );
 
+  // Kích hoạt chế độ Edge-to-Edge
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  // Làm cho thanh điều hướng và thanh trạng thái trong suốt
+  // Điều này cho phép widget của bạn vẽ phía sau chúng.
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    // Làm cho thanh trạng thái trong suốt
+    statusBarColor: Colors.transparent,
+    // (Tùy chọn) Điều chỉnh màu icon trên thanh trạng thái (sáng hoặc tối)
+    statusBarIconBrightness: Brightness.light, 
+
+    // Làm cho thanh điều hướng trong suốt (chỉ Android)
+    systemNavigationBarColor: Colors.transparent,
+    // (Tùy chọn) Điều chỉnh màu icon trên thanh điều hướng (chỉ Android)
+    systemNavigationBarIconBrightness: Brightness.light, 
+  ));
+
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());
   });
@@ -47,10 +65,62 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  // Biến để tránh hiển thị hộp thoại nhiều lần
+  bool _isUpdateChecked = false;
+  final _log = Logger('_MyAppState');
+
   @override
   void initState() {
     super.initState();
     FlutterNativeSplash.remove();
+    // Chỉ kiểm tra cập nhật một lần khi widget được tạo
+    if (!_isUpdateChecked) {
+      _checkForUpdate();
+      _isUpdateChecked = true;
+    }
+  }
+
+  // Hàm kiểm tra và kích hoạt cập nhật
+  Future<void> _checkForUpdate() async {
+    _log.info("Kiểm tra cập nhật...");
+    try {
+      AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+
+      // Kiểm tra xem có bản cập nhật không
+      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+        // Quyết định dùng loại cập nhật nào (Immediate hay Flexible)
+        // Ở đây ví dụ ưu tiên Immediate nếu được phép
+        if (updateInfo.immediateUpdateAllowed) {
+          _log.info("Có bản cập nhật Tức thì (Immediate).");
+          // Kích hoạt luồng cập nhật Tức thì
+          AppUpdateResult result = await InAppUpdate.performImmediateUpdate();
+
+          if (result == AppUpdateResult.success) {
+            _log.info("Cập nhật Tức thì thành công!");
+          } else {
+            _log.info("Người dùng đã hủy cập nhật Tức thì.");
+          }
+        } else if (updateInfo.flexibleUpdateAllowed) {
+          _log.info("Có bản cập nhật Linh hoạt (Flexible).");
+          // Kích hoạt luồng cập nhật Linh hoạt
+          AppUpdateResult result = await InAppUpdate.startFlexibleUpdate();
+
+          if (result == AppUpdateResult.success) {
+            _log.info("Bắt đầu tải cập nhật Linh hoạt.");
+            // Sau khi tải xong, bạn phải tự kích hoạt cài đặt
+            // Đây là bước quan trọng nhất của Flexible update
+            await InAppUpdate.completeFlexibleUpdate();
+            _log.info("Cập nhật Linh hoạt đã được cài đặt.");
+          } else {
+            _log.info("Người dùng đã hủy cập nhật Linh hoạt.");
+          }
+        }
+      } else {
+        _log.info("Không có bản cập nhật nào.");
+      }
+    } catch (e) {
+      _log.info("Lỗi khi kiểm tra cập nhật: $e");
+    }
   }
 
   @override
