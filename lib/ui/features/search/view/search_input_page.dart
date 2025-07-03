@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -27,7 +28,7 @@ class SearchInputPage extends StatelessWidget {
                       color: appColorScheme(context).onSurface,
                     ),
                 onSubmitted: (value) {
-                  context.go('/search_result', extra: {'query': value});
+                  context.pushReplacement('/search_result', extra: {'query': value});
                 },
               ),
             ),

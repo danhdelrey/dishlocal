@@ -141,7 +141,7 @@ class _ShimmeringProfileListItemState extends State<ShimmeringProfileListItem> w
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    height: 12.0,
+                    height: 10.0,
                     width: 50 + (Random().nextDouble() * 100),
                     decoration: BoxDecoration(
                       color: placeholderColor,
@@ -150,7 +150,7 @@ class _ShimmeringProfileListItemState extends State<ShimmeringProfileListItem> w
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    height: 12.0,
+                    height: 10.0,
                     width: 200.0,
                     decoration: BoxDecoration(
                       color: placeholderColor,

@@ -5,6 +5,7 @@ import 'package:dishlocal/ui/features/post_search/bloc/post_search_bloc.dart';
 import 'package:dishlocal/ui/features/profile_search/bloc/profile_search_bloc.dart';
 import 'package:dishlocal/ui/features/profile_search/view/list_profile_page.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
+import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +25,9 @@ class SearchResultScreen extends StatelessWidget {
         BlocProvider(create: (context) => getIt<ProfileSearchBloc>()),
       ],
       // _SearchResultContent sẽ nhận query và sử dụng các BLoC đã được cung cấp
-      child: _SearchResultContent(query: query),
+      child: ConnectivityAndLocationGuard(builder: (context) {
+        return _SearchResultContent(query: query);
+      }),
     );
   }
 }

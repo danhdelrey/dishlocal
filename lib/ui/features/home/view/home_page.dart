@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
@@ -9,6 +10,7 @@ import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 /// BƯỚC 1: HomePage giờ trở thành một "Container" đơn giản, có thể là StatelessWidget.
@@ -101,6 +103,7 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
           // Phần headerSliverBuilder không thay đổi
           return <Widget>[
             GlassSliverAppBar(
+              
               centerTitle: true,
               hasBorder: false,
               title: ShaderMask(
@@ -112,6 +115,14 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
                       ),
                 ),
               ),
+              actions: [
+                IconButton(
+                  icon: AppIcons.search.toSvg(
+                    color: appColorScheme(context).onSurfaceVariant,
+                  ),
+                  onPressed: () => context.push('/search_input'),
+                ),
+              ],
               bottom: TabBar(
                 dividerColor: Colors.white.withValues(alpha: 0.1),
                 controller: _tabController,
