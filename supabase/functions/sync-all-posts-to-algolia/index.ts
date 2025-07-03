@@ -1,3 +1,5 @@
+// File: supabase/functions/sync-all-posts-to-algolia/index.ts
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -51,16 +53,32 @@ serve(async (req) => {
       });
     }
 
-    // 4. Chuẩn bị dữ liệu để gửi lên Algolia
-    // Algolia sử dụng `objectID` làm định danh duy nhất.
-    // Chúng ta sẽ map `id` của Supabase thành `objectID`.
-    const algoliaObjects = posts.map(post => ({
-      ...post,
-      objectID: post.id,
-    }));
+    // 4. Chuẩn bị dữ liệu để gửi lên Algolia (Bao gồm cả _geoloc)
+    const algoliaObjects = posts.map(post => {
+      // *** THAY ĐỔI QUAN TRỌNG Ở ĐÂY ***
+      // Tạo object _geoloc theo đúng định dạng Algolia yêu cầu
+      const geoData = (post.latitude && post.longitude) 
+        ? { _geoloc: { lat: post.latitude, lng: post.longitude } }
+        : {};
+
+      return {
+        objectID: post.id,
+        id: post.id,
+        image_url: post.image_url,
+        dish_name: post.dish_name,
+        location_name: post.location_name,
+        location_address: post.location_address,
+        price: post.price,
+        insight: post.insight,
+        // Thêm object _geoloc vào đây
+        ...geoData,
+        // Chúng ta vẫn có thể giữ lại latitude và longitude riêng nếu cần hiển thị trên client
+        latitude: post.latitude,
+        longitude: post.longitude,
+      };
+    });
 
     // 5. Gửi dữ liệu lên Algolia bằng REST API (sử dụng fetch)
-    // Chia nhỏ dữ liệu thành các batch (ví dụ mỗi batch 1000 object) để không bị quá tải
     const batchSize = 1000;
     let totalSynced = 0;
 
@@ -78,7 +96,7 @@ serve(async (req) => {
           },
           body: JSON.stringify({
             requests: batch.map(obj => ({
-              action: "updateObject", // 'updateObject' sẽ tạo mới nếu chưa có, hoặc cập nhật nếu đã có
+              action: "updateObject",
               body: obj,
             })),
           }),
@@ -108,7 +126,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: (error as Error).message }), {
+    return new Response(JSON.stringify({ error: (error instanceof Error) ? error.message : "An unknown error occurred" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
