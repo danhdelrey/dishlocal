@@ -336,7 +336,8 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
       return const Left(AppUserFailure.unknown());
     }
   }
-    @override
+
+  @override
   Future<Either<AppUserFailure, List<AppUser>>> searchProfiles({
     required String query,
     int page = 0,
@@ -344,22 +345,59 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   }) async {
     _log.info('🔍 Bắt đầu tìm kiếm profile với query: "$query"');
     try {
-      // 1. Gọi SearchService để lấy danh sách AppUser
-      final profiles = await _searchService.search<AppUser>(
+      // 1. Gọi SearchService để lấy danh sách objectIds
+      final searchResult = await _searchService.search(
         query: query,
-        index: SearchIndex.profiles, // Chỉ định index 'profiles'
-        fromJson: AppUser.fromJson, // Cung cấp hàm factory
+        searchType: SearchableItem.profiles,
         page: page,
         hitsPerPage: hitsPerPage,
       );
-      _log.fine('✅ SearchService trả về ${profiles.length} profile.');
 
-      // 2. Tùy chọn: Làm giàu dữ liệu (ví dụ: kiểm tra trạng thái 'isFollowing')
-      // Nếu dữ liệu từ Algolia đã đủ, bạn có thể bỏ qua bước này.
-      // Nếu không, bạn có thể lặp qua 'profiles' và cập nhật 'isFollowing'.
+      if (searchResult.objectIds.isEmpty) {
+        _log.info('🔍 Không tìm thấy profile nào với query: "$query"');
+        return const Right([]);
+      }
 
-      // 3. Trả về kết quả thành công
-      return Right(profiles);
+      // 2. Lấy chi tiết profiles từ database
+      final currentUserId = _authService.getCurrentUserId();
+      final List<AppUser> appUsers = [];
+
+      for (var userId in searchResult.objectIds) {
+        _log.info('📥 Bắt đầu lấy chi tiết profile ID: $userId');
+        final profile = await _dbService.readSingleById<ProfileEntity>(
+          tableName: 'profiles',
+          id: userId,
+          fromJson: ProfileEntity.fromJson,
+        );
+
+        // Kiểm tra trạng thái following
+        bool isFollowing = false;
+        if (currentUserId != null && currentUserId != userId) {
+          final result = await _dbService.readList(
+            tableName: 'followers',
+            fromJson: (json) => json,
+            filters: {'user_id': userId, 'follower_id': currentUserId},
+          );
+          isFollowing = result.isNotEmpty;
+        }
+
+        final appUser = AppUser(
+          userId: profile.id,
+          email: '', // Không cần email khi tìm kiếm
+          username: profile.username,
+          displayName: profile.displayName,
+          photoUrl: profile.photoUrl,
+          bio: profile.bio,
+          followerCount: profile.followerCount,
+          followingCount: profile.followingCount,
+          isSetupCompleted: profile.isSetupCompleted,
+          isFollowing: isFollowing,
+          originalDisplayname: profile.displayName ?? '',
+        );
+        appUsers.add(appUser);
+      }
+      _log.info('🔍 Tìm kiếm thành công, tìm thấy ${appUsers.length} profiles.');
+      return Right(appUsers);
     } on SearchServiceException catch (e, st) {
       // 4. Bắt lỗi từ SearchService và ánh xạ sang AppUserFailure
       _log.severe('❌ Lỗi từ SearchService khi tìm kiếm profile', e, st);
@@ -368,7 +406,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         // Lỗi kết nối
         SearchConnectionException() => AppUserFailure.databaseFailure(e.message),
         // Lỗi API (hệ thống)
-        SearchApiException() => AppUserFailure.databaseFailure('Dịch vụ tìm kiếm đang gặp sự cố.'),
+        SearchApiException() => const AppUserFailure.databaseFailure('Dịch vụ tìm kiếm đang gặp sự cố.'),
         // Các lỗi khác từ search service
         _ => const AppUserFailure.unknown(),
       };

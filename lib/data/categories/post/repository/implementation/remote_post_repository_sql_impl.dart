@@ -382,14 +382,34 @@ class RemotePostRepositorySqlImpl implements PostRepository {
     _log.info('🔍 Bắt đầu tìm kiếm bài viết với query: "$query"');
     try {
       // 1. Ủy quyền công việc tìm kiếm cho SearchService
-      final posts = await _searchService.search<Post>(
+      final searchResult = await _searchService.search(
         query: query,
-        index: SearchIndex.posts,
-        fromJson: Post.fromJson,
+        searchType: SearchableItem.posts,
         page: page,
         hitsPerPage: hitsPerPage,
       );
-      _log.fine('✅ SearchService trả về ${posts.length} kết quả.');
+      _log.info('✅ Tìm kiếm thành công, nhận được ${searchResult.objectIds.length} bài viết.');
+      if (searchResult.objectIds.isEmpty) {
+        _log.info('🔍 Không tìm thấy bài viết nào với query: "$query"');
+        return const Right([]); // Trả về danh sách rỗng nếu không có kết quả
+      }
+      _log.info('📥 Bắt đầu lấy chi tiết cho ${searchResult.objectIds.length} bài viết...');
+      // 2. Lấy chi tiết bài viết từ Supabase bằng RPC;
+
+      final currentUserId = _authenticationService.getCurrentUserId();
+      final List<Post> posts = [];
+
+      for (var postId in searchResult.objectIds) {
+        _log.info('📥 Bắt đầu lấy chi tiết bài viết ID: $postId');
+        final data = await _supabase.rpc('get_post_details_by_id', params: {
+          'p_post_id': postId,
+          'p_user_id': currentUserId,
+        }).single();
+
+        final post = Post.fromJson(data);
+        posts.add(post);
+        _log.info('✅ Lấy chi tiết bài viết thành công.: ${post.toString()}');
+      }
 
       // 2. Làm giàu dữ liệu với khoảng cách
       final enrichedPosts = await _enrichPostsWithDistance(posts);

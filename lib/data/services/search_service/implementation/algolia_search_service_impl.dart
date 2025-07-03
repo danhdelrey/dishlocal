@@ -4,127 +4,127 @@ import 'package:algoliasearch/algoliasearch.dart';
 import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:dishlocal/data/services/search_service/exception/search_service_exception.dart';
 import 'package:dishlocal/data/services/search_service/interface/search_service.dart';
+import 'package:dishlocal/data/services/search_service/model/search_result.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
 @LazySingleton(as: SearchService)
 class AlgoliaSearchServiceImpl implements SearchService {
   final _log = Logger('AlgoliaSearchServiceImpl');
-  final  _searchClient = SearchClient(
+  final SearchClient _searchClient = SearchClient(
     appId: AppEnvironment.algoliaAppId,
     apiKey: AppEnvironment.algoliaApiKey,
   );
 
   AlgoliaSearchServiceImpl() {
-    _log.info('Initializing with App ID: ${AppEnvironment.algoliaAppId}');
-  }
-
-  // Helper để chuyển đổi enum sang tên index thực tế
-  String _indexName(SearchIndex index) {
-    switch (index) {
-      case SearchIndex.posts:
-        return 'posts'; // Tên index trên dashboard Algolia
-      case SearchIndex.profiles:
-        return 'profiles'; // Tên index trên dashboard Algolia
-    }
+    _log.info('AlgoliaSearchServiceImpl initialized. App ID: ${AppEnvironment.algoliaAppId}');
   }
 
   @override
-  Future<List<T>> search<T>({
+  Future<SearchResult> search({
     required String query,
-    required SearchIndex index,
-    required T Function(Map<String, dynamic> json) fromJson,
+    required SearchableItem searchType,
     int page = 0,
     int hitsPerPage = 20,
   }) async {
-    _log.info('Executing search for "$query" on index "${_indexName(index)}", page: $page, hitsPerPage: $hitsPerPage');
+    _log.fine(
+      'Starting search for query: "$query" in type: ${searchType.name} '
+      '| page: $page | hitsPerPage: $hitsPerPage',
+    );
 
     if (query.trim().isEmpty) {
-      _log.warning('Search query is empty or whitespace.');
-      throw InvalidSearchQueryException('Truy vấn không được để trống.');
+      _log.warning('Search query is empty. Throwing InvalidSearchQueryException.');
+      throw InvalidSearchQueryException('Truy vấn tìm kiếm không được để trống.');
     }
 
+    final String indexName;
+    switch (searchType) {
+      case SearchableItem.posts:
+        indexName = 'posts';
+        break;
+      case SearchableItem.profiles:
+        indexName = 'profiles';
+        break;
+    }
+    _log.finer('Using Algolia index: "$indexName"');
+
     try {
+      // --- THAY ĐỔI QUAN TRỌNG Ở ĐÂY ---
+      // 1. Tạo một đối tượng SearchForHits để chứa tất cả các tham số tìm kiếm
       final searchRequest = SearchForHits(
-        indexName: _indexName(index),
+        indexName: indexName,
         query: query,
         page: page,
         hitsPerPage: hitsPerPage,
       );
 
-      final response = await _searchClient.searchIndex(request: searchRequest);
+      // 2. Gọi API và truyền đối tượng vừa tạo vào tham số `request`
+      final response = await _searchClient.searchIndex(
+        request: searchRequest,
+      );
+      // ------------------------------------
 
-      _log.fine('Search successful. Found ${response.nbHits} hits in ${response.processingTimeMS}ms.');
+      _log.info(
+        'Search successful. Found ${response.nbHits} hits '
+        'in ${response.processingTimeMS}ms.',
+      );
 
-      final hits = response.hits;
-      final results = <T>[];
-      for (final hit in hits) {
-        try {
-          results.add(fromJson(hit));
-        } on Exception catch (e, stackTrace) {
-          _log.severe('Failed to parse a hit object. Error: $e', e, stackTrace);
-          throw SearchDataParsingException(
-            message: 'Không thể phân tích một đối tượng kết quả: ${e.toString()}',
-            originalError: e,
-          );
-        }
-      }
-      _log.info('Successfully parsed ${results.length} out of ${hits.length} hits.');
-      return results;
-    }
-    // ---- Bắt đầu khối xử lý lỗi được cập nhật ----
-
-    // 1. Xử lý lỗi API (phổ biến nhất)
-    on AlgoliaApiException catch (e, stackTrace) {
-      final errorMessage = e.error.toString(); // e.error có thể là Map hoặc String
-      final statusCode = e.statusCode;
-      _log.severe('Algolia API error: $errorMessage (Status: $statusCode)', e, stackTrace);
-      switch (statusCode) {
+      return SearchResult(
+          totalPage: response.nbPages,
+          totalHits: response.nbHits,
+          currentPage: response.page,
+          objectIds: response.hits
+              .map(
+                (hit) => hit.objectID,
+              )
+              .toList());
+    } on AlgoliaApiException catch (e, stackTrace) {
+      _log.severe(
+        'Algolia API Error! Status: ${e.statusCode}, Message: ${e.error}',
+        e,
+        stackTrace,
+      );
+      switch (e.statusCode) {
         case 401:
         case 403:
-          throw SearchAuthenticationException(errorMessage);
-        case 429:
-          throw SearchRateLimitException(errorMessage);
+          throw SearchAuthenticationException(e.error.toString());
         case 404:
-          throw SearchIndexNotFoundException(_indexName(index), errorMessage);
+          throw SearchIndexNotFoundException(indexName, e.error.toString());
+        case 429:
+          throw SearchRateLimitException(e.error.toString());
         default:
           throw UnknownSearchApiException(
-            message: errorMessage,
-            statusCode: statusCode,
+            message: e.error.toString(),
+            statusCode: e.statusCode,
           );
       }
-    }
-
-    // 2. Xử lý lỗi Timeout
-    on AlgoliaTimeoutException catch (e, stackTrace) {
-      _log.warning('Algolia request timed out. Error: ${e.error}', e, stackTrace);
-      throw SearchConnectionException('Yêu cầu tìm kiếm đã hết hạn.');
-    }
-
-    // 3. Xử lý lỗi IO (mạng, kết nối)
-    on AlgoliaIOException catch (e, stackTrace) {
-      _log.warning('Algolia I/O error (network). Error: ${e.error}', e, stackTrace);
-      throw SearchConnectionException('Lỗi kết nối. Vui lòng kiểm tra lại mạng của bạn.');
-    }
-
-    // 4. Xử lý lỗi không thể kết nối đến host
-    on UnreachableHostsException catch (e, stackTrace) {
-      _log.severe('All Algolia hosts are unreachable. Errors: ${e.errors}', e, stackTrace);
+    } on AlgoliaTimeoutException catch (e, stackTrace) {
+      _log.severe('Algolia request timed out.', e, stackTrace);
+      throw SearchConnectionException('Yêu cầu tìm kiếm đã hết thời gian chờ.');
+    } on AlgoliaIOException catch (e, stackTrace) {
+      _log.severe('Algolia IO error occurred.', e, stackTrace);
+      throw SearchConnectionException('Đã xảy ra lỗi mạng trong khi tìm kiếm.');
+    } on UnreachableHostsException catch (e, stackTrace) {
+      _log.severe(
+        'All Algolia hosts are unreachable. Errors: ${e.errors}',
+        e,
+        stackTrace,
+      );
       throw SearchConnectionException('Không thể kết nối đến máy chủ tìm kiếm.');
-    }
-
-    // 5. Bắt các lỗi khác của Algolia (ít phổ biến hơn)
-    on AlgoliaException catch (e, stackTrace) {
-      _log.severe('An unhandled Algolia exception occurred.', e, stackTrace);
-      throw UnknownSearchApiException(message: 'Đã xảy ra lỗi không xác định từ Algolia: ${e.toString()}');
-    }
-
-    // 6. Bắt các lỗi chung của Dart/Flutter
-    on Exception catch (e, stackTrace) {
-      _log.shout('An unhandled exception occurred during search.', e, stackTrace);
-      throw UnknownSearchApiException(message: 'Đã xảy ra lỗi không mong muốn: ${e.toString()}');
+    } on AlgoliaException catch (e, stackTrace) {
+      _log.severe(
+        'An unhandled Algolia exception occurred.',
+        e,
+        stackTrace,
+      );
+      throw UnknownSearchApiException(message: e.toString());
+    } on Exception catch (e, stackTrace) {
+      _log.severe(
+        'An unexpected generic error occurred during search.',
+        e,
+        stackTrace,
+      );
+      throw UnknownSearchApiException(message: 'Đã có lỗi không mong muốn xảy ra.');
     }
   }
-
-  
 }

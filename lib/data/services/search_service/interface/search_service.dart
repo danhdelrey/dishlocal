@@ -1,24 +1,44 @@
+// search_service.dart
 
-enum SearchIndex { posts, profiles }
+import 'package:dishlocal/data/services/search_service/model/search_result.dart';
 
+/// Enum để xác định loại nội dung cần tìm kiếm.
+/// Giúp code dễ đọc và an toàn hơn so với việc dùng chuỗi ('posts', 'profiles').
+enum SearchableItem {
+  posts,
+  profiles,
+}
+
+/// Định nghĩa các phương thức cần có cho một dịch vụ tìm kiếm.
+/// Bất kỳ lớp nào implement `SearchService` sẽ phải cung cấp logic
+/// cho các phương thức này.
 abstract class SearchService {
-  /// Tìm kiếm trên một index cụ thể dựa trên một truy vấn.
+  /// Thực hiện tìm kiếm trên Algolia.
   ///
-  /// [T]: Kiểu dữ liệu của kết quả trả về (ví dụ: `Post`, `Profile`).
-  /// [query]: Chuỗi văn bản để tìm kiếm.
-  /// [index]: Enum chỉ định index cần tìm kiếm (`SearchIndex.posts` hoặc `SearchIndex.profiles`).
-  /// [fromJson]: Một hàm để chuyển đổi một map JSON thành đối tượng kiểu `T`.
-  /// [page]: Số trang kết quả, bắt đầu từ 0.
-  /// [hitsPerPage]: Số lượng kết quả trên mỗi trang.
+  /// Trả về một `Map` chứa danh sách kết quả và thông tin phân trang.
   ///
-  /// Trả về một `Future<List<T>>`.
-  ///
-  /// Có thể throw các exception tương tự như các phương thức riêng lẻ.
-  Future<List<T>> search<T>({
+  /// - [query]: Chuỗi ký tự người dùng nhập vào để tìm kiếm.
+  /// - [searchType]: Loại nội dung cần tìm (`posts` hoặc `profiles`).
+  /// - [page]: Trang kết quả muốn lấy (mặc định là 0, trang đầu tiên).
+  /// - [hitsPerPage]: Số lượng kết quả trên mỗi trang (mặc định là 20).
+  Future<SearchResult> search({
     required String query,
-    required SearchIndex index,
-    required T Function(Map<String, dynamic> json) fromJson,
+    required SearchableItem searchType,
     int page = 0,
     int hitsPerPage = 20,
   });
+
+  // Trong tương lai, bạn có thể dễ dàng thêm các phương thức khác ở đây
+  // ví dụ như tìm kiếm theo vị trí mà không ảnh hưởng đến code hiện tại.
+  /*
+  Future<Map<String, dynamic>> searchByLocation({
+    required String query,
+    required SearchableItem searchType,
+    required double latitude,
+    required double longitude,
+    int radiusInMeters = 5000, // bán kính 5km
+    int page = 0,
+    int hitsPerPage = 20,
+  });
+  */
 }
