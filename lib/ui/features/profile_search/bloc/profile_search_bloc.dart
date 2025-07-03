@@ -34,8 +34,6 @@ class ProfileSearchBloc extends Bloc<ProfileSearchEvent, ProfileSearchState> {
 
       emit(state.copyWith(isLoading: true));
 
-      // --- SỬA CÁCH TÍNH TRANG CẦN TẢI ---
-      // Lấy page key cuối cùng đã tải, nếu chưa có thì là -1, sau đó +1 để ra trang tiếp theo (0).
       final pageToFetch = (state.keys?.last ?? -1) + 1;
       _log.info('📥 Đang tải trang profile số $pageToFetch...');
 
@@ -51,19 +49,19 @@ class ProfileSearchBloc extends Bloc<ProfileSearchEvent, ProfileSearchState> {
           emit(state.copyWith(error: failure, isLoading: false));
         },
         (newProfiles) {
-          final isLastPage = newProfiles.length < _hitsPerPage;
-          _log.info('✅ Tải được ${newProfiles.length} profile. isLastPage=$isLastPage');
+          // Lọc ra profile của current user
+          final currentUserId = _appUserRepository.getCurrentUserId();
+          final filteredProfiles = newProfiles.where((profile) => profile.userId != currentUserId).toList();
+          
+          final isLastPage = filteredProfiles.length < _hitsPerPage;
+          _log.info('✅ Tải được ${filteredProfiles.length} profile (đã loại trừ current user). isLastPage=$isLastPage');
 
-          // --- SỬA LỖI Ở ĐÂY ---
           emit(state.copyWith(
-            // Cập nhật danh sách các trang
-            pages: [...?state.pages, newProfiles],
-            // **FIX**: Cập nhật danh sách các key tương ứng
+            pages: [...?state.pages, filteredProfiles],
             keys: [...?state.keys, pageToFetch],
-            // Xác định xem còn trang tiếp theo không
             hasNextPage: !isLastPage,
             isLoading: false,
-            error: null, // Xóa lỗi cũ nếu có
+            error: null,
           ));
         },
       );

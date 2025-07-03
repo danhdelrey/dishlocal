@@ -185,7 +185,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
                 pageKey: 'profileSavedPosts',
                 noItemsMessage: 'Chưa có bài viết nào được lưu.',
                 // Chỉ hiển thị tab này nếu là trang của chính mình
-                isVisible: currentUserId == (widget.userId ?? currentUserId),
+                //isVisible: currentUserId == (widget.userId ?? currentUserId),
               ),
             ],
           ),

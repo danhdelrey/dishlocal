@@ -28,7 +28,14 @@ class SearchInputPage extends StatelessWidget {
                       color: appColorScheme(context).onSurface,
                     ),
                 onSubmitted: (value) {
-                  context.pushReplacement('/search_result', extra: {'query': value});
+                  if(value.trim().isNotEmpty) {
+                    context.push('/search/result', extra: value.trim());
+                  }else{
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Vui lòng nhập từ khóa tìm kiếm')),
+                    );
+                  }
                 },
               ),
             ),
