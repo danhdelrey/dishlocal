@@ -1,22 +1,45 @@
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
+import 'package:dishlocal/ui/features/post_search/bloc/post_search_bloc.dart';
+import 'package:dishlocal/ui/features/profile_search/bloc/profile_search_bloc.dart';
+import 'package:dishlocal/ui/features/profile_search/view/list_profile_page.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class SearchResultPage extends StatefulWidget {
-  const SearchResultPage({super.key});
+// Widget container nhận query và cung cấp BLoC
+class SearchResultScreen extends StatelessWidget {
+  final String query;
+  const SearchResultScreen({super.key, required this.query});
 
   @override
-  State<SearchResultPage> createState() => _SearchResultPageState();
+  Widget build(BuildContext context) {
+    // Cung cấp các BLoC cho cây widget con
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => getIt<PostSearchBloc>()),
+        BlocProvider(create: (context) => getIt<ProfileSearchBloc>()),
+      ],
+      // _SearchResultContent sẽ nhận query và sử dụng các BLoC đã được cung cấp
+      child: _SearchResultContent(query: query),
+    );
+  }
 }
 
-class _SearchResultPageState extends State<SearchResultPage> with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-  final ScrollController _mainScrollController = ScrollController();
-  //late final List<PostBloc> _postBlocs;
+// Widget nội dung chính, chứa state và logic
+class _SearchResultContent extends StatefulWidget {
+  final String query;
+  const _SearchResultContent({required this.query});
 
-  // BƯỚC 1: Thêm một Set để theo dõi các tab đã được khởi tạo.
+  @override
+  State<_SearchResultContent> createState() => __SearchResultContentState();
+}
+
+class __SearchResultContentState extends State<_SearchResultContent> with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  // Chúng ta không cần lưu trữ BLoCs ở đây nữa vì đã có BlocProvider
   final Set<int> _initializedTabs = {};
 
   @override
@@ -24,142 +47,84 @@ class _SearchResultPageState extends State<SearchResultPage> with SingleTickerPr
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    //final postRepository = getIt<PostRepository>();
+    // Bắt đầu tìm kiếm cho tab đầu tiên (Posts)
+    context.read<PostSearchBloc>().add(PostSearchEvent.searchStarted(widget.query));
+    _initializedTabs.add(0);
 
-    // BƯỚC 2: Khởi tạo các BLoC nhưng KHÔNG fetch dữ liệu ngay.
-    // _postBlocs = [
-    //   PostBloc(postRepository.getPosts),
-    //   PostBloc(postRepository.getFollowingPosts),
-    // ];
-
-    // BƯỚC 3: Fetch dữ liệu cho tab đầu tiên (tab 0) một cách tường minh.
-    // if (_postBlocs.isNotEmpty) {
-    //   _postBlocs[0].add(const PostEvent.fetchNextPostPageRequested());
-    //   _initializedTabs.add(0);
-    // }
-
-    // BƯỚC 4: Thêm listener để xử lý việc chuyển tab.
+    // Lắng nghe sự kiện chuyển tab để fetch dữ liệu cho các tab khác
     _tabController.addListener(_handleTabSelection);
   }
 
-  // BƯỚC 5: Tạo hàm xử lý cho listener.
   void _handleTabSelection() {
     final index = _tabController.index;
-    // Nếu tab này chưa được khởi tạo trước đó...
     if (!_initializedTabs.contains(index)) {
-      // ...thì gửi event fetch và đánh dấu là đã khởi tạo.
-      //_postBlocs[index].add(const PostEvent.fetchNextPostPageRequested());
+      if (index == 1) {
+        // Nếu chuyển đến tab 'Người dùng', bắt đầu tìm kiếm profile
+        context.read<ProfileSearchBloc>().add(ProfileSearchEvent.searchStarted(widget.query));
+      }
       _initializedTabs.add(index);
     }
   }
 
-  void _scrollToTopAndRefresh(int index) {
-    // Logic này không thay đổi
-    if (_mainScrollController.hasClients) {
-      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-    }
-    final innerController = PrimaryScrollController.of(context);
-    if (innerController.hasClients) {
-      innerController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-    }
-    //_postBlocs[index].add(const PostEvent.refreshRequested());
-  }
-
   @override
   void dispose() {
-    // BƯỚC 6: Đừng quên gỡ listener.
     _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
-    _mainScrollController.dispose();
-    // for (var bloc in _postBlocs) {
-    //   bloc.close();
-    // }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Toàn bộ phần UI trong build() không cần thay đổi
     return Scaffold(
-      extendBody: true,
       body: NestedScrollView(
-        controller: _mainScrollController,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
           return <Widget>[
-            GlassSliverAppBar(
-              titleSpacing: 0,
-              centerTitle: true,
-              hasBorder: false,
-              title: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(CupertinoIcons.back),
-                    onPressed: () => context.pop(),
-                  ),
-                  Expanded(
-                    child: CupertinoSearchTextField(
-                      style: appTextTheme(context).bodyMedium?.copyWith(
-                            color: appColorScheme(context).onSurface,
-                          ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                ],
-              ),
+            SliverAppBar(
+              title: Text('Kết quả cho "${widget.query}"'),
+              pinned: true,
+              floating: true,
+              snap: true,
               bottom: TabBar(
-                dividerColor: Colors.white.withValues(alpha: 0.1),
                 controller: _tabController,
-                onTap: (index) {
-                  // Logic refresh-on-tap giữ nguyên
-                  if (!_tabController.indexIsChanging) {
-                    _scrollToTopAndRefresh(index);
-                  }
-                },
                 tabs: const [
                   Tab(text: 'Bài viết'),
                   Tab(text: 'Người dùng'),
                 ],
               ),
-              floating: true,
-              snap: true,
-              pinned: true,
             ),
           ];
         },
         body: TabBarView(
           controller: _tabController,
           children: [
-            // BlocProvider.value(
-            //   value: _postBlocs[0],
-            //   child: const GridPostPage(
-            //     key: PageStorageKey<String>('homeForYouTab'),
-            //     noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
-            //   ),
-            // ),
-            // BlocProvider.value(
-            //   value: _postBlocs[1],
-            //   child: const GridPostPage(
-            //     key: PageStorageKey<String>('homeFollowingTab'),
-            //     noItemsFoundMessage: 'Bạn chưa theo dõi ai.',
-            //   ),
-            // ),
-            Center(
-              child: Text(
-                'Chức năng này hiện chưa được triển khai.',
-                style: appTextTheme(context).bodyLarge?.copyWith(
-                      color: appColorScheme(context).onSurface,
-                    ),
-              ),
+            // Tab bài viết
+            BlocBuilder<PostSearchBloc, PostSearchState>(
+              builder: (context, state) {
+                return GridPostPage(
+                  pagingState: state,
+                  onFetchNextPage: () => context.read<PostSearchBloc>().add(const PostSearchEvent.nextPageRequested()),
+                  onRefresh: () async {
+                    context.read<PostSearchBloc>().add(PostSearchEvent.searchStarted(widget.query));
+                    // Đợi BLoC xử lý xong
+                    await context.read<PostSearchBloc>().stream.firstWhere((s) => s.error != null || s.pages?.isNotEmpty == true);
+                  },
+                  noItemsFoundMessage: "Không tìm thấy bài viết nào.",
+                );
+              },
             ),
-            Center(
-              child: Text(
-                'Chức năng này hiện chưa được triển khai.',
-                style: appTextTheme(context).bodyLarge?.copyWith(
-                      color: appColorScheme(context).onSurface,
-                    ),
-              ),
+            // Tab người dùng
+            BlocBuilder<ProfileSearchBloc, ProfileSearchState>(
+              builder: (context, state) {
+                return ListProfilePage(
+                  pagingState: state,
+                  onFetchNextPage: () => context.read<ProfileSearchBloc>().add(const ProfileSearchEvent.nextPageRequested()),
+                  onRefresh: () async {
+                    context.read<ProfileSearchBloc>().add(ProfileSearchEvent.searchStarted(widget.query));
+                    await context.read<ProfileSearchBloc>().stream.firstWhere((s) => s.error != null || s.pages?.isNotEmpty == true);
+                  },
+                  noItemsFoundMessage: "Không tìm thấy người dùng nào.",
+                );
+              },
             ),
           ],
         ),

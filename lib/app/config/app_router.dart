@@ -24,7 +24,7 @@ class AppRouter {
   final _log = Logger('AppRouter');
 
   late final router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/search_input',
     debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: _redirect,
@@ -36,11 +36,14 @@ class AppRouter {
       GoRoute(
         path: '/search_input',
         builder: (context, state) => const SearchInputPage(),
-        
       ),
-       GoRoute(
+      GoRoute(
         path: '/search_result',
-        builder: (context, state) => const SearchResultPage(),
+        builder: (context, state){
+          final extraMap = state.extra as Map<String, dynamic>;
+          final String query = extraMap['query'];
+          return SearchResultScreen(query: query);
+        },
       ),
 
       GoRoute(
@@ -70,7 +73,7 @@ class AppRouter {
           ]),
       GoRoute(
         path: '/camera',
-        builder: (context, state) =>  CameraPage(),
+        builder: (context, state) => CameraPage(),
         routes: [
           GoRoute(
             path: 'new_post',
@@ -96,8 +99,6 @@ class AppRouter {
           return NewPostPage.edit(postToUpdate: postToUpdate);
         },
       ),
-
-
 
       // Sử dụng MainShell thay vì PersistentTabView.router
       StatefulShellRoute.indexedStack(

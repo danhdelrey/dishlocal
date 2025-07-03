@@ -1,52 +1,48 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
-import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
-import 'package:dishlocal/ui/widgets/animated_widgets/fade_slide_up.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
+// THAY ĐỔI 1: GridPostPage giờ là một widget trình bày thuần túy.
 class GridPostPage extends StatelessWidget {
-  // Chuyển thành StatelessWidget vì không còn state nội bộ
+  // THAY ĐỔI 2: Nó nhận vào state và các hàm callback.
+  final PagingState<dynamic, Post> pagingState;
+  final VoidCallback onFetchNextPage;
+  final Future<void> Function() onRefresh;
   final String noItemsFoundMessage;
 
   const GridPostPage({
     super.key,
+    required this.pagingState,
+    required this.onFetchNextPage,
+    required this.onRefresh,
     this.noItemsFoundMessage = "Không có bài viết nào.",
   });
 
   @override
   Widget build(BuildContext context) {
-    // Widget này sẽ tìm BLoC được cung cấp ở cây widget cha của nó
-    final postBloc = context.watch<PostBloc>(); // Dùng watch để rebuild khi state thay đổi
-    final state = postBloc.state;
-
+    // THAY ĐỔI 3: Không còn `context.watch<PostBloc>()` nữa.
     return RefreshIndicator(
-      onRefresh: () async {
-        postBloc.add(const PostEvent.refreshRequested());
-        // Có thể thêm một completer hoặc đợi một chút để UI mượt hơn
-        await postBloc.stream.firstWhere((s) => !s.isLoading);
-      },
+      onRefresh: onRefresh, // Gọi callback onRefresh
       child: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
           slivers: [
-            PagedSliverMasonryGrid<DateTime?, Post>(
-              state: state, // Lấy state từ BLoC
-              fetchNextPage: () {
-                // Bảo BLoC của nó fetch trang tiếp theo
-                postBloc.add(const PostEvent.fetchNextPostPageRequested());
-              },
+            PagedSliverMasonryGrid<dynamic, Post>(
+              // Dùng state và callback được truyền vào
+              state: pagingState,
+              fetchNextPage: onFetchNextPage,
               builderDelegate: PagedChildBuilderDelegate<Post>(
                 itemBuilder: (context, post, index) => SmallPost(
                   post: post,
                   onDeletePostPopBack: () async {
-                    postBloc.add(const PostEvent.refreshRequested());
-                    await postBloc.stream.firstWhere((s) => !s.isLoading);
+                    // Khi một bài viết bị xóa, chúng ta chỉ cần gọi onRefresh.
+                    await onRefresh();
                   },
                 ),
+                // Các builder khác giữ nguyên
                 firstPageProgressIndicatorBuilder: (_) => Column(
                   children: List.generate(
                     2,
@@ -59,10 +55,7 @@ class GridPostPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Sử dụng tham số đã truyền vào
-                noItemsFoundIndicatorBuilder: (_) => Center(
-                  child: Text(noItemsFoundMessage),
-                ),
+                noItemsFoundIndicatorBuilder: (_) => Center(child: Text(noItemsFoundMessage)),
                 newPageProgressIndicatorBuilder: (context) => const ShimmeringSmallPost(),
               ),
               gridDelegateBuilder: (int childCount) => const SliverSimpleGridDelegateWithFixedCrossAxisCount(
@@ -72,9 +65,7 @@ class GridPostPage extends StatelessWidget {
               crossAxisSpacing: 10,
             ),
             const SliverToBoxAdapter(
-              child: SizedBox(
-                height: kBottomNavigationBarHeight + 15,
-              ),
+              child: SizedBox(height: kBottomNavigationBarHeight + 15),
             ),
           ],
         ),
