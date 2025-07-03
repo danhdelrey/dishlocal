@@ -17,7 +17,7 @@ typedef ProfileSearchState = PagingState<int, AppUser>;
 class ProfileSearchBloc extends Bloc<ProfileSearchEvent, ProfileSearchState> {
   final _log = Logger('ProfileSearchBloc');
   final AppUserRepository _appUserRepository;
-  static const int _hitsPerPage = 15;
+  static const int _hitsPerPage = 10;
 
   String _currentQuery = '';
 

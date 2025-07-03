@@ -17,7 +17,7 @@ typedef PostSearchState = PagingState<int, Post>;
 class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
   final _log = Logger('PostSearchBloc');
   final PostRepository _postRepository;
-  static const int _hitsPerPage = 15;
+  static const int _hitsPerPage = 10;
 
   String _currentQuery = '';
 
