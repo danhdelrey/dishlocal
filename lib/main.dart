@@ -34,23 +34,6 @@ Future<void> main() async {
   //   options: AppEnvironment.firebaseOption,
   // );
 
-  // Kích hoạt chế độ Edge-to-Edge
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
-  // Làm cho thanh điều hướng và thanh trạng thái trong suốt
-  // Điều này cho phép widget của bạn vẽ phía sau chúng.
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    // Làm cho thanh trạng thái trong suốt
-    statusBarColor: Colors.transparent,
-    // (Tùy chọn) Điều chỉnh màu icon trên thanh trạng thái (sáng hoặc tối)
-    statusBarIconBrightness: Brightness.light, 
-
-    // Làm cho thanh điều hướng trong suốt (chỉ Android)
-    systemNavigationBarColor: Colors.transparent,
-    // (Tùy chọn) Điều chỉnh màu icon trên thanh điều hướng (chỉ Android)
-    systemNavigationBarIconBrightness: Brightness.light, 
-  ));
-
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());

@@ -29,7 +29,7 @@ class SearchInputPage extends StatelessWidget {
                     ),
                 onSubmitted: (value) {
                   if(value.trim().isNotEmpty) {
-                    context.push('/search/result', extra: value.trim());
+                    context.push('/search_result', extra: {'query': value});
                   }else{
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
