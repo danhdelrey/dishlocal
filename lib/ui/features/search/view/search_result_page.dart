@@ -5,6 +5,7 @@ import 'package:dishlocal/ui/features/post_search/bloc/post_search_bloc.dart';
 import 'package:dishlocal/ui/features/profile_search/bloc/profile_search_bloc.dart';
 import 'package:dishlocal/ui/features/profile_search/view/list_profile_page.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -79,12 +80,27 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return <Widget>[
-            SliverAppBar(
-              title: Text('Kết quả cho "${widget.query}"'),
+            GlassSliverAppBar(
+              titleSpacing: 0,
+              title: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(CupertinoIcons.back),
+                    onPressed: () => context.pop(),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Kết quả cho "${widget.query}"',
+                      style: appTextTheme(context).titleMedium,
+                    ),
+                  ),
+                ],
+              ),
               pinned: true,
               floating: true,
               snap: true,
               bottom: TabBar(
+                dividerColor: Colors.white.withValues(alpha: 0.1),
                 controller: _tabController,
                 tabs: const [
                   Tab(text: 'Bài viết'),

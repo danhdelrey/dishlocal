@@ -21,12 +21,14 @@ class SearchInputPage extends StatelessWidget {
             ),
             Expanded(
               child: CupertinoSearchTextField(
+                placeholder: 'Tìm kiếm bài viết, người dùng...',
+                autofocus: true,
                 style: appTextTheme(context).bodyMedium?.copyWith(
                       color: appColorScheme(context).onSurface,
                     ),
-                    onSubmitted: (value) {
-                      context.go('/search_result', extra: {'query': value});
-                    },
+                onSubmitted: (value) {
+                  context.go('/search_result', extra: {'query': value});
+                },
               ),
             ),
             const SizedBox(

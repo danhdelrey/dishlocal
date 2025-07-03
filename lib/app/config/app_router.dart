@@ -44,6 +44,18 @@ class AppRouter {
           final String query = extraMap['query'];
           return SearchResultScreen(query: query);
         },
+        routes: [
+            GoRoute(
+              path: 'profile',
+              builder: (context, state) {
+                final extraMap = state.extra as Map<String, dynamic>;
+                final String userId = extraMap['userId'];
+                return ProfilePage(
+                  userId: userId,
+                );
+              },
+            ),
+          ],
       ),
 
       GoRoute(
@@ -70,7 +82,7 @@ class AppRouter {
                 );
               },
             ),
-          ]),
+          ],),
       GoRoute(
         path: '/camera',
         builder: (context, state) => CameraPage(),

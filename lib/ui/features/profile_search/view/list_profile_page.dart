@@ -1,5 +1,11 @@
+import 'dart:math';
+
+import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
+import 'package:dishlocal/ui/features/user_info/view/custom_rich_text.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ListProfilePage extends StatelessWidget {
@@ -36,10 +42,40 @@ class ListProfilePage extends StatelessWidget {
                       backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
                       child: user.photoUrl == null ? const Icon(Icons.person) : null,
                     ),
-                    title: Text(user.displayName ?? user.username!),
-                    subtitle: Text('@${user.username}'),
+                    title: RichText(
+                      text: TextSpan(
+                        style: appTextTheme(context).labelLarge?.copyWith(
+                              color: appColorScheme(context).onSurface,
+                            ),
+                        children: [
+                          TextSpan(
+                            text: user.displayName ?? user.username!,
+                            style: appTextTheme(context).labelLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          TextSpan(
+                            text: ' @${user.username}',
+                            style: appTextTheme(context).bodyMedium?.copyWith(
+                                  color: appColorScheme(context).onSurfaceVariant,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    subtitle: CustomRichText(
+                      label1: NumberFormatter.formatCompactNumberStable(user.followerCount),
+                      description1: ' người theo dõi • ',
+                      label2: NumberFormatter.formatCompactNumberStable(user.followingCount),
+                      description2: ' đang theo dõi',
+                    ),
                     onTap: () {
-                      // TODO: Điều hướng đến trang cá nhân
+                      context.push(
+                        '/search_result/profile',
+                        extra: {
+                          'userId': user.userId,
+                        },
+                      );
                     },
                   );
                 },
@@ -60,22 +96,72 @@ class ListProfilePage extends StatelessWidget {
   }
 }
 
-// Widget shimmer cho một item profile
-class ShimmeringProfileListItem extends StatelessWidget {
+class ShimmeringProfileListItem extends StatefulWidget {
   const ShimmeringProfileListItem({super.key});
 
   @override
+  State<ShimmeringProfileListItem> createState() => _ShimmeringProfileListItemState();
+}
+
+class _ShimmeringProfileListItemState extends State<ShimmeringProfileListItem> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+
+    _opacityAnimation = Tween<double>(begin: 0.3, end: 0.8).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Tương tự ShimmeringSmallPost, nhưng dùng cho ListTile
-    return const ListTile(
-      leading: CircleAvatar(backgroundColor: Colors.grey),
-      title: SizedBox(
-        height: 16.0,
-        child: DecoratedBox(decoration: BoxDecoration(color: Colors.grey)),
-      ),
-      subtitle: SizedBox(
-        height: 12.0,
-        child: DecoratedBox(decoration: BoxDecoration(color: Colors.grey)),
+    final placeholderColor = appColorScheme(context).outlineVariant;
+
+    return FadeTransition(
+      opacity: _opacityAnimation,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            CircleAvatar(backgroundColor: placeholderColor),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 12.0,
+                    width: 50 + (Random().nextDouble() * 100),
+                    decoration: BoxDecoration(
+                      color: placeholderColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 12.0,
+                    width: 200.0,
+                    decoration: BoxDecoration(
+                      color: placeholderColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
