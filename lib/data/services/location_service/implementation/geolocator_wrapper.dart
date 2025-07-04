@@ -12,4 +12,6 @@ class GeolocatorWrapper {
   Future<LocationPermission> requestPermission() => Geolocator.requestPermission();
 
   Future<Position> getCurrentPosition() => Geolocator.getCurrentPosition();
+
+  Stream<Position> get positionStream => Geolocator.getPositionStream();
 }

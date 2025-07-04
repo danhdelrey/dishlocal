@@ -96,6 +96,7 @@ dependencies:
   bloc_concurrency: ^0.3.0
   in_app_update: ^4.2.3
   mapbox_maps_flutter: ^2.9.0
+  latlong2: ^0.9.1
   
 
 dev_dependencies:

@@ -17,4 +17,7 @@ abstract class LocationService {
   /// Phương thức này là một "facade" kết hợp các bước kiểm tra và lấy vị trí,
   /// phù hợp cho các trường hợp sử dụng phổ biến.
   Future<Position> getCurrentPosition();
+
+  /// Lấy stream vị trí liên tục của người dùng.
+  Stream<Position> getLocationStream();
 }

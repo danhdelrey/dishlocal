@@ -33,6 +33,10 @@ import '../../data/categories/direction/repository/implementation/direction_repo
     as _i116;
 import '../../data/categories/direction/repository/interface/direction_repository.dart'
     as _i93;
+import '../../data/categories/location/repository/implementation/location_repository_impl.dart'
+    as _i106;
+import '../../data/categories/location/repository/interface/location_repository.dart'
+    as _i864;
 import '../../data/categories/moderation/repository/implementation/moderation_repository_impl.dart'
     as _i709;
 import '../../data/categories/moderation/repository/interface/moderation_repository.dart'
@@ -95,6 +99,7 @@ import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
 import '../../ui/features/delete_post/bloc/delete_post_bloc.dart' as _i204;
 import '../../ui/features/follow/bloc/follow_bloc.dart' as _i501;
+import '../../ui/features/map/bloc/map_bloc.dart' as _i936;
 import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
     as _i144;
 import '../../ui/features/post_search/bloc/post_search_bloc.dart' as _i892;
@@ -160,6 +165,8 @@ _i174.GetIt init(
           ));
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
+  gh.factory<_i936.MapBloc>(
+      () => _i936.MapBloc(gh<_i93.DirectionRepository>()));
   gh.lazySingleton<_i749.AppUserRepository>(() => _i90.SqlAppUserRepositoryImpl(
         gh<_i780.AuthenticationService>(),
         gh<_i178.SqlDatabaseService>(),
@@ -208,6 +215,8 @@ _i174.GetIt init(
       () => _i32.ProfileSearchBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
+  gh.lazySingleton<_i864.LocationRepository>(
+      () => _i106.LocationRepositoryImpl(gh<_i473.LocationService>()));
   gh.lazySingleton<_i557.CommentRepository>(
       () => _i395.RemoteCommentRepositorySqlImpl(
             gh<_i178.SqlDatabaseService>(),
