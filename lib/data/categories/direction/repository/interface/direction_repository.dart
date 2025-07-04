@@ -1,6 +1,7 @@
 
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/direction/model/direction.dart';
+import 'package:dishlocal/data/categories/direction/model/location_data.dart';
 import 'package:dishlocal/data/categories/direction/repository/failure/direction_failure.dart';
 
 /// Interface (hợp đồng) cho repository quản lý dữ liệu chỉ đường.
@@ -35,4 +36,6 @@ abstract class DirectionRepository {
     required List<List<double>> coordinates,
     String profile = 'driving-traffic',
   });
+
+  Stream<Either<DirectionFailure, LocationData>> getLocationStream();
 }

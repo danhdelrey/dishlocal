@@ -33,10 +33,6 @@ import '../../data/categories/direction/repository/implementation/direction_repo
     as _i116;
 import '../../data/categories/direction/repository/interface/direction_repository.dart'
     as _i93;
-import '../../data/categories/location/repository/implementation/location_repository_impl.dart'
-    as _i106;
-import '../../data/categories/location/repository/interface/location_repository.dart'
-    as _i864;
 import '../../data/categories/moderation/repository/implementation/moderation_repository_impl.dart'
     as _i709;
 import '../../data/categories/moderation/repository/interface/moderation_repository.dart'
@@ -154,8 +150,6 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());
-  gh.lazySingleton<_i93.DirectionRepository>(
-      () => _i116.DirectionRepositoryImpl(gh<_i882.DirectionService>()));
   gh.lazySingleton<_i178.SqlDatabaseService>(
       () => _i876.SqlSupabaseServiceImpl());
   gh.lazySingleton<_i886.ModerationRepository>(
@@ -165,6 +159,11 @@ _i174.GetIt init(
           ));
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
+  gh.lazySingleton<_i93.DirectionRepository>(
+      () => _i116.DirectionRepositoryImpl(
+            gh<_i882.DirectionService>(),
+            gh<_i473.LocationService>(),
+          ));
   gh.factory<_i936.MapBloc>(
       () => _i936.MapBloc(gh<_i93.DirectionRepository>()));
   gh.lazySingleton<_i749.AppUserRepository>(() => _i90.SqlAppUserRepositoryImpl(
@@ -215,8 +214,6 @@ _i174.GetIt init(
       () => _i32.ProfileSearchBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
-  gh.lazySingleton<_i864.LocationRepository>(
-      () => _i106.LocationRepositoryImpl(gh<_i473.LocationService>()));
   gh.lazySingleton<_i557.CommentRepository>(
       () => _i395.RemoteCommentRepositorySqlImpl(
             gh<_i178.SqlDatabaseService>(),
