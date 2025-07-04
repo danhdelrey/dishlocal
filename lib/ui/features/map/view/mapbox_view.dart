@@ -219,6 +219,29 @@ class _MapboxViewState extends State<MapboxView> {
     await _mapboxMap!.flyTo(bounds, MapAnimationOptions(duration: 3000));
   }
 
+  Future<void> _zoomToCurrentUserLocation() async {
+    if (_mapboxMap == null) return;
+
+    try {
+      final geo.Position currentPosition = await _getUserLocation();
+
+      // Tạo các tùy chọn cho camera
+      final cameraOptions = CameraOptions(
+        center: Point(coordinates: Position(currentPosition.longitude, currentPosition.latitude)),
+        zoom: 18.5, // Mức zoom cao để nhìn rõ đường phố
+        //pitch: 60.0, // Giữ góc nhìn 3D
+        bearing: 0, // Hướng về phía Bắc
+      );
+
+      // Thực hiện hiệu ứng "bay" đến vị trí
+      await _mapboxMap!.flyTo(cameraOptions, MapAnimationOptions(duration: 1500));
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lỗi khi lấy vị trí: ${e.toString()}')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -269,9 +292,9 @@ class _MapboxViewState extends State<MapboxView> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _initializeMapAndRoute,
-        tooltip: 'Tải lại tuyến đường',
-        child: const Icon(Icons.refresh),
+        onPressed: _zoomToCurrentUserLocation, // Gọi hàm mới
+        tooltip: 'Vị trí của tôi', // Thay đổi tooltip
+        child: const Icon(Icons.my_location), // Thay đổi icon
       ),
     );
   }
