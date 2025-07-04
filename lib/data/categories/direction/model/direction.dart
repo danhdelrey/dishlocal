@@ -1,19 +1,19 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'direction_api_model.freezed.dart';
-part 'direction_api_model.g.dart';
+part 'direction.freezed.dart';
+part 'direction.g.dart';
 
 // --- Model gốc (Root Model) ---
 @freezed
-abstract class DirectionApiModel with _$DirectionApiModel {
-  const factory DirectionApiModel({
+abstract class Direction with _$Direction {
+  const factory Direction({
     required List<RouteModel> routes,
     required List<WaypointModel> waypoints,
     required String code,
     required String uuid,
-  }) = _DirectionApiModel;
+  }) = _Direction;
 
-  factory DirectionApiModel.fromJson(Map<String, dynamic> json) => _$DirectionApiModelFromJson(json);
+  factory Direction.fromJson(Map<String, dynamic> json) => _$DirectionFromJson(json);
 }
 
 // --- Các model con ---

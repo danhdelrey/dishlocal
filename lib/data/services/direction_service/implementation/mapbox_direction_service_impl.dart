@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:dishlocal/data/services/direction_service/exception/direction_service_exception.dart';
 import 'package:dio/dio.dart';
-import 'package:dishlocal/data/services/direction_service/api_model/direction_api_model.dart';
 import 'package:dishlocal/data/services/direction_service/interface/direction_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -29,7 +28,7 @@ class MapboxDirectionServiceImpl implements DirectionService {
   }
 
   /// Phương thức private để xử lý logic gọi API chung cho cả hai loại route.
-  Future<DirectionApiModel> _getRoute({
+  Future<Map<String, dynamic>> _getRoute({
     required String path,
     required List<List<double>> coordinates,
     String profile = 'driving-traffic',
@@ -79,9 +78,8 @@ class MapboxDirectionServiceImpl implements DirectionService {
 
       if (code == 'Ok') {
         _log.info('Lấy dữ liệu chỉ đường thành công.');
-        final model = DirectionApiModel.fromJson(responseData);
-        _log.finer('Dữ liệu đã được parse: ${model.routes.first.toString()}');
-        return model;
+        _log.finer('Dữ liệu đã được parse: ${responseData.toString()}');
+        return Map<String, dynamic>.from(responseData);
       } else {
         // Ném ra exception tương ứng với mã lỗi từ Mapbox
         final String message = responseData['message'] ?? 'Không có thông báo chi tiết.';
@@ -116,7 +114,7 @@ class MapboxDirectionServiceImpl implements DirectionService {
   }
 
   @override
-  Future<DirectionApiModel> getDirections({
+  Future<Map<String, dynamic>> getDirections({
     required List<List<double>> coordinates,
     String profile = 'driving-traffic',
   }) {
@@ -130,7 +128,7 @@ class MapboxDirectionServiceImpl implements DirectionService {
   }
 
   @override
-  Future<DirectionApiModel> getOptimizedRoute({
+  Future<Map<String, dynamic>> getOptimizedRoute({
     required List<List<double>> coordinates,
     String profile = 'driving-traffic',
   }) {

@@ -1,4 +1,3 @@
-import 'package:dishlocal/data/services/direction_service/api_model/direction_api_model.dart';
 import 'package:dishlocal/data/services/direction_service/exception/direction_service_exception.dart';
 
 /// Interface định nghĩa các hoạt động liên quan đến việc lấy dữ liệu chỉ đường.
@@ -14,8 +13,6 @@ abstract class DirectionService {
   /// - `walking`: Đi bộ.
   /// - `cycling`: Đi xe đạp.
   ///
-  /// Trả về một đối tượng [DirectionApiModel] chứa đầy đủ thông tin về tuyến đường.
-  ///
   /// Ném ra các exceptions sau:
   /// - [NoRouteException]: Khi không tìm thấy tuyến đường nào giữa các tọa độ.
   /// - [NoSegmentException]: Khi một trong các tọa độ không nằm trên một đoạn đường có thể định tuyến.
@@ -25,7 +22,7 @@ abstract class DirectionService {
   /// - [InvalidTokenException]: Khi access token không hợp lệ hoặc thiếu quyền.
   /// - [RateLimitExceededException]: Khi vượt quá giới hạn số lượng yêu cầu API.
   /// - [UnknownDirectionException]: Cho các lỗi không xác định khác từ server hoặc lỗi kết nối.
-  Future<DirectionApiModel> getDirections({
+  Future<Map<String,dynamic>> getDirections({
     required List<List<double>> coordinates,
     String profile = 'driving-traffic',
   });
@@ -37,8 +34,6 @@ abstract class DirectionService {
   ///
   /// [coordinates] là một danh sách các cặp tọa độ `[kinh độ, vĩ độ]`.
   ///
-  /// Trả về một đối tượng [DirectionApiModel] với lộ trình đã được sắp xếp lại tối ưu.
-  ///
   /// Ném ra các exceptions tương tự như `getDirections`:
   /// - [NoRouteException]
   /// - [NoSegmentException]
@@ -48,7 +43,7 @@ abstract class DirectionService {
   /// - [InvalidTokenException]
   /// - [RateLimitExceededException]
   /// - [UnknownDirectionException]
-  Future<DirectionApiModel> getOptimizedRoute({
+  Future<Map<String,dynamic>> getOptimizedRoute({
     required List<List<double>> coordinates,
     String profile = 'driving-traffic',
   });

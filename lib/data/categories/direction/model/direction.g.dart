@@ -1,13 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'direction_api_model.dart';
+part of 'direction.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_DirectionApiModel _$DirectionApiModelFromJson(Map<String, dynamic> json) =>
-    _DirectionApiModel(
+_Direction _$DirectionFromJson(Map<String, dynamic> json) => _Direction(
       routes: (json['routes'] as List<dynamic>)
           .map((e) => RouteModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -18,7 +17,7 @@ _DirectionApiModel _$DirectionApiModelFromJson(Map<String, dynamic> json) =>
       uuid: json['uuid'] as String,
     );
 
-Map<String, dynamic> _$DirectionApiModelToJson(_DirectionApiModel instance) =>
+Map<String, dynamic> _$DirectionToJson(_Direction instance) =>
     <String, dynamic>{
       'routes': instance.routes,
       'waypoints': instance.waypoints,

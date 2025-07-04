@@ -29,6 +29,10 @@ import '../../data/categories/comment/repository/implementation/remote_comment_r
     as _i395;
 import '../../data/categories/comment/repository/interface/comment_repository.dart'
     as _i557;
+import '../../data/categories/direction/repository/implementation/direction_repository_impl.dart'
+    as _i116;
+import '../../data/categories/direction/repository/interface/direction_repository.dart'
+    as _i93;
 import '../../data/categories/moderation/repository/implementation/moderation_repository_impl.dart'
     as _i709;
 import '../../data/categories/moderation/repository/interface/moderation_repository.dart'
@@ -145,6 +149,8 @@ _i174.GetIt init(
   );
   gh.lazySingleton<_i766.GeocodingService>(
       () => _i3.GeocodingServiceNominatimImpl());
+  gh.lazySingleton<_i93.DirectionRepository>(
+      () => _i116.DirectionRepositoryImpl(gh<_i882.DirectionService>()));
   gh.lazySingleton<_i178.SqlDatabaseService>(
       () => _i876.SqlSupabaseServiceImpl());
   gh.lazySingleton<_i886.ModerationRepository>(

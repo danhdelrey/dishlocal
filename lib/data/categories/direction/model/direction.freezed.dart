@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'direction_api_model.dart';
+part of 'direction.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,28 +14,27 @@ part of 'direction_api_model.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$DirectionApiModel {
+mixin _$Direction {
   List<RouteModel> get routes;
   List<WaypointModel> get waypoints;
   String get code;
   String get uuid;
 
-  /// Create a copy of DirectionApiModel
+  /// Create a copy of Direction
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $DirectionApiModelCopyWith<DirectionApiModel> get copyWith =>
-      _$DirectionApiModelCopyWithImpl<DirectionApiModel>(
-          this as DirectionApiModel, _$identity);
+  $DirectionCopyWith<Direction> get copyWith =>
+      _$DirectionCopyWithImpl<Direction>(this as Direction, _$identity);
 
-  /// Serializes this DirectionApiModel to a JSON map.
+  /// Serializes this Direction to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is DirectionApiModel &&
+            other is Direction &&
             const DeepCollectionEquality().equals(other.routes, routes) &&
             const DeepCollectionEquality().equals(other.waypoints, waypoints) &&
             (identical(other.code, code) || other.code == code) &&
@@ -53,15 +52,14 @@ mixin _$DirectionApiModel {
 
   @override
   String toString() {
-    return 'DirectionApiModel(routes: $routes, waypoints: $waypoints, code: $code, uuid: $uuid)';
+    return 'Direction(routes: $routes, waypoints: $waypoints, code: $code, uuid: $uuid)';
   }
 }
 
 /// @nodoc
-abstract mixin class $DirectionApiModelCopyWith<$Res> {
-  factory $DirectionApiModelCopyWith(
-          DirectionApiModel value, $Res Function(DirectionApiModel) _then) =
-      _$DirectionApiModelCopyWithImpl;
+abstract mixin class $DirectionCopyWith<$Res> {
+  factory $DirectionCopyWith(Direction value, $Res Function(Direction) _then) =
+      _$DirectionCopyWithImpl;
   @useResult
   $Res call(
       {List<RouteModel> routes,
@@ -71,14 +69,13 @@ abstract mixin class $DirectionApiModelCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$DirectionApiModelCopyWithImpl<$Res>
-    implements $DirectionApiModelCopyWith<$Res> {
-  _$DirectionApiModelCopyWithImpl(this._self, this._then);
+class _$DirectionCopyWithImpl<$Res> implements $DirectionCopyWith<$Res> {
+  _$DirectionCopyWithImpl(this._self, this._then);
 
-  final DirectionApiModel _self;
-  final $Res Function(DirectionApiModel) _then;
+  final Direction _self;
+  final $Res Function(Direction) _then;
 
-  /// Create a copy of DirectionApiModel
+  /// Create a copy of Direction
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -111,16 +108,16 @@ class _$DirectionApiModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _DirectionApiModel implements DirectionApiModel {
-  const _DirectionApiModel(
+class _Direction implements Direction {
+  const _Direction(
       {required final List<RouteModel> routes,
       required final List<WaypointModel> waypoints,
       required this.code,
       required this.uuid})
       : _routes = routes,
         _waypoints = waypoints;
-  factory _DirectionApiModel.fromJson(Map<String, dynamic> json) =>
-      _$DirectionApiModelFromJson(json);
+  factory _Direction.fromJson(Map<String, dynamic> json) =>
+      _$DirectionFromJson(json);
 
   final List<RouteModel> _routes;
   @override
@@ -143,17 +140,17 @@ class _DirectionApiModel implements DirectionApiModel {
   @override
   final String uuid;
 
-  /// Create a copy of DirectionApiModel
+  /// Create a copy of Direction
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$DirectionApiModelCopyWith<_DirectionApiModel> get copyWith =>
-      __$DirectionApiModelCopyWithImpl<_DirectionApiModel>(this, _$identity);
+  _$DirectionCopyWith<_Direction> get copyWith =>
+      __$DirectionCopyWithImpl<_Direction>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$DirectionApiModelToJson(
+    return _$DirectionToJson(
       this,
     );
   }
@@ -162,7 +159,7 @@ class _DirectionApiModel implements DirectionApiModel {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _DirectionApiModel &&
+            other is _Direction &&
             const DeepCollectionEquality().equals(other._routes, _routes) &&
             const DeepCollectionEquality()
                 .equals(other._waypoints, _waypoints) &&
@@ -181,16 +178,16 @@ class _DirectionApiModel implements DirectionApiModel {
 
   @override
   String toString() {
-    return 'DirectionApiModel(routes: $routes, waypoints: $waypoints, code: $code, uuid: $uuid)';
+    return 'Direction(routes: $routes, waypoints: $waypoints, code: $code, uuid: $uuid)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$DirectionApiModelCopyWith<$Res>
-    implements $DirectionApiModelCopyWith<$Res> {
-  factory _$DirectionApiModelCopyWith(
-          _DirectionApiModel value, $Res Function(_DirectionApiModel) _then) =
-      __$DirectionApiModelCopyWithImpl;
+abstract mixin class _$DirectionCopyWith<$Res>
+    implements $DirectionCopyWith<$Res> {
+  factory _$DirectionCopyWith(
+          _Direction value, $Res Function(_Direction) _then) =
+      __$DirectionCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -201,14 +198,13 @@ abstract mixin class _$DirectionApiModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$DirectionApiModelCopyWithImpl<$Res>
-    implements _$DirectionApiModelCopyWith<$Res> {
-  __$DirectionApiModelCopyWithImpl(this._self, this._then);
+class __$DirectionCopyWithImpl<$Res> implements _$DirectionCopyWith<$Res> {
+  __$DirectionCopyWithImpl(this._self, this._then);
 
-  final _DirectionApiModel _self;
-  final $Res Function(_DirectionApiModel) _then;
+  final _Direction _self;
+  final $Res Function(_Direction) _then;
 
-  /// Create a copy of DirectionApiModel
+  /// Create a copy of Direction
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -218,7 +214,7 @@ class __$DirectionApiModelCopyWithImpl<$Res>
     Object? code = null,
     Object? uuid = null,
   }) {
-    return _then(_DirectionApiModel(
+    return _then(_Direction(
       routes: null == routes
           ? _self._routes
           : routes // ignore: cast_nullable_to_non_nullable
