@@ -97,6 +97,7 @@ dependencies:
   in_app_update: ^4.2.3
   mapbox_maps_flutter: ^2.9.0
   latlong2: ^0.9.1
+  turf: ^0.0.10
   
 
 dev_dependencies:
