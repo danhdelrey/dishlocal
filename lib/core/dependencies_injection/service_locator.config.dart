@@ -50,6 +50,10 @@ import '../../data/services/database_service/interface/no_sql_database_service.d
     as _i60;
 import '../../data/services/database_service/interface/sql_database_service.dart'
     as _i178;
+import '../../data/services/direction_service/implementation/mapbox_direction_service_impl.dart'
+    as _i900;
+import '../../data/services/direction_service/interface/direction_service.dart'
+    as _i882;
 import '../../data/services/distance_service/implementation/haversine_distance_service.dart'
     as _i1015;
 import '../../data/services/distance_service/interface/distance_service.dart'
@@ -126,6 +130,8 @@ _i174.GetIt init(
     () => _i709.HiveAiModerationServiceImpl(),
     instanceName: 'hive.ai',
   );
+  gh.lazySingleton<_i882.DirectionService>(
+      () => _i900.MapboxDirectionServiceImpl());
   gh.lazySingleton<_i310.SearchService>(() => _i324.AlgoliaSearchServiceImpl());
   gh.lazySingleton<_i367.DistanceService>(
       () => _i1015.HaversineDistanceService());
