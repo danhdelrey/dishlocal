@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:in_app_update/in_app_update.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:dishlocal/app/config/app_router.dart';
@@ -33,7 +34,7 @@ Future<void> main() async {
   // await Firebase.initializeApp(
   //   options: AppEnvironment.firebaseOption,
   // );
-
+  MapboxOptions.setAccessToken(AppEnvironment.mapboxAccessToken);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());

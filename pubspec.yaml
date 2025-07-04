@@ -95,6 +95,7 @@ dependencies:
   algoliasearch: ^1.34.0
   bloc_concurrency: ^0.3.0
   in_app_update: ^4.2.3
+  mapbox_maps_flutter: ^2.9.0
   
 
 dev_dependencies:

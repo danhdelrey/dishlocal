@@ -116,4 +116,12 @@ class AppEnvironment {
     return dotenv.env['ALGOLIA_API_KEY_PROD'] ?? '';
   }
 
+  //Mapbox
+  static String get mapboxAccessToken {
+    if (isInDevelopment) {
+      return dotenv.env['MAPBOX_ACCESS_TOKEN'] ?? '';
+    }
+    return dotenv.env['MAPBOX_ACCESS_TOKEN'] ?? '';
+  }
+
 }

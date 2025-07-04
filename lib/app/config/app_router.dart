@@ -8,6 +8,7 @@ import 'package:dishlocal/ui/features/auth/view/login_page.dart';
 import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
 import 'package:dishlocal/ui/features/create_post/view/new_post_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
+import 'package:dishlocal/ui/features/map/view/mapbox_view.dart';
 import 'package:dishlocal/ui/features/search/view/search_input_page.dart';
 import 'package:dishlocal/ui/features/search/view/search_result_page.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_page.dart';
@@ -24,7 +25,7 @@ class AppRouter {
   final _log = Logger('AppRouter');
 
   late final router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/mapbox_view',
     debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: _redirect,
@@ -110,6 +111,10 @@ class AppRouter {
           final postToUpdate = state.extra as Post;
           return NewPostPage.edit(postToUpdate: postToUpdate);
         },
+      ),
+      GoRoute(
+        path: '/mapbox_view',
+        builder: (context, state) => const MapboxView(),
       ),
 
       // Sử dụng MainShell thay vì PersistentTabView.router
