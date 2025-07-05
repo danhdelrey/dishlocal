@@ -37,83 +37,113 @@ class $MapEventCopyWith<$Res> {
 
 /// @nodoc
 
-class _NavigationStarted implements MapEvent {
-  const _NavigationStarted({required final List<double> destinationCoordinates})
-      : _destinationCoordinates = destinationCoordinates;
+class _RouteRequested implements MapEvent {
+  const _RouteRequested(
+      {required final List<List<double>> coordinates,
+      this.profile = 'driving-traffic'})
+      : _coordinates = coordinates;
 
-  final List<double> _destinationCoordinates;
-  List<double> get destinationCoordinates {
-    if (_destinationCoordinates is EqualUnmodifiableListView)
-      return _destinationCoordinates;
+  final List<List<double>> _coordinates;
+  List<List<double>> get coordinates {
+    if (_coordinates is EqualUnmodifiableListView) return _coordinates;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_destinationCoordinates);
+    return EqualUnmodifiableListView(_coordinates);
   }
+
+  @JsonKey()
+  final String profile;
 
   /// Create a copy of MapEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$NavigationStartedCopyWith<_NavigationStarted> get copyWith =>
-      __$NavigationStartedCopyWithImpl<_NavigationStarted>(this, _$identity);
+  _$RouteRequestedCopyWith<_RouteRequested> get copyWith =>
+      __$RouteRequestedCopyWithImpl<_RouteRequested>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _NavigationStarted &&
-            const DeepCollectionEquality().equals(
-                other._destinationCoordinates, _destinationCoordinates));
+            other is _RouteRequested &&
+            const DeepCollectionEquality()
+                .equals(other._coordinates, _coordinates) &&
+            (identical(other.profile, profile) || other.profile == profile));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_destinationCoordinates));
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_coordinates), profile);
 
   @override
   String toString() {
-    return 'MapEvent.navigationStarted(destinationCoordinates: $destinationCoordinates)';
+    return 'MapEvent.routeRequested(coordinates: $coordinates, profile: $profile)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$NavigationStartedCopyWith<$Res>
+abstract mixin class _$RouteRequestedCopyWith<$Res>
     implements $MapEventCopyWith<$Res> {
-  factory _$NavigationStartedCopyWith(
-          _NavigationStarted value, $Res Function(_NavigationStarted) _then) =
-      __$NavigationStartedCopyWithImpl;
+  factory _$RouteRequestedCopyWith(
+          _RouteRequested value, $Res Function(_RouteRequested) _then) =
+      __$RouteRequestedCopyWithImpl;
   @useResult
-  $Res call({List<double> destinationCoordinates});
+  $Res call({List<List<double>> coordinates, String profile});
 }
 
 /// @nodoc
-class __$NavigationStartedCopyWithImpl<$Res>
-    implements _$NavigationStartedCopyWith<$Res> {
-  __$NavigationStartedCopyWithImpl(this._self, this._then);
+class __$RouteRequestedCopyWithImpl<$Res>
+    implements _$RouteRequestedCopyWith<$Res> {
+  __$RouteRequestedCopyWithImpl(this._self, this._then);
 
-  final _NavigationStarted _self;
-  final $Res Function(_NavigationStarted) _then;
+  final _RouteRequested _self;
+  final $Res Function(_RouteRequested) _then;
 
   /// Create a copy of MapEvent
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? destinationCoordinates = null,
+    Object? coordinates = null,
+    Object? profile = null,
   }) {
-    return _then(_NavigationStarted(
-      destinationCoordinates: null == destinationCoordinates
-          ? _self._destinationCoordinates
-          : destinationCoordinates // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+    return _then(_RouteRequested(
+      coordinates: null == coordinates
+          ? _self._coordinates
+          : coordinates // ignore: cast_nullable_to_non_nullable
+              as List<List<double>>,
+      profile: null == profile
+          ? _self.profile
+          : profile // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
 /// @nodoc
 
-class _LocationUpdated implements MapEvent {
-  const _LocationUpdated({required this.userLocation});
+class _NavigationStarted implements MapEvent {
+  const _NavigationStarted();
 
-  final LocationData userLocation;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _NavigationStarted);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'MapEvent.navigationStarted()';
+  }
+}
+
+/// @nodoc
+
+class _LocationUpdated implements MapEvent {
+  const _LocationUpdated({required this.locationData});
+
+  final LocationData locationData;
 
   /// Create a copy of MapEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -127,16 +157,16 @@ class _LocationUpdated implements MapEvent {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _LocationUpdated &&
-            (identical(other.userLocation, userLocation) ||
-                other.userLocation == userLocation));
+            (identical(other.locationData, locationData) ||
+                other.locationData == locationData));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userLocation);
+  int get hashCode => Object.hash(runtimeType, locationData);
 
   @override
   String toString() {
-    return 'MapEvent.locationUpdated(userLocation: $userLocation)';
+    return 'MapEvent.locationUpdated(locationData: $locationData)';
   }
 }
 
@@ -147,9 +177,9 @@ abstract mixin class _$LocationUpdatedCopyWith<$Res>
           _LocationUpdated value, $Res Function(_LocationUpdated) _then) =
       __$LocationUpdatedCopyWithImpl;
   @useResult
-  $Res call({LocationData userLocation});
+  $Res call({LocationData locationData});
 
-  $LocationDataCopyWith<$Res> get userLocation;
+  $LocationDataCopyWith<$Res> get locationData;
 }
 
 /// @nodoc
@@ -164,12 +194,12 @@ class __$LocationUpdatedCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? userLocation = null,
+    Object? locationData = null,
   }) {
     return _then(_LocationUpdated(
-      userLocation: null == userLocation
-          ? _self.userLocation
-          : userLocation // ignore: cast_nullable_to_non_nullable
+      locationData: null == locationData
+          ? _self.locationData
+          : locationData // ignore: cast_nullable_to_non_nullable
               as LocationData,
     ));
   }
@@ -178,9 +208,9 @@ class __$LocationUpdatedCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $LocationDataCopyWith<$Res> get userLocation {
-    return $LocationDataCopyWith<$Res>(_self.userLocation, (value) {
-      return _then(_self.copyWith(userLocation: value));
+  $LocationDataCopyWith<$Res> get locationData {
+    return $LocationDataCopyWith<$Res>(_self.locationData, (value) {
+      return _then(_self.copyWith(locationData: value));
     });
   }
 }
@@ -294,13 +324,13 @@ class _Initial implements MapState {
 
 /// @nodoc
 
-class _Loading implements MapState {
-  const _Loading();
+class _LoadInProgress implements MapState {
+  const _LoadInProgress();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _Loading);
+        (other.runtimeType == runtimeType && other is _LoadInProgress);
   }
 
   @override
@@ -308,79 +338,242 @@ class _Loading implements MapState {
 
   @override
   String toString() {
-    return 'MapState.loading()';
+    return 'MapState.loadInProgress()';
   }
 }
 
 /// @nodoc
 
-class _Success implements MapState {
-  const _Success({required this.direction, required this.userLocation});
+class _LoadSuccess implements MapState {
+  const _LoadSuccess({required this.direction, required this.currentLocation});
 
   final Direction direction;
-  final LocationData userLocation;
+  final LocationData? currentLocation;
 
   /// Create a copy of MapState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$SuccessCopyWith<_Success> get copyWith =>
-      __$SuccessCopyWithImpl<_Success>(this, _$identity);
+  _$LoadSuccessCopyWith<_LoadSuccess> get copyWith =>
+      __$LoadSuccessCopyWithImpl<_LoadSuccess>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Success &&
+            other is _LoadSuccess &&
             (identical(other.direction, direction) ||
                 other.direction == direction) &&
-            (identical(other.userLocation, userLocation) ||
-                other.userLocation == userLocation));
+            (identical(other.currentLocation, currentLocation) ||
+                other.currentLocation == currentLocation));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, direction, userLocation);
+  int get hashCode => Object.hash(runtimeType, direction, currentLocation);
 
   @override
   String toString() {
-    return 'MapState.success(direction: $direction, userLocation: $userLocation)';
+    return 'MapState.loadSuccess(direction: $direction, currentLocation: $currentLocation)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$SuccessCopyWith<$Res>
+abstract mixin class _$LoadSuccessCopyWith<$Res>
     implements $MapStateCopyWith<$Res> {
-  factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) =
-      __$SuccessCopyWithImpl;
+  factory _$LoadSuccessCopyWith(
+          _LoadSuccess value, $Res Function(_LoadSuccess) _then) =
+      __$LoadSuccessCopyWithImpl;
   @useResult
-  $Res call({Direction direction, LocationData userLocation});
+  $Res call({Direction direction, LocationData? currentLocation});
 
   $DirectionCopyWith<$Res> get direction;
-  $LocationDataCopyWith<$Res> get userLocation;
+  $LocationDataCopyWith<$Res>? get currentLocation;
 }
 
 /// @nodoc
-class __$SuccessCopyWithImpl<$Res> implements _$SuccessCopyWith<$Res> {
-  __$SuccessCopyWithImpl(this._self, this._then);
+class __$LoadSuccessCopyWithImpl<$Res> implements _$LoadSuccessCopyWith<$Res> {
+  __$LoadSuccessCopyWithImpl(this._self, this._then);
 
-  final _Success _self;
-  final $Res Function(_Success) _then;
+  final _LoadSuccess _self;
+  final $Res Function(_LoadSuccess) _then;
 
   /// Create a copy of MapState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   $Res call({
     Object? direction = null,
-    Object? userLocation = null,
+    Object? currentLocation = freezed,
   }) {
-    return _then(_Success(
+    return _then(_LoadSuccess(
       direction: null == direction
           ? _self.direction
           : direction // ignore: cast_nullable_to_non_nullable
               as Direction,
-      userLocation: null == userLocation
-          ? _self.userLocation
-          : userLocation // ignore: cast_nullable_to_non_nullable
+      currentLocation: freezed == currentLocation
+          ? _self.currentLocation
+          : currentLocation // ignore: cast_nullable_to_non_nullable
+              as LocationData?,
+    ));
+  }
+
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $DirectionCopyWith<$Res> get direction {
+    return $DirectionCopyWith<$Res>(_self.direction, (value) {
+      return _then(_self.copyWith(direction: value));
+    });
+  }
+
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LocationDataCopyWith<$Res>? get currentLocation {
+    if (_self.currentLocation == null) {
+      return null;
+    }
+
+    return $LocationDataCopyWith<$Res>(_self.currentLocation!, (value) {
+      return _then(_self.copyWith(currentLocation: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _LoadFailure implements MapState {
+  const _LoadFailure({required this.failure});
+
+  final DirectionFailure failure;
+
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$LoadFailureCopyWith<_LoadFailure> get copyWith =>
+      __$LoadFailureCopyWithImpl<_LoadFailure>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _LoadFailure &&
+            (identical(other.failure, failure) || other.failure == failure));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, failure);
+
+  @override
+  String toString() {
+    return 'MapState.loadFailure(failure: $failure)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$LoadFailureCopyWith<$Res>
+    implements $MapStateCopyWith<$Res> {
+  factory _$LoadFailureCopyWith(
+          _LoadFailure value, $Res Function(_LoadFailure) _then) =
+      __$LoadFailureCopyWithImpl;
+  @useResult
+  $Res call({DirectionFailure failure});
+}
+
+/// @nodoc
+class __$LoadFailureCopyWithImpl<$Res> implements _$LoadFailureCopyWith<$Res> {
+  __$LoadFailureCopyWithImpl(this._self, this._then);
+
+  final _LoadFailure _self;
+  final $Res Function(_LoadFailure) _then;
+
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? failure = null,
+  }) {
+    return _then(_LoadFailure(
+      failure: null == failure
+          ? _self.failure
+          : failure // ignore: cast_nullable_to_non_nullable
+              as DirectionFailure,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _Navigation implements MapState {
+  const _Navigation({required this.direction, required this.currentLocation});
+
+  final Direction direction;
+  final LocationData currentLocation;
+
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$NavigationCopyWith<_Navigation> get copyWith =>
+      __$NavigationCopyWithImpl<_Navigation>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _Navigation &&
+            (identical(other.direction, direction) ||
+                other.direction == direction) &&
+            (identical(other.currentLocation, currentLocation) ||
+                other.currentLocation == currentLocation));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, direction, currentLocation);
+
+  @override
+  String toString() {
+    return 'MapState.navigation(direction: $direction, currentLocation: $currentLocation)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$NavigationCopyWith<$Res>
+    implements $MapStateCopyWith<$Res> {
+  factory _$NavigationCopyWith(
+          _Navigation value, $Res Function(_Navigation) _then) =
+      __$NavigationCopyWithImpl;
+  @useResult
+  $Res call({Direction direction, LocationData currentLocation});
+
+  $DirectionCopyWith<$Res> get direction;
+  $LocationDataCopyWith<$Res> get currentLocation;
+}
+
+/// @nodoc
+class __$NavigationCopyWithImpl<$Res> implements _$NavigationCopyWith<$Res> {
+  __$NavigationCopyWithImpl(this._self, this._then);
+
+  final _Navigation _self;
+  final $Res Function(_Navigation) _then;
+
+  /// Create a copy of MapState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? direction = null,
+    Object? currentLocation = null,
+  }) {
+    return _then(_Navigation(
+      direction: null == direction
+          ? _self.direction
+          : direction // ignore: cast_nullable_to_non_nullable
+              as Direction,
+      currentLocation: null == currentLocation
+          ? _self.currentLocation
+          : currentLocation // ignore: cast_nullable_to_non_nullable
               as LocationData,
     ));
   }
@@ -399,72 +592,10 @@ class __$SuccessCopyWithImpl<$Res> implements _$SuccessCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $LocationDataCopyWith<$Res> get userLocation {
-    return $LocationDataCopyWith<$Res>(_self.userLocation, (value) {
-      return _then(_self.copyWith(userLocation: value));
+  $LocationDataCopyWith<$Res> get currentLocation {
+    return $LocationDataCopyWith<$Res>(_self.currentLocation, (value) {
+      return _then(_self.copyWith(currentLocation: value));
     });
-  }
-}
-
-/// @nodoc
-
-class _Failure implements MapState {
-  const _Failure({required this.failure});
-
-  final DirectionFailure failure;
-
-  /// Create a copy of MapState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$FailureCopyWith<_Failure> get copyWith =>
-      __$FailureCopyWithImpl<_Failure>(this, _$identity);
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _Failure &&
-            (identical(other.failure, failure) || other.failure == failure));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, failure);
-
-  @override
-  String toString() {
-    return 'MapState.failure(failure: $failure)';
-  }
-}
-
-/// @nodoc
-abstract mixin class _$FailureCopyWith<$Res>
-    implements $MapStateCopyWith<$Res> {
-  factory _$FailureCopyWith(_Failure value, $Res Function(_Failure) _then) =
-      __$FailureCopyWithImpl;
-  @useResult
-  $Res call({DirectionFailure failure});
-}
-
-/// @nodoc
-class __$FailureCopyWithImpl<$Res> implements _$FailureCopyWith<$Res> {
-  __$FailureCopyWithImpl(this._self, this._then);
-
-  final _Failure _self;
-  final $Res Function(_Failure) _then;
-
-  /// Create a copy of MapState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? failure = null,
-  }) {
-    return _then(_Failure(
-      failure: null == failure
-          ? _self.failure
-          : failure // ignore: cast_nullable_to_non_nullable
-              as DirectionFailure,
-    ));
   }
 }
 

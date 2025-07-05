@@ -2,18 +2,22 @@ part of 'map_bloc.dart';
 
 @freezed
 class MapEvent with _$MapEvent {
-  /// Kích hoạt bởi UI để bắt đầu theo dõi và chỉ đường.
-  /// [destinationCoordinates] là một List chứa [longitude, latitude].
-  const factory MapEvent.navigationStarted({
-    required List<double> destinationCoordinates,
-  }) = _NavigationStarted;
+  /// Sự kiện được gọi để yêu cầu tìm đường đi giữa các điểm.
+  /// Đây là sự kiện khởi đầu cho việc hiển thị tuyến đường trên bản đồ.
+  const factory MapEvent.routeRequested({
+    required List<List<double>> coordinates,
+    @Default('driving-traffic') String profile,
+  }) = _RouteRequested;
 
-  /// Event nội bộ, được kích hoạt khi stream vị trí trả về dữ liệu mới.
+  /// Sự kiện được gọi khi người dùng bắt đầu chế độ điều hướng (turn-by-turn).
+  const factory MapEvent.navigationStarted() = _NavigationStarted;
+
+  /// Sự kiện nội bộ để cập nhật vị trí mới nhất của người dùng từ stream.
   const factory MapEvent.locationUpdated({
-    required LocationData userLocation,
+    required LocationData locationData,
   }) = _LocationUpdated;
 
-  /// Event nội bộ, được kích hoạt khi stream vị trí báo lỗi.
+  /// Sự kiện nội bộ được gọi khi stream vị trí gặp lỗi.
   const factory MapEvent.locationStreamFailed({
     required DirectionFailure failure,
   }) = _LocationStreamFailed;

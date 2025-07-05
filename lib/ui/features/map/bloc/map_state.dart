@@ -1,23 +1,32 @@
 part of 'map_bloc.dart';
 
 @freezed
-class MapState with _$MapState {
-  /// Trạng thái khởi tạo, chưa có hoạt động nào.
+sealed class MapState with _$MapState {
+  /// Trạng thái khởi tạo, chưa có hành động nào xảy ra.
   const factory MapState.initial() = _Initial;
 
-  /// Đang tải dữ liệu chỉ đường lần đầu tiên.
-  const factory MapState.loading() = _Loading;
+  /// Trạng thái đang tải dữ liệu chỉ đường.
+  /// UI nên hiển thị một chỉ báo tải (loading indicator).
+  const factory MapState.loadInProgress() = _LoadInProgress;
 
-  /// Nhận và cập nhật chỉ đường thành công.
-  /// Chứa cả [direction] và [userLocation] để UI có thể cập nhật
-  /// cả đường đi và vị trí của người dùng.
-  const factory MapState.success({
+  /// Trạng thái đã tìm thấy đường đi thành công.
+  /// Chứa thông tin về tuyến đường và vị trí hiện tại của người dùng.
+  /// Đây là trạng thái xem trước tuyến đường.
+  const factory MapState.loadSuccess({
     required Direction direction,
-    required LocationData userLocation,
-  }) = _Success;
+    required LocationData? currentLocation,
+  }) = _LoadSuccess;
 
-  /// Có lỗi xảy ra trong quá trình lấy vị trí hoặc chỉ đường.
-  const factory MapState.failure({
+  /// Trạng thái tìm đường thất bại.
+  /// Chứa thông tin lỗi để UI có thể hiển thị thông báo phù hợp.
+  const factory MapState.loadFailure({
     required DirectionFailure failure,
-  }) = _Failure;
+  }) = _LoadFailure;
+
+  /// Trạng thái đang trong chế độ điều hướng (giống Google Maps).
+  /// UI sẽ thay đổi để tập trung vào vị trí người dùng và các chỉ dẫn tiếp theo.
+  const factory MapState.navigation({
+    required Direction direction,
+    required LocationData currentLocation,
+  }) = _Navigation;
 }
