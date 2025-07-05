@@ -12,7 +12,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 
-
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
@@ -62,7 +61,7 @@ class _MapViewState extends State<MapView> {
       final startPosition = await _getUserLocation();
 
       // Tọa độ giả định cho điểm đến (cần thay thế bằng logic thực tế của bạn)
-      const destinationCoords = [105.98628253876866, 9.777433047374611]; // Ví dụ: Làng Đại học
+      const destinationCoords = [105.98628253876866, 9.777433047374611];
 
       // Gửi sự kiện tới BLoC
       // ignore: use_build_context_synchronously
@@ -216,9 +215,7 @@ class _MapViewState extends State<MapView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chỉ Đường'),
-      ),
+      extendBody: true,
       // Sử dụng BlocConsumer để xử lý cả UI và các side-effect (như vẽ bản đồ)
       body: BlocConsumer<MapBloc, MapState>(
         // listener để xử lý các hành động không cần rebuild UI
@@ -246,6 +243,12 @@ class _MapViewState extends State<MapView> {
                 onMapCreated: (controller) async {
                   _mapboxMap = controller;
                   _pointAnnotationManager = await _mapboxMap!.annotations.createPointAnnotationManager();
+
+                  controller.scaleBar.updateSettings(ScaleBarSettings(enabled: false));
+                  controller.compass.updateSettings(CompassSettings(enabled: false));
+                  controller.logo.updateSettings(LogoSettings(enabled: false));
+                  controller.attribution.updateSettings(AttributionSettings(enabled: false));
+
                   if (!_mapReadyCompleter.isCompleted) {
                     _mapReadyCompleter.complete();
                   }
