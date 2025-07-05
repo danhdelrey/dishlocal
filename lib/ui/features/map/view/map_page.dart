@@ -3,101 +3,179 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/app_environment/app_environment.dart';
-import 'package:flutter/material.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/data/categories/direction/model/direction.dart';
+import 'package:dishlocal/ui/features/map/bloc/map_bloc.dart';
+import 'package:flutter/material.dart' hide Preview;
 import 'package:flutter/services.dart'; // Cần cho rootBundle
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:http/http.dart' as http;
-import 'package:turf/turf.dart' as turf;
 
-class MapPage extends StatefulWidget {
+
+class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
   @override
-  State<MapPage> createState() => _MapPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<MapBloc>(),
+      child: const MapView(),
+    );
+  }
 }
 
-class _MapPageState extends State<MapPage> {
-  // Các biến quản lý trạng thái
+class MapView extends StatefulWidget {
+  const MapView({super.key});
+
+  @override
+  State<MapView> createState() => _MapViewState();
+}
+
+class _MapViewState extends State<MapView> {
+  // Các biến quản lý Mapbox, giữ nguyên
   MapboxMap? _mapboxMap;
   PointAnnotationManager? _pointAnnotationManager;
-  Uint8List? _markerImage; // Biến lưu dữ liệu ảnh marker
+  Uint8List? _markerImage;
 
-  bool _isLoading = true;
-  String? _errorMessage;
-
+  // ID cho source và layer, giữ nguyên
   static const _routeSourceId = "route-source";
   static const _routeLayerId = "route-layer";
 
+  // Biến completer để đảm bảo map đã sẵn sàng trước khi vẽ
   final Completer<void> _mapReadyCompleter = Completer();
 
   @override
   void initState() {
     super.initState();
-    _loadMarkerImage(); // Tải ảnh marker khi widget khởi tạo
-    _initializeMapAndRoute();
+    _loadMarkerImage();
+
+    // Trigger sự kiện tải tuyến đường khi widget khởi tạo
+    _requestInitialRoute();
   }
 
-  // Tải ảnh marker từ assets và lưu vào biến
+  // Hàm này sẽ gọi BLoC để yêu cầu tuyến đường
+  Future<void> _requestInitialRoute() async {
+    try {
+      // Logic lấy vị trí người dùng và điểm đến vẫn nằm ở đây
+      // vì nó là dữ liệu đầu vào cho BLoC.
+      final startPosition = await _getUserLocation();
+
+      // Tọa độ giả định cho điểm đến (cần thay thế bằng logic thực tế của bạn)
+      const destinationCoords = [105.98628253876866, 9.777433047374611]; // Ví dụ: Làng Đại học
+
+      // Gửi sự kiện tới BLoC
+      // ignore: use_build_context_synchronously
+      context.read<MapBloc>().add(
+            MapEvent.routeRequested(
+              coordinates: [
+                [startPosition.longitude, startPosition.latitude],
+                destinationCoords, // Tọa độ điểm đến
+              ],
+            ),
+          );
+    } catch (e) {
+      // Nếu không lấy được vị trí ban đầu, có thể xử lý lỗi ở đây
+      // hoặc để BLoC xử lý (nếu bạn thiết kế BLoC nhận lỗi này)
+      // Hiện tại, ta sẽ hiển thị SnackBar
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lỗi khi lấy vị trí ban đầu: ${e.toString()}')));
+      }
+    }
+  }
+
+  // Tải ảnh marker từ assets và lưu vào biến (giữ nguyên)
   Future<void> _loadMarkerImage() async {
     final ByteData bytes = await rootBundle.load('assets/images/location_marker.png');
-    setState(() {
-      _markerImage = bytes.buffer.asUint8List();
-    });
-  }
-
-  Future<void> _initializeMapAndRoute() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final startPosition = await _getUserLocation();
-      final destinationPosition = _calculateDestination(startPosition);
-      final routeCoordinates = await _fetchRoute(startPosition, destinationPosition);
-
-      await _mapReadyCompleter.future;
-
-      await _drawRoute(routeCoordinates);
-      await _addDestinationMarker(destinationPosition); // Thêm marker tại điểm đến
-      await _adjustCamera(startPosition, destinationPosition);
-    } catch (e) {
+    if (mounted) {
       setState(() {
-        _errorMessage = "Lỗi: ${e.toString()}";
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
+        _markerImage = bytes.buffer.asUint8List();
       });
     }
   }
 
-  // Thêm một marker với nhãn tại điểm đến
-  Future<void> _addDestinationMarker(geo.Position destination) async {
-    // Đảm bảo manager và ảnh đã sẵn sàng
+  // Hàm vẽ tuyến đường, giờ nhận vào dữ liệu từ BLoC
+  Future<void> _drawRoute(List<List<double>> coordinates) async {
+    await _mapReadyCompleter.future;
+    if (_mapboxMap == null) return;
+
+    final routeGeometry = LineString(coordinates: coordinates.map((coord) => Position(coord[0], coord[1])).toList());
+
+    try {
+      await _mapboxMap!.style.removeStyleLayer(_routeLayerId);
+      await _mapboxMap!.style.removeStyleSource(_routeSourceId);
+    } catch (_) {}
+
+    await _mapboxMap!.style.addSource(GeoJsonSource(
+      id: _routeSourceId,
+      data: json.encode(routeGeometry.toJson()),
+    ));
+
+    final routeLayer = LineLayer(
+      id: _routeLayerId,
+      sourceId: _routeSourceId,
+      lineColor: Colors.blue.toARGB32(),
+      lineWidth: 7.0,
+      lineOpacity: 0.8,
+      lineJoin: LineJoin.ROUND,
+      lineCap: LineCap.ROUND,
+    );
+
+    await _mapboxMap!.style.addLayer(routeLayer);
+
+    // Logic đặt layer puck bên trên vẫn giữ nguyên
+    const knownPuckLayerIds = ['puck', 'mapbox-location-indicator-layer'];
+    String? puckLayerId;
+    final styleLayers = await _mapboxMap!.style.getStyleLayers();
+
+    for (final layer in styleLayers) {
+      if (knownPuckLayerIds.contains(layer?.id)) {
+        puckLayerId = layer?.id;
+        break;
+      }
+    }
+    if (puckLayerId != null) {
+      await _mapboxMap!.style.moveStyleLayer(_routeLayerId, LayerPosition(below: puckLayerId));
+    }
+  }
+
+  // Hàm thêm marker, giờ nhận tọa độ từ BLoC
+  Future<void> _addDestinationMarker(List<double> destination, String name) async {
+    await _mapReadyCompleter.future;
     if (_pointAnnotationManager == null || _markerImage == null) return;
 
-    // Xóa các marker cũ để tránh trùng lặp khi tải lại
     await _pointAnnotationManager!.deleteAll();
 
-    // Tạo chú thích điểm (marker)
     await _pointAnnotationManager!.create(
       PointAnnotationOptions(
-        geometry: Point(coordinates: Position(destination.longitude, destination.latitude)),
+        geometry: Point(coordinates: Position(destination[0], destination[1])),
         image: _markerImage!,
-        iconAnchor: IconAnchor.BOTTOM, // Đặt điểm neo ở dưới cùng của icon
-        textField: 'Quán ăn Hai Lúa',
+        iconAnchor: IconAnchor.BOTTOM,
+        textField: name,
         textColor: Colors.black.toARGB32(),
         textSize: 14.0,
-        textOffset: [0.0, -2], // Dịch chuyển văn bản lên trên icon
-        textAnchor: TextAnchor.BOTTOM, // Neo văn bản ở cạnh dưới của nó
+        textOffset: [0.0, -2],
+        textAnchor: TextAnchor.BOTTOM,
       ),
     );
   }
 
+  // Hàm điều chỉnh camera, giờ nhận dữ liệu từ BLoC
+  Future<void> _adjustCamera(Direction direction) async {
+    await _mapReadyCompleter.future;
+    if (_mapboxMap == null || direction.waypoints.length < 2) return;
+
+    // Lấy tọa độ từ Waypoints trong model Direction
+    final startPoint = Point(coordinates: Position(direction.waypoints.first.location[0], direction.waypoints.first.location[1]));
+    final endPoint = Point(coordinates: Position(direction.waypoints.last.location[0], direction.waypoints.last.location[1]));
+
+    final bounds = await _mapboxMap!.cameraForCoordinates([startPoint, endPoint], MbxEdgeInsets(top: 100, left: 50, bottom: 100, right: 50), null, null);
+
+    await _mapboxMap!.flyTo(bounds, MapAnimationOptions(duration: 2000));
+  }
+
+  // Lấy vị trí người dùng (giữ nguyên)
   Future<geo.Position> _getUserLocation() async {
-    // ... (code không đổi)
     bool serviceEnabled = await geo.Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       throw 'Dịch vụ vị trí đã bị tắt.';
@@ -118,122 +196,15 @@ class _MapPageState extends State<MapPage> {
     return await geo.Geolocator.getCurrentPosition(desiredAccuracy: geo.LocationAccuracy.high);
   }
 
-  geo.Position _calculateDestination(geo.Position start) {
-    // ... (code không đổi)
-    final startPoint = turf.Point(coordinates: turf.Position(start.longitude, start.latitude));
-    final destinationFeature = turf.destination(startPoint, 10, 90, turf.Unit.kilometers);
-
-    final destCoords = destinationFeature.coordinates;
-    return geo.Position(latitude: destCoords.lat as double, longitude: destCoords.lng as double, timestamp: DateTime.now(), accuracy: 0, altitude: 0, altitudeAccuracy: 0, heading: 0, headingAccuracy: 0, speed: 0, speedAccuracy: 0);
-  }
-
-  Future<List<Position>> _fetchRoute(geo.Position start, geo.Position end) async {
-    final url = 'https://api.mapbox.com/directions/v5/mapbox/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=geojson&access_token=${AppEnvironment.mapboxAccessToken}';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final decoded = json.decode(response.body);
-      final List<dynamic> coordinates = decoded['routes'][0]['geometry']['coordinates'];
-      return coordinates.map((coord) => Position(coord[0], coord[1])).toList();
-    } else {
-      throw 'Không thể lấy dữ liệu chỉ đường. Status code: ${response.statusCode}';
-    }
-  }
-
-  Future<void> _drawRoute(List<Position> coordinates) async {
-    if (_mapboxMap == null) return;
-
-    // Xóa tuyến đường cũ nếu có
-    try {
-      await _mapboxMap!.style.removeStyleLayer(_routeLayerId);
-      await _mapboxMap!.style.removeStyleSource(_routeSourceId);
-    } catch (_) {
-      // Bỏ qua lỗi nếu layer/source chưa tồn tại
-    }
-
-    // Tạo một LineString từ các tọa độ
-    final routeGeometry = LineString(coordinates: coordinates);
-
-    // Thêm source dữ liệu GeoJSON
-    await _mapboxMap!.style.addSource(GeoJsonSource(
-      id: _routeSourceId,
-      data: json.encode(routeGeometry.toJson()),
-    ));
-
-    // Tạo đối tượng layer
-    final routeLayer = LineLayer(
-      id: _routeLayerId,
-      sourceId: _routeSourceId,
-      lineColor: Colors.blue.toARGB32(),
-      lineWidth: 7.0, // Tăng độ rộng một chút để dễ nhìn
-      lineOpacity: 0.8,
-      lineJoin: LineJoin.ROUND,
-      lineCap: LineCap.ROUND,
-    );
-
-    // Thêm layer vào bản đồ trước
-    await _mapboxMap!.style.addLayer(routeLayer);
-
-    // --- LOGIC SỬA LẠI ĐỂ ĐẶT LAYER ĐÚNG VỊ TRÍ ---
-
-    // Lấy danh sách ID của các layer puck có thể có trên iOS và Android
-    const knownPuckLayerIds = [
-      'puck', // ID trên iOS
-      'mapbox-location-indicator-layer' // ID trên Android
-    ];
-
-    String? puckLayerId;
-    final styleLayers = await _mapboxMap!.style.getStyleLayers();
-
-    // Tìm ID chính xác của layer puck đang được sử dụng
-    for (final layer in styleLayers) {
-      if (knownPuckLayerIds.contains(layer?.id)) {
-        puckLayerId = layer?.id;
-        break;
-      }
-    }
-
-    // Nếu tìm thấy layer của puck, di chuyển layer tuyến đường xuống ngay bên dưới nó.
-    // Điều này đảm bảo puck luôn nằm trên tuyến đường.
-    if (puckLayerId != null) {
-      await _mapboxMap!.style.moveStyleLayer(_routeLayerId, LayerPosition(below: puckLayerId));
-    }
-  }
-
-  Future<void> _adjustCamera(geo.Position start, geo.Position end) async {
-    if (_mapboxMap == null) return;
-
-    // <-- CHỨC NĂNG ZOOM ĐỂ THẤY TOÀN BỘ TUYẾN ĐƯỜNG NẰM Ở ĐÂY
-    final bounds = await _mapboxMap!.cameraForCoordinates(
-        [
-          Point(coordinates: Position(start.longitude, start.latitude)),
-          Point(coordinates: Position(end.longitude, end.latitude)),
-        ],
-
-        // Thêm padding để tuyến đường không bị sát viền màn hình
-        MbxEdgeInsets(top: 100, left: 50, bottom: 100, right: 50),
-        null,
-        null);
-
-    await _mapboxMap!.flyTo(bounds, MapAnimationOptions(duration: 3000));
-  }
-
+  // Zoom tới vị trí hiện tại (giữ nguyên)
   Future<void> _zoomToCurrentUserLocation() async {
     if (_mapboxMap == null) return;
-
     try {
       final geo.Position currentPosition = await _getUserLocation();
-
-      // Tạo các tùy chọn cho camera
       final cameraOptions = CameraOptions(
         center: Point(coordinates: Position(currentPosition.longitude, currentPosition.latitude)),
-        zoom: 18.5, // Mức zoom cao để nhìn rõ đường phố
-        //pitch: 60.0, // Giữ góc nhìn 3D
-        bearing: 0, // Hướng về phía Bắc
+        zoom: 17.0,
       );
-
-      // Thực hiện hiệu ứng "bay" đến vị trí
       await _mapboxMap!.flyTo(cameraOptions, MapAnimationOptions(duration: 1500));
     } catch (e) {
       if (mounted) {
@@ -246,55 +217,78 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chỉ Đường Tới Điểm Cách 1km'),
+        title: const Text('Chỉ Đường'),
       ),
-      body: Stack(
-        children: [
-          MapWidget(
-            key: const ValueKey("mapWidget"),
-            onMapCreated: (controller) async {
-              _mapboxMap = controller;
-              // Khởi tạo PointAnnotationManager sau khi map được tạo
-              _pointAnnotationManager = await _mapboxMap!.annotations.createPointAnnotationManager();
-              if (!_mapReadyCompleter.isCompleted) {
-                _mapReadyCompleter.complete();
-              }
-            },
-            onStyleLoadedListener: (_) {
-              _mapboxMap?.location.updateSettings(LocationComponentSettings(
-                enabled: true,
-                puckBearingEnabled: true,
-                puckBearing: PuckBearing.HEADING,
-              ));
-            },
-          ),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
-          if (_errorMessage != null)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Material(
-                child: Container(
-                  color: Colors.redAccent,
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    _errorMessage!,
-                    style: const TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
+      // Sử dụng BlocConsumer để xử lý cả UI và các side-effect (như vẽ bản đồ)
+      body: BlocConsumer<MapBloc, MapState>(
+        // listener để xử lý các hành động không cần rebuild UI
+        listener: (context, state) {
+          if (state is Preview) {
+            // Khi có dữ liệu, gọi các hàm vẽ
+            final direction = state.direction;
+            if (direction.routes.isNotEmpty && direction.waypoints.isNotEmpty) {
+              final route = direction.routes.first;
+              final destinationWaypoint = direction.waypoints.last;
+
+              _drawRoute(route.geometry.coordinates);
+              _addDestinationMarker(destinationWaypoint.location, destinationWaypoint.name);
+              _adjustCamera(direction);
+            }
+          }
+          // Bạn có thể thêm các listener khác ở đây, ví dụ cho trạng thái Navigating
+        },
+        // builder để xây dựng các widget trên màn hình
+        builder: (context, state) {
+          return Stack(
+            children: [
+              MapWidget(
+                key: const ValueKey("mapWidget"),
+                onMapCreated: (controller) async {
+                  _mapboxMap = controller;
+                  _pointAnnotationManager = await _mapboxMap!.annotations.createPointAnnotationManager();
+                  if (!_mapReadyCompleter.isCompleted) {
+                    _mapReadyCompleter.complete();
+                  }
+                },
+                onStyleLoadedListener: (_) {
+                  _mapboxMap?.location.updateSettings(LocationComponentSettings(
+                    enabled: true,
+                    puckBearingEnabled: true,
+                    puckBearing: PuckBearing.HEADING,
+                  ));
+                },
+              ),
+              // Hiển thị loading indicator dựa trên state của BLoC
+              if (state is LoadInProgress)
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              // Hiển thị lỗi dựa trên state của BLoC
+              if (state is LoadFailure)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Material(
+                    child: Container(
+                      color: Colors.redAccent,
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        state.failure.message, // Lấy message từ failure object
+                        style: const TextStyle(color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-        ],
+            ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _zoomToCurrentUserLocation, // Gọi hàm mới
-        tooltip: 'Vị trí của tôi', // Thay đổi tooltip
-        child: const Icon(Icons.my_location), // Thay đổi icon
+        onPressed: _zoomToCurrentUserLocation,
+        tooltip: 'Vị trí của tôi',
+        child: const Icon(Icons.my_location),
       ),
     );
   }
