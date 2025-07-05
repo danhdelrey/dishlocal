@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/direction/model/direction.dart';
 import 'package:dishlocal/ui/features/map/bloc/map_bloc.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:flutter/material.dart' hide Preview;
 import 'package:flutter/services.dart'; // Cần cho rootBundle
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -216,6 +218,40 @@ class _MapViewState extends State<MapView> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(1000),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(1000),
+              boxShadow: [
+                BoxShadow(
+                  color: appColorScheme(context).outline.withValues(alpha: 0.5),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 5, bottom: 5, right: 10, left: 5),
+              child: CustomIconWithLabel(
+                icon: AppIcons.left.toSvg(
+                  color: Colors.black,
+                  width: 16,
+                  height: 16,
+                ),
+                label: 'Quay về',
+                labelColor: Colors.black,
+              ),
+            ),
+          ),
+        ),
+      ),
       // Sử dụng BlocConsumer để xử lý cả UI và các side-effect (như vẽ bản đồ)
       body: BlocConsumer<MapBloc, MapState>(
         // listener để xử lý các hành động không cần rebuild UI
@@ -289,8 +325,11 @@ class _MapViewState extends State<MapView> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        foregroundColor: appColorScheme(context).primary,
         onPressed: _zoomToCurrentUserLocation,
         tooltip: 'Vị trí của tôi',
+        shape: const CircleBorder(),
         child: const Icon(Icons.my_location),
       ),
     );
