@@ -177,7 +177,7 @@ abstract class IntersectionModel with _$IntersectionModel {
     required List<int> bearings,
     required List<bool> entry,
     @JsonKey(name: 'admin_index') required int adminIndex,
-    required int out,
+    int? out,
     @JsonKey(name: 'geometry_index') required int geometryIndex,
     required List<double> location,
     // Các thuộc tính dưới đây không phải lúc nào cũng có

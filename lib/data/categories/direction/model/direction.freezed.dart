@@ -3171,7 +3171,7 @@ mixin _$IntersectionModel {
   List<bool> get entry;
   @JsonKey(name: 'admin_index')
   int get adminIndex;
-  int get out;
+  int? get out;
   @JsonKey(name: 'geometry_index')
   int get geometryIndex;
   List<double>
@@ -3256,7 +3256,7 @@ abstract mixin class $IntersectionModelCopyWith<$Res> {
       List<int> bearings,
       List<bool> entry,
       @JsonKey(name: 'admin_index') int adminIndex,
-      int out,
+      int? out,
       @JsonKey(name: 'geometry_index') int geometryIndex,
       List<double> location,
       @JsonKey(name: 'in') int? inIndex,
@@ -3285,7 +3285,7 @@ class _$IntersectionModelCopyWithImpl<$Res>
     Object? bearings = null,
     Object? entry = null,
     Object? adminIndex = null,
-    Object? out = null,
+    Object? out = freezed,
     Object? geometryIndex = null,
     Object? location = null,
     Object? inIndex = freezed,
@@ -3311,10 +3311,10 @@ class _$IntersectionModelCopyWithImpl<$Res>
           ? _self.adminIndex
           : adminIndex // ignore: cast_nullable_to_non_nullable
               as int,
-      out: null == out
+      out: freezed == out
           ? _self.out
           : out // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       geometryIndex: null == geometryIndex
           ? _self.geometryIndex
           : geometryIndex // ignore: cast_nullable_to_non_nullable
@@ -3369,7 +3369,7 @@ class _IntersectionModel implements IntersectionModel {
       required final List<int> bearings,
       required final List<bool> entry,
       @JsonKey(name: 'admin_index') required this.adminIndex,
-      required this.out,
+      this.out,
       @JsonKey(name: 'geometry_index') required this.geometryIndex,
       required final List<double> location,
       @JsonKey(name: 'in') this.inIndex,
@@ -3406,7 +3406,7 @@ class _IntersectionModel implements IntersectionModel {
   @JsonKey(name: 'admin_index')
   final int adminIndex;
   @override
-  final int out;
+  final int? out;
   @override
   @JsonKey(name: 'geometry_index')
   final int geometryIndex;
@@ -3510,7 +3510,7 @@ abstract mixin class _$IntersectionModelCopyWith<$Res>
       List<int> bearings,
       List<bool> entry,
       @JsonKey(name: 'admin_index') int adminIndex,
-      int out,
+      int? out,
       @JsonKey(name: 'geometry_index') int geometryIndex,
       List<double> location,
       @JsonKey(name: 'in') int? inIndex,
@@ -3540,7 +3540,7 @@ class __$IntersectionModelCopyWithImpl<$Res>
     Object? bearings = null,
     Object? entry = null,
     Object? adminIndex = null,
-    Object? out = null,
+    Object? out = freezed,
     Object? geometryIndex = null,
     Object? location = null,
     Object? inIndex = freezed,
@@ -3566,10 +3566,10 @@ class __$IntersectionModelCopyWithImpl<$Res>
           ? _self.adminIndex
           : adminIndex // ignore: cast_nullable_to_non_nullable
               as int,
-      out: null == out
+      out: freezed == out
           ? _self.out
           : out // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       geometryIndex: null == geometryIndex
           ? _self.geometryIndex
           : geometryIndex // ignore: cast_nullable_to_non_nullable

@@ -276,7 +276,7 @@ _IntersectionModel _$IntersectionModelFromJson(Map<String, dynamic> json) =>
           .toList(),
       entry: (json['entry'] as List<dynamic>).map((e) => e as bool).toList(),
       adminIndex: (json['admin_index'] as num).toInt(),
-      out: (json['out'] as num).toInt(),
+      out: (json['out'] as num?)?.toInt(),
       geometryIndex: (json['geometry_index'] as num).toInt(),
       location: (json['location'] as List<dynamic>)
           .map((e) => (e as num).toDouble())
