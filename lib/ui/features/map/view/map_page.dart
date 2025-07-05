@@ -51,6 +51,7 @@ class _MapViewState extends State<MapView> {
   PointAnnotationManager? _pointAnnotationManager;
   Uint8List? _markerImage;
   PointAnnotation? _destinationAnnotation;
+  bool _puckIsVisible = false;
 
   // ID cho source và layer, giữ nguyên
   static const _routeSourceId = "route-source";
@@ -245,6 +246,15 @@ class _MapViewState extends State<MapView> {
     return await geo.Geolocator.getCurrentPosition(desiredAccuracy: geo.LocationAccuracy.high);
   }
 
+  Future<void> _showUserLocationPuck() async {
+    if (_mapboxMap == null) return;
+    await _mapboxMap!.location.updateSettings(LocationComponentSettings(
+      enabled: true, // <-- Bật lại puck
+      puckBearingEnabled: true,
+      puckBearing: PuckBearing.HEADING,
+    ));
+  }
+
   // Zoom tới vị trí hiện tại (giữ nguyên)
   Future<void> _zoomToCurrentUserLocation() async {
     if (_mapboxMap == null) return;
@@ -265,10 +275,8 @@ class _MapViewState extends State<MapView> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MapBloc, MapState>(
-      // listener để xử lý các hành động không cần rebuild UI
       listener: (context, state) {
         if (state is Preview) {
-          // Khi có dữ liệu, gọi các hàm vẽ
           final direction = state.direction;
           if (direction.routes!.isNotEmpty && direction.waypoints!.isNotEmpty) {
             final route = direction.routes!.first;
@@ -277,9 +285,13 @@ class _MapViewState extends State<MapView> {
             _drawRoute(route.geometry?.coordinates ?? [[]]);
             _addDestinationMarker(destinationWaypoint.location ?? [], widget.destinationName);
             _adjustCamera(direction);
+
+            if (!_puckIsVisible) {
+              _showUserLocationPuck();
+              _puckIsVisible = true; // Đặt cờ để không gọi lại nữa
+            }
           }
         }
-        // Bạn có thể thêm các listener khác ở đây, ví dụ cho trạng thái Navigating
       },
       // builder để xây dựng các widget trên màn hình
       builder: (context, state) {
@@ -377,8 +389,8 @@ class _MapViewState extends State<MapView> {
               MapWidget(
                 key: const ValueKey("mapWidget"),
                 cameraOptions: CameraOptions(
-                  center: Point(coordinates: Position(108.2772, 16.0544)), // Tọa độ Đà Nẵng
-                  zoom: 0, // Zoom ra xa hơn
+                  center: Point(coordinates: Position(107.33311570955856, 16.440014641689704)),
+                  zoom: 5, // Zoom ra xa hơn
                   pitch: 0.0,
                   bearing: 0.0,
                 ),
@@ -399,7 +411,7 @@ class _MapViewState extends State<MapView> {
                 },
                 onStyleLoadedListener: (_) {
                   _mapboxMap?.location.updateSettings(LocationComponentSettings(
-                    enabled: true,
+                    enabled: false,
                     puckBearingEnabled: true,
                     puckBearing: PuckBearing.HEADING,
                   ));
@@ -430,14 +442,16 @@ class _MapViewState extends State<MapView> {
                 ),
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.white,
-            foregroundColor: appColorScheme(context).primary,
-            onPressed: _zoomToCurrentUserLocation,
-            tooltip: 'Vị trí của tôi',
-            shape: const CircleBorder(),
-            child: const Icon(Icons.my_location),
-          ),
+          floatingActionButton: state is Preview
+              ? FloatingActionButton(
+                  backgroundColor: Colors.white,
+                  foregroundColor: appColorScheme(context).primary,
+                  onPressed: _zoomToCurrentUserLocation,
+                  tooltip: 'Vị trí của tôi',
+                  shape: const CircleBorder(),
+                  child: const Icon(Icons.my_location),
+                )
+              : null,
         );
       },
     );
