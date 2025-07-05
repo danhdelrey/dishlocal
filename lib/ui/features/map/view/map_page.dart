@@ -50,6 +50,7 @@ class _MapViewState extends State<MapView> {
   MapboxMap? _mapboxMap;
   PointAnnotationManager? _pointAnnotationManager;
   Uint8List? _markerImage;
+  PointAnnotation? _destinationAnnotation;
 
   // ID cho source và layer, giữ nguyên
   static const _routeSourceId = "route-source";
@@ -154,9 +155,13 @@ class _MapViewState extends State<MapView> {
     await _mapReadyCompleter.future;
     if (_pointAnnotationManager == null || _markerImage == null) return;
 
-    await _pointAnnotationManager!.deleteAll();
+    // Nếu đã có marker điểm đến cũ, hãy xóa nó đi
+    if (_destinationAnnotation != null) {
+      await _pointAnnotationManager!.delete(_destinationAnnotation!);
+    }
 
-    await _pointAnnotationManager!.create(
+    // Tạo marker mới và lưu lại để có thể xóa trong lần cập nhật sau
+    _destinationAnnotation = await _pointAnnotationManager!.create(
       PointAnnotationOptions(
         geometry: Point(coordinates: Position(destination[0], destination[1])),
         image: _markerImage!,
@@ -170,6 +175,38 @@ class _MapViewState extends State<MapView> {
         textAnchor: TextAnchor.BOTTOM,
       ),
     );
+  }
+
+  Future<void> _addIslandLabels() async {
+    await _mapReadyCompleter.future;
+    if (_pointAnnotationManager == null) return;
+
+    // Tọa độ trung tâm của Hoàng Sa và Trường Sa
+    final hoangSaPosition = Position(112.0, 16.5); // Kinh độ, Vĩ độ
+    final truongSaPosition = Position(114.16, 9.25); // Kinh độ, Vĩ độ
+
+    await _pointAnnotationManager!.createMulti([
+      // Nhãn cho Quần đảo Hoàng Sa
+      PointAnnotationOptions(
+        geometry: Point(coordinates: hoangSaPosition),
+        textField: 'Quần đảo Hoàng Sa (Việt Nam)',
+        textColor: Colors.blue.shade900.toARGB32(),
+        textHaloColor: Colors.white.toARGB32(),
+        textHaloWidth: 2.0,
+        textSize: 12.0,
+        textAnchor: TextAnchor.CENTER,
+      ),
+      // Nhãn cho Quần đảo Trường Sa
+      PointAnnotationOptions(
+        geometry: Point(coordinates: truongSaPosition),
+        textField: 'Quần đảo Trường Sa (Việt Nam)',
+        textColor: Colors.blue.shade900.toARGB32(),
+        textHaloColor: Colors.white.toARGB32(),
+        textHaloWidth: 2.0,
+        textSize: 12.0,
+        textAnchor: TextAnchor.CENTER,
+      ),
+    ]);
   }
 
   // Hàm điều chỉnh camera, giờ nhận dữ liệu từ BLoC
@@ -340,8 +377,8 @@ class _MapViewState extends State<MapView> {
               MapWidget(
                 key: const ValueKey("mapWidget"),
                 cameraOptions: CameraOptions(
-                  center: Point(coordinates: Position(0.0, 0.0)),
-                  zoom: 0.0, // hoặc thử zoom: 1.0 nếu muốn thấy chi tiết hơn
+                  center: Point(coordinates: Position(108.2772, 16.0544)), // Tọa độ Đà Nẵng
+                  zoom: 0, // Zoom ra xa hơn
                   pitch: 0.0,
                   bearing: 0.0,
                 ),
@@ -357,6 +394,8 @@ class _MapViewState extends State<MapView> {
                   if (!_mapReadyCompleter.isCompleted) {
                     _mapReadyCompleter.complete();
                   }
+
+                  _addIslandLabels();
                 },
                 onStyleLoadedListener: (_) {
                   _mapboxMap?.location.updateSettings(LocationComponentSettings(
