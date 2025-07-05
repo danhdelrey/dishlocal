@@ -4,6 +4,7 @@ import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
+import 'package:dishlocal/data/categories/direction/model/location_data.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/delete_post/bloc/delete_post_bloc.dart';
@@ -370,7 +371,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
             label: 'Xem trên bản đồ',
             onTap: () {
               if (post.address != null) {
-                MapsLauncher.launchCoordinates(post.address!.latitude, post.address!.longitude);
+                context.push('/map', extra: {'destination': LocationData(latitude: post.address!.latitude, longitude: post.address!.longitude)});
               }
             },
           ),

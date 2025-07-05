@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dishlocal/app/config/main_shell.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
+import 'package:dishlocal/data/categories/direction/model/location_data.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:dishlocal/ui/features/auth/view/login_page.dart';
@@ -25,7 +26,7 @@ class AppRouter {
   final _log = Logger('AppRouter');
 
   late final router = GoRouter(
-    initialLocation: '/map',
+    initialLocation: '/home',
     debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: _redirect,
@@ -114,7 +115,11 @@ class AppRouter {
       ),
       GoRoute(
         path: '/map',
-        builder: (context, state) => const MapPage(),
+        builder: (context, state){
+          final extraMap = state.extra as Map<String, dynamic>;
+          final LocationData destination = extraMap['destination'];
+          return MapPage(destination: destination);
+        },
       ),
 
       // Sử dụng MainShell thay vì PersistentTabView.router

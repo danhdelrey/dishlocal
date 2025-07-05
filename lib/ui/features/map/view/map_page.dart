@@ -8,28 +8,35 @@ import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/direction/model/direction.dart';
+import 'package:dishlocal/data/categories/direction/model/location_data.dart';
 import 'package:dishlocal/ui/features/map/bloc/map_bloc.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
 import 'package:flutter/material.dart' hide Preview;
 import 'package:flutter/services.dart'; // Cần cho rootBundle
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 
 class MapPage extends StatelessWidget {
-  const MapPage({super.key});
+  const MapPage({super.key, required this.destination});
+
+  final LocationData destination;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<MapBloc>(),
-      child: const MapView(),
+      child: MapView(
+        destination: destination,
+      ),
     );
   }
 }
 
 class MapView extends StatefulWidget {
-  const MapView({super.key});
+  const MapView({super.key, required this.destination});
+  final LocationData destination;
 
   @override
   State<MapView> createState() => _MapViewState();
@@ -64,16 +71,13 @@ class _MapViewState extends State<MapView> {
       // vì nó là dữ liệu đầu vào cho BLoC.
       final startPosition = await _getUserLocation();
 
-      // Tọa độ giả định cho điểm đến (cần thay thế bằng logic thực tế của bạn)
-      const destinationCoords = [105.98628253876866, 9.777433047374611];
-
       // Gửi sự kiện tới BLoC
       // ignore: use_build_context_synchronously
       context.read<MapBloc>().add(
             MapEvent.routeRequested(
               coordinates: [
                 [startPosition.longitude, startPosition.latitude],
-                destinationCoords, // Tọa độ điểm đến
+                [widget.destination.longitude, widget.destination.latitude], // Tọa độ điểm đến
               ],
             ),
           );
@@ -241,9 +245,12 @@ class _MapViewState extends State<MapView> {
           extendBody: true,
           extendBodyBehindAppBar: true,
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: Colors.transparent,
             title: InkWell(
-              onTap: () {},
+              onTap: () {
+                context.pop();
+              },
               borderRadius: BorderRadius.circular(1000),
               child: Ink(
                 decoration: BoxDecoration(
