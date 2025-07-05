@@ -1,32 +1,30 @@
 part of 'map_bloc.dart';
 
 @freezed
-sealed class MapState with _$MapState {
+class MapState with _$MapState {
   /// Trạng thái khởi tạo, chưa có hành động nào xảy ra.
-  const factory MapState.initial() = _Initial;
+  const factory MapState.initial() = Initial;
 
-  /// Trạng thái đang tải dữ liệu chỉ đường.
-  /// UI nên hiển thị một chỉ báo tải (loading indicator).
-  const factory MapState.loadInProgress() = _LoadInProgress;
+  /// Trạng thái đang tải dữ liệu tuyến đường ban đầu.
+  const factory MapState.loadInProgress() = LoadInProgress;
 
-  /// Trạng thái đã tìm thấy đường đi thành công.
-  /// Chứa thông tin về tuyến đường và vị trí hiện tại của người dùng.
-  /// Đây là trạng thái xem trước tuyến đường.
-  const factory MapState.loadSuccess({
-    required Direction direction,
-    required LocationData? currentLocation,
-  }) = _LoadSuccess;
+  /// Trạng thái tải tuyến đường thất bại.
+  /// Chứa [failure] để UI có thể hiển thị thông báo lỗi phù hợp.
+  const factory MapState.loadFailure(DirectionFailure failure) = LoadFailure;
 
-  /// Trạng thái tìm đường thất bại.
-  /// Chứa thông tin lỗi để UI có thể hiển thị thông báo phù hợp.
-  const factory MapState.loadFailure({
-    required DirectionFailure failure,
-  }) = _LoadFailure;
+  /// Trạng thái hiển thị tuyến đường thành công, ở chế độ xem trước.
+  /// Người dùng có thể tự do di chuyển, phóng to/thu nhỏ bản đồ.
+  ///
+  /// - [direction]: Dữ liệu chỉ đường đã tải.
+  const factory MapState.preview(Direction direction) = Preview;
 
-  /// Trạng thái đang trong chế độ điều hướng (giống Google Maps).
-  /// UI sẽ thay đổi để tập trung vào vị trí người dùng và các chỉ dẫn tiếp theo.
-  const factory MapState.navigation({
+  /// Trạng thái đang trong chế độ chỉ đường (điều hướng).
+  /// Bản đồ sẽ tự động theo dõi và căn giữa vào vị trí của người dùng.
+  ///
+  /// - [direction]: Dữ liệu chỉ đường gốc.
+  /// - [currentLocation]: Vị trí hiện tại của người dùng, được cập nhật liên tục.
+  const factory MapState.navigating({
     required Direction direction,
     required LocationData currentLocation,
-  }) = _Navigation;
+  }) = Navigating;
 }

@@ -10,14 +10,14 @@ import 'package:geolocator/geolocator.dart' as geo;
 import 'package:http/http.dart' as http;
 import 'package:turf/turf.dart' as turf;
 
-class MapboxView extends StatefulWidget {
-  const MapboxView({super.key});
+class MapPage extends StatefulWidget {
+  const MapPage({super.key});
 
   @override
-  State<MapboxView> createState() => _MapboxViewState();
+  State<MapPage> createState() => _MapPageState();
 }
 
-class _MapboxViewState extends State<MapboxView> {
+class _MapPageState extends State<MapPage> {
   // Các biến quản lý trạng thái
   MapboxMap? _mapboxMap;
   PointAnnotationManager? _pointAnnotationManager;
