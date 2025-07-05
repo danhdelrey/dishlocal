@@ -34,7 +34,7 @@ class DirectionRepositoryImpl implements DirectionRepository {
 
       _log.info('Bắt đầu phân tích dữ liệu JSON thành model Direction...');
       final directionModel = Direction.fromJson(rawData);
-      _log.fine('Phân tích dữ liệu thành công. Summary: ${directionModel.routes.first.toString()}');
+      _log.fine('Phân tích dữ liệu thành công. Summary: ${directionModel.routes?.first.toString()}');
 
       // Nếu mọi thứ thành công, trả về dữ liệu bên Right
       return Right(directionModel);

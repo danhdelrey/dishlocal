@@ -7,14 +7,14 @@ part of 'direction.dart';
 // **************************************************************************
 
 _Direction _$DirectionFromJson(Map<String, dynamic> json) => _Direction(
-      routes: (json['routes'] as List<dynamic>)
-          .map((e) => RouteModel.fromJson(e as Map<String, dynamic>))
+      routes: (json['routes'] as List<dynamic>?)
+          ?.map((e) => RouteModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      waypoints: (json['waypoints'] as List<dynamic>)
-          .map((e) => WaypointModel.fromJson(e as Map<String, dynamic>))
+      waypoints: (json['waypoints'] as List<dynamic>?)
+          ?.map((e) => WaypointModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      code: json['code'] as String,
-      uuid: json['uuid'] as String,
+      code: json['code'] as String?,
+      uuid: json['uuid'] as String?,
     );
 
 Map<String, dynamic> _$DirectionToJson(_Direction instance) =>
@@ -26,15 +26,16 @@ Map<String, dynamic> _$DirectionToJson(_Direction instance) =>
     };
 
 _RouteModel _$RouteModelFromJson(Map<String, dynamic> json) => _RouteModel(
-      weightName: json['weight_name'] as String,
-      weight: (json['weight'] as num).toDouble(),
-      duration: (json['duration'] as num).toDouble(),
-      distance: (json['distance'] as num).toDouble(),
-      legs: (json['legs'] as List<dynamic>)
-          .map((e) => LegModel.fromJson(e as Map<String, dynamic>))
+      weightName: json['weight_name'] as String?,
+      weight: (json['weight'] as num?)?.toDouble(),
+      duration: (json['duration'] as num?)?.toDouble(),
+      distance: (json['distance'] as num?)?.toDouble(),
+      legs: (json['legs'] as List<dynamic>?)
+          ?.map((e) => LegModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      geometry:
-          GeometryModel.fromJson(json['geometry'] as Map<String, dynamic>),
+      geometry: json['geometry'] == null
+          ? null
+          : GeometryModel.fromJson(json['geometry'] as Map<String, dynamic>),
       voiceLocale: json['voiceLocale'] as String?,
     );
 
@@ -51,10 +52,10 @@ Map<String, dynamic> _$RouteModelToJson(_RouteModel instance) =>
 
 _WaypointModel _$WaypointModelFromJson(Map<String, dynamic> json) =>
     _WaypointModel(
-      distance: (json['distance'] as num).toDouble(),
-      name: json['name'] as String,
-      location: (json['location'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+      distance: (json['distance'] as num?)?.toDouble(),
+      name: json['name'] as String?,
+      location: (json['location'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
           .toList(),
     );
 
@@ -66,19 +67,21 @@ Map<String, dynamic> _$WaypointModelToJson(_WaypointModel instance) =>
     };
 
 _LegModel _$LegModelFromJson(Map<String, dynamic> json) => _LegModel(
-      viaWaypoints: json['via_waypoints'] as List<dynamic>,
-      annotation:
-          AnnotationModel.fromJson(json['annotation'] as Map<String, dynamic>),
-      admins: (json['admins'] as List<dynamic>)
-          .map((e) => AdminModel.fromJson(e as Map<String, dynamic>))
+      viaWaypoints: json['via_waypoints'] as List<dynamic>?,
+      annotation: json['annotation'] == null
+          ? null
+          : AnnotationModel.fromJson(
+              json['annotation'] as Map<String, dynamic>),
+      admins: (json['admins'] as List<dynamic>?)
+          ?.map((e) => AdminModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      weight: (json['weight'] as num).toDouble(),
-      duration: (json['duration'] as num).toDouble(),
-      steps: (json['steps'] as List<dynamic>)
-          .map((e) => StepModel.fromJson(e as Map<String, dynamic>))
+      weight: (json['weight'] as num?)?.toDouble(),
+      duration: (json['duration'] as num?)?.toDouble(),
+      steps: (json['steps'] as List<dynamic>?)
+          ?.map((e) => StepModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      distance: (json['distance'] as num).toDouble(),
-      summary: json['summary'] as String,
+      distance: (json['distance'] as num?)?.toDouble(),
+      summary: json['summary'] as String?,
     );
 
 Map<String, dynamic> _$LegModelToJson(_LegModel instance) => <String, dynamic>{
@@ -94,14 +97,14 @@ Map<String, dynamic> _$LegModelToJson(_LegModel instance) => <String, dynamic>{
 
 _AnnotationModel _$AnnotationModelFromJson(Map<String, dynamic> json) =>
     _AnnotationModel(
-      speed: (json['speed'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+      speed: (json['speed'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
           .toList(),
-      distance: (json['distance'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+      distance: (json['distance'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
           .toList(),
-      duration: (json['duration'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+      duration: (json['duration'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
           .toList(),
     );
 
@@ -113,7 +116,7 @@ Map<String, dynamic> _$AnnotationModelToJson(_AnnotationModel instance) =>
     };
 
 _AdminModel _$AdminModelFromJson(Map<String, dynamic> json) => _AdminModel(
-      iso31661: json['iso_3166_1'] as String,
+      iso31661: json['iso_3166_1'] as String?,
     );
 
 Map<String, dynamic> _$AdminModelToJson(_AdminModel instance) =>
@@ -122,26 +125,29 @@ Map<String, dynamic> _$AdminModelToJson(_AdminModel instance) =>
     };
 
 _StepModel _$StepModelFromJson(Map<String, dynamic> json) => _StepModel(
-      bannerInstructions: (json['bannerInstructions'] as List<dynamic>)
-          .map(
+      bannerInstructions: (json['bannerInstructions'] as List<dynamic>?)
+          ?.map(
               (e) => BannerInstructionModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      voiceInstructions: (json['voiceInstructions'] as List<dynamic>)
-          .map((e) => VoiceInstructionModel.fromJson(e as Map<String, dynamic>))
+      voiceInstructions: (json['voiceInstructions'] as List<dynamic>?)
+          ?.map(
+              (e) => VoiceInstructionModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      intersections: (json['intersections'] as List<dynamic>)
-          .map((e) => IntersectionModel.fromJson(e as Map<String, dynamic>))
+      intersections: (json['intersections'] as List<dynamic>?)
+          ?.map((e) => IntersectionModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      maneuver:
-          ManeuverModel.fromJson(json['maneuver'] as Map<String, dynamic>),
-      name: json['name'] as String,
-      duration: (json['duration'] as num).toDouble(),
-      distance: (json['distance'] as num).toDouble(),
-      drivingSide: json['driving_side'] as String,
-      weight: (json['weight'] as num).toDouble(),
-      mode: json['mode'] as String,
-      geometry:
-          GeometryModel.fromJson(json['geometry'] as Map<String, dynamic>),
+      maneuver: json['maneuver'] == null
+          ? null
+          : ManeuverModel.fromJson(json['maneuver'] as Map<String, dynamic>),
+      name: json['name'] as String?,
+      duration: (json['duration'] as num?)?.toDouble(),
+      distance: (json['distance'] as num?)?.toDouble(),
+      drivingSide: json['driving_side'] as String?,
+      weight: (json['weight'] as num?)?.toDouble(),
+      mode: json['mode'] as String?,
+      geometry: json['geometry'] == null
+          ? null
+          : GeometryModel.fromJson(json['geometry'] as Map<String, dynamic>),
       ref: json['ref'] as String?,
     );
 
@@ -163,11 +169,11 @@ Map<String, dynamic> _$StepModelToJson(_StepModel instance) =>
 
 _GeometryModel _$GeometryModelFromJson(Map<String, dynamic> json) =>
     _GeometryModel(
-      coordinates: (json['coordinates'] as List<dynamic>)
-          .map((e) =>
+      coordinates: (json['coordinates'] as List<dynamic>?)
+          ?.map((e) =>
               (e as List<dynamic>).map((e) => (e as num).toDouble()).toList())
           .toList(),
-      type: json['type'] as String,
+      type: json['type'] as String?,
     );
 
 Map<String, dynamic> _$GeometryModelToJson(_GeometryModel instance) =>
@@ -179,13 +185,16 @@ Map<String, dynamic> _$GeometryModelToJson(_GeometryModel instance) =>
 _BannerInstructionModel _$BannerInstructionModelFromJson(
         Map<String, dynamic> json) =>
     _BannerInstructionModel(
-      primary: PrimaryInstructionModel.fromJson(
-          json['primary'] as Map<String, dynamic>),
+      primary: json['primary'] == null
+          ? null
+          : PrimaryInstructionModel.fromJson(
+              json['primary'] as Map<String, dynamic>),
       sub: json['sub'] == null
           ? null
           : PrimaryInstructionModel.fromJson(
               json['sub'] as Map<String, dynamic>),
-      distanceAlongGeometry: (json['distanceAlongGeometry'] as num).toDouble(),
+      distanceAlongGeometry:
+          (json['distanceAlongGeometry'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$BannerInstructionModelToJson(
@@ -199,12 +208,12 @@ Map<String, dynamic> _$BannerInstructionModelToJson(
 _PrimaryInstructionModel _$PrimaryInstructionModelFromJson(
         Map<String, dynamic> json) =>
     _PrimaryInstructionModel(
-      components: (json['components'] as List<dynamic>)
-          .map((e) => ComponentModel.fromJson(e as Map<String, dynamic>))
+      components: (json['components'] as List<dynamic>?)
+          ?.map((e) => ComponentModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      type: json['type'] as String,
-      modifier: json['modifier'] as String,
-      text: json['text'] as String,
+      type: json['type'] as String?,
+      modifier: json['modifier'] as String?,
+      text: json['text'] as String?,
     );
 
 Map<String, dynamic> _$PrimaryInstructionModelToJson(
@@ -218,7 +227,7 @@ Map<String, dynamic> _$PrimaryInstructionModelToJson(
 
 _ComponentModel _$ComponentModelFromJson(Map<String, dynamic> json) =>
     _ComponentModel(
-      type: json['type'] as String,
+      type: json['type'] as String?,
       text: json['text'] as String?,
       mapboxShield: json['mapbox_shield'] == null
           ? null
@@ -235,10 +244,10 @@ Map<String, dynamic> _$ComponentModelToJson(_ComponentModel instance) =>
 
 _MapboxShieldModel _$MapboxShieldModelFromJson(Map<String, dynamic> json) =>
     _MapboxShieldModel(
-      textColor: json['text_color'] as String,
-      name: json['name'] as String,
-      displayRef: json['display_ref'] as String,
-      baseUrl: json['base_url'] as String,
+      textColor: json['text_color'] as String?,
+      name: json['name'] as String?,
+      displayRef: json['display_ref'] as String?,
+      baseUrl: json['base_url'] as String?,
     );
 
 Map<String, dynamic> _$MapboxShieldModelToJson(_MapboxShieldModel instance) =>
@@ -252,9 +261,10 @@ Map<String, dynamic> _$MapboxShieldModelToJson(_MapboxShieldModel instance) =>
 _VoiceInstructionModel _$VoiceInstructionModelFromJson(
         Map<String, dynamic> json) =>
     _VoiceInstructionModel(
-      ssmlAnnouncement: json['ssmlAnnouncement'] as String,
-      announcement: json['announcement'] as String,
-      distanceAlongGeometry: (json['distanceAlongGeometry'] as num).toDouble(),
+      ssmlAnnouncement: json['ssmlAnnouncement'] as String?,
+      announcement: json['announcement'] as String?,
+      distanceAlongGeometry:
+          (json['distanceAlongGeometry'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$VoiceInstructionModelToJson(
@@ -271,15 +281,15 @@ _IntersectionModel _$IntersectionModelFromJson(Map<String, dynamic> json) =>
           ? null
           : MapboxStreetsV8Model.fromJson(
               json['mapbox_streets_v8'] as Map<String, dynamic>),
-      bearings: (json['bearings'] as List<dynamic>)
-          .map((e) => (e as num).toInt())
+      bearings: (json['bearings'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
           .toList(),
-      entry: (json['entry'] as List<dynamic>).map((e) => e as bool).toList(),
-      adminIndex: (json['admin_index'] as num).toInt(),
+      entry: (json['entry'] as List<dynamic>?)?.map((e) => e as bool).toList(),
+      adminIndex: (json['admin_index'] as num?)?.toInt(),
       out: (json['out'] as num?)?.toInt(),
-      geometryIndex: (json['geometry_index'] as num).toInt(),
-      location: (json['location'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+      geometryIndex: (json['geometry_index'] as num?)?.toInt(),
+      location: (json['location'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
           .toList(),
       inIndex: (json['in'] as num?)?.toInt(),
       duration: (json['duration'] as num?)?.toDouble(),
@@ -307,7 +317,7 @@ Map<String, dynamic> _$IntersectionModelToJson(_IntersectionModel instance) =>
 _MapboxStreetsV8Model _$MapboxStreetsV8ModelFromJson(
         Map<String, dynamic> json) =>
     _MapboxStreetsV8Model(
-      streetClass: json['class'] as String,
+      streetClass: json['class'] as String?,
     );
 
 Map<String, dynamic> _$MapboxStreetsV8ModelToJson(
@@ -318,12 +328,12 @@ Map<String, dynamic> _$MapboxStreetsV8ModelToJson(
 
 _ManeuverModel _$ManeuverModelFromJson(Map<String, dynamic> json) =>
     _ManeuverModel(
-      type: json['type'] as String,
-      instruction: json['instruction'] as String,
-      bearingAfter: (json['bearing_after'] as num).toInt(),
-      bearingBefore: (json['bearing_before'] as num).toInt(),
-      location: (json['location'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+      type: json['type'] as String?,
+      instruction: json['instruction'] as String?,
+      bearingAfter: (json['bearing_after'] as num?)?.toInt(),
+      bearingBefore: (json['bearing_before'] as num?)?.toInt(),
+      location: (json['location'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
           .toList(),
       modifier: json['modifier'] as String?,
     );

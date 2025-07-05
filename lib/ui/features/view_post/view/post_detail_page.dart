@@ -371,7 +371,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
             label: 'Xem trên bản đồ',
             onTap: () {
               if (post.address != null) {
-                context.push('/map', extra: {'destination': LocationData(latitude: post.address!.latitude, longitude: post.address!.longitude)});
+                context.push(
+                  '/map',
+                  extra: {
+                    'destination': LocationData(latitude: post.address!.latitude, longitude: post.address!.longitude),
+                    'destinationName': post.diningLocationName,
+                  },
+                );
               }
             },
           ),

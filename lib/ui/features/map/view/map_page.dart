@@ -19,9 +19,10 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 
 class MapPage extends StatelessWidget {
-  const MapPage({super.key, required this.destination});
+  const MapPage({super.key, required this.destination, required this.destinationName});
 
   final LocationData destination;
+  final String destinationName;
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +30,16 @@ class MapPage extends StatelessWidget {
       create: (context) => getIt<MapBloc>(),
       child: MapView(
         destination: destination,
+        destinationName: destinationName,
       ),
     );
   }
 }
 
 class MapView extends StatefulWidget {
-  const MapView({super.key, required this.destination});
+  const MapView({super.key, required this.destination, required this.destinationName});
   final LocationData destination;
+  final String destinationName;
 
   @override
   State<MapView> createState() => _MapViewState();
@@ -160,6 +163,8 @@ class _MapViewState extends State<MapView> {
         iconAnchor: IconAnchor.BOTTOM,
         textField: name,
         textColor: Colors.black.toARGB32(),
+        textHaloColor: Colors.white.toARGB32(),
+        textHaloWidth: 2.0,
         textSize: 14.0,
         textOffset: [0.0, -2],
         textAnchor: TextAnchor.BOTTOM,
@@ -170,11 +175,11 @@ class _MapViewState extends State<MapView> {
   // Hàm điều chỉnh camera, giờ nhận dữ liệu từ BLoC
   Future<void> _adjustCamera(Direction direction) async {
     await _mapReadyCompleter.future;
-    if (_mapboxMap == null || direction.waypoints.length < 2) return;
+    if (_mapboxMap == null || direction.waypoints!.length < 2) return;
 
     // Lấy tọa độ từ Waypoints trong model Direction
-    final startPoint = Point(coordinates: Position(direction.waypoints.first.location[0], direction.waypoints.first.location[1]));
-    final endPoint = Point(coordinates: Position(direction.waypoints.last.location[0], direction.waypoints.last.location[1]));
+    final startPoint = Point(coordinates: Position(direction.waypoints!.first.location![0], direction.waypoints!.first.location![1]));
+    final endPoint = Point(coordinates: Position(direction.waypoints!.last.location![0], direction.waypoints!.last.location![1]));
 
     final bounds = await _mapboxMap!.cameraForCoordinates([startPoint, endPoint], MbxEdgeInsets(top: 100, left: 50, bottom: 100, right: 50), null, null);
 
@@ -228,12 +233,12 @@ class _MapViewState extends State<MapView> {
         if (state is Preview) {
           // Khi có dữ liệu, gọi các hàm vẽ
           final direction = state.direction;
-          if (direction.routes.isNotEmpty && direction.waypoints.isNotEmpty) {
-            final route = direction.routes.first;
-            final destinationWaypoint = direction.waypoints.last;
+          if (direction.routes!.isNotEmpty && direction.waypoints!.isNotEmpty) {
+            final route = direction.routes!.first;
+            final destinationWaypoint = direction.waypoints!.last;
 
-            _drawRoute(route.geometry.coordinates);
-            _addDestinationMarker(destinationWaypoint.location, destinationWaypoint.name);
+            _drawRoute(route.geometry?.coordinates ?? [[]]);
+            _addDestinationMarker(destinationWaypoint.location ?? [], widget.destinationName);
             _adjustCamera(direction);
           }
         }
@@ -307,7 +312,7 @@ class _MapViewState extends State<MapView> {
                           const Icon(Icons.directions_car, color: Colors.blue),
                           const SizedBox(width: 8),
                           Text(
-                            NumberFormatter.formatDistance(state.direction.routes.first.distance),
+                            NumberFormatter.formatDistance(state.direction.routes?.first.distance),
                             style: appTextTheme(context).titleMedium?.copyWith(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold,
@@ -317,7 +322,7 @@ class _MapViewState extends State<MapView> {
                           const Icon(Icons.timer, color: Colors.green),
                           const SizedBox(width: 8),
                           Text(
-                            NumberFormatter.formatDuration(state.direction.routes.first.duration),
+                            NumberFormatter.formatDuration(state.direction.routes?.first.duration),
                             style: appTextTheme(context).titleMedium?.copyWith(
                                   color: Colors.green,
                                   fontWeight: FontWeight.bold,
@@ -334,6 +339,12 @@ class _MapViewState extends State<MapView> {
             children: [
               MapWidget(
                 key: const ValueKey("mapWidget"),
+                cameraOptions: CameraOptions(
+                  center: Point(coordinates: Position(0.0, 0.0)),
+                  zoom: 0.0, // hoặc thử zoom: 1.0 nếu muốn thấy chi tiết hơn
+                  pitch: 0.0,
+                  bearing: 0.0,
+                ),
                 onMapCreated: (controller) async {
                   _mapboxMap = controller;
                   _pointAnnotationManager = await _mapboxMap!.annotations.createPointAnnotationManager();

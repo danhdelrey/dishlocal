@@ -118,7 +118,8 @@ class AppRouter {
         builder: (context, state){
           final extraMap = state.extra as Map<String, dynamic>;
           final LocationData destination = extraMap['destination'];
-          return MapPage(destination: destination);
+          final String destinationName = extraMap['destinationName'];
+          return MapPage(destination: destination,destinationName: destinationName,);
         },
       ),
 

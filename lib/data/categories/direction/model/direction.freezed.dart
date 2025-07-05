@@ -15,10 +15,10 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$Direction {
-  List<RouteModel> get routes;
-  List<WaypointModel> get waypoints;
-  String get code;
-  String get uuid;
+  List<RouteModel>? get routes;
+  List<WaypointModel>? get waypoints;
+  String? get code;
+  String? get uuid;
 
   /// Create a copy of Direction
   /// with the given fields replaced by the non-null parameter values.
@@ -62,10 +62,10 @@ abstract mixin class $DirectionCopyWith<$Res> {
       _$DirectionCopyWithImpl;
   @useResult
   $Res call(
-      {List<RouteModel> routes,
-      List<WaypointModel> waypoints,
-      String code,
-      String uuid});
+      {List<RouteModel>? routes,
+      List<WaypointModel>? waypoints,
+      String? code,
+      String? uuid});
 }
 
 /// @nodoc
@@ -80,28 +80,28 @@ class _$DirectionCopyWithImpl<$Res> implements $DirectionCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? routes = null,
-    Object? waypoints = null,
-    Object? code = null,
-    Object? uuid = null,
+    Object? routes = freezed,
+    Object? waypoints = freezed,
+    Object? code = freezed,
+    Object? uuid = freezed,
   }) {
     return _then(_self.copyWith(
-      routes: null == routes
+      routes: freezed == routes
           ? _self.routes
           : routes // ignore: cast_nullable_to_non_nullable
-              as List<RouteModel>,
-      waypoints: null == waypoints
+              as List<RouteModel>?,
+      waypoints: freezed == waypoints
           ? _self.waypoints
           : waypoints // ignore: cast_nullable_to_non_nullable
-              as List<WaypointModel>,
-      code: null == code
+              as List<WaypointModel>?,
+      code: freezed == code
           ? _self.code
           : code // ignore: cast_nullable_to_non_nullable
-              as String,
-      uuid: null == uuid
+              as String?,
+      uuid: freezed == uuid
           ? _self.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -110,35 +110,39 @@ class _$DirectionCopyWithImpl<$Res> implements $DirectionCopyWith<$Res> {
 @JsonSerializable()
 class _Direction implements Direction {
   const _Direction(
-      {required final List<RouteModel> routes,
-      required final List<WaypointModel> waypoints,
-      required this.code,
-      required this.uuid})
+      {final List<RouteModel>? routes,
+      final List<WaypointModel>? waypoints,
+      this.code,
+      this.uuid})
       : _routes = routes,
         _waypoints = waypoints;
   factory _Direction.fromJson(Map<String, dynamic> json) =>
       _$DirectionFromJson(json);
 
-  final List<RouteModel> _routes;
+  final List<RouteModel>? _routes;
   @override
-  List<RouteModel> get routes {
+  List<RouteModel>? get routes {
+    final value = _routes;
+    if (value == null) return null;
     if (_routes is EqualUnmodifiableListView) return _routes;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_routes);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<WaypointModel> _waypoints;
+  final List<WaypointModel>? _waypoints;
   @override
-  List<WaypointModel> get waypoints {
+  List<WaypointModel>? get waypoints {
+    final value = _waypoints;
+    if (value == null) return null;
     if (_waypoints is EqualUnmodifiableListView) return _waypoints;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_waypoints);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  final String code;
+  final String? code;
   @override
-  final String uuid;
+  final String? uuid;
 
   /// Create a copy of Direction
   /// with the given fields replaced by the non-null parameter values.
@@ -191,10 +195,10 @@ abstract mixin class _$DirectionCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<RouteModel> routes,
-      List<WaypointModel> waypoints,
-      String code,
-      String uuid});
+      {List<RouteModel>? routes,
+      List<WaypointModel>? waypoints,
+      String? code,
+      String? uuid});
 }
 
 /// @nodoc
@@ -209,28 +213,28 @@ class __$DirectionCopyWithImpl<$Res> implements _$DirectionCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? routes = null,
-    Object? waypoints = null,
-    Object? code = null,
-    Object? uuid = null,
+    Object? routes = freezed,
+    Object? waypoints = freezed,
+    Object? code = freezed,
+    Object? uuid = freezed,
   }) {
     return _then(_Direction(
-      routes: null == routes
+      routes: freezed == routes
           ? _self._routes
           : routes // ignore: cast_nullable_to_non_nullable
-              as List<RouteModel>,
-      waypoints: null == waypoints
+              as List<RouteModel>?,
+      waypoints: freezed == waypoints
           ? _self._waypoints
           : waypoints // ignore: cast_nullable_to_non_nullable
-              as List<WaypointModel>,
-      code: null == code
+              as List<WaypointModel>?,
+      code: freezed == code
           ? _self.code
           : code // ignore: cast_nullable_to_non_nullable
-              as String,
-      uuid: null == uuid
+              as String?,
+      uuid: freezed == uuid
           ? _self.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -238,12 +242,12 @@ class __$DirectionCopyWithImpl<$Res> implements _$DirectionCopyWith<$Res> {
 /// @nodoc
 mixin _$RouteModel {
   @JsonKey(name: 'weight_name')
-  String get weightName;
-  double get weight;
-  double get duration;
-  double get distance;
-  List<LegModel> get legs;
-  GeometryModel get geometry;
+  String? get weightName;
+  double? get weight;
+  double? get duration;
+  double? get distance;
+  List<LegModel>? get legs;
+  GeometryModel? get geometry;
   @JsonKey(name: 'voiceLocale')
   String? get voiceLocale;
 
@@ -301,15 +305,15 @@ abstract mixin class $RouteModelCopyWith<$Res> {
       _$RouteModelCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: 'weight_name') String weightName,
-      double weight,
-      double duration,
-      double distance,
-      List<LegModel> legs,
-      GeometryModel geometry,
+      {@JsonKey(name: 'weight_name') String? weightName,
+      double? weight,
+      double? duration,
+      double? distance,
+      List<LegModel>? legs,
+      GeometryModel? geometry,
       @JsonKey(name: 'voiceLocale') String? voiceLocale});
 
-  $GeometryModelCopyWith<$Res> get geometry;
+  $GeometryModelCopyWith<$Res>? get geometry;
 }
 
 /// @nodoc
@@ -324,39 +328,39 @@ class _$RouteModelCopyWithImpl<$Res> implements $RouteModelCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? weightName = null,
-    Object? weight = null,
-    Object? duration = null,
-    Object? distance = null,
-    Object? legs = null,
-    Object? geometry = null,
+    Object? weightName = freezed,
+    Object? weight = freezed,
+    Object? duration = freezed,
+    Object? distance = freezed,
+    Object? legs = freezed,
+    Object? geometry = freezed,
     Object? voiceLocale = freezed,
   }) {
     return _then(_self.copyWith(
-      weightName: null == weightName
+      weightName: freezed == weightName
           ? _self.weightName
           : weightName // ignore: cast_nullable_to_non_nullable
-              as String,
-      weight: null == weight
+              as String?,
+      weight: freezed == weight
           ? _self.weight
           : weight // ignore: cast_nullable_to_non_nullable
-              as double,
-      duration: null == duration
+              as double?,
+      duration: freezed == duration
           ? _self.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as double,
-      distance: null == distance
+              as double?,
+      distance: freezed == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as double,
-      legs: null == legs
+              as double?,
+      legs: freezed == legs
           ? _self.legs
           : legs // ignore: cast_nullable_to_non_nullable
-              as List<LegModel>,
-      geometry: null == geometry
+              as List<LegModel>?,
+      geometry: freezed == geometry
           ? _self.geometry
           : geometry // ignore: cast_nullable_to_non_nullable
-              as GeometryModel,
+              as GeometryModel?,
       voiceLocale: freezed == voiceLocale
           ? _self.voiceLocale
           : voiceLocale // ignore: cast_nullable_to_non_nullable
@@ -368,8 +372,12 @@ class _$RouteModelCopyWithImpl<$Res> implements $RouteModelCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $GeometryModelCopyWith<$Res> get geometry {
-    return $GeometryModelCopyWith<$Res>(_self.geometry, (value) {
+  $GeometryModelCopyWith<$Res>? get geometry {
+    if (_self.geometry == null) {
+      return null;
+    }
+
+    return $GeometryModelCopyWith<$Res>(_self.geometry!, (value) {
       return _then(_self.copyWith(geometry: value));
     });
   }
@@ -379,12 +387,12 @@ class _$RouteModelCopyWithImpl<$Res> implements $RouteModelCopyWith<$Res> {
 @JsonSerializable()
 class _RouteModel implements RouteModel {
   const _RouteModel(
-      {@JsonKey(name: 'weight_name') required this.weightName,
-      required this.weight,
-      required this.duration,
-      required this.distance,
-      required final List<LegModel> legs,
-      required this.geometry,
+      {@JsonKey(name: 'weight_name') this.weightName,
+      this.weight,
+      this.duration,
+      this.distance,
+      final List<LegModel>? legs,
+      this.geometry,
       @JsonKey(name: 'voiceLocale') this.voiceLocale})
       : _legs = legs;
   factory _RouteModel.fromJson(Map<String, dynamic> json) =>
@@ -392,23 +400,25 @@ class _RouteModel implements RouteModel {
 
   @override
   @JsonKey(name: 'weight_name')
-  final String weightName;
+  final String? weightName;
   @override
-  final double weight;
+  final double? weight;
   @override
-  final double duration;
+  final double? duration;
   @override
-  final double distance;
-  final List<LegModel> _legs;
+  final double? distance;
+  final List<LegModel>? _legs;
   @override
-  List<LegModel> get legs {
+  List<LegModel>? get legs {
+    final value = _legs;
+    if (value == null) return null;
     if (_legs is EqualUnmodifiableListView) return _legs;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_legs);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  final GeometryModel geometry;
+  final GeometryModel? geometry;
   @override
   @JsonKey(name: 'voiceLocale')
   final String? voiceLocale;
@@ -474,16 +484,16 @@ abstract mixin class _$RouteModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'weight_name') String weightName,
-      double weight,
-      double duration,
-      double distance,
-      List<LegModel> legs,
-      GeometryModel geometry,
+      {@JsonKey(name: 'weight_name') String? weightName,
+      double? weight,
+      double? duration,
+      double? distance,
+      List<LegModel>? legs,
+      GeometryModel? geometry,
       @JsonKey(name: 'voiceLocale') String? voiceLocale});
 
   @override
-  $GeometryModelCopyWith<$Res> get geometry;
+  $GeometryModelCopyWith<$Res>? get geometry;
 }
 
 /// @nodoc
@@ -498,39 +508,39 @@ class __$RouteModelCopyWithImpl<$Res> implements _$RouteModelCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? weightName = null,
-    Object? weight = null,
-    Object? duration = null,
-    Object? distance = null,
-    Object? legs = null,
-    Object? geometry = null,
+    Object? weightName = freezed,
+    Object? weight = freezed,
+    Object? duration = freezed,
+    Object? distance = freezed,
+    Object? legs = freezed,
+    Object? geometry = freezed,
     Object? voiceLocale = freezed,
   }) {
     return _then(_RouteModel(
-      weightName: null == weightName
+      weightName: freezed == weightName
           ? _self.weightName
           : weightName // ignore: cast_nullable_to_non_nullable
-              as String,
-      weight: null == weight
+              as String?,
+      weight: freezed == weight
           ? _self.weight
           : weight // ignore: cast_nullable_to_non_nullable
-              as double,
-      duration: null == duration
+              as double?,
+      duration: freezed == duration
           ? _self.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as double,
-      distance: null == distance
+              as double?,
+      distance: freezed == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as double,
-      legs: null == legs
+              as double?,
+      legs: freezed == legs
           ? _self._legs
           : legs // ignore: cast_nullable_to_non_nullable
-              as List<LegModel>,
-      geometry: null == geometry
+              as List<LegModel>?,
+      geometry: freezed == geometry
           ? _self.geometry
           : geometry // ignore: cast_nullable_to_non_nullable
-              as GeometryModel,
+              as GeometryModel?,
       voiceLocale: freezed == voiceLocale
           ? _self.voiceLocale
           : voiceLocale // ignore: cast_nullable_to_non_nullable
@@ -542,8 +552,12 @@ class __$RouteModelCopyWithImpl<$Res> implements _$RouteModelCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $GeometryModelCopyWith<$Res> get geometry {
-    return $GeometryModelCopyWith<$Res>(_self.geometry, (value) {
+  $GeometryModelCopyWith<$Res>? get geometry {
+    if (_self.geometry == null) {
+      return null;
+    }
+
+    return $GeometryModelCopyWith<$Res>(_self.geometry!, (value) {
       return _then(_self.copyWith(geometry: value));
     });
   }
@@ -551,9 +565,9 @@ class __$RouteModelCopyWithImpl<$Res> implements _$RouteModelCopyWith<$Res> {
 
 /// @nodoc
 mixin _$WaypointModel {
-  double get distance;
-  String get name;
-  List<double> get location;
+  double? get distance;
+  String? get name;
+  List<double>? get location;
 
   /// Create a copy of WaypointModel
   /// with the given fields replaced by the non-null parameter values.
@@ -594,7 +608,7 @@ abstract mixin class $WaypointModelCopyWith<$Res> {
           WaypointModel value, $Res Function(WaypointModel) _then) =
       _$WaypointModelCopyWithImpl;
   @useResult
-  $Res call({double distance, String name, List<double> location});
+  $Res call({double? distance, String? name, List<double>? location});
 }
 
 /// @nodoc
@@ -610,23 +624,23 @@ class _$WaypointModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? distance = null,
-    Object? name = null,
-    Object? location = null,
+    Object? distance = freezed,
+    Object? name = freezed,
+    Object? location = freezed,
   }) {
     return _then(_self.copyWith(
-      distance: null == distance
+      distance: freezed == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as double,
-      name: null == name
+              as double?,
+      name: freezed == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      location: null == location
+              as String?,
+      location: freezed == location
           ? _self.location
           : location // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double>?,
     ));
   }
 }
@@ -634,24 +648,23 @@ class _$WaypointModelCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _WaypointModel implements WaypointModel {
-  const _WaypointModel(
-      {required this.distance,
-      required this.name,
-      required final List<double> location})
+  const _WaypointModel({this.distance, this.name, final List<double>? location})
       : _location = location;
   factory _WaypointModel.fromJson(Map<String, dynamic> json) =>
       _$WaypointModelFromJson(json);
 
   @override
-  final double distance;
+  final double? distance;
   @override
-  final String name;
-  final List<double> _location;
+  final String? name;
+  final List<double>? _location;
   @override
-  List<double> get location {
+  List<double>? get location {
+    final value = _location;
+    if (value == null) return null;
     if (_location is EqualUnmodifiableListView) return _location;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_location);
+    return EqualUnmodifiableListView(value);
   }
 
   /// Create a copy of WaypointModel
@@ -699,7 +712,7 @@ abstract mixin class _$WaypointModelCopyWith<$Res>
       __$WaypointModelCopyWithImpl;
   @override
   @useResult
-  $Res call({double distance, String name, List<double> location});
+  $Res call({double? distance, String? name, List<double>? location});
 }
 
 /// @nodoc
@@ -715,23 +728,23 @@ class __$WaypointModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? distance = null,
-    Object? name = null,
-    Object? location = null,
+    Object? distance = freezed,
+    Object? name = freezed,
+    Object? location = freezed,
   }) {
     return _then(_WaypointModel(
-      distance: null == distance
+      distance: freezed == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as double,
-      name: null == name
+              as double?,
+      name: freezed == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      location: null == location
+              as String?,
+      location: freezed == location
           ? _self._location
           : location // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double>?,
     ));
   }
 }
@@ -739,14 +752,14 @@ class __$WaypointModelCopyWithImpl<$Res>
 /// @nodoc
 mixin _$LegModel {
   @JsonKey(name: 'via_waypoints')
-  List<dynamic> get viaWaypoints;
-  AnnotationModel get annotation;
-  List<AdminModel> get admins;
-  double get weight;
-  double get duration;
-  List<StepModel> get steps;
-  double get distance;
-  String get summary;
+  List<dynamic>? get viaWaypoints;
+  AnnotationModel? get annotation;
+  List<AdminModel>? get admins;
+  double? get weight;
+  double? get duration;
+  List<StepModel>? get steps;
+  double? get distance;
+  String? get summary;
 
   /// Create a copy of LegModel
   /// with the given fields replaced by the non-null parameter values.
@@ -802,16 +815,16 @@ abstract mixin class $LegModelCopyWith<$Res> {
       _$LegModelCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: 'via_waypoints') List<dynamic> viaWaypoints,
-      AnnotationModel annotation,
-      List<AdminModel> admins,
-      double weight,
-      double duration,
-      List<StepModel> steps,
-      double distance,
-      String summary});
+      {@JsonKey(name: 'via_waypoints') List<dynamic>? viaWaypoints,
+      AnnotationModel? annotation,
+      List<AdminModel>? admins,
+      double? weight,
+      double? duration,
+      List<StepModel>? steps,
+      double? distance,
+      String? summary});
 
-  $AnnotationModelCopyWith<$Res> get annotation;
+  $AnnotationModelCopyWith<$Res>? get annotation;
 }
 
 /// @nodoc
@@ -826,48 +839,48 @@ class _$LegModelCopyWithImpl<$Res> implements $LegModelCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? viaWaypoints = null,
-    Object? annotation = null,
-    Object? admins = null,
-    Object? weight = null,
-    Object? duration = null,
-    Object? steps = null,
-    Object? distance = null,
-    Object? summary = null,
+    Object? viaWaypoints = freezed,
+    Object? annotation = freezed,
+    Object? admins = freezed,
+    Object? weight = freezed,
+    Object? duration = freezed,
+    Object? steps = freezed,
+    Object? distance = freezed,
+    Object? summary = freezed,
   }) {
     return _then(_self.copyWith(
-      viaWaypoints: null == viaWaypoints
+      viaWaypoints: freezed == viaWaypoints
           ? _self.viaWaypoints
           : viaWaypoints // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
-      annotation: null == annotation
+              as List<dynamic>?,
+      annotation: freezed == annotation
           ? _self.annotation
           : annotation // ignore: cast_nullable_to_non_nullable
-              as AnnotationModel,
-      admins: null == admins
+              as AnnotationModel?,
+      admins: freezed == admins
           ? _self.admins
           : admins // ignore: cast_nullable_to_non_nullable
-              as List<AdminModel>,
-      weight: null == weight
+              as List<AdminModel>?,
+      weight: freezed == weight
           ? _self.weight
           : weight // ignore: cast_nullable_to_non_nullable
-              as double,
-      duration: null == duration
+              as double?,
+      duration: freezed == duration
           ? _self.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as double,
-      steps: null == steps
+              as double?,
+      steps: freezed == steps
           ? _self.steps
           : steps // ignore: cast_nullable_to_non_nullable
-              as List<StepModel>,
-      distance: null == distance
+              as List<StepModel>?,
+      distance: freezed == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as double,
-      summary: null == summary
+              as double?,
+      summary: freezed == summary
           ? _self.summary
           : summary // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 
@@ -875,8 +888,12 @@ class _$LegModelCopyWithImpl<$Res> implements $LegModelCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $AnnotationModelCopyWith<$Res> get annotation {
-    return $AnnotationModelCopyWith<$Res>(_self.annotation, (value) {
+  $AnnotationModelCopyWith<$Res>? get annotation {
+    if (_self.annotation == null) {
+      return null;
+    }
+
+    return $AnnotationModelCopyWith<$Res>(_self.annotation!, (value) {
       return _then(_self.copyWith(annotation: value));
     });
   }
@@ -886,56 +903,61 @@ class _$LegModelCopyWithImpl<$Res> implements $LegModelCopyWith<$Res> {
 @JsonSerializable()
 class _LegModel implements LegModel {
   const _LegModel(
-      {@JsonKey(name: 'via_waypoints')
-      required final List<dynamic> viaWaypoints,
-      required this.annotation,
-      required final List<AdminModel> admins,
-      required this.weight,
-      required this.duration,
-      required final List<StepModel> steps,
-      required this.distance,
-      required this.summary})
+      {@JsonKey(name: 'via_waypoints') final List<dynamic>? viaWaypoints,
+      this.annotation,
+      final List<AdminModel>? admins,
+      this.weight,
+      this.duration,
+      final List<StepModel>? steps,
+      this.distance,
+      this.summary})
       : _viaWaypoints = viaWaypoints,
         _admins = admins,
         _steps = steps;
   factory _LegModel.fromJson(Map<String, dynamic> json) =>
       _$LegModelFromJson(json);
 
-  final List<dynamic> _viaWaypoints;
+  final List<dynamic>? _viaWaypoints;
   @override
   @JsonKey(name: 'via_waypoints')
-  List<dynamic> get viaWaypoints {
+  List<dynamic>? get viaWaypoints {
+    final value = _viaWaypoints;
+    if (value == null) return null;
     if (_viaWaypoints is EqualUnmodifiableListView) return _viaWaypoints;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_viaWaypoints);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  final AnnotationModel annotation;
-  final List<AdminModel> _admins;
+  final AnnotationModel? annotation;
+  final List<AdminModel>? _admins;
   @override
-  List<AdminModel> get admins {
+  List<AdminModel>? get admins {
+    final value = _admins;
+    if (value == null) return null;
     if (_admins is EqualUnmodifiableListView) return _admins;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_admins);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  final double weight;
+  final double? weight;
   @override
-  final double duration;
-  final List<StepModel> _steps;
+  final double? duration;
+  final List<StepModel>? _steps;
   @override
-  List<StepModel> get steps {
+  List<StepModel>? get steps {
+    final value = _steps;
+    if (value == null) return null;
     if (_steps is EqualUnmodifiableListView) return _steps;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_steps);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  final double distance;
+  final double? distance;
   @override
-  final String summary;
+  final String? summary;
 
   /// Create a copy of LegModel
   /// with the given fields replaced by the non-null parameter values.
@@ -998,17 +1020,17 @@ abstract mixin class _$LegModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'via_waypoints') List<dynamic> viaWaypoints,
-      AnnotationModel annotation,
-      List<AdminModel> admins,
-      double weight,
-      double duration,
-      List<StepModel> steps,
-      double distance,
-      String summary});
+      {@JsonKey(name: 'via_waypoints') List<dynamic>? viaWaypoints,
+      AnnotationModel? annotation,
+      List<AdminModel>? admins,
+      double? weight,
+      double? duration,
+      List<StepModel>? steps,
+      double? distance,
+      String? summary});
 
   @override
-  $AnnotationModelCopyWith<$Res> get annotation;
+  $AnnotationModelCopyWith<$Res>? get annotation;
 }
 
 /// @nodoc
@@ -1023,48 +1045,48 @@ class __$LegModelCopyWithImpl<$Res> implements _$LegModelCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? viaWaypoints = null,
-    Object? annotation = null,
-    Object? admins = null,
-    Object? weight = null,
-    Object? duration = null,
-    Object? steps = null,
-    Object? distance = null,
-    Object? summary = null,
+    Object? viaWaypoints = freezed,
+    Object? annotation = freezed,
+    Object? admins = freezed,
+    Object? weight = freezed,
+    Object? duration = freezed,
+    Object? steps = freezed,
+    Object? distance = freezed,
+    Object? summary = freezed,
   }) {
     return _then(_LegModel(
-      viaWaypoints: null == viaWaypoints
+      viaWaypoints: freezed == viaWaypoints
           ? _self._viaWaypoints
           : viaWaypoints // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>,
-      annotation: null == annotation
+              as List<dynamic>?,
+      annotation: freezed == annotation
           ? _self.annotation
           : annotation // ignore: cast_nullable_to_non_nullable
-              as AnnotationModel,
-      admins: null == admins
+              as AnnotationModel?,
+      admins: freezed == admins
           ? _self._admins
           : admins // ignore: cast_nullable_to_non_nullable
-              as List<AdminModel>,
-      weight: null == weight
+              as List<AdminModel>?,
+      weight: freezed == weight
           ? _self.weight
           : weight // ignore: cast_nullable_to_non_nullable
-              as double,
-      duration: null == duration
+              as double?,
+      duration: freezed == duration
           ? _self.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as double,
-      steps: null == steps
+              as double?,
+      steps: freezed == steps
           ? _self._steps
           : steps // ignore: cast_nullable_to_non_nullable
-              as List<StepModel>,
-      distance: null == distance
+              as List<StepModel>?,
+      distance: freezed == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as double,
-      summary: null == summary
+              as double?,
+      summary: freezed == summary
           ? _self.summary
           : summary // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 
@@ -1072,8 +1094,12 @@ class __$LegModelCopyWithImpl<$Res> implements _$LegModelCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $AnnotationModelCopyWith<$Res> get annotation {
-    return $AnnotationModelCopyWith<$Res>(_self.annotation, (value) {
+  $AnnotationModelCopyWith<$Res>? get annotation {
+    if (_self.annotation == null) {
+      return null;
+    }
+
+    return $AnnotationModelCopyWith<$Res>(_self.annotation!, (value) {
       return _then(_self.copyWith(annotation: value));
     });
   }
@@ -1081,9 +1107,9 @@ class __$LegModelCopyWithImpl<$Res> implements _$LegModelCopyWith<$Res> {
 
 /// @nodoc
 mixin _$AnnotationModel {
-  List<double> get speed;
-  List<double> get distance;
-  List<double> get duration;
+  List<double>? get speed;
+  List<double>? get distance;
+  List<double>? get duration;
 
   /// Create a copy of AnnotationModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1126,7 +1152,8 @@ abstract mixin class $AnnotationModelCopyWith<$Res> {
           AnnotationModel value, $Res Function(AnnotationModel) _then) =
       _$AnnotationModelCopyWithImpl;
   @useResult
-  $Res call({List<double> speed, List<double> distance, List<double> duration});
+  $Res call(
+      {List<double>? speed, List<double>? distance, List<double>? duration});
 }
 
 /// @nodoc
@@ -1142,23 +1169,23 @@ class _$AnnotationModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? speed = null,
-    Object? distance = null,
-    Object? duration = null,
+    Object? speed = freezed,
+    Object? distance = freezed,
+    Object? duration = freezed,
   }) {
     return _then(_self.copyWith(
-      speed: null == speed
+      speed: freezed == speed
           ? _self.speed
           : speed // ignore: cast_nullable_to_non_nullable
-              as List<double>,
-      distance: null == distance
+              as List<double>?,
+      distance: freezed == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as List<double>,
-      duration: null == duration
+              as List<double>?,
+      duration: freezed == duration
           ? _self.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double>?,
     ));
   }
 }
@@ -1167,37 +1194,43 @@ class _$AnnotationModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _AnnotationModel implements AnnotationModel {
   const _AnnotationModel(
-      {required final List<double> speed,
-      required final List<double> distance,
-      required final List<double> duration})
+      {final List<double>? speed,
+      final List<double>? distance,
+      final List<double>? duration})
       : _speed = speed,
         _distance = distance,
         _duration = duration;
   factory _AnnotationModel.fromJson(Map<String, dynamic> json) =>
       _$AnnotationModelFromJson(json);
 
-  final List<double> _speed;
+  final List<double>? _speed;
   @override
-  List<double> get speed {
+  List<double>? get speed {
+    final value = _speed;
+    if (value == null) return null;
     if (_speed is EqualUnmodifiableListView) return _speed;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_speed);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<double> _distance;
+  final List<double>? _distance;
   @override
-  List<double> get distance {
+  List<double>? get distance {
+    final value = _distance;
+    if (value == null) return null;
     if (_distance is EqualUnmodifiableListView) return _distance;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_distance);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<double> _duration;
+  final List<double>? _duration;
   @override
-  List<double> get duration {
+  List<double>? get duration {
+    final value = _duration;
+    if (value == null) return null;
     if (_duration is EqualUnmodifiableListView) return _duration;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_duration);
+    return EqualUnmodifiableListView(value);
   }
 
   /// Create a copy of AnnotationModel
@@ -1247,7 +1280,8 @@ abstract mixin class _$AnnotationModelCopyWith<$Res>
       __$AnnotationModelCopyWithImpl;
   @override
   @useResult
-  $Res call({List<double> speed, List<double> distance, List<double> duration});
+  $Res call(
+      {List<double>? speed, List<double>? distance, List<double>? duration});
 }
 
 /// @nodoc
@@ -1263,23 +1297,23 @@ class __$AnnotationModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? speed = null,
-    Object? distance = null,
-    Object? duration = null,
+    Object? speed = freezed,
+    Object? distance = freezed,
+    Object? duration = freezed,
   }) {
     return _then(_AnnotationModel(
-      speed: null == speed
+      speed: freezed == speed
           ? _self._speed
           : speed // ignore: cast_nullable_to_non_nullable
-              as List<double>,
-      distance: null == distance
+              as List<double>?,
+      distance: freezed == distance
           ? _self._distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as List<double>,
-      duration: null == duration
+              as List<double>?,
+      duration: freezed == duration
           ? _self._duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double>?,
     ));
   }
 }
@@ -1287,7 +1321,7 @@ class __$AnnotationModelCopyWithImpl<$Res>
 /// @nodoc
 mixin _$AdminModel {
   @JsonKey(name: 'iso_3166_1')
-  String get iso31661;
+  String? get iso31661;
 
   /// Create a copy of AdminModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1324,7 +1358,7 @@ abstract mixin class $AdminModelCopyWith<$Res> {
           AdminModel value, $Res Function(AdminModel) _then) =
       _$AdminModelCopyWithImpl;
   @useResult
-  $Res call({@JsonKey(name: 'iso_3166_1') String iso31661});
+  $Res call({@JsonKey(name: 'iso_3166_1') String? iso31661});
 }
 
 /// @nodoc
@@ -1339,13 +1373,13 @@ class _$AdminModelCopyWithImpl<$Res> implements $AdminModelCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? iso31661 = null,
+    Object? iso31661 = freezed,
   }) {
     return _then(_self.copyWith(
-      iso31661: null == iso31661
+      iso31661: freezed == iso31661
           ? _self.iso31661
           : iso31661 // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -1353,13 +1387,13 @@ class _$AdminModelCopyWithImpl<$Res> implements $AdminModelCopyWith<$Res> {
 /// @nodoc
 @JsonSerializable()
 class _AdminModel implements AdminModel {
-  const _AdminModel({@JsonKey(name: 'iso_3166_1') required this.iso31661});
+  const _AdminModel({@JsonKey(name: 'iso_3166_1') this.iso31661});
   factory _AdminModel.fromJson(Map<String, dynamic> json) =>
       _$AdminModelFromJson(json);
 
   @override
   @JsonKey(name: 'iso_3166_1')
-  final String iso31661;
+  final String? iso31661;
 
   /// Create a copy of AdminModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1403,7 +1437,7 @@ abstract mixin class _$AdminModelCopyWith<$Res>
       __$AdminModelCopyWithImpl;
   @override
   @useResult
-  $Res call({@JsonKey(name: 'iso_3166_1') String iso31661});
+  $Res call({@JsonKey(name: 'iso_3166_1') String? iso31661});
 }
 
 /// @nodoc
@@ -1418,13 +1452,13 @@ class __$AdminModelCopyWithImpl<$Res> implements _$AdminModelCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? iso31661 = null,
+    Object? iso31661 = freezed,
   }) {
     return _then(_AdminModel(
-      iso31661: null == iso31661
+      iso31661: freezed == iso31661
           ? _self.iso31661
           : iso31661 // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -1432,19 +1466,19 @@ class __$AdminModelCopyWithImpl<$Res> implements _$AdminModelCopyWith<$Res> {
 /// @nodoc
 mixin _$StepModel {
   @JsonKey(name: 'bannerInstructions')
-  List<BannerInstructionModel> get bannerInstructions;
+  List<BannerInstructionModel>? get bannerInstructions;
   @JsonKey(name: 'voiceInstructions')
-  List<VoiceInstructionModel> get voiceInstructions;
-  List<IntersectionModel> get intersections;
-  ManeuverModel get maneuver;
-  String get name;
-  double get duration;
-  double get distance;
+  List<VoiceInstructionModel>? get voiceInstructions;
+  List<IntersectionModel>? get intersections;
+  ManeuverModel? get maneuver;
+  String? get name;
+  double? get duration;
+  double? get distance;
   @JsonKey(name: 'driving_side')
-  String get drivingSide;
-  double get weight;
-  String get mode;
-  GeometryModel
+  String? get drivingSide;
+  double? get weight;
+  String? get mode;
+  GeometryModel?
       get geometry; // `ref` có thể là null, ví dụ trong step đầu tiên không có
   String? get ref;
 
@@ -1515,22 +1549,22 @@ abstract mixin class $StepModelCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'bannerInstructions')
-      List<BannerInstructionModel> bannerInstructions,
+      List<BannerInstructionModel>? bannerInstructions,
       @JsonKey(name: 'voiceInstructions')
-      List<VoiceInstructionModel> voiceInstructions,
-      List<IntersectionModel> intersections,
-      ManeuverModel maneuver,
-      String name,
-      double duration,
-      double distance,
-      @JsonKey(name: 'driving_side') String drivingSide,
-      double weight,
-      String mode,
-      GeometryModel geometry,
+      List<VoiceInstructionModel>? voiceInstructions,
+      List<IntersectionModel>? intersections,
+      ManeuverModel? maneuver,
+      String? name,
+      double? duration,
+      double? distance,
+      @JsonKey(name: 'driving_side') String? drivingSide,
+      double? weight,
+      String? mode,
+      GeometryModel? geometry,
       String? ref});
 
-  $ManeuverModelCopyWith<$Res> get maneuver;
-  $GeometryModelCopyWith<$Res> get geometry;
+  $ManeuverModelCopyWith<$Res>? get maneuver;
+  $GeometryModelCopyWith<$Res>? get geometry;
 }
 
 /// @nodoc
@@ -1545,64 +1579,64 @@ class _$StepModelCopyWithImpl<$Res> implements $StepModelCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? bannerInstructions = null,
-    Object? voiceInstructions = null,
-    Object? intersections = null,
-    Object? maneuver = null,
-    Object? name = null,
-    Object? duration = null,
-    Object? distance = null,
-    Object? drivingSide = null,
-    Object? weight = null,
-    Object? mode = null,
-    Object? geometry = null,
+    Object? bannerInstructions = freezed,
+    Object? voiceInstructions = freezed,
+    Object? intersections = freezed,
+    Object? maneuver = freezed,
+    Object? name = freezed,
+    Object? duration = freezed,
+    Object? distance = freezed,
+    Object? drivingSide = freezed,
+    Object? weight = freezed,
+    Object? mode = freezed,
+    Object? geometry = freezed,
     Object? ref = freezed,
   }) {
     return _then(_self.copyWith(
-      bannerInstructions: null == bannerInstructions
+      bannerInstructions: freezed == bannerInstructions
           ? _self.bannerInstructions
           : bannerInstructions // ignore: cast_nullable_to_non_nullable
-              as List<BannerInstructionModel>,
-      voiceInstructions: null == voiceInstructions
+              as List<BannerInstructionModel>?,
+      voiceInstructions: freezed == voiceInstructions
           ? _self.voiceInstructions
           : voiceInstructions // ignore: cast_nullable_to_non_nullable
-              as List<VoiceInstructionModel>,
-      intersections: null == intersections
+              as List<VoiceInstructionModel>?,
+      intersections: freezed == intersections
           ? _self.intersections
           : intersections // ignore: cast_nullable_to_non_nullable
-              as List<IntersectionModel>,
-      maneuver: null == maneuver
+              as List<IntersectionModel>?,
+      maneuver: freezed == maneuver
           ? _self.maneuver
           : maneuver // ignore: cast_nullable_to_non_nullable
-              as ManeuverModel,
-      name: null == name
+              as ManeuverModel?,
+      name: freezed == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      duration: null == duration
+              as String?,
+      duration: freezed == duration
           ? _self.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as double,
-      distance: null == distance
+              as double?,
+      distance: freezed == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as double,
-      drivingSide: null == drivingSide
+              as double?,
+      drivingSide: freezed == drivingSide
           ? _self.drivingSide
           : drivingSide // ignore: cast_nullable_to_non_nullable
-              as String,
-      weight: null == weight
+              as String?,
+      weight: freezed == weight
           ? _self.weight
           : weight // ignore: cast_nullable_to_non_nullable
-              as double,
-      mode: null == mode
+              as double?,
+      mode: freezed == mode
           ? _self.mode
           : mode // ignore: cast_nullable_to_non_nullable
-              as String,
-      geometry: null == geometry
+              as String?,
+      geometry: freezed == geometry
           ? _self.geometry
           : geometry // ignore: cast_nullable_to_non_nullable
-              as GeometryModel,
+              as GeometryModel?,
       ref: freezed == ref
           ? _self.ref
           : ref // ignore: cast_nullable_to_non_nullable
@@ -1614,8 +1648,12 @@ class _$StepModelCopyWithImpl<$Res> implements $StepModelCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ManeuverModelCopyWith<$Res> get maneuver {
-    return $ManeuverModelCopyWith<$Res>(_self.maneuver, (value) {
+  $ManeuverModelCopyWith<$Res>? get maneuver {
+    if (_self.maneuver == null) {
+      return null;
+    }
+
+    return $ManeuverModelCopyWith<$Res>(_self.maneuver!, (value) {
       return _then(_self.copyWith(maneuver: value));
     });
   }
@@ -1624,8 +1662,12 @@ class _$StepModelCopyWithImpl<$Res> implements $StepModelCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $GeometryModelCopyWith<$Res> get geometry {
-    return $GeometryModelCopyWith<$Res>(_self.geometry, (value) {
+  $GeometryModelCopyWith<$Res>? get geometry {
+    if (_self.geometry == null) {
+      return null;
+    }
+
+    return $GeometryModelCopyWith<$Res>(_self.geometry!, (value) {
       return _then(_self.copyWith(geometry: value));
     });
   }
@@ -1636,18 +1678,18 @@ class _$StepModelCopyWithImpl<$Res> implements $StepModelCopyWith<$Res> {
 class _StepModel implements StepModel {
   const _StepModel(
       {@JsonKey(name: 'bannerInstructions')
-      required final List<BannerInstructionModel> bannerInstructions,
+      final List<BannerInstructionModel>? bannerInstructions,
       @JsonKey(name: 'voiceInstructions')
-      required final List<VoiceInstructionModel> voiceInstructions,
-      required final List<IntersectionModel> intersections,
-      required this.maneuver,
-      required this.name,
-      required this.duration,
-      required this.distance,
-      @JsonKey(name: 'driving_side') required this.drivingSide,
-      required this.weight,
-      required this.mode,
-      required this.geometry,
+      final List<VoiceInstructionModel>? voiceInstructions,
+      final List<IntersectionModel>? intersections,
+      this.maneuver,
+      this.name,
+      this.duration,
+      this.distance,
+      @JsonKey(name: 'driving_side') this.drivingSide,
+      this.weight,
+      this.mode,
+      this.geometry,
       this.ref})
       : _bannerInstructions = bannerInstructions,
         _voiceInstructions = voiceInstructions,
@@ -1655,51 +1697,57 @@ class _StepModel implements StepModel {
   factory _StepModel.fromJson(Map<String, dynamic> json) =>
       _$StepModelFromJson(json);
 
-  final List<BannerInstructionModel> _bannerInstructions;
+  final List<BannerInstructionModel>? _bannerInstructions;
   @override
   @JsonKey(name: 'bannerInstructions')
-  List<BannerInstructionModel> get bannerInstructions {
+  List<BannerInstructionModel>? get bannerInstructions {
+    final value = _bannerInstructions;
+    if (value == null) return null;
     if (_bannerInstructions is EqualUnmodifiableListView)
       return _bannerInstructions;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_bannerInstructions);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<VoiceInstructionModel> _voiceInstructions;
+  final List<VoiceInstructionModel>? _voiceInstructions;
   @override
   @JsonKey(name: 'voiceInstructions')
-  List<VoiceInstructionModel> get voiceInstructions {
+  List<VoiceInstructionModel>? get voiceInstructions {
+    final value = _voiceInstructions;
+    if (value == null) return null;
     if (_voiceInstructions is EqualUnmodifiableListView)
       return _voiceInstructions;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_voiceInstructions);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<IntersectionModel> _intersections;
+  final List<IntersectionModel>? _intersections;
   @override
-  List<IntersectionModel> get intersections {
+  List<IntersectionModel>? get intersections {
+    final value = _intersections;
+    if (value == null) return null;
     if (_intersections is EqualUnmodifiableListView) return _intersections;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_intersections);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  final ManeuverModel maneuver;
+  final ManeuverModel? maneuver;
   @override
-  final String name;
+  final String? name;
   @override
-  final double duration;
+  final double? duration;
   @override
-  final double distance;
+  final double? distance;
   @override
   @JsonKey(name: 'driving_side')
-  final String drivingSide;
+  final String? drivingSide;
   @override
-  final double weight;
+  final double? weight;
   @override
-  final String mode;
+  final String? mode;
   @override
-  final GeometryModel geometry;
+  final GeometryModel? geometry;
 // `ref` có thể là null, ví dụ trong step đầu tiên không có
   @override
   final String? ref;
@@ -1779,24 +1827,24 @@ abstract mixin class _$StepModelCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: 'bannerInstructions')
-      List<BannerInstructionModel> bannerInstructions,
+      List<BannerInstructionModel>? bannerInstructions,
       @JsonKey(name: 'voiceInstructions')
-      List<VoiceInstructionModel> voiceInstructions,
-      List<IntersectionModel> intersections,
-      ManeuverModel maneuver,
-      String name,
-      double duration,
-      double distance,
-      @JsonKey(name: 'driving_side') String drivingSide,
-      double weight,
-      String mode,
-      GeometryModel geometry,
+      List<VoiceInstructionModel>? voiceInstructions,
+      List<IntersectionModel>? intersections,
+      ManeuverModel? maneuver,
+      String? name,
+      double? duration,
+      double? distance,
+      @JsonKey(name: 'driving_side') String? drivingSide,
+      double? weight,
+      String? mode,
+      GeometryModel? geometry,
       String? ref});
 
   @override
-  $ManeuverModelCopyWith<$Res> get maneuver;
+  $ManeuverModelCopyWith<$Res>? get maneuver;
   @override
-  $GeometryModelCopyWith<$Res> get geometry;
+  $GeometryModelCopyWith<$Res>? get geometry;
 }
 
 /// @nodoc
@@ -1811,64 +1859,64 @@ class __$StepModelCopyWithImpl<$Res> implements _$StepModelCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? bannerInstructions = null,
-    Object? voiceInstructions = null,
-    Object? intersections = null,
-    Object? maneuver = null,
-    Object? name = null,
-    Object? duration = null,
-    Object? distance = null,
-    Object? drivingSide = null,
-    Object? weight = null,
-    Object? mode = null,
-    Object? geometry = null,
+    Object? bannerInstructions = freezed,
+    Object? voiceInstructions = freezed,
+    Object? intersections = freezed,
+    Object? maneuver = freezed,
+    Object? name = freezed,
+    Object? duration = freezed,
+    Object? distance = freezed,
+    Object? drivingSide = freezed,
+    Object? weight = freezed,
+    Object? mode = freezed,
+    Object? geometry = freezed,
     Object? ref = freezed,
   }) {
     return _then(_StepModel(
-      bannerInstructions: null == bannerInstructions
+      bannerInstructions: freezed == bannerInstructions
           ? _self._bannerInstructions
           : bannerInstructions // ignore: cast_nullable_to_non_nullable
-              as List<BannerInstructionModel>,
-      voiceInstructions: null == voiceInstructions
+              as List<BannerInstructionModel>?,
+      voiceInstructions: freezed == voiceInstructions
           ? _self._voiceInstructions
           : voiceInstructions // ignore: cast_nullable_to_non_nullable
-              as List<VoiceInstructionModel>,
-      intersections: null == intersections
+              as List<VoiceInstructionModel>?,
+      intersections: freezed == intersections
           ? _self._intersections
           : intersections // ignore: cast_nullable_to_non_nullable
-              as List<IntersectionModel>,
-      maneuver: null == maneuver
+              as List<IntersectionModel>?,
+      maneuver: freezed == maneuver
           ? _self.maneuver
           : maneuver // ignore: cast_nullable_to_non_nullable
-              as ManeuverModel,
-      name: null == name
+              as ManeuverModel?,
+      name: freezed == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      duration: null == duration
+              as String?,
+      duration: freezed == duration
           ? _self.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as double,
-      distance: null == distance
+              as double?,
+      distance: freezed == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as double,
-      drivingSide: null == drivingSide
+              as double?,
+      drivingSide: freezed == drivingSide
           ? _self.drivingSide
           : drivingSide // ignore: cast_nullable_to_non_nullable
-              as String,
-      weight: null == weight
+              as String?,
+      weight: freezed == weight
           ? _self.weight
           : weight // ignore: cast_nullable_to_non_nullable
-              as double,
-      mode: null == mode
+              as double?,
+      mode: freezed == mode
           ? _self.mode
           : mode // ignore: cast_nullable_to_non_nullable
-              as String,
-      geometry: null == geometry
+              as String?,
+      geometry: freezed == geometry
           ? _self.geometry
           : geometry // ignore: cast_nullable_to_non_nullable
-              as GeometryModel,
+              as GeometryModel?,
       ref: freezed == ref
           ? _self.ref
           : ref // ignore: cast_nullable_to_non_nullable
@@ -1880,8 +1928,12 @@ class __$StepModelCopyWithImpl<$Res> implements _$StepModelCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ManeuverModelCopyWith<$Res> get maneuver {
-    return $ManeuverModelCopyWith<$Res>(_self.maneuver, (value) {
+  $ManeuverModelCopyWith<$Res>? get maneuver {
+    if (_self.maneuver == null) {
+      return null;
+    }
+
+    return $ManeuverModelCopyWith<$Res>(_self.maneuver!, (value) {
       return _then(_self.copyWith(maneuver: value));
     });
   }
@@ -1890,8 +1942,12 @@ class __$StepModelCopyWithImpl<$Res> implements _$StepModelCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $GeometryModelCopyWith<$Res> get geometry {
-    return $GeometryModelCopyWith<$Res>(_self.geometry, (value) {
+  $GeometryModelCopyWith<$Res>? get geometry {
+    if (_self.geometry == null) {
+      return null;
+    }
+
+    return $GeometryModelCopyWith<$Res>(_self.geometry!, (value) {
       return _then(_self.copyWith(geometry: value));
     });
   }
@@ -1899,8 +1955,8 @@ class __$StepModelCopyWithImpl<$Res> implements _$StepModelCopyWith<$Res> {
 
 /// @nodoc
 mixin _$GeometryModel {
-  List<List<double>> get coordinates;
-  String get type;
+  List<List<double>>? get coordinates;
+  String? get type;
 
   /// Create a copy of GeometryModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1940,7 +1996,7 @@ abstract mixin class $GeometryModelCopyWith<$Res> {
           GeometryModel value, $Res Function(GeometryModel) _then) =
       _$GeometryModelCopyWithImpl;
   @useResult
-  $Res call({List<List<double>> coordinates, String type});
+  $Res call({List<List<double>>? coordinates, String? type});
 }
 
 /// @nodoc
@@ -1956,18 +2012,18 @@ class _$GeometryModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? coordinates = null,
-    Object? type = null,
+    Object? coordinates = freezed,
+    Object? type = freezed,
   }) {
     return _then(_self.copyWith(
-      coordinates: null == coordinates
+      coordinates: freezed == coordinates
           ? _self.coordinates
           : coordinates // ignore: cast_nullable_to_non_nullable
-              as List<List<double>>,
-      type: null == type
+              as List<List<double>>?,
+      type: freezed == type
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -1975,22 +2031,23 @@ class _$GeometryModelCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _GeometryModel implements GeometryModel {
-  const _GeometryModel(
-      {required final List<List<double>> coordinates, required this.type})
+  const _GeometryModel({final List<List<double>>? coordinates, this.type})
       : _coordinates = coordinates;
   factory _GeometryModel.fromJson(Map<String, dynamic> json) =>
       _$GeometryModelFromJson(json);
 
-  final List<List<double>> _coordinates;
+  final List<List<double>>? _coordinates;
   @override
-  List<List<double>> get coordinates {
+  List<List<double>>? get coordinates {
+    final value = _coordinates;
+    if (value == null) return null;
     if (_coordinates is EqualUnmodifiableListView) return _coordinates;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_coordinates);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  final String type;
+  final String? type;
 
   /// Create a copy of GeometryModel
   /// with the given fields replaced by the non-null parameter values.
@@ -2036,7 +2093,7 @@ abstract mixin class _$GeometryModelCopyWith<$Res>
       __$GeometryModelCopyWithImpl;
   @override
   @useResult
-  $Res call({List<List<double>> coordinates, String type});
+  $Res call({List<List<double>>? coordinates, String? type});
 }
 
 /// @nodoc
@@ -2052,29 +2109,29 @@ class __$GeometryModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? coordinates = null,
-    Object? type = null,
+    Object? coordinates = freezed,
+    Object? type = freezed,
   }) {
     return _then(_GeometryModel(
-      coordinates: null == coordinates
+      coordinates: freezed == coordinates
           ? _self._coordinates
           : coordinates // ignore: cast_nullable_to_non_nullable
-              as List<List<double>>,
-      type: null == type
+              as List<List<double>>?,
+      type: freezed == type
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 mixin _$BannerInstructionModel {
-  PrimaryInstructionModel
+  PrimaryInstructionModel?
       get primary; // 'sub' không phải lúc nào cũng có, nên có thể là null
   PrimaryInstructionModel? get sub;
   @JsonKey(name: 'distanceAlongGeometry')
-  double get distanceAlongGeometry;
+  double? get distanceAlongGeometry;
 
   /// Create a copy of BannerInstructionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -2116,11 +2173,11 @@ abstract mixin class $BannerInstructionModelCopyWith<$Res> {
       _$BannerInstructionModelCopyWithImpl;
   @useResult
   $Res call(
-      {PrimaryInstructionModel primary,
+      {PrimaryInstructionModel? primary,
       PrimaryInstructionModel? sub,
-      @JsonKey(name: 'distanceAlongGeometry') double distanceAlongGeometry});
+      @JsonKey(name: 'distanceAlongGeometry') double? distanceAlongGeometry});
 
-  $PrimaryInstructionModelCopyWith<$Res> get primary;
+  $PrimaryInstructionModelCopyWith<$Res>? get primary;
   $PrimaryInstructionModelCopyWith<$Res>? get sub;
 }
 
@@ -2137,23 +2194,23 @@ class _$BannerInstructionModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? primary = null,
+    Object? primary = freezed,
     Object? sub = freezed,
-    Object? distanceAlongGeometry = null,
+    Object? distanceAlongGeometry = freezed,
   }) {
     return _then(_self.copyWith(
-      primary: null == primary
+      primary: freezed == primary
           ? _self.primary
           : primary // ignore: cast_nullable_to_non_nullable
-              as PrimaryInstructionModel,
+              as PrimaryInstructionModel?,
       sub: freezed == sub
           ? _self.sub
           : sub // ignore: cast_nullable_to_non_nullable
               as PrimaryInstructionModel?,
-      distanceAlongGeometry: null == distanceAlongGeometry
+      distanceAlongGeometry: freezed == distanceAlongGeometry
           ? _self.distanceAlongGeometry
           : distanceAlongGeometry // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
     ));
   }
 
@@ -2161,8 +2218,12 @@ class _$BannerInstructionModelCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $PrimaryInstructionModelCopyWith<$Res> get primary {
-    return $PrimaryInstructionModelCopyWith<$Res>(_self.primary, (value) {
+  $PrimaryInstructionModelCopyWith<$Res>? get primary {
+    if (_self.primary == null) {
+      return null;
+    }
+
+    return $PrimaryInstructionModelCopyWith<$Res>(_self.primary!, (value) {
       return _then(_self.copyWith(primary: value));
     });
   }
@@ -2186,21 +2247,20 @@ class _$BannerInstructionModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _BannerInstructionModel implements BannerInstructionModel {
   const _BannerInstructionModel(
-      {required this.primary,
+      {this.primary,
       this.sub,
-      @JsonKey(name: 'distanceAlongGeometry')
-      required this.distanceAlongGeometry});
+      @JsonKey(name: 'distanceAlongGeometry') this.distanceAlongGeometry});
   factory _BannerInstructionModel.fromJson(Map<String, dynamic> json) =>
       _$BannerInstructionModelFromJson(json);
 
   @override
-  final PrimaryInstructionModel primary;
+  final PrimaryInstructionModel? primary;
 // 'sub' không phải lúc nào cũng có, nên có thể là null
   @override
   final PrimaryInstructionModel? sub;
   @override
   @JsonKey(name: 'distanceAlongGeometry')
-  final double distanceAlongGeometry;
+  final double? distanceAlongGeometry;
 
   /// Create a copy of BannerInstructionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -2249,12 +2309,12 @@ abstract mixin class _$BannerInstructionModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {PrimaryInstructionModel primary,
+      {PrimaryInstructionModel? primary,
       PrimaryInstructionModel? sub,
-      @JsonKey(name: 'distanceAlongGeometry') double distanceAlongGeometry});
+      @JsonKey(name: 'distanceAlongGeometry') double? distanceAlongGeometry});
 
   @override
-  $PrimaryInstructionModelCopyWith<$Res> get primary;
+  $PrimaryInstructionModelCopyWith<$Res>? get primary;
   @override
   $PrimaryInstructionModelCopyWith<$Res>? get sub;
 }
@@ -2272,23 +2332,23 @@ class __$BannerInstructionModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? primary = null,
+    Object? primary = freezed,
     Object? sub = freezed,
-    Object? distanceAlongGeometry = null,
+    Object? distanceAlongGeometry = freezed,
   }) {
     return _then(_BannerInstructionModel(
-      primary: null == primary
+      primary: freezed == primary
           ? _self.primary
           : primary // ignore: cast_nullable_to_non_nullable
-              as PrimaryInstructionModel,
+              as PrimaryInstructionModel?,
       sub: freezed == sub
           ? _self.sub
           : sub // ignore: cast_nullable_to_non_nullable
               as PrimaryInstructionModel?,
-      distanceAlongGeometry: null == distanceAlongGeometry
+      distanceAlongGeometry: freezed == distanceAlongGeometry
           ? _self.distanceAlongGeometry
           : distanceAlongGeometry // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
     ));
   }
 
@@ -2296,8 +2356,12 @@ class __$BannerInstructionModelCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $PrimaryInstructionModelCopyWith<$Res> get primary {
-    return $PrimaryInstructionModelCopyWith<$Res>(_self.primary, (value) {
+  $PrimaryInstructionModelCopyWith<$Res>? get primary {
+    if (_self.primary == null) {
+      return null;
+    }
+
+    return $PrimaryInstructionModelCopyWith<$Res>(_self.primary!, (value) {
       return _then(_self.copyWith(primary: value));
     });
   }
@@ -2319,10 +2383,10 @@ class __$BannerInstructionModelCopyWithImpl<$Res>
 
 /// @nodoc
 mixin _$PrimaryInstructionModel {
-  List<ComponentModel> get components;
-  String get type;
-  String get modifier;
-  String get text;
+  List<ComponentModel>? get components;
+  String? get type;
+  String? get modifier;
+  String? get text;
 
   /// Create a copy of PrimaryInstructionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -2366,10 +2430,10 @@ abstract mixin class $PrimaryInstructionModelCopyWith<$Res> {
       _$PrimaryInstructionModelCopyWithImpl;
   @useResult
   $Res call(
-      {List<ComponentModel> components,
-      String type,
-      String modifier,
-      String text});
+      {List<ComponentModel>? components,
+      String? type,
+      String? modifier,
+      String? text});
 }
 
 /// @nodoc
@@ -2385,28 +2449,28 @@ class _$PrimaryInstructionModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? components = null,
-    Object? type = null,
-    Object? modifier = null,
-    Object? text = null,
+    Object? components = freezed,
+    Object? type = freezed,
+    Object? modifier = freezed,
+    Object? text = freezed,
   }) {
     return _then(_self.copyWith(
-      components: null == components
+      components: freezed == components
           ? _self.components
           : components // ignore: cast_nullable_to_non_nullable
-              as List<ComponentModel>,
-      type: null == type
+              as List<ComponentModel>?,
+      type: freezed == type
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      modifier: null == modifier
+              as String?,
+      modifier: freezed == modifier
           ? _self.modifier
           : modifier // ignore: cast_nullable_to_non_nullable
-              as String,
-      text: null == text
+              as String?,
+      text: freezed == text
           ? _self.text
           : text // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -2415,28 +2479,30 @@ class _$PrimaryInstructionModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _PrimaryInstructionModel implements PrimaryInstructionModel {
   const _PrimaryInstructionModel(
-      {required final List<ComponentModel> components,
-      required this.type,
-      required this.modifier,
-      required this.text})
+      {final List<ComponentModel>? components,
+      this.type,
+      this.modifier,
+      this.text})
       : _components = components;
   factory _PrimaryInstructionModel.fromJson(Map<String, dynamic> json) =>
       _$PrimaryInstructionModelFromJson(json);
 
-  final List<ComponentModel> _components;
+  final List<ComponentModel>? _components;
   @override
-  List<ComponentModel> get components {
+  List<ComponentModel>? get components {
+    final value = _components;
+    if (value == null) return null;
     if (_components is EqualUnmodifiableListView) return _components;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_components);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
-  final String type;
+  final String? type;
   @override
-  final String modifier;
+  final String? modifier;
   @override
-  final String text;
+  final String? text;
 
   /// Create a copy of PrimaryInstructionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -2487,10 +2553,10 @@ abstract mixin class _$PrimaryInstructionModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<ComponentModel> components,
-      String type,
-      String modifier,
-      String text});
+      {List<ComponentModel>? components,
+      String? type,
+      String? modifier,
+      String? text});
 }
 
 /// @nodoc
@@ -2506,35 +2572,35 @@ class __$PrimaryInstructionModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? components = null,
-    Object? type = null,
-    Object? modifier = null,
-    Object? text = null,
+    Object? components = freezed,
+    Object? type = freezed,
+    Object? modifier = freezed,
+    Object? text = freezed,
   }) {
     return _then(_PrimaryInstructionModel(
-      components: null == components
+      components: freezed == components
           ? _self._components
           : components // ignore: cast_nullable_to_non_nullable
-              as List<ComponentModel>,
-      type: null == type
+              as List<ComponentModel>?,
+      type: freezed == type
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      modifier: null == modifier
+              as String?,
+      modifier: freezed == modifier
           ? _self.modifier
           : modifier // ignore: cast_nullable_to_non_nullable
-              as String,
-      text: null == text
+              as String?,
+      text: freezed == text
           ? _self.text
           : text // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 mixin _$ComponentModel {
-  String get type;
+  String? get type;
   String? get text; // 'mapbox_shield' chỉ có khi type là 'icon'
   @JsonKey(name: 'mapbox_shield')
   MapboxShieldModel? get mapboxShield;
@@ -2578,7 +2644,7 @@ abstract mixin class $ComponentModelCopyWith<$Res> {
       _$ComponentModelCopyWithImpl;
   @useResult
   $Res call(
-      {String type,
+      {String? type,
       String? text,
       @JsonKey(name: 'mapbox_shield') MapboxShieldModel? mapboxShield});
 
@@ -2598,15 +2664,15 @@ class _$ComponentModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? type = null,
+    Object? type = freezed,
     Object? text = freezed,
     Object? mapboxShield = freezed,
   }) {
     return _then(_self.copyWith(
-      type: null == type
+      type: freezed == type
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       text: freezed == text
           ? _self.text
           : text // ignore: cast_nullable_to_non_nullable
@@ -2637,14 +2703,14 @@ class _$ComponentModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _ComponentModel implements ComponentModel {
   const _ComponentModel(
-      {required this.type,
+      {this.type,
       this.text,
       @JsonKey(name: 'mapbox_shield') this.mapboxShield});
   factory _ComponentModel.fromJson(Map<String, dynamic> json) =>
       _$ComponentModelFromJson(json);
 
   @override
-  final String type;
+  final String? type;
   @override
   final String? text;
 // 'mapbox_shield' chỉ có khi type là 'icon'
@@ -2697,7 +2763,7 @@ abstract mixin class _$ComponentModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String type,
+      {String? type,
       String? text,
       @JsonKey(name: 'mapbox_shield') MapboxShieldModel? mapboxShield});
 
@@ -2718,15 +2784,15 @@ class __$ComponentModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? type = null,
+    Object? type = freezed,
     Object? text = freezed,
     Object? mapboxShield = freezed,
   }) {
     return _then(_ComponentModel(
-      type: null == type
+      type: freezed == type
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       text: freezed == text
           ? _self.text
           : text // ignore: cast_nullable_to_non_nullable
@@ -2756,12 +2822,12 @@ class __$ComponentModelCopyWithImpl<$Res>
 /// @nodoc
 mixin _$MapboxShieldModel {
   @JsonKey(name: 'text_color')
-  String get textColor;
-  String get name;
+  String? get textColor;
+  String? get name;
   @JsonKey(name: 'display_ref')
-  String get displayRef;
+  String? get displayRef;
   @JsonKey(name: 'base_url')
-  String get baseUrl;
+  String? get baseUrl;
 
   /// Create a copy of MapboxShieldModel
   /// with the given fields replaced by the non-null parameter values.
@@ -2805,10 +2871,10 @@ abstract mixin class $MapboxShieldModelCopyWith<$Res> {
       _$MapboxShieldModelCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: 'text_color') String textColor,
-      String name,
-      @JsonKey(name: 'display_ref') String displayRef,
-      @JsonKey(name: 'base_url') String baseUrl});
+      {@JsonKey(name: 'text_color') String? textColor,
+      String? name,
+      @JsonKey(name: 'display_ref') String? displayRef,
+      @JsonKey(name: 'base_url') String? baseUrl});
 }
 
 /// @nodoc
@@ -2824,28 +2890,28 @@ class _$MapboxShieldModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? textColor = null,
-    Object? name = null,
-    Object? displayRef = null,
-    Object? baseUrl = null,
+    Object? textColor = freezed,
+    Object? name = freezed,
+    Object? displayRef = freezed,
+    Object? baseUrl = freezed,
   }) {
     return _then(_self.copyWith(
-      textColor: null == textColor
+      textColor: freezed == textColor
           ? _self.textColor
           : textColor // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
+              as String?,
+      name: freezed == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      displayRef: null == displayRef
+              as String?,
+      displayRef: freezed == displayRef
           ? _self.displayRef
           : displayRef // ignore: cast_nullable_to_non_nullable
-              as String,
-      baseUrl: null == baseUrl
+              as String?,
+      baseUrl: freezed == baseUrl
           ? _self.baseUrl
           : baseUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -2854,24 +2920,24 @@ class _$MapboxShieldModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _MapboxShieldModel implements MapboxShieldModel {
   const _MapboxShieldModel(
-      {@JsonKey(name: 'text_color') required this.textColor,
-      required this.name,
-      @JsonKey(name: 'display_ref') required this.displayRef,
-      @JsonKey(name: 'base_url') required this.baseUrl});
+      {@JsonKey(name: 'text_color') this.textColor,
+      this.name,
+      @JsonKey(name: 'display_ref') this.displayRef,
+      @JsonKey(name: 'base_url') this.baseUrl});
   factory _MapboxShieldModel.fromJson(Map<String, dynamic> json) =>
       _$MapboxShieldModelFromJson(json);
 
   @override
   @JsonKey(name: 'text_color')
-  final String textColor;
+  final String? textColor;
   @override
-  final String name;
+  final String? name;
   @override
   @JsonKey(name: 'display_ref')
-  final String displayRef;
+  final String? displayRef;
   @override
   @JsonKey(name: 'base_url')
-  final String baseUrl;
+  final String? baseUrl;
 
   /// Create a copy of MapboxShieldModel
   /// with the given fields replaced by the non-null parameter values.
@@ -2921,10 +2987,10 @@ abstract mixin class _$MapboxShieldModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'text_color') String textColor,
-      String name,
-      @JsonKey(name: 'display_ref') String displayRef,
-      @JsonKey(name: 'base_url') String baseUrl});
+      {@JsonKey(name: 'text_color') String? textColor,
+      String? name,
+      @JsonKey(name: 'display_ref') String? displayRef,
+      @JsonKey(name: 'base_url') String? baseUrl});
 }
 
 /// @nodoc
@@ -2940,28 +3006,28 @@ class __$MapboxShieldModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? textColor = null,
-    Object? name = null,
-    Object? displayRef = null,
-    Object? baseUrl = null,
+    Object? textColor = freezed,
+    Object? name = freezed,
+    Object? displayRef = freezed,
+    Object? baseUrl = freezed,
   }) {
     return _then(_MapboxShieldModel(
-      textColor: null == textColor
+      textColor: freezed == textColor
           ? _self.textColor
           : textColor // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
+              as String?,
+      name: freezed == name
           ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      displayRef: null == displayRef
+              as String?,
+      displayRef: freezed == displayRef
           ? _self.displayRef
           : displayRef // ignore: cast_nullable_to_non_nullable
-              as String,
-      baseUrl: null == baseUrl
+              as String?,
+      baseUrl: freezed == baseUrl
           ? _self.baseUrl
           : baseUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -2969,10 +3035,10 @@ class __$MapboxShieldModelCopyWithImpl<$Res>
 /// @nodoc
 mixin _$VoiceInstructionModel {
   @JsonKey(name: 'ssmlAnnouncement')
-  String get ssmlAnnouncement;
-  String get announcement;
+  String? get ssmlAnnouncement;
+  String? get announcement;
   @JsonKey(name: 'distanceAlongGeometry')
-  double get distanceAlongGeometry;
+  double? get distanceAlongGeometry;
 
   /// Create a copy of VoiceInstructionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -3016,9 +3082,9 @@ abstract mixin class $VoiceInstructionModelCopyWith<$Res> {
       _$VoiceInstructionModelCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: 'ssmlAnnouncement') String ssmlAnnouncement,
-      String announcement,
-      @JsonKey(name: 'distanceAlongGeometry') double distanceAlongGeometry});
+      {@JsonKey(name: 'ssmlAnnouncement') String? ssmlAnnouncement,
+      String? announcement,
+      @JsonKey(name: 'distanceAlongGeometry') double? distanceAlongGeometry});
 }
 
 /// @nodoc
@@ -3034,23 +3100,23 @@ class _$VoiceInstructionModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? ssmlAnnouncement = null,
-    Object? announcement = null,
-    Object? distanceAlongGeometry = null,
+    Object? ssmlAnnouncement = freezed,
+    Object? announcement = freezed,
+    Object? distanceAlongGeometry = freezed,
   }) {
     return _then(_self.copyWith(
-      ssmlAnnouncement: null == ssmlAnnouncement
+      ssmlAnnouncement: freezed == ssmlAnnouncement
           ? _self.ssmlAnnouncement
           : ssmlAnnouncement // ignore: cast_nullable_to_non_nullable
-              as String,
-      announcement: null == announcement
+              as String?,
+      announcement: freezed == announcement
           ? _self.announcement
           : announcement // ignore: cast_nullable_to_non_nullable
-              as String,
-      distanceAlongGeometry: null == distanceAlongGeometry
+              as String?,
+      distanceAlongGeometry: freezed == distanceAlongGeometry
           ? _self.distanceAlongGeometry
           : distanceAlongGeometry // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
     ));
   }
 }
@@ -3059,21 +3125,20 @@ class _$VoiceInstructionModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _VoiceInstructionModel implements VoiceInstructionModel {
   const _VoiceInstructionModel(
-      {@JsonKey(name: 'ssmlAnnouncement') required this.ssmlAnnouncement,
-      required this.announcement,
-      @JsonKey(name: 'distanceAlongGeometry')
-      required this.distanceAlongGeometry});
+      {@JsonKey(name: 'ssmlAnnouncement') this.ssmlAnnouncement,
+      this.announcement,
+      @JsonKey(name: 'distanceAlongGeometry') this.distanceAlongGeometry});
   factory _VoiceInstructionModel.fromJson(Map<String, dynamic> json) =>
       _$VoiceInstructionModelFromJson(json);
 
   @override
   @JsonKey(name: 'ssmlAnnouncement')
-  final String ssmlAnnouncement;
+  final String? ssmlAnnouncement;
   @override
-  final String announcement;
+  final String? announcement;
   @override
   @JsonKey(name: 'distanceAlongGeometry')
-  final double distanceAlongGeometry;
+  final double? distanceAlongGeometry;
 
   /// Create a copy of VoiceInstructionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -3124,9 +3189,9 @@ abstract mixin class _$VoiceInstructionModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'ssmlAnnouncement') String ssmlAnnouncement,
-      String announcement,
-      @JsonKey(name: 'distanceAlongGeometry') double distanceAlongGeometry});
+      {@JsonKey(name: 'ssmlAnnouncement') String? ssmlAnnouncement,
+      String? announcement,
+      @JsonKey(name: 'distanceAlongGeometry') double? distanceAlongGeometry});
 }
 
 /// @nodoc
@@ -3142,23 +3207,23 @@ class __$VoiceInstructionModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? ssmlAnnouncement = null,
-    Object? announcement = null,
-    Object? distanceAlongGeometry = null,
+    Object? ssmlAnnouncement = freezed,
+    Object? announcement = freezed,
+    Object? distanceAlongGeometry = freezed,
   }) {
     return _then(_VoiceInstructionModel(
-      ssmlAnnouncement: null == ssmlAnnouncement
+      ssmlAnnouncement: freezed == ssmlAnnouncement
           ? _self.ssmlAnnouncement
           : ssmlAnnouncement // ignore: cast_nullable_to_non_nullable
-              as String,
-      announcement: null == announcement
+              as String?,
+      announcement: freezed == announcement
           ? _self.announcement
           : announcement // ignore: cast_nullable_to_non_nullable
-              as String,
-      distanceAlongGeometry: null == distanceAlongGeometry
+              as String?,
+      distanceAlongGeometry: freezed == distanceAlongGeometry
           ? _self.distanceAlongGeometry
           : distanceAlongGeometry // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
     ));
   }
 }
@@ -3167,14 +3232,14 @@ class __$VoiceInstructionModelCopyWithImpl<$Res>
 mixin _$IntersectionModel {
   @JsonKey(name: 'mapbox_streets_v8')
   MapboxStreetsV8Model? get mapboxStreetsV8;
-  List<int> get bearings;
-  List<bool> get entry;
+  List<int>? get bearings;
+  List<bool>? get entry;
   @JsonKey(name: 'admin_index')
-  int get adminIndex;
+  int? get adminIndex;
   int? get out;
   @JsonKey(name: 'geometry_index')
-  int get geometryIndex;
-  List<double>
+  int? get geometryIndex;
+  List<double>?
       get location; // Các thuộc tính dưới đây không phải lúc nào cũng có
   @JsonKey(name: 'in')
   int? get inIndex;
@@ -3253,12 +3318,12 @@ abstract mixin class $IntersectionModelCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'mapbox_streets_v8')
       MapboxStreetsV8Model? mapboxStreetsV8,
-      List<int> bearings,
-      List<bool> entry,
-      @JsonKey(name: 'admin_index') int adminIndex,
+      List<int>? bearings,
+      List<bool>? entry,
+      @JsonKey(name: 'admin_index') int? adminIndex,
       int? out,
-      @JsonKey(name: 'geometry_index') int geometryIndex,
-      List<double> location,
+      @JsonKey(name: 'geometry_index') int? geometryIndex,
+      List<double>? location,
       @JsonKey(name: 'in') int? inIndex,
       double? duration,
       @JsonKey(name: 'turn_weight') double? turnWeight,
@@ -3282,12 +3347,12 @@ class _$IntersectionModelCopyWithImpl<$Res>
   @override
   $Res call({
     Object? mapboxStreetsV8 = freezed,
-    Object? bearings = null,
-    Object? entry = null,
-    Object? adminIndex = null,
+    Object? bearings = freezed,
+    Object? entry = freezed,
+    Object? adminIndex = freezed,
     Object? out = freezed,
-    Object? geometryIndex = null,
-    Object? location = null,
+    Object? geometryIndex = freezed,
+    Object? location = freezed,
     Object? inIndex = freezed,
     Object? duration = freezed,
     Object? turnWeight = freezed,
@@ -3299,30 +3364,30 @@ class _$IntersectionModelCopyWithImpl<$Res>
           ? _self.mapboxStreetsV8
           : mapboxStreetsV8 // ignore: cast_nullable_to_non_nullable
               as MapboxStreetsV8Model?,
-      bearings: null == bearings
+      bearings: freezed == bearings
           ? _self.bearings
           : bearings // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      entry: null == entry
+              as List<int>?,
+      entry: freezed == entry
           ? _self.entry
           : entry // ignore: cast_nullable_to_non_nullable
-              as List<bool>,
-      adminIndex: null == adminIndex
+              as List<bool>?,
+      adminIndex: freezed == adminIndex
           ? _self.adminIndex
           : adminIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       out: freezed == out
           ? _self.out
           : out // ignore: cast_nullable_to_non_nullable
               as int?,
-      geometryIndex: null == geometryIndex
+      geometryIndex: freezed == geometryIndex
           ? _self.geometryIndex
           : geometryIndex // ignore: cast_nullable_to_non_nullable
-              as int,
-      location: null == location
+              as int?,
+      location: freezed == location
           ? _self.location
           : location // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double>?,
       inIndex: freezed == inIndex
           ? _self.inIndex
           : inIndex // ignore: cast_nullable_to_non_nullable
@@ -3366,12 +3431,12 @@ class _$IntersectionModelCopyWithImpl<$Res>
 class _IntersectionModel implements IntersectionModel {
   const _IntersectionModel(
       {@JsonKey(name: 'mapbox_streets_v8') this.mapboxStreetsV8,
-      required final List<int> bearings,
-      required final List<bool> entry,
-      @JsonKey(name: 'admin_index') required this.adminIndex,
+      final List<int>? bearings,
+      final List<bool>? entry,
+      @JsonKey(name: 'admin_index') this.adminIndex,
       this.out,
-      @JsonKey(name: 'geometry_index') required this.geometryIndex,
-      required final List<double> location,
+      @JsonKey(name: 'geometry_index') this.geometryIndex,
+      final List<double>? location,
       @JsonKey(name: 'in') this.inIndex,
       this.duration,
       @JsonKey(name: 'turn_weight') this.turnWeight,
@@ -3386,36 +3451,42 @@ class _IntersectionModel implements IntersectionModel {
   @override
   @JsonKey(name: 'mapbox_streets_v8')
   final MapboxStreetsV8Model? mapboxStreetsV8;
-  final List<int> _bearings;
+  final List<int>? _bearings;
   @override
-  List<int> get bearings {
+  List<int>? get bearings {
+    final value = _bearings;
+    if (value == null) return null;
     if (_bearings is EqualUnmodifiableListView) return _bearings;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_bearings);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<bool> _entry;
+  final List<bool>? _entry;
   @override
-  List<bool> get entry {
+  List<bool>? get entry {
+    final value = _entry;
+    if (value == null) return null;
     if (_entry is EqualUnmodifiableListView) return _entry;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_entry);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
   @JsonKey(name: 'admin_index')
-  final int adminIndex;
+  final int? adminIndex;
   @override
   final int? out;
   @override
   @JsonKey(name: 'geometry_index')
-  final int geometryIndex;
-  final List<double> _location;
+  final int? geometryIndex;
+  final List<double>? _location;
   @override
-  List<double> get location {
+  List<double>? get location {
+    final value = _location;
+    if (value == null) return null;
     if (_location is EqualUnmodifiableListView) return _location;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_location);
+    return EqualUnmodifiableListView(value);
   }
 
 // Các thuộc tính dưới đây không phải lúc nào cũng có
@@ -3507,12 +3578,12 @@ abstract mixin class _$IntersectionModelCopyWith<$Res>
   $Res call(
       {@JsonKey(name: 'mapbox_streets_v8')
       MapboxStreetsV8Model? mapboxStreetsV8,
-      List<int> bearings,
-      List<bool> entry,
-      @JsonKey(name: 'admin_index') int adminIndex,
+      List<int>? bearings,
+      List<bool>? entry,
+      @JsonKey(name: 'admin_index') int? adminIndex,
       int? out,
-      @JsonKey(name: 'geometry_index') int geometryIndex,
-      List<double> location,
+      @JsonKey(name: 'geometry_index') int? geometryIndex,
+      List<double>? location,
       @JsonKey(name: 'in') int? inIndex,
       double? duration,
       @JsonKey(name: 'turn_weight') double? turnWeight,
@@ -3537,12 +3608,12 @@ class __$IntersectionModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? mapboxStreetsV8 = freezed,
-    Object? bearings = null,
-    Object? entry = null,
-    Object? adminIndex = null,
+    Object? bearings = freezed,
+    Object? entry = freezed,
+    Object? adminIndex = freezed,
     Object? out = freezed,
-    Object? geometryIndex = null,
-    Object? location = null,
+    Object? geometryIndex = freezed,
+    Object? location = freezed,
     Object? inIndex = freezed,
     Object? duration = freezed,
     Object? turnWeight = freezed,
@@ -3554,30 +3625,30 @@ class __$IntersectionModelCopyWithImpl<$Res>
           ? _self.mapboxStreetsV8
           : mapboxStreetsV8 // ignore: cast_nullable_to_non_nullable
               as MapboxStreetsV8Model?,
-      bearings: null == bearings
+      bearings: freezed == bearings
           ? _self._bearings
           : bearings // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      entry: null == entry
+              as List<int>?,
+      entry: freezed == entry
           ? _self._entry
           : entry // ignore: cast_nullable_to_non_nullable
-              as List<bool>,
-      adminIndex: null == adminIndex
+              as List<bool>?,
+      adminIndex: freezed == adminIndex
           ? _self.adminIndex
           : adminIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       out: freezed == out
           ? _self.out
           : out // ignore: cast_nullable_to_non_nullable
               as int?,
-      geometryIndex: null == geometryIndex
+      geometryIndex: freezed == geometryIndex
           ? _self.geometryIndex
           : geometryIndex // ignore: cast_nullable_to_non_nullable
-              as int,
-      location: null == location
+              as int?,
+      location: freezed == location
           ? _self._location
           : location // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double>?,
       inIndex: freezed == inIndex
           ? _self.inIndex
           : inIndex // ignore: cast_nullable_to_non_nullable
@@ -3619,7 +3690,7 @@ class __$IntersectionModelCopyWithImpl<$Res>
 /// @nodoc
 mixin _$MapboxStreetsV8Model {
   @JsonKey(name: 'class')
-  String get streetClass;
+  String? get streetClass;
 
   /// Create a copy of MapboxStreetsV8Model
   /// with the given fields replaced by the non-null parameter values.
@@ -3657,7 +3728,7 @@ abstract mixin class $MapboxStreetsV8ModelCopyWith<$Res> {
           $Res Function(MapboxStreetsV8Model) _then) =
       _$MapboxStreetsV8ModelCopyWithImpl;
   @useResult
-  $Res call({@JsonKey(name: 'class') String streetClass});
+  $Res call({@JsonKey(name: 'class') String? streetClass});
 }
 
 /// @nodoc
@@ -3673,13 +3744,13 @@ class _$MapboxStreetsV8ModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? streetClass = null,
+    Object? streetClass = freezed,
   }) {
     return _then(_self.copyWith(
-      streetClass: null == streetClass
+      streetClass: freezed == streetClass
           ? _self.streetClass
           : streetClass // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -3687,14 +3758,13 @@ class _$MapboxStreetsV8ModelCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _MapboxStreetsV8Model implements MapboxStreetsV8Model {
-  const _MapboxStreetsV8Model(
-      {@JsonKey(name: 'class') required this.streetClass});
+  const _MapboxStreetsV8Model({@JsonKey(name: 'class') this.streetClass});
   factory _MapboxStreetsV8Model.fromJson(Map<String, dynamic> json) =>
       _$MapboxStreetsV8ModelFromJson(json);
 
   @override
   @JsonKey(name: 'class')
-  final String streetClass;
+  final String? streetClass;
 
   /// Create a copy of MapboxStreetsV8Model
   /// with the given fields replaced by the non-null parameter values.
@@ -3739,7 +3809,7 @@ abstract mixin class _$MapboxStreetsV8ModelCopyWith<$Res>
       __$MapboxStreetsV8ModelCopyWithImpl;
   @override
   @useResult
-  $Res call({@JsonKey(name: 'class') String streetClass});
+  $Res call({@JsonKey(name: 'class') String? streetClass});
 }
 
 /// @nodoc
@@ -3755,26 +3825,26 @@ class __$MapboxStreetsV8ModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? streetClass = null,
+    Object? streetClass = freezed,
   }) {
     return _then(_MapboxStreetsV8Model(
-      streetClass: null == streetClass
+      streetClass: freezed == streetClass
           ? _self.streetClass
           : streetClass // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 mixin _$ManeuverModel {
-  String get type;
-  String get instruction;
+  String? get type;
+  String? get instruction;
   @JsonKey(name: 'bearing_after')
-  int get bearingAfter;
+  int? get bearingAfter;
   @JsonKey(name: 'bearing_before')
-  int get bearingBefore;
-  List<double>
+  int? get bearingBefore;
+  List<double>?
       get location; // `modifier` có thể là null (ví dụ ở maneuver cuối 'arrive')
   String? get modifier;
 
@@ -3824,11 +3894,11 @@ abstract mixin class $ManeuverModelCopyWith<$Res> {
       _$ManeuverModelCopyWithImpl;
   @useResult
   $Res call(
-      {String type,
-      String instruction,
-      @JsonKey(name: 'bearing_after') int bearingAfter,
-      @JsonKey(name: 'bearing_before') int bearingBefore,
-      List<double> location,
+      {String? type,
+      String? instruction,
+      @JsonKey(name: 'bearing_after') int? bearingAfter,
+      @JsonKey(name: 'bearing_before') int? bearingBefore,
+      List<double>? location,
       String? modifier});
 }
 
@@ -3845,34 +3915,34 @@ class _$ManeuverModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? type = null,
-    Object? instruction = null,
-    Object? bearingAfter = null,
-    Object? bearingBefore = null,
-    Object? location = null,
+    Object? type = freezed,
+    Object? instruction = freezed,
+    Object? bearingAfter = freezed,
+    Object? bearingBefore = freezed,
+    Object? location = freezed,
     Object? modifier = freezed,
   }) {
     return _then(_self.copyWith(
-      type: null == type
+      type: freezed == type
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      instruction: null == instruction
+              as String?,
+      instruction: freezed == instruction
           ? _self.instruction
           : instruction // ignore: cast_nullable_to_non_nullable
-              as String,
-      bearingAfter: null == bearingAfter
+              as String?,
+      bearingAfter: freezed == bearingAfter
           ? _self.bearingAfter
           : bearingAfter // ignore: cast_nullable_to_non_nullable
-              as int,
-      bearingBefore: null == bearingBefore
+              as int?,
+      bearingBefore: freezed == bearingBefore
           ? _self.bearingBefore
           : bearingBefore // ignore: cast_nullable_to_non_nullable
-              as int,
-      location: null == location
+              as int?,
+      location: freezed == location
           ? _self.location
           : location // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double>?,
       modifier: freezed == modifier
           ? _self.modifier
           : modifier // ignore: cast_nullable_to_non_nullable
@@ -3885,32 +3955,34 @@ class _$ManeuverModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _ManeuverModel implements ManeuverModel {
   const _ManeuverModel(
-      {required this.type,
-      required this.instruction,
-      @JsonKey(name: 'bearing_after') required this.bearingAfter,
-      @JsonKey(name: 'bearing_before') required this.bearingBefore,
-      required final List<double> location,
+      {this.type,
+      this.instruction,
+      @JsonKey(name: 'bearing_after') this.bearingAfter,
+      @JsonKey(name: 'bearing_before') this.bearingBefore,
+      final List<double>? location,
       this.modifier})
       : _location = location;
   factory _ManeuverModel.fromJson(Map<String, dynamic> json) =>
       _$ManeuverModelFromJson(json);
 
   @override
-  final String type;
+  final String? type;
   @override
-  final String instruction;
+  final String? instruction;
   @override
   @JsonKey(name: 'bearing_after')
-  final int bearingAfter;
+  final int? bearingAfter;
   @override
   @JsonKey(name: 'bearing_before')
-  final int bearingBefore;
-  final List<double> _location;
+  final int? bearingBefore;
+  final List<double>? _location;
   @override
-  List<double> get location {
+  List<double>? get location {
+    final value = _location;
+    if (value == null) return null;
     if (_location is EqualUnmodifiableListView) return _location;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_location);
+    return EqualUnmodifiableListView(value);
   }
 
 // `modifier` có thể là null (ví dụ ở maneuver cuối 'arrive')
@@ -3969,11 +4041,11 @@ abstract mixin class _$ManeuverModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String type,
-      String instruction,
-      @JsonKey(name: 'bearing_after') int bearingAfter,
-      @JsonKey(name: 'bearing_before') int bearingBefore,
-      List<double> location,
+      {String? type,
+      String? instruction,
+      @JsonKey(name: 'bearing_after') int? bearingAfter,
+      @JsonKey(name: 'bearing_before') int? bearingBefore,
+      List<double>? location,
       String? modifier});
 }
 
@@ -3990,34 +4062,34 @@ class __$ManeuverModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? type = null,
-    Object? instruction = null,
-    Object? bearingAfter = null,
-    Object? bearingBefore = null,
-    Object? location = null,
+    Object? type = freezed,
+    Object? instruction = freezed,
+    Object? bearingAfter = freezed,
+    Object? bearingBefore = freezed,
+    Object? location = freezed,
     Object? modifier = freezed,
   }) {
     return _then(_ManeuverModel(
-      type: null == type
+      type: freezed == type
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      instruction: null == instruction
+              as String?,
+      instruction: freezed == instruction
           ? _self.instruction
           : instruction // ignore: cast_nullable_to_non_nullable
-              as String,
-      bearingAfter: null == bearingAfter
+              as String?,
+      bearingAfter: freezed == bearingAfter
           ? _self.bearingAfter
           : bearingAfter // ignore: cast_nullable_to_non_nullable
-              as int,
-      bearingBefore: null == bearingBefore
+              as int?,
+      bearingBefore: freezed == bearingBefore
           ? _self.bearingBefore
           : bearingBefore // ignore: cast_nullable_to_non_nullable
-              as int,
-      location: null == location
+              as int?,
+      location: freezed == location
           ? _self._location
           : location // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double>?,
       modifier: freezed == modifier
           ? _self.modifier
           : modifier // ignore: cast_nullable_to_non_nullable

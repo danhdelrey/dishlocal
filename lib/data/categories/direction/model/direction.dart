@@ -7,10 +7,10 @@ part 'direction.g.dart';
 @freezed
 abstract class Direction with _$Direction {
   const factory Direction({
-    required List<RouteModel> routes,
-    required List<WaypointModel> waypoints,
-    required String code,
-    required String uuid,
+    List<RouteModel>? routes,
+    List<WaypointModel>? waypoints,
+    String? code,
+    String? uuid,
   }) = _Direction;
 
   factory Direction.fromJson(Map<String, dynamic> json) => _$DirectionFromJson(json);
@@ -21,12 +21,12 @@ abstract class Direction with _$Direction {
 @freezed
 abstract class RouteModel with _$RouteModel {
   const factory RouteModel({
-    @JsonKey(name: 'weight_name') required String weightName,
-    required double weight,
-    required double duration,
-    required double distance,
-    required List<LegModel> legs,
-    required GeometryModel geometry,
+    @JsonKey(name: 'weight_name') String? weightName,
+    double? weight,
+    double? duration,
+    double? distance,
+    List<LegModel>? legs,
+    GeometryModel? geometry,
     @JsonKey(name: 'voiceLocale') String? voiceLocale,
   }) = _RouteModel;
 
@@ -36,9 +36,9 @@ abstract class RouteModel with _$RouteModel {
 @freezed
 abstract class WaypointModel with _$WaypointModel {
   const factory WaypointModel({
-    required double distance,
-    required String name,
-    required List<double> location,
+    double? distance,
+    String? name,
+    List<double>? location,
   }) = _WaypointModel;
 
   factory WaypointModel.fromJson(Map<String, dynamic> json) => _$WaypointModelFromJson(json);
@@ -47,14 +47,14 @@ abstract class WaypointModel with _$WaypointModel {
 @freezed
 abstract class LegModel with _$LegModel {
   const factory LegModel({
-    @JsonKey(name: 'via_waypoints') required List<dynamic> viaWaypoints,
-    required AnnotationModel annotation,
-    required List<AdminModel> admins,
-    required double weight,
-    required double duration,
-    required List<StepModel> steps,
-    required double distance,
-    required String summary,
+    @JsonKey(name: 'via_waypoints') List<dynamic>? viaWaypoints,
+    AnnotationModel? annotation,
+    List<AdminModel>? admins,
+    double? weight,
+    double? duration,
+    List<StepModel>? steps,
+    double? distance,
+    String? summary,
   }) = _LegModel;
 
   factory LegModel.fromJson(Map<String, dynamic> json) => _$LegModelFromJson(json);
@@ -63,9 +63,9 @@ abstract class LegModel with _$LegModel {
 @freezed
 abstract class AnnotationModel with _$AnnotationModel {
   const factory AnnotationModel({
-    required List<double> speed,
-    required List<double> distance,
-    required List<double> duration,
+    List<double>? speed,
+    List<double>? distance,
+    List<double>? duration,
   }) = _AnnotationModel;
 
   factory AnnotationModel.fromJson(Map<String, dynamic> json) => _$AnnotationModelFromJson(json);
@@ -74,7 +74,7 @@ abstract class AnnotationModel with _$AnnotationModel {
 @freezed
 abstract class AdminModel with _$AdminModel {
   const factory AdminModel({
-    @JsonKey(name: 'iso_3166_1') required String iso31661,
+    @JsonKey(name: 'iso_3166_1') String? iso31661,
   }) = _AdminModel;
 
   factory AdminModel.fromJson(Map<String, dynamic> json) => _$AdminModelFromJson(json);
@@ -83,17 +83,17 @@ abstract class AdminModel with _$AdminModel {
 @freezed
 abstract class StepModel with _$StepModel {
   const factory StepModel({
-    @JsonKey(name: 'bannerInstructions') required List<BannerInstructionModel> bannerInstructions,
-    @JsonKey(name: 'voiceInstructions') required List<VoiceInstructionModel> voiceInstructions,
-    required List<IntersectionModel> intersections,
-    required ManeuverModel maneuver,
-    required String name,
-    required double duration,
-    required double distance,
-    @JsonKey(name: 'driving_side') required String drivingSide,
-    required double weight,
-    required String mode,
-    required GeometryModel geometry,
+    @JsonKey(name: 'bannerInstructions') List<BannerInstructionModel>? bannerInstructions,
+    @JsonKey(name: 'voiceInstructions') List<VoiceInstructionModel>? voiceInstructions,
+    List<IntersectionModel>? intersections,
+    ManeuverModel? maneuver,
+    String? name,
+    double? duration,
+    double? distance,
+    @JsonKey(name: 'driving_side') String? drivingSide,
+    double? weight,
+    String? mode,
+    GeometryModel? geometry,
     // `ref` có thể là null, ví dụ trong step đầu tiên không có
     String? ref,
   }) = _StepModel;
@@ -104,8 +104,8 @@ abstract class StepModel with _$StepModel {
 @freezed
 abstract class GeometryModel with _$GeometryModel {
   const factory GeometryModel({
-    required List<List<double>> coordinates,
-    required String type,
+    List<List<double>>? coordinates,
+    String? type,
   }) = _GeometryModel;
 
   factory GeometryModel.fromJson(Map<String, dynamic> json) => _$GeometryModelFromJson(json);
@@ -114,10 +114,10 @@ abstract class GeometryModel with _$GeometryModel {
 @freezed
 abstract class BannerInstructionModel with _$BannerInstructionModel {
   const factory BannerInstructionModel({
-    required PrimaryInstructionModel primary,
+    PrimaryInstructionModel? primary,
     // 'sub' không phải lúc nào cũng có, nên có thể là null
     PrimaryInstructionModel? sub,
-    @JsonKey(name: 'distanceAlongGeometry') required double distanceAlongGeometry,
+    @JsonKey(name: 'distanceAlongGeometry') double? distanceAlongGeometry,
   }) = _BannerInstructionModel;
 
   factory BannerInstructionModel.fromJson(Map<String, dynamic> json) => _$BannerInstructionModelFromJson(json);
@@ -126,10 +126,10 @@ abstract class BannerInstructionModel with _$BannerInstructionModel {
 @freezed
 abstract class PrimaryInstructionModel with _$PrimaryInstructionModel {
   const factory PrimaryInstructionModel({
-    required List<ComponentModel> components,
-    required String type,
-    required String modifier,
-    required String text,
+    List<ComponentModel>? components,
+    String? type,
+    String? modifier,
+    String? text,
   }) = _PrimaryInstructionModel;
 
   factory PrimaryInstructionModel.fromJson(Map<String, dynamic> json) => _$PrimaryInstructionModelFromJson(json);
@@ -138,7 +138,7 @@ abstract class PrimaryInstructionModel with _$PrimaryInstructionModel {
 @freezed
 abstract class ComponentModel with _$ComponentModel {
   const factory ComponentModel({
-    required String type,
+    String? type,
     String? text,
     // 'mapbox_shield' chỉ có khi type là 'icon'
     @JsonKey(name: 'mapbox_shield') MapboxShieldModel? mapboxShield,
@@ -150,10 +150,10 @@ abstract class ComponentModel with _$ComponentModel {
 @freezed
 abstract class MapboxShieldModel with _$MapboxShieldModel {
   const factory MapboxShieldModel({
-    @JsonKey(name: 'text_color') required String textColor,
-    required String name,
-    @JsonKey(name: 'display_ref') required String displayRef,
-    @JsonKey(name: 'base_url') required String baseUrl,
+    @JsonKey(name: 'text_color') String? textColor,
+    String? name,
+    @JsonKey(name: 'display_ref') String? displayRef,
+    @JsonKey(name: 'base_url') String? baseUrl,
   }) = _MapboxShieldModel;
 
   factory MapboxShieldModel.fromJson(Map<String, dynamic> json) => _$MapboxShieldModelFromJson(json);
@@ -162,9 +162,9 @@ abstract class MapboxShieldModel with _$MapboxShieldModel {
 @freezed
 abstract class VoiceInstructionModel with _$VoiceInstructionModel {
   const factory VoiceInstructionModel({
-    @JsonKey(name: 'ssmlAnnouncement') required String ssmlAnnouncement,
-    required String announcement,
-    @JsonKey(name: 'distanceAlongGeometry') required double distanceAlongGeometry,
+    @JsonKey(name: 'ssmlAnnouncement') String? ssmlAnnouncement,
+    String? announcement,
+    @JsonKey(name: 'distanceAlongGeometry') double? distanceAlongGeometry,
   }) = _VoiceInstructionModel;
 
   factory VoiceInstructionModel.fromJson(Map<String, dynamic> json) => _$VoiceInstructionModelFromJson(json);
@@ -174,12 +174,12 @@ abstract class VoiceInstructionModel with _$VoiceInstructionModel {
 abstract class IntersectionModel with _$IntersectionModel {
   const factory IntersectionModel({
     @JsonKey(name: 'mapbox_streets_v8') MapboxStreetsV8Model? mapboxStreetsV8,
-    required List<int> bearings,
-    required List<bool> entry,
-    @JsonKey(name: 'admin_index') required int adminIndex,
+    List<int>? bearings,
+    List<bool>? entry,
+    @JsonKey(name: 'admin_index') int? adminIndex,
     int? out,
-    @JsonKey(name: 'geometry_index') required int geometryIndex,
-    required List<double> location,
+    @JsonKey(name: 'geometry_index') int? geometryIndex,
+    List<double>? location,
     // Các thuộc tính dưới đây không phải lúc nào cũng có
     @JsonKey(name: 'in') int? inIndex,
     double? duration,
@@ -194,7 +194,7 @@ abstract class IntersectionModel with _$IntersectionModel {
 @freezed
 abstract class MapboxStreetsV8Model with _$MapboxStreetsV8Model {
   const factory MapboxStreetsV8Model({
-    @JsonKey(name: 'class') required String streetClass,
+    @JsonKey(name: 'class') String? streetClass,
   }) = _MapboxStreetsV8Model;
 
   factory MapboxStreetsV8Model.fromJson(Map<String, dynamic> json) => _$MapboxStreetsV8ModelFromJson(json);
@@ -203,11 +203,11 @@ abstract class MapboxStreetsV8Model with _$MapboxStreetsV8Model {
 @freezed
 abstract class ManeuverModel with _$ManeuverModel {
   const factory ManeuverModel({
-    required String type,
-    required String instruction,
-    @JsonKey(name: 'bearing_after') required int bearingAfter,
-    @JsonKey(name: 'bearing_before') required int bearingBefore,
-    required List<double> location,
+    String? type,
+    String? instruction,
+    @JsonKey(name: 'bearing_after') int? bearingAfter,
+    @JsonKey(name: 'bearing_before') int? bearingBefore,
+    List<double>? location,
     // `modifier` có thể là null (ví dụ ở maneuver cuối 'arrive')
     String? modifier,
   }) = _ManeuverModel;
