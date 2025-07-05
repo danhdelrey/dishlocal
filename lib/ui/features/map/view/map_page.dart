@@ -5,6 +5,8 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/core/utils/number_formatter.dart';
+import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/direction/model/direction.dart';
 import 'package:dishlocal/ui/features/map/bloc/map_bloc.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart';
@@ -216,63 +218,112 @@ class _MapViewState extends State<MapView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(1000),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: Colors.white,
+    return BlocConsumer<MapBloc, MapState>(
+      // listener để xử lý các hành động không cần rebuild UI
+      listener: (context, state) {
+        if (state is Preview) {
+          // Khi có dữ liệu, gọi các hàm vẽ
+          final direction = state.direction;
+          if (direction.routes.isNotEmpty && direction.waypoints.isNotEmpty) {
+            final route = direction.routes.first;
+            final destinationWaypoint = direction.waypoints.last;
+
+            _drawRoute(route.geometry.coordinates);
+            _addDestinationMarker(destinationWaypoint.location, destinationWaypoint.name);
+            _adjustCamera(direction);
+          }
+        }
+        // Bạn có thể thêm các listener khác ở đây, ví dụ cho trạng thái Navigating
+      },
+      // builder để xây dựng các widget trên màn hình
+      builder: (context, state) {
+        return Scaffold(
+          extendBody: true,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            title: InkWell(
+              onTap: () {},
               borderRadius: BorderRadius.circular(1000),
-              boxShadow: [
-                BoxShadow(
-                  color: appColorScheme(context).outline.withValues(alpha: 0.5),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
+              child: Ink(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(1000),
+                  boxShadow: [
+                    BoxShadow(
+                      color: appColorScheme(context).outline.withValues(alpha: 0.5),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 5, bottom: 5, right: 10, left: 5),
-              child: CustomIconWithLabel(
-                icon: AppIcons.left.toSvg(
-                  color: Colors.black,
-                  width: 16,
-                  height: 16,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 5, bottom: 5, right: 10, left: 5),
+                  child: CustomIconWithLabel(
+                    icon: AppIcons.left.toSvg(
+                      color: Colors.black,
+                      width: 16,
+                      height: 16,
+                    ),
+                    label: 'Quay về',
+                    labelColor: Colors.black,
+                  ),
                 ),
-                label: 'Quay về',
-                labelColor: Colors.black,
               ),
             ),
           ),
-        ),
-      ),
-      // Sử dụng BlocConsumer để xử lý cả UI và các side-effect (như vẽ bản đồ)
-      body: BlocConsumer<MapBloc, MapState>(
-        // listener để xử lý các hành động không cần rebuild UI
-        listener: (context, state) {
-          if (state is Preview) {
-            // Khi có dữ liệu, gọi các hàm vẽ
-            final direction = state.direction;
-            if (direction.routes.isNotEmpty && direction.waypoints.isNotEmpty) {
-              final route = direction.routes.first;
-              final destinationWaypoint = direction.waypoints.last;
-
-              _drawRoute(route.geometry.coordinates);
-              _addDestinationMarker(destinationWaypoint.location, destinationWaypoint.name);
-              _adjustCamera(direction);
-            }
-          }
-          // Bạn có thể thêm các listener khác ở đây, ví dụ cho trạng thái Navigating
-        },
-        // builder để xây dựng các widget trên màn hình
-        builder: (context, state) {
-          return Stack(
+          bottomNavigationBar: state is Preview
+              ? Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: appColorScheme(context).outline.withValues(alpha: 0.5),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.directions_car, color: Colors.blue),
+                          const SizedBox(width: 8),
+                          Text(
+                            NumberFormatter.formatDistance(state.direction.routes.first.distance),
+                            style: appTextTheme(context).titleMedium?.copyWith(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          const SizedBox(width: 16),
+                          const Icon(Icons.timer, color: Colors.green),
+                          const SizedBox(width: 8),
+                          Text(
+                            NumberFormatter.formatDuration(state.direction.routes.first.duration),
+                            style: appTextTheme(context).titleMedium?.copyWith(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              : null,
+          // Sử dụng BlocConsumer để xử lý cả UI và các side-effect (như vẽ bản đồ)
+          body: Stack(
             children: [
               MapWidget(
                 key: const ValueKey("mapWidget"),
@@ -321,17 +372,17 @@ class _MapViewState extends State<MapView> {
                   ),
                 ),
             ],
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        foregroundColor: appColorScheme(context).primary,
-        onPressed: _zoomToCurrentUserLocation,
-        tooltip: 'Vị trí của tôi',
-        shape: const CircleBorder(),
-        child: const Icon(Icons.my_location),
-      ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.white,
+            foregroundColor: appColorScheme(context).primary,
+            onPressed: _zoomToCurrentUserLocation,
+            tooltip: 'Vị trí của tôi',
+            shape: const CircleBorder(),
+            child: const Icon(Icons.my_location),
+          ),
+        );
+      },
     );
   }
 }

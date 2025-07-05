@@ -13,6 +13,26 @@ class NumberFormatter {
     );
   }
 
+  static String formatDuration(double? seconds) {
+    if (seconds == null || seconds <= 0) return '0 giây';
+
+    final int totalSeconds = seconds.round();
+    final int days = totalSeconds ~/ 86400;
+    final int hours = (totalSeconds % 86400) ~/ 3600;
+    final int minutes = (totalSeconds % 3600) ~/ 60;
+    final int secs = totalSeconds % 60;
+
+    final List<String> parts = [];
+
+    if (days > 0) parts.add('$days ngày');
+    if (hours > 0) parts.add('$hours giờ');
+    if (minutes > 0) parts.add('$minutes phút');
+    if (secs > 0 && parts.isEmpty) parts.add('$secs giây'); // chỉ hiện giây nếu không có ngày/giờ/phút
+
+    return parts.join(' ');
+  }
+
+
   static String formatDistance(double? distanceInMeters) {
     if (distanceInMeters == null) {
       return '?';
