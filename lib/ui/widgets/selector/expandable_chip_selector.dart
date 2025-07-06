@@ -94,6 +94,14 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final String buttonLabel;
+    if (!widget.allowMultiSelect && _selectedItems.isNotEmpty) {
+      // Nếu ở chế độ chọn một và đã có mục được chọn, hiển thị mục đó
+      buttonLabel = _selectedItems.first;
+    } else {
+      // Ngược lại, hiển thị tiêu đề mặc định
+      buttonLabel = widget.title;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min, // Giúp Column chỉ chiếm không gian cần thiết
@@ -103,7 +111,7 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
           onPressed: () => setState(() => _isExpanded = !_isExpanded),
           icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
           label: Text(
-            widget.title,
+            buttonLabel,
             style: const TextStyle(fontSize: 16),
           ),
           style: ElevatedButton.styleFrom(
@@ -155,5 +163,3 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
     );
   }
 }
-
-
