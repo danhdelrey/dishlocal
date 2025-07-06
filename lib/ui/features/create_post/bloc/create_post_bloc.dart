@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:dishlocal/core/enum/food_category.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/moderation/repository/interface/moderation_repository.dart';
@@ -256,6 +257,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           price: moneyInput.value,
           insight: insightInput.value,
           createdAt: event.createdAt,
+          foodCategory: event.foodCategory,
           likeCount: 0,
           saveCount: 0,
           commentCount: 0,

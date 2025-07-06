@@ -213,6 +213,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                       imagePath: widget.imagePath,
                                       createdAt: now,
                                       blurHash: widget.blurHash,
+                                      foodCategory: selectedCategories.isNotEmpty ? selectedCategories.first : null,
                                       postToUpdate: widget.inEditMode ? widget.postToUpdate : null,
                                     ),
                                   );

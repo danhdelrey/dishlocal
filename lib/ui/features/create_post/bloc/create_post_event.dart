@@ -60,9 +60,10 @@ final class CreatePostRequested extends CreatePostEvent {
   final String imagePath;
   final String blurHash;
   final DateTime createdAt;
+  final FoodCategory? foodCategory;
   final Post? postToUpdate;
 
-  const CreatePostRequested({required this.address, required this.imagePath, required this.createdAt, required this.blurHash, this.postToUpdate});
+  const CreatePostRequested({required this.address, required this.imagePath, required this.createdAt, required this.blurHash, this.postToUpdate, this.foodCategory});
   @override
   List<Object?> get props => [address, imagePath, createdAt];
 }
