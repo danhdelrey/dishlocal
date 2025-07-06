@@ -1,38 +1,30 @@
+import 'package:dishlocal/core/enum/food_category.dart';
 import 'package:dishlocal/ui/widgets/selector/animated_category_chip.dart';
 import 'package:flutter/material.dart';
 
-// AnimatedCategoryChip không thay đổi nhiều, vẫn là một widget phụ trợ tốt.
-// Tôi đã để nó ở cuối file này để dễ quản lý.
-// Bạn cũng có thể tách nó ra file riêng nếu muốn.
-
 class ExpandableChipSelector extends StatefulWidget {
-  /// Tiêu đề hiển thị trên nút expand/collapse.
   final String title;
 
-  /// Map chứa các mục để hiển thị. Key là nhãn (label), Value là màu sắc.
-  final Map<String, Color> items;
+  // ---- THAY ĐỔI CÁC THAM SỐ ----
+  /// Danh sách các mục FoodCategory để hiển thị.
+  final List<FoodCategory> items;
 
-  /// Các mục được chọn ban đầu khi widget được tạo.
-  final Set<String> initialSelection;
+  /// Các mục được chọn ban đầu.
+  final Set<FoodCategory> initialSelection;
 
-  /// Cho phép chọn nhiều mục hay không. Mặc định là false (chỉ chọn một).
+  /// Callback được gọi mỗi khi lựa chọn thay đổi.
+  final ValueChanged<Set<FoodCategory>> onSelectionChanged;
+
   final bool allowMultiSelect;
-
-  /// Văn bản cho nút "Chọn tất cả". Chỉ hiển thị nếu `allowMultiSelect` là true.
   final String? selectAllText;
-
-  /// Màu sắc cho nút "Chọn tất cả".
   final Color? selectAllColor;
-
-  /// Callback được gọi mỗi khi lựa chọn thay đổi, trả về một Set các mục đã chọn.
-  final ValueChanged<Set<String>> onSelectionChanged;
 
   const ExpandableChipSelector({
     super.key,
     required this.title,
-    required this.items,
-    required this.onSelectionChanged,
-    this.initialSelection = const {},
+    required this.items, // <-- THAY ĐỔI
+    required this.onSelectionChanged, // <-- THAY ĐỔI
+    this.initialSelection = const {}, // <-- THAY ĐỔI
     this.allowMultiSelect = false,
     this.selectAllText,
     this.selectAllColor,
@@ -43,52 +35,47 @@ class ExpandableChipSelector extends StatefulWidget {
 }
 
 class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
-  // Trạng thái nội bộ của widget
-  late final Set<String> _selectedItems;
+  // ---- THAY ĐỔI KIỂU DỮ LIỆU CỦA TRẠNG THÁI ----
+  late final Set<FoodCategory> _selectedItems;
   bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
-    // Khởi tạo các mục đã chọn từ tham số đầu vào
-    _selectedItems = Set<String>.from(widget.initialSelection);
+    _selectedItems = Set<FoodCategory>.from(widget.initialSelection);
   }
 
-  // Getter để kiểm tra xem tất cả có được chọn không
-  bool get _isAllSelected => _selectedItems.length == widget.items.length;
+  bool get _isAllSelected => widget.items.isNotEmpty && _selectedItems.length == widget.items.length;
 
-  // Hàm xử lý khi nhấn nút "Chọn tất cả"
   void _toggleAll() {
     setState(() {
       if (_isAllSelected) {
         _selectedItems.clear();
       } else {
-        _selectedItems.addAll(widget.items.keys);
+        // Thêm tất cả các mục từ danh sách
+        _selectedItems.addAll(widget.items);
       }
     });
-    // Thông báo cho widget cha về sự thay đổi
     widget.onSelectionChanged(_selectedItems);
   }
 
-  // Hàm xử lý khi chọn một mục
-  void _onItemSelected(String item, bool isSelected) {
+  // ---- THAY ĐỔI KIỂU DỮ LIỆU CỦA THAM SỐ ----
+  void _onItemSelected(FoodCategory item, bool isSelected) {
     setState(() {
       if (widget.allowMultiSelect) {
-        // Chế độ chọn nhiều
         if (isSelected) {
           _selectedItems.add(item);
         } else {
           _selectedItems.remove(item);
         }
       } else {
-        // Chế độ chọn một
         _selectedItems.clear();
         if (isSelected) {
           _selectedItems.add(item);
         }
+        _isExpanded = false;
       }
     });
-    // Thông báo cho widget cha về sự thay đổi
     widget.onSelectionChanged(_selectedItems);
   }
 
@@ -96,31 +83,23 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
   Widget build(BuildContext context) {
     final String buttonLabel;
     if (!widget.allowMultiSelect && _selectedItems.isNotEmpty) {
-      // Nếu ở chế độ chọn một và đã có mục được chọn, hiển thị mục đó
-      buttonLabel = _selectedItems.first;
+      // Lấy nhãn từ đối tượng enum đã chọn
+      buttonLabel = _selectedItems.first.label; // <-- THAY ĐỔI
     } else {
-      // Ngược lại, hiển thị tiêu đề mặc định
       buttonLabel = widget.title;
     }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min, // Giúp Column chỉ chiếm không gian cần thiết
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Nút mở rộng/thu gọn
         ElevatedButton.icon(
           onPressed: () => setState(() => _isExpanded = !_isExpanded),
           icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
-          label: Text(
-            buttonLabel,
-            style: const TextStyle(fontSize: 16),
-          ),
-          style: ElevatedButton.styleFrom(
-            shape: const StadiumBorder(),
-          ),
+          label: Text(buttonLabel, style: const TextStyle(fontSize: 16)),
+          style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
         ),
         const SizedBox(height: 12),
-
-        // AnimatedSwitcher để trào mượt
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 150),
           transitionBuilder: (child, animation) {
@@ -135,7 +114,6 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
                   spacing: 10,
                   runSpacing: 10,
                   children: [
-                    // Nút "Chọn tất cả" (nếu được cho phép)
                     if (widget.allowMultiSelect && widget.selectAllText != null)
                       AnimatedCategoryChip(
                         label: widget.selectAllText!,
@@ -143,16 +121,15 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
                         color: widget.selectAllColor ?? Colors.indigo,
                         onSelected: (_) => _toggleAll(),
                       ),
-                    // Danh sách các mục
-                    ...widget.items.entries.map((entry) {
-                      final label = entry.key;
-                      final color = entry.value;
-                      final isSelected = _selectedItems.contains(label);
+
+                    // ---- THAY ĐỔI LOGIC LẶP ----
+                    ...widget.items.map((category) {
+                      final isSelected = _selectedItems.contains(category);
                       return AnimatedCategoryChip(
-                        label: label,
+                        label: category.label, // Lấy từ enum
                         isSelected: isSelected,
-                        color: color,
-                        onSelected: (selected) => _onItemSelected(label, selected),
+                        color: category.color, // Lấy từ enum
+                        onSelected: (selected) => _onItemSelected(category, selected),
                       );
                     }),
                   ],
