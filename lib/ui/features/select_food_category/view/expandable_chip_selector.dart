@@ -65,10 +65,16 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
         const SizedBox(height: 12),
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 150),
-          // ... (giữ nguyên transitionBuilder)
+          transitionBuilder: (child, animation) {
+            return SizeTransition(
+              sizeFactor: animation,
+              child: FadeTransition(opacity: animation, child: child),
+            );
+          },
           child: _isExpanded
               ? Wrap(
-                  // ... (giữ nguyên Wrap)
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     if (widget.allowMultiSelect && widget.selectAllText != null)
                       AnimatedCategoryChip(
