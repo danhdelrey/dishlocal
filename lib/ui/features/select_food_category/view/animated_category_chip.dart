@@ -31,7 +31,7 @@ class _AnimatedCategoryChipState extends State<AnimatedCategoryChip> {
   Widget build(BuildContext context) {
     final isSelected = widget.isSelected;
     final baseColor = widget.color;
-    final bgColor = isSelected ? baseColor.withValues(alpha: 0.5) : baseColor.withValues(alpha: 0.1);
+    final bgColor = isSelected ? baseColor.withValues(alpha: 0.8) : baseColor.withValues(alpha: 0.1);
     final textColor = isSelected ? appColorScheme(context).onSurface : baseColor;
 
     return GestureDetector(
@@ -52,10 +52,7 @@ class _AnimatedCategoryChipState extends State<AnimatedCategoryChip> {
           ),
           child: Text(
             widget.label,
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.w500,
-            ),
+            style: appTextTheme(context).labelLarge!.copyWith(color: textColor),
           ),
         ),
       ),

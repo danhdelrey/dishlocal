@@ -60,7 +60,10 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
         OutlinedButton.icon(
           onPressed: () => setState(() => _isExpanded = !_isExpanded),
           icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
-          label: Text(buttonLabel, style: const TextStyle(fontSize: 16)),
+          label: Text(
+            buttonLabel,
+            style: appTextTheme(context).labelLarge,
+          ),
           style: ElevatedButton.styleFrom(
             shape: const StadiumBorder(),
             backgroundColor: !widget.allowMultiSelect && widget.selectedItems.isNotEmpty ? widget.selectedItems.first.color.withAlpha(50) : null,
