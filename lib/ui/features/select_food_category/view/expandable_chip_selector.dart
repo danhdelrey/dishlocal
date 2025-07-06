@@ -1,5 +1,5 @@
 import 'package:dishlocal/core/enum/food_category.dart';
-import 'package:dishlocal/ui/widgets/selector/animated_category_chip.dart';
+import 'package:dishlocal/ui/features/select_food_category/view/animated_category_chip.dart';
 import 'package:flutter/material.dart';
 
 class ExpandableChipSelector extends StatefulWidget {
