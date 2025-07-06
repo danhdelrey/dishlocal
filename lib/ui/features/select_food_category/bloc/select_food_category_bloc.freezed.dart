@@ -252,13 +252,14 @@ class $SelectFoodCategoryStateCopyWith<$Res> {
 
 /// @nodoc
 
-class _Initial implements SelectFoodCategoryState {
-  const _Initial();
+class SelectFoodCategoryInitial implements SelectFoodCategoryState {
+  const SelectFoodCategoryInitial();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _Initial);
+        (other.runtimeType == runtimeType &&
+            other is SelectFoodCategoryInitial);
   }
 
   @override
@@ -272,8 +273,8 @@ class _Initial implements SelectFoodCategoryState {
 
 /// @nodoc
 
-class _Loaded implements SelectFoodCategoryState {
-  const _Loaded(
+class SelectFoodCategoryLoaded implements SelectFoodCategoryState {
+  const SelectFoodCategoryLoaded(
       {required final List<FoodCategory> allCategories,
       required final Set<FoodCategory> selectedCategories,
       required this.allowMultiSelect})
@@ -308,14 +309,15 @@ class _Loaded implements SelectFoodCategoryState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$LoadedCopyWith<_Loaded> get copyWith =>
-      __$LoadedCopyWithImpl<_Loaded>(this, _$identity);
+  $SelectFoodCategoryLoadedCopyWith<SelectFoodCategoryLoaded> get copyWith =>
+      _$SelectFoodCategoryLoadedCopyWithImpl<SelectFoodCategoryLoaded>(
+          this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Loaded &&
+            other is SelectFoodCategoryLoaded &&
             const DeepCollectionEquality()
                 .equals(other._allCategories, _allCategories) &&
             const DeepCollectionEquality()
@@ -338,10 +340,11 @@ class _Loaded implements SelectFoodCategoryState {
 }
 
 /// @nodoc
-abstract mixin class _$LoadedCopyWith<$Res>
+abstract mixin class $SelectFoodCategoryLoadedCopyWith<$Res>
     implements $SelectFoodCategoryStateCopyWith<$Res> {
-  factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) =
-      __$LoadedCopyWithImpl;
+  factory $SelectFoodCategoryLoadedCopyWith(SelectFoodCategoryLoaded value,
+          $Res Function(SelectFoodCategoryLoaded) _then) =
+      _$SelectFoodCategoryLoadedCopyWithImpl;
   @useResult
   $Res call(
       {List<FoodCategory> allCategories,
@@ -350,11 +353,12 @@ abstract mixin class _$LoadedCopyWith<$Res>
 }
 
 /// @nodoc
-class __$LoadedCopyWithImpl<$Res> implements _$LoadedCopyWith<$Res> {
-  __$LoadedCopyWithImpl(this._self, this._then);
+class _$SelectFoodCategoryLoadedCopyWithImpl<$Res>
+    implements $SelectFoodCategoryLoadedCopyWith<$Res> {
+  _$SelectFoodCategoryLoadedCopyWithImpl(this._self, this._then);
 
-  final _Loaded _self;
-  final $Res Function(_Loaded) _then;
+  final SelectFoodCategoryLoaded _self;
+  final $Res Function(SelectFoodCategoryLoaded) _then;
 
   /// Create a copy of SelectFoodCategoryState
   /// with the given fields replaced by the non-null parameter values.
@@ -364,7 +368,7 @@ class __$LoadedCopyWithImpl<$Res> implements _$LoadedCopyWith<$Res> {
     Object? selectedCategories = null,
     Object? allowMultiSelect = null,
   }) {
-    return _then(_Loaded(
+    return _then(SelectFoodCategoryLoaded(
       allCategories: null == allCategories
           ? _self._allCategories
           : allCategories // ignore: cast_nullable_to_non_nullable

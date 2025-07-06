@@ -3,7 +3,7 @@ part of 'select_food_category_bloc.dart';
 @freezed
 class SelectFoodCategoryState with _$SelectFoodCategoryState {
   /// Trạng thái ban đầu, chưa có dữ liệu.
-  const factory SelectFoodCategoryState.initial() = _Initial;
+  const factory SelectFoodCategoryState.initial() = SelectFoodCategoryInitial;
 
   /// Trạng thái khi dữ liệu đã sẵn sàng để hiển thị.
   const factory SelectFoodCategoryState.loaded({
@@ -15,5 +15,5 @@ class SelectFoodCategoryState with _$SelectFoodCategoryState {
 
     /// Chế độ cho phép chọn nhiều hay không.
     required bool allowMultiSelect,
-  }) = _Loaded;
+  }) = SelectFoodCategoryLoaded;
 }

@@ -38,7 +38,7 @@ class SelectFoodCategoryBloc extends Bloc<SelectFoodCategoryEvent, SelectFoodCat
   ) {
     final currentState = state;
     // Chỉ xử lý nếu trạng thái hiện tại là Loaded
-    if (currentState is _Loaded) {
+    if (currentState is SelectFoodCategoryLoaded) {
       // Tạo một bản sao có thể thay đổi của các mục đã chọn
       final newSelection = Set<FoodCategory>.from(currentState.selectedCategories);
       final category = event.category;
@@ -73,7 +73,7 @@ class SelectFoodCategoryBloc extends Bloc<SelectFoodCategoryEvent, SelectFoodCat
     Emitter<SelectFoodCategoryState> emit,
   ) {
     final currentState = state;
-    if (currentState is _Loaded && currentState.allowMultiSelect) {
+    if (currentState is SelectFoodCategoryLoaded && currentState.allowMultiSelect) {
       final bool isAllSelected = currentState.selectedCategories.length == currentState.allCategories.length;
 
       Set<FoodCategory> newSelection;
