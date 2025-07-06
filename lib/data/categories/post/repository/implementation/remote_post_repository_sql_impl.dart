@@ -320,7 +320,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       };
 
       // Loại bỏ các giá trị null để không ghi đè dữ liệu hiện có bằng null
-      dataToUpdate.removeWhere((key, value) => value == null);
+      //dataToUpdate.removeWhere((key, value) => value == null);
 
       await _dbService.update(
         tableName: 'posts',
@@ -329,6 +329,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         fromJson: (json) => {},
       );
       _log.info('✅ Cập nhật bài viết ${post.postId} thành công.');
+      _log.info('Data to update: $dataToUpdate');
     });
   }
 
