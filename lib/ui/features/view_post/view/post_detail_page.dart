@@ -152,13 +152,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                   icon: Icons.edit,
                                                   label: 'Chỉnh sửa bài viết',
                                                   onTap: () async {
-                                                    final result = await context.push('/edit_post', extra: widget.post);
+                                                    final result = await context.push('/edit_post', extra: state.post);
                                                     if (result == true) {
                                                       if (!context.mounted) {
                                                         return;
                                                       }
                                                       context.read<ViewPostBloc>().add(
-                                                            ViewPostEvent.started(widget.post),
+                                                            ViewPostEvent.started(state.post),
                                                           );
                                                     }
                                                   },
