@@ -54,7 +54,7 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
     final isAllSelected = widget.allowMultiSelect && widget.items.isNotEmpty && widget.selectedItems.length == widget.items.length;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
         OutlinedButton.icon(
@@ -71,7 +71,6 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
             side: !widget.allowMultiSelect && widget.selectedItems.isNotEmpty ? BorderSide(color: widget.selectedItems.first.color) : null,
           ),
         ),
-        const SizedBox(height: 12),
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 150),
           transitionBuilder: (child, animation) {
@@ -81,29 +80,32 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
             );
           },
           child: _isExpanded
-              ? Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    if (widget.allowMultiSelect && widget.selectAllText != null)
-                      AnimatedCategoryChip(
-                        label: widget.selectAllText!,
-                        isSelected: isAllSelected,
-                        color: widget.selectAllColor ?? Colors.indigo,
-                        // ----- THAY ĐỔI -----
-                        onSelected: (_) => widget.onSelectAllTapped?.call(),
-                      ),
-                    ...widget.items.map((category) {
-                      final isSelected = widget.selectedItems.contains(category);
-                      return AnimatedCategoryChip(
-                        label: category.label,
-                        isSelected: isSelected,
-                        color: category.color,
-                        // ----- THAY ĐỔI -----
-                        onSelected: (_) => widget.onCategoryTapped(category),
-                      );
-                    }),
-                  ],
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (widget.allowMultiSelect && widget.selectAllText != null)
+                        AnimatedCategoryChip(
+                          label: widget.selectAllText!,
+                          isSelected: isAllSelected,
+                          color: widget.selectAllColor ?? Colors.indigo,
+                          // ----- THAY ĐỔI -----
+                          onSelected: (_) => widget.onSelectAllTapped?.call(),
+                        ),
+                      ...widget.items.map((category) {
+                        final isSelected = widget.selectedItems.contains(category);
+                        return AnimatedCategoryChip(
+                          label: category.label,
+                          isSelected: isSelected,
+                          color: category.color,
+                          // ----- THAY ĐỔI -----
+                          onSelected: (_) => widget.onCategoryTapped(category),
+                        );
+                      }),
+                    ],
+                  ),
                 )
               : const SizedBox(key: ValueKey('collapsed_chips')),
         ),
