@@ -387,7 +387,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           delay: const Duration(milliseconds: 500),
           child: _buildAuthorInfo(post, context, currentUserId, author),
         ),
-        if (post.insight != null)
+        if (post.insight != null && post.insight!.trim().isNotEmpty)
           FadeSlideUp(
             delay: const Duration(milliseconds: 600),
             child: Padding(
