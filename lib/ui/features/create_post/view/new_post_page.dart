@@ -207,6 +207,7 @@ class _NewPostPageState extends State<NewPostPage> {
                         actions: [
                           TextButton(
                             onPressed: () {
+                              Logger('NewPostPage').info('food category selected: $selectedCategories');
                               context.read<CreatePostBloc>().add(
                                     CreatePostRequested(
                                       address: widget.address,

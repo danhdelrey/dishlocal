@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:dishlocal/core/json_converter/food_category_converter.dart';
 import 'package:dishlocal/data/services/database_service/entity/post_entity.dart';
 import 'package:dishlocal/data/services/database_service/exception/sql_database_service_exception.dart';
 import 'package:dishlocal/data/services/geocoding_service/interface/geocoding_service.dart';
@@ -131,6 +132,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         price: post.price,
         insight: post.insight,
         createdAt: post.createdAt,
+        foodCategory: post.foodCategory,
       );
 
       _log.fine('📤 Đang lưu bài viết vào bảng "posts"...');
@@ -314,6 +316,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         'longitude': post.address?.longitude,
         'price': post.price,
         'insight': post.insight,
+        'food_category': const FoodCategoryConverter().toJson(post.foodCategory),
       };
 
       // Loại bỏ các giá trị null để không ghi đè dữ liệu hiện có bằng null

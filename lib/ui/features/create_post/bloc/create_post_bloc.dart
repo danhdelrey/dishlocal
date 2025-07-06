@@ -222,6 +222,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           dishName: state.dishNameInput.value,
           insight: state.insightInput.value,
           price: state.moneyInput.value,
+          foodCategory: event.foodCategory,
         ),
       );
       updateResult.fold(
