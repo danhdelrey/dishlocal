@@ -212,19 +212,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
                               ),
                               SliverToBoxAdapter(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 150),
+                                  padding: const EdgeInsets.only(top: 10, bottom: 150),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      BlurredEdgeWidget(
-                                        blurredChild: CachedImage(blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
-                                        clearRadius: 1,
-                                        blurSigma: 100,
-                                        topChild: CachedImage(blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
-                                      ),
+                                      CachedImage(borderRadius: 30, blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
                                       BlocBuilder<ViewPostBloc, ViewPostState>(
                                         builder: (context, state) {
                                           return switch (state) {
@@ -241,7 +236,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                   )),
                                                 ],
                                               ),
-                                            ViewPostSuccess() => _buildMainContent(context, state.post, state.currentUserId, state.author),
+                                            ViewPostSuccess() => Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                                child: _buildMainContent(context, state.post, state.currentUserId, state.author),
+                                              ),
                                             ViewPostFailure() => const Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
@@ -319,7 +317,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(
-          height: 10,
+          height: 20,
         ),
         FadeSlideUp(
           child: CustomIconWithLabel(

@@ -6,11 +6,12 @@ class CachedImage extends StatefulWidget {
   const CachedImage({
     super.key,
     required this.imageUrl,
-    required this.blurHash,
+    required this.blurHash,  this.borderRadius = 12,
   });
 
   final String imageUrl;
   final String blurHash;
+  final double borderRadius;
 
   @override
   State<CachedImage> createState() => _CachedImageState();
@@ -32,7 +33,7 @@ class _CachedImageState extends State<CachedImage> {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(widget.borderRadius),
       child: AspectRatio(
         aspectRatio: 1,
         child: Stack(

@@ -5,18 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FoodCategoryContainerBuilder extends StatelessWidget {
-  const FoodCategoryContainerBuilder({super.key, required this.builder,  this.allowMultiSelect = false});
+  const FoodCategoryContainerBuilder({super.key, required this.builder, this.allowMultiSelect = false});
 
-  final Widget Function(BuildContext context,List<FoodCategory> allCategories, Set<FoodCategory> selectedCategories, bool allowMultiSelect) builder;
+  final Widget Function(BuildContext context, List<FoodCategory> allCategories, Set<FoodCategory> selectedCategories, bool allowMultiSelect) builder;
   final bool allowMultiSelect;
-
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<SelectFoodCategoryBloc>()
         ..add(
-           SelectFoodCategoryEvent.initialized(
+          SelectFoodCategoryEvent.initialized(
             allCategories: FoodCategory.values,
             allowMultiSelect: allowMultiSelect,
           ),
@@ -31,18 +30,9 @@ class FoodCategoryContainerBuilder extends StatelessWidget {
               height: double.infinity,
               width: double.infinity,
               decoration: BoxDecoration(
-                gradient: state.selectedCategories.isNotEmpty
-                    ? LinearGradient(
-                        colors: [
-                          state.selectedCategories.first.color.withValues(alpha: 0.2),
-                          Colors.transparent,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                    : null,
+                color: state.selectedCategories.isNotEmpty ? state.selectedCategories.first.color.withValues(alpha: 0.05) : Colors.transparent,
               ),
-              child: builder(context,state.allCategories, state.selectedCategories, state.allowMultiSelect),
+              child: builder(context, state.allCategories, state.selectedCategories, state.allowMultiSelect),
             );
           } else {
             // Nếu không phải _Loaded, thì nó là _Initial (hoặc trạng thái khác)

@@ -226,64 +226,51 @@ class _NewPostPageState extends State<NewPostPage> {
                         ),
                       ),
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 20),
-                              widget.inEditMode
-                                  ? BlurredEdgeWidget(
-                                      blurredChild: CachedImage(blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? ''),
-                                      clearRadius: 1,
-                                      blurSigma: 100,
-                                      topChild: CachedImage(blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? ''),
-                                    )
-                                  : BlurredEdgeWidget(
-                                      blurSigma: 100,
-                                      clearRadius: 1,
-                                      blurredChild: RoundedCornerImageFile(imagePath: widget.imagePath),
-                                      topChild: RoundedCornerImageFile(imagePath: widget.imagePath),
-                                    ),
-                              const SizedBox(height: 20),
-                              Text(
-                                widget.inEditMode ? TimeFormatter.formatDateTimeFull(widget.postToUpdate?.createdAt ?? now) : formatted,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            Text(
+                              widget.inEditMode ? TimeFormatter.formatDateTimeFull(widget.postToUpdate?.createdAt ?? now) : formatted,
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
+                            const SizedBox(height: 5),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 50),
+                              child: Text(
+                                widget.inEditMode ? (widget.postToUpdate?.address?.displayName ?? '') : (widget.address.displayName ?? ''),
                                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                       color: Theme.of(context).colorScheme.onSurface,
                                     ),
+                                textAlign: TextAlign.center,
                               ),
-                              const SizedBox(height: 5),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 50),
-                                child: Text(
-                                  widget.inEditMode ? (widget.postToUpdate?.address?.displayName ?? '') : (widget.address.displayName ?? ''),
-                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                        color: Theme.of(context).colorScheme.onSurface,
-                                      ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              ExpandableChipSelector(
-                                title: '📋 Chọn loại món',
-                                items: allCategories,
-                                allowMultiSelect: allowMultiSelect,
-                                selectedItems: selectedCategories,
-                                onCategoryTapped: (category) {
-                                  context.read<SelectFoodCategoryBloc>().add(SelectFoodCategoryEvent.categoryToggled(category));
-                                },
-                                onSelectAllTapped: () {
-                                  context.read<SelectFoodCategoryBloc>().add(const SelectFoodCategoryEvent.allToggled());
-                                },
-                                selectAllText: '📋 Tất cả',
-                                selectAllColor: Colors.indigo,
-                              ),
-                              const SizedBox(height: 20),
-
-                              // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
-                              BlocBuilder<CreatePostBloc, CreatePostState>(
-                                builder: (context, state) {
-                                  return Column(
+                            ),
+                            const SizedBox(height: 20),
+                            widget.inEditMode ? CachedImage(borderRadius: 30, blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? '') : RoundedCornerImageFile(borderRadius: 30, imagePath: widget.imagePath),
+                            const SizedBox(height: 20),
+                            // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
+                            BlocBuilder<CreatePostBloc, CreatePostState>(
+                              builder: (context, state) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  child: Column(
                                     children: [
+                                      ExpandableChipSelector(
+                                        title: '📋 Chọn loại món',
+                                        items: allCategories,
+                                        allowMultiSelect: allowMultiSelect,
+                                        selectedItems: selectedCategories,
+                                        onCategoryTapped: (category) {
+                                          context.read<SelectFoodCategoryBloc>().add(SelectFoodCategoryEvent.categoryToggled(category));
+                                        },
+                                        onSelectAllTapped: () {
+                                          context.read<SelectFoodCategoryBloc>().add(const SelectFoodCategoryEvent.allToggled());
+                                        },
+                                        selectAllText: '📋 Tất cả',
+                                        selectAllColor: Colors.indigo,
+                                      ),
+                                      const SizedBox(height: 20),
                                       AppTextField(
                                         initialValue: widget.inEditMode ? widget.postToUpdate?.dishName : null,
                                         focusNode: _dishNameFocusNode,
@@ -362,14 +349,14 @@ class _NewPostPageState extends State<NewPostPage> {
                                         onChanged: (insight) => context.read<CreatePostBloc>().add(InsightInputChanged(insight: insight)),
                                       ),
                                     ],
-                                  );
-                                },
-                              ),
-                              const SizedBox(
-                                height: 300,
-                              ),
-                            ],
-                          ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(
+                              height: 300,
+                            ),
+                          ],
                         ),
                       ),
                     ],
