@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_chip_selector.dart';
 import 'package:flutter/material.dart';
 
@@ -30,8 +31,8 @@ class _AnimatedCategoryChipState extends State<AnimatedCategoryChip> {
   Widget build(BuildContext context) {
     final isSelected = widget.isSelected;
     final baseColor = widget.color;
-    final bgColor = isSelected ? baseColor : baseColor.withValues(alpha: 0.15);
-    final textColor = isSelected ? Colors.white : baseColor;
+    final bgColor = isSelected ? baseColor.withValues(alpha: 0.5) : baseColor.withValues(alpha: 0.1);
+    final textColor = isSelected ? appColorScheme(context).onSurface : baseColor;
 
     return GestureDetector(
       onTapDown: _onTapDown,

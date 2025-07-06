@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/enum/food_category.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/animated_category_chip.dart';
 import 'package:flutter/material.dart';
@@ -56,11 +57,16 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        ElevatedButton.icon(
+        OutlinedButton.icon(
           onPressed: () => setState(() => _isExpanded = !_isExpanded),
           icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
           label: Text(buttonLabel, style: const TextStyle(fontSize: 16)),
-          style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+          style: ElevatedButton.styleFrom(
+            shape: const StadiumBorder(),
+            backgroundColor: !widget.allowMultiSelect && widget.selectedItems.isNotEmpty ? widget.selectedItems.first.color.withAlpha(50) : null,
+            foregroundColor: appColorScheme(context).onSurface,
+            side: !widget.allowMultiSelect && widget.selectedItems.isNotEmpty ? BorderSide(color: widget.selectedItems.first.color) : null,
+          ),
         ),
         const SizedBox(height: 12),
         AnimatedSwitcher(
