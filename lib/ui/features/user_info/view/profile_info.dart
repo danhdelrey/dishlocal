@@ -61,7 +61,7 @@ class ProfileInfo extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (state.appUser.bio != null && state.appUser.bio!.isNotEmpty) ...[
+                  if (state.appUser.bio != null && state.appUser.bio!.trim().isNotEmpty) ...[
                     const SizedBox(height: 20),
                     Text(
                       state.appUser.bio!,
