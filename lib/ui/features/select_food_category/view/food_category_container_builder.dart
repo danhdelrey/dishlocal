@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FoodCategoryContainerBuilder extends StatelessWidget {
-  const FoodCategoryContainerBuilder({super.key, required this.builder, this.allowMultiSelect = false});
+  const FoodCategoryContainerBuilder({super.key, required this.builder, this.allowMultiSelect = false, required this.initialFoodCategory});
 
   final Widget Function(BuildContext context, List<FoodCategory> allCategories, Set<FoodCategory> selectedCategories, bool allowMultiSelect) builder;
   final bool allowMultiSelect;
+  final Set<FoodCategory> initialFoodCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +19,7 @@ class FoodCategoryContainerBuilder extends StatelessWidget {
           SelectFoodCategoryEvent.initialized(
             allCategories: FoodCategory.values,
             allowMultiSelect: allowMultiSelect,
+            initialSelection: initialFoodCategory,
           ),
         ),
       child: BlocBuilder<SelectFoodCategoryBloc, SelectFoodCategoryState>(
@@ -26,14 +28,7 @@ class FoodCategoryContainerBuilder extends StatelessWidget {
           if (state is SelectFoodCategoryLoaded) {
             // Do state đã được xác nhận là _Loaded, chúng ta có thể
             // truy cập các thuộc tính của nó một cách an toàn.
-            return Container(
-              height: double.infinity,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: state.selectedCategories.isNotEmpty ? state.selectedCategories.first.color.withValues(alpha: 0.05) : Colors.transparent,
-              ),
-              child: builder(context, state.allCategories, state.selectedCategories, state.allowMultiSelect),
-            );
+            return builder(context, state.allCategories, state.selectedCategories, state.allowMultiSelect);
           } else {
             // Nếu không phải _Loaded, thì nó là _Initial (hoặc trạng thái khác)
             // Hiển thị vòng xoay chờ.

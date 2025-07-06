@@ -194,176 +194,183 @@ class _NewPostPageState extends State<NewPostPage> {
             child: GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
               child: Scaffold(
-                body: FoodCategoryContainerBuilder(builder: (context, allCategories, selectedCategories, allowMultiSelect) {
-                  return CustomScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                    slivers: [
-                      GlassSliverAppBar(
-                        title: Text(widget.inEditMode ? 'Chỉnh sửa bài đăng' : 'Bài đăng mới'),
-                        centerTitle: true,
-                        pinned: true,
-                        floating: true,
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Logger('NewPostPage').info('food category selected: $selectedCategories');
-                              context.read<CreatePostBloc>().add(
-                                    CreatePostRequested(
-                                      address: widget.address,
-                                      imagePath: widget.imagePath,
-                                      createdAt: now,
-                                      blurHash: widget.blurHash,
-                                      foodCategory: selectedCategories.isNotEmpty ? selectedCategories.first : null,
-                                      postToUpdate: widget.inEditMode ? widget.postToUpdate : null,
-                                    ),
-                                  );
-                            },
-                            child: Text(widget.inEditMode ? 'Cập nhật' : 'Đăng bài'),
-                          ),
-                        ],
-                        leading: IconButton(
-                          onPressed: () => context.pop(),
-                          icon: AppIcons.left.toSvg(color: Theme.of(context).colorScheme.onSurface),
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            Text(
-                              widget.inEditMode ? TimeFormatter.formatDateTimeFull(widget.postToUpdate?.createdAt ?? now) : formatted,
-                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurface,
-                                  ),
-                            ),
-                            const SizedBox(height: 5),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 50),
-                              child: Text(
-                                widget.inEditMode ? (widget.postToUpdate?.address?.displayName ?? '') : (widget.address.displayName ?? ''),
-                                style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface,
-                                    ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            widget.inEditMode ? CachedImage(borderRadius: 30, blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? '') : RoundedCornerImageFile(borderRadius: 30, imagePath: widget.imagePath),
-                            const SizedBox(height: 20),
-                            // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
-                            BlocBuilder<CreatePostBloc, CreatePostState>(
-                              builder: (context, state) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                                  child: Column(
-                                    children: [
-                                      ExpandableChipSelector(
-                                        title: '📋 Chọn loại món',
-                                        items: allCategories,
-                                        allowMultiSelect: allowMultiSelect,
-                                        selectedItems: selectedCategories,
-                                        onCategoryTapped: (category) {
-                                          context.read<SelectFoodCategoryBloc>().add(SelectFoodCategoryEvent.categoryToggled(category));
-                                        },
-                                        onSelectAllTapped: () {
-                                          context.read<SelectFoodCategoryBloc>().add(const SelectFoodCategoryEvent.allToggled());
-                                        },
-                                        selectAllText: '📋 Tất cả',
-                                        selectAllColor: Colors.indigo,
-                                      ),
-                                      const SizedBox(height: 20),
-                                      AppTextField(
-                                        initialValue: widget.inEditMode ? widget.postToUpdate?.dishName : null,
-                                        focusNode: _dishNameFocusNode,
-                                        keyboardType: TextInputType.name,
-                                        maxLine: 1,
-                                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                        autoFocus: true,
-                                        title: 'Tên món ăn*',
-                                        hintText: 'Nhập tên món ăn...',
-                                        maxLength: 100,
-                                        onChanged: (dishName) => context.read<CreatePostBloc>().add(DishNameInputChanged(dishName: dishName)),
-                                        // Sử dụng `displayError` của Formz v0.7.0+ để code gọn hơn
-                                        // Hoặc giữ logic cũ của bạn nếu muốn thông báo lỗi tùy chỉnh
-                                        errorText: state.dishNameInput.isNotValid && !state.dishNameInput.isPure ? state.dishNameInput.displayError?.getMessage() : null,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      AppTextField(
-                                        initialValue: widget.inEditMode ? NumberFormatter.formatMoney(widget.postToUpdate?.price ?? 0) : null,
-                                        leadingIcon: AppIcons.wallet4.toSvg(
-                                          width: 16,
-                                          color: appColorScheme(context).onSurface,
+                body: FoodCategoryContainerBuilder(
+                    initialFoodCategory: widget.postToUpdate?.foodCategory != null ? {widget.postToUpdate!.foodCategory!} : {},
+                    builder: (
+                      context,
+                      allCategories,
+                      selectedCategories,
+                      allowMultiSelect,
+                    ) {
+                      return CustomScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                        slivers: [
+                          GlassSliverAppBar(
+                            title: Text(widget.inEditMode ? 'Chỉnh sửa bài đăng' : 'Bài đăng mới'),
+                            centerTitle: true,
+                            pinned: true,
+                            floating: true,
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Logger('NewPostPage').info('food category selected: $selectedCategories');
+                                  context.read<CreatePostBloc>().add(
+                                        CreatePostRequested(
+                                          address: widget.address,
+                                          imagePath: widget.imagePath,
+                                          createdAt: now,
+                                          blurHash: widget.blurHash,
+                                          foodCategory: selectedCategories.isNotEmpty ? selectedCategories.first : null,
+                                          postToUpdate: widget.inEditMode ? widget.postToUpdate : null,
                                         ),
-                                        inputFormatters: [
-                                          CurrencyInputFormatter(
-                                            trailingSymbol: 'đ',
-                                            mantissaLength: 0,
-                                            thousandSeparator: ThousandSeparator.Period,
-                                            useSymbolPadding: true,
+                                      );
+                                },
+                                child: Text(widget.inEditMode ? 'Cập nhật' : 'Đăng bài'),
+                              ),
+                            ],
+                            leading: IconButton(
+                              onPressed: () => context.pop(),
+                              icon: AppIcons.left.toSvg(color: Theme.of(context).colorScheme.onSurface),
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                Text(
+                                  widget.inEditMode ? TimeFormatter.formatDateTimeFull(widget.postToUpdate?.createdAt ?? now) : formatted,
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                        color: Theme.of(context).colorScheme.onSurface,
+                                      ),
+                                ),
+                                const SizedBox(height: 5),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                                  child: Text(
+                                    widget.inEditMode ? (widget.postToUpdate?.address?.displayName ?? '') : (widget.address.displayName ?? ''),
+                                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                          color: Theme.of(context).colorScheme.onSurface,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                widget.inEditMode ? CachedImage(borderRadius: 30, blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? '') : RoundedCornerImageFile(borderRadius: 30, imagePath: widget.imagePath),
+                                const SizedBox(height: 20),
+                                // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi
+                                BlocBuilder<CreatePostBloc, CreatePostState>(
+                                  builder: (context, state) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                                      child: Column(
+                                        children: [
+                                          ExpandableChipSelector(
+                                            title: '📋 Chọn loại món',
+                                            items: allCategories,
+                                            allowMultiSelect: allowMultiSelect,
+                                            selectedItems: selectedCategories,
+                                            onCategoryTapped: (category) {
+                                              context.read<SelectFoodCategoryBloc>().add(SelectFoodCategoryEvent.categoryToggled(category));
+                                            },
+                                            onSelectAllTapped: () {
+                                              context.read<SelectFoodCategoryBloc>().add(const SelectFoodCategoryEvent.allToggled());
+                                            },
+                                            selectAllText: '📋 Tất cả',
+                                            selectAllColor: Colors.indigo,
+                                          ),
+                                          const SizedBox(height: 20),
+                                          AppTextField(
+                                            initialValue: widget.inEditMode ? widget.postToUpdate?.dishName : null,
+                                            focusNode: _dishNameFocusNode,
+                                            keyboardType: TextInputType.name,
+                                            maxLine: 1,
+                                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                            autoFocus: true,
+                                            title: 'Tên món ăn*',
+                                            hintText: 'Nhập tên món ăn...',
+                                            maxLength: 100,
+                                            onChanged: (dishName) => context.read<CreatePostBloc>().add(DishNameInputChanged(dishName: dishName)),
+                                            // Sử dụng `displayError` của Formz v0.7.0+ để code gọn hơn
+                                            // Hoặc giữ logic cũ của bạn nếu muốn thông báo lỗi tùy chỉnh
+                                            errorText: state.dishNameInput.isNotValid && !state.dishNameInput.isPure ? state.dishNameInput.displayError?.getMessage() : null,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          AppTextField(
+                                            initialValue: widget.inEditMode ? NumberFormatter.formatMoney(widget.postToUpdate?.price ?? 0) : null,
+                                            leadingIcon: AppIcons.wallet4.toSvg(
+                                              width: 16,
+                                              color: appColorScheme(context).onSurface,
+                                            ),
+                                            inputFormatters: [
+                                              CurrencyInputFormatter(
+                                                trailingSymbol: 'đ',
+                                                mantissaLength: 0,
+                                                thousandSeparator: ThousandSeparator.Period,
+                                                useSymbolPadding: true,
+                                              ),
+                                            ],
+                                            focusNode: _moneyInputFocusNode,
+                                            keyboardType: TextInputType.number,
+                                            title: 'Giá tiền*',
+                                            hintText: 'Nhập giá tiền của món ăn...',
+                                            maxLine: 1,
+                                            maxLength: 12,
+                                            onChanged: (money) {
+                                              context.read<CreatePostBloc>().add(MoneyInputChanged(money: money));
+                                            },
+                                            errorText: state.moneyInput.isNotValid && !state.moneyInput.isPure ? state.moneyInput.displayError?.getMessage() : null,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          AppTextField(
+                                            initialValue: widget.inEditMode ? widget.postToUpdate?.diningLocationName : null,
+                                            focusNode: _diningLocationNameFocusNode,
+                                            keyboardType: TextInputType.name,
+                                            maxLine: 1,
+                                            title: 'Tên quán ăn*',
+                                            hintText: 'Nhập tên quán ăn...',
+                                            maxLength: 200,
+                                            onChanged: (diningLocationName) => context.read<CreatePostBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
+                                            // Thêm errorText cho các trường khác để nhất quán
+                                            errorText: state.diningLocationNameInput.isNotValid && !state.diningLocationNameInput.isPure ? state.diningLocationNameInput.displayError?.getMessage() : null,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          AppTextField(
+                                            initialValue: widget.inEditMode ? widget.postToUpdate?.address?.exactAddress : null,
+                                            focusNode: _exactAddressInputFocusNode,
+                                            title: 'Địa chỉ cụ thể của quán ăn',
+                                            keyboardType: TextInputType.name,
+                                            maxLine: 1,
+                                            hintText: 'Vd: số nhà, tên đường, nhận biết...',
+                                            maxLength: 200,
+                                            onChanged: (exactAddress) => context.read<CreatePostBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
+                                            errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? state.exactAddressInput.displayError?.getMessage() : null,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          AppTextField(
+                                            initialValue: widget.inEditMode ? widget.postToUpdate?.insight : null,
+                                            focusNode: _insightInputFocusNode,
+                                            title: 'Cảm nhận',
+                                            hintText: 'Nêu cảm nhận của bạn...',
+                                            maxLength: 2000,
+                                            minLine: 10,
+                                            maxLine: 1000,
+                                            onChanged: (insight) => context.read<CreatePostBloc>().add(InsightInputChanged(insight: insight)),
                                           ),
                                         ],
-                                        focusNode: _moneyInputFocusNode,
-                                        keyboardType: TextInputType.number,
-                                        title: 'Giá tiền*',
-                                        hintText: 'Nhập giá tiền của món ăn...',
-                                        maxLine: 1,
-                                        maxLength: 12,
-                                        onChanged: (money) {
-                                          context.read<CreatePostBloc>().add(MoneyInputChanged(money: money));
-                                        },
-                                        errorText: state.moneyInput.isNotValid && !state.moneyInput.isPure ? state.moneyInput.displayError?.getMessage() : null,
                                       ),
-                                      const SizedBox(height: 10),
-                                      AppTextField(
-                                        initialValue: widget.inEditMode ? widget.postToUpdate?.diningLocationName : null,
-                                        focusNode: _diningLocationNameFocusNode,
-                                        keyboardType: TextInputType.name,
-                                        maxLine: 1,
-                                        title: 'Tên quán ăn*',
-                                        hintText: 'Nhập tên quán ăn...',
-                                        maxLength: 200,
-                                        onChanged: (diningLocationName) => context.read<CreatePostBloc>().add(DiningLocationNameInputChanged(diningLocationName: diningLocationName)),
-                                        // Thêm errorText cho các trường khác để nhất quán
-                                        errorText: state.diningLocationNameInput.isNotValid && !state.diningLocationNameInput.isPure ? state.diningLocationNameInput.displayError?.getMessage() : null,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      AppTextField(
-                                        initialValue: widget.inEditMode ? widget.postToUpdate?.address?.exactAddress : null,
-                                        focusNode: _exactAddressInputFocusNode,
-                                        title: 'Địa chỉ cụ thể của quán ăn',
-                                        keyboardType: TextInputType.name,
-                                        maxLine: 1,
-                                        hintText: 'Vd: số nhà, tên đường, nhận biết...',
-                                        maxLength: 200,
-                                        onChanged: (exactAddress) => context.read<CreatePostBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
-                                        errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? state.exactAddressInput.displayError?.getMessage() : null,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      AppTextField(
-                                        initialValue: widget.inEditMode ? widget.postToUpdate?.insight : null,
-                                        focusNode: _insightInputFocusNode,
-                                        title: 'Cảm nhận',
-                                        hintText: 'Nêu cảm nhận của bạn...',
-                                        maxLength: 2000,
-                                        minLine: 10,
-                                        maxLine: 1000,
-                                        onChanged: (insight) => context.read<CreatePostBloc>().add(InsightInputChanged(insight: insight)),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                                    );
+                                  },
+                                ),
+                                const SizedBox(
+                                  height: 300,
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              height: 300,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                }),
+                          ),
+                        ],
+                      );
+                    }),
               ),
             ),
           ),
