@@ -1,6 +1,8 @@
 // file: lib/data/entities/post_entity.dart
 
+import 'package:dishlocal/core/enum/food_category.dart';
 import 'package:dishlocal/core/json_converter/date_time_converter.dart';
+import 'package:dishlocal/core/json_converter/food_category_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'post_entity.freezed.dart';
@@ -51,6 +53,9 @@ abstract class PostEntity with _$PostEntity {
     @Default(0) int saveCount,
 
     @Default(0) int commentCount,
+
+    @FoodCategoryConverter()
+    FoodCategory? foodCategory,
 
     /// Thời điểm bài post được tạo.
     @DateTimeConverter() required DateTime createdAt,

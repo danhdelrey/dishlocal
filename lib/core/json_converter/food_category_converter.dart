@@ -13,8 +13,7 @@ class FoodCategoryConverter implements JsonConverter<FoodCategory?, String?> {
     // Nếu giá trị không null, tìm enum tương ứng.
     // Vẫn giữ `orElse` để xử lý trường hợp chuỗi không hợp lệ từ server.
     return FoodCategory.values.firstWhere(
-      (category) => category.name == json,
-      orElse: () => FoodCategory.other, // Hoặc trả về null nếu bạn muốn: orElse: () => null
+      (category) => category.name == json
     );
   }
 

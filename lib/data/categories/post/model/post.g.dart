@@ -28,6 +28,8 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
       isLiked: json['isLiked'] as bool,
       isSaved: json['isSaved'] as bool,
       commentCount: (json['commentCount'] as num).toInt(),
+      foodCategory: const FoodCategoryConverter()
+          .fromJson(json['foodCategory'] as String?),
     );
 
 Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
@@ -49,4 +51,6 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'isLiked': instance.isLiked,
       'isSaved': instance.isSaved,
       'commentCount': instance.commentCount,
+      'foodCategory':
+          const FoodCategoryConverter().toJson(instance.foodCategory),
     };

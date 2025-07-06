@@ -21,6 +21,8 @@ _PostEntity _$PostEntityFromJson(Map<String, dynamic> json) => _PostEntity(
       likeCount: (json['like_count'] as num?)?.toInt() ?? 0,
       saveCount: (json['save_count'] as num?)?.toInt() ?? 0,
       commentCount: (json['comment_count'] as num?)?.toInt() ?? 0,
+      foodCategory: const FoodCategoryConverter()
+          .fromJson(json['food_category'] as String?),
       createdAt:
           const DateTimeConverter().fromJson(json['created_at'] as String),
     );
@@ -41,5 +43,7 @@ Map<String, dynamic> _$PostEntityToJson(_PostEntity instance) =>
       'like_count': instance.likeCount,
       'save_count': instance.saveCount,
       'comment_count': instance.commentCount,
+      'food_category':
+          const FoodCategoryConverter().toJson(instance.foodCategory),
       'created_at': const DateTimeConverter().toJson(instance.createdAt),
     };

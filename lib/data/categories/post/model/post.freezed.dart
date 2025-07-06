@@ -34,6 +34,8 @@ mixin _$Post {
   bool get isLiked;
   bool get isSaved;
   int get commentCount;
+  @FoodCategoryConverter()
+  FoodCategory? get foodCategory;
 
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
@@ -79,35 +81,39 @@ mixin _$Post {
             (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.isSaved, isSaved) || other.isSaved == isSaved) &&
             (identical(other.commentCount, commentCount) ||
-                other.commentCount == commentCount));
+                other.commentCount == commentCount) &&
+            (identical(other.foodCategory, foodCategory) ||
+                other.foodCategory == foodCategory));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      postId,
-      authorUserId,
-      authorUsername,
-      authorAvatarUrl,
-      imageUrl,
-      blurHash,
-      dishName,
-      diningLocationName,
-      address,
-      distance,
-      price,
-      insight,
-      createdAt,
-      likeCount,
-      saveCount,
-      isLiked,
-      isSaved,
-      commentCount);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        postId,
+        authorUserId,
+        authorUsername,
+        authorAvatarUrl,
+        imageUrl,
+        blurHash,
+        dishName,
+        diningLocationName,
+        address,
+        distance,
+        price,
+        insight,
+        createdAt,
+        likeCount,
+        saveCount,
+        isLiked,
+        isSaved,
+        commentCount,
+        foodCategory
+      ]);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory)';
   }
 }
 
@@ -134,7 +140,8 @@ abstract mixin class $PostCopyWith<$Res> {
       int saveCount,
       bool isLiked,
       bool isSaved,
-      int commentCount});
+      int commentCount,
+      @FoodCategoryConverter() FoodCategory? foodCategory});
 
   $AddressCopyWith<$Res>? get address;
 }
@@ -169,6 +176,7 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
     Object? isLiked = null,
     Object? isSaved = null,
     Object? commentCount = null,
+    Object? foodCategory = freezed,
   }) {
     return _then(_self.copyWith(
       postId: null == postId
@@ -243,6 +251,10 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
           ? _self.commentCount
           : commentCount // ignore: cast_nullable_to_non_nullable
               as int,
+      foodCategory: freezed == foodCategory
+          ? _self.foodCategory
+          : foodCategory // ignore: cast_nullable_to_non_nullable
+              as FoodCategory?,
     ));
   }
 
@@ -283,7 +295,8 @@ class _Post implements Post {
       required this.saveCount,
       required this.isLiked,
       required this.isSaved,
-      required this.commentCount});
+      required this.commentCount,
+      @FoodCategoryConverter() this.foodCategory});
   factory _Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
   @override
@@ -323,6 +336,9 @@ class _Post implements Post {
   final bool isSaved;
   @override
   final int commentCount;
+  @override
+  @FoodCategoryConverter()
+  final FoodCategory? foodCategory;
 
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
@@ -373,35 +389,39 @@ class _Post implements Post {
             (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.isSaved, isSaved) || other.isSaved == isSaved) &&
             (identical(other.commentCount, commentCount) ||
-                other.commentCount == commentCount));
+                other.commentCount == commentCount) &&
+            (identical(other.foodCategory, foodCategory) ||
+                other.foodCategory == foodCategory));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      postId,
-      authorUserId,
-      authorUsername,
-      authorAvatarUrl,
-      imageUrl,
-      blurHash,
-      dishName,
-      diningLocationName,
-      address,
-      distance,
-      price,
-      insight,
-      createdAt,
-      likeCount,
-      saveCount,
-      isLiked,
-      isSaved,
-      commentCount);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        postId,
+        authorUserId,
+        authorUsername,
+        authorAvatarUrl,
+        imageUrl,
+        blurHash,
+        dishName,
+        diningLocationName,
+        address,
+        distance,
+        price,
+        insight,
+        createdAt,
+        likeCount,
+        saveCount,
+        isLiked,
+        isSaved,
+        commentCount,
+        foodCategory
+      ]);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory)';
   }
 }
 
@@ -429,7 +449,8 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       int saveCount,
       bool isLiked,
       bool isSaved,
-      int commentCount});
+      int commentCount,
+      @FoodCategoryConverter() FoodCategory? foodCategory});
 
   @override
   $AddressCopyWith<$Res>? get address;
@@ -465,6 +486,7 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
     Object? isLiked = null,
     Object? isSaved = null,
     Object? commentCount = null,
+    Object? foodCategory = freezed,
   }) {
     return _then(_Post(
       postId: null == postId
@@ -539,6 +561,10 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
           ? _self.commentCount
           : commentCount // ignore: cast_nullable_to_non_nullable
               as int,
+      foodCategory: freezed == foodCategory
+          ? _self.foodCategory
+          : foodCategory // ignore: cast_nullable_to_non_nullable
+              as FoodCategory?,
     ));
   }
 

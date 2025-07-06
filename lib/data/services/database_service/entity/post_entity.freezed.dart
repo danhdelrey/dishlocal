@@ -54,6 +54,8 @@ mixin _$PostEntity {
   /// (Denormalized) Số lượt lưu, được cập nhật bằng triggers.
   int get saveCount;
   int get commentCount;
+  @FoodCategoryConverter()
+  FoodCategory? get foodCategory;
 
   /// Thời điểm bài post được tạo.
   @DateTimeConverter()
@@ -99,6 +101,8 @@ mixin _$PostEntity {
                 other.saveCount == saveCount) &&
             (identical(other.commentCount, commentCount) ||
                 other.commentCount == commentCount) &&
+            (identical(other.foodCategory, foodCategory) ||
+                other.foodCategory == foodCategory) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -121,11 +125,12 @@ mixin _$PostEntity {
       likeCount,
       saveCount,
       commentCount,
+      foodCategory,
       createdAt);
 
   @override
   String toString() {
-    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, createdAt: $createdAt)';
+    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, foodCategory: $foodCategory, createdAt: $createdAt)';
   }
 }
 
@@ -150,6 +155,7 @@ abstract mixin class $PostEntityCopyWith<$Res> {
       int likeCount,
       int saveCount,
       int commentCount,
+      @FoodCategoryConverter() FoodCategory? foodCategory,
       @DateTimeConverter() DateTime createdAt});
 }
 
@@ -179,6 +185,7 @@ class _$PostEntityCopyWithImpl<$Res> implements $PostEntityCopyWith<$Res> {
     Object? likeCount = null,
     Object? saveCount = null,
     Object? commentCount = null,
+    Object? foodCategory = freezed,
     Object? createdAt = null,
   }) {
     return _then(_self.copyWith(
@@ -238,6 +245,10 @@ class _$PostEntityCopyWithImpl<$Res> implements $PostEntityCopyWith<$Res> {
           ? _self.commentCount
           : commentCount // ignore: cast_nullable_to_non_nullable
               as int,
+      foodCategory: freezed == foodCategory
+          ? _self.foodCategory
+          : foodCategory // ignore: cast_nullable_to_non_nullable
+              as FoodCategory?,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -265,6 +276,7 @@ class _PostEntity implements PostEntity {
       this.likeCount = 0,
       this.saveCount = 0,
       this.commentCount = 0,
+      @FoodCategoryConverter() this.foodCategory,
       @DateTimeConverter() required this.createdAt});
   factory _PostEntity.fromJson(Map<String, dynamic> json) =>
       _$PostEntityFromJson(json);
@@ -325,6 +337,9 @@ class _PostEntity implements PostEntity {
   @override
   @JsonKey()
   final int commentCount;
+  @override
+  @FoodCategoryConverter()
+  final FoodCategory? foodCategory;
 
   /// Thời điểm bài post được tạo.
   @override
@@ -376,6 +391,8 @@ class _PostEntity implements PostEntity {
                 other.saveCount == saveCount) &&
             (identical(other.commentCount, commentCount) ||
                 other.commentCount == commentCount) &&
+            (identical(other.foodCategory, foodCategory) ||
+                other.foodCategory == foodCategory) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -398,11 +415,12 @@ class _PostEntity implements PostEntity {
       likeCount,
       saveCount,
       commentCount,
+      foodCategory,
       createdAt);
 
   @override
   String toString() {
-    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, createdAt: $createdAt)';
+    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, foodCategory: $foodCategory, createdAt: $createdAt)';
   }
 }
 
@@ -429,6 +447,7 @@ abstract mixin class _$PostEntityCopyWith<$Res>
       int likeCount,
       int saveCount,
       int commentCount,
+      @FoodCategoryConverter() FoodCategory? foodCategory,
       @DateTimeConverter() DateTime createdAt});
 }
 
@@ -458,6 +477,7 @@ class __$PostEntityCopyWithImpl<$Res> implements _$PostEntityCopyWith<$Res> {
     Object? likeCount = null,
     Object? saveCount = null,
     Object? commentCount = null,
+    Object? foodCategory = freezed,
     Object? createdAt = null,
   }) {
     return _then(_PostEntity(
@@ -517,6 +537,10 @@ class __$PostEntityCopyWithImpl<$Res> implements _$PostEntityCopyWith<$Res> {
           ? _self.commentCount
           : commentCount // ignore: cast_nullable_to_non_nullable
               as int,
+      foodCategory: freezed == foodCategory
+          ? _self.foodCategory
+          : foodCategory // ignore: cast_nullable_to_non_nullable
+              as FoodCategory?,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable

@@ -1,4 +1,6 @@
+import 'package:dishlocal/core/enum/food_category.dart';
 import 'package:dishlocal/core/json_converter/date_time_converter.dart';
+import 'package:dishlocal/core/json_converter/food_category_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 
@@ -27,6 +29,9 @@ abstract class Post with _$Post {
     required bool isLiked,
     required bool isSaved,
     required int commentCount,
+    
+    @FoodCategoryConverter()
+    FoodCategory? foodCategory,
   }) = _Post;
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
