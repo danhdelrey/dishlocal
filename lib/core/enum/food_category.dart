@@ -28,7 +28,7 @@ enum FoodCategory {
   breakfast('🍳 Món sáng', Colors.yellow),
   desserts('🍨 Tráng miệng & Kem', Colors.purpleAccent),
   bakery('🥐 Tiệm bánh', Color(0xFFBCAAA4)), // Màu bánh nướng
-  coffeeAndTea('☕ Cà phê & Trà sữa', Colors.brown),
+  coffeeAndTea('☕ Cà phê & Trà sữa', Color.fromARGB(255, 170, 120, 100)),
   beverages('🥤 Nước uống & Giải khát', Colors.blue),
   barAndPub('🍻 Bar & Pub', Colors.indigo);
 
