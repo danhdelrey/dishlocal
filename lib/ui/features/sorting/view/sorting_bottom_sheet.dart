@@ -2,7 +2,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/enum/sort_option.dart';
 import 'package:dishlocal/ui/features/select_food_category/bloc/select_food_category_bloc.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_chip_selector.dart';
-import 'package:dishlocal/ui/features/select_food_category/view/food_category_container_builder.dart';
+import 'package:dishlocal/ui/features/select_food_category/view/food_category_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -53,7 +53,7 @@ class SortingBottomSheet extends StatelessWidget {
               ],
             ),
           ),
-          body: FoodCategoryContainerBuilder(
+          body: FoodCategoryBuilder(
               allowMultiSelect: true,
               initialFoodCategory: const {},
               builder: (context, allCategories, selectedCategories, allowMultiSelect) {

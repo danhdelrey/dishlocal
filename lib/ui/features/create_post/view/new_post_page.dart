@@ -12,7 +12,7 @@ import 'package:dishlocal/ui/features/create_post/form_input/exact_address_input
 import 'package:dishlocal/ui/features/create_post/form_input/money_input.dart';
 import 'package:dishlocal/ui/features/select_food_category/bloc/select_food_category_bloc.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_chip_selector.dart';
-import 'package:dishlocal/ui/features/select_food_category/view/food_category_container_builder.dart';
+import 'package:dishlocal/ui/features/select_food_category/view/food_category_builder.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';
@@ -194,7 +194,7 @@ class _NewPostPageState extends State<NewPostPage> {
             child: GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
               child: Scaffold(
-                body: FoodCategoryContainerBuilder(
+                body: FoodCategoryBuilder(
                     initialFoodCategory: widget.postToUpdate?.foodCategory != null ? {widget.postToUpdate!.foodCategory!} : {},
                     builder: (
                       context,

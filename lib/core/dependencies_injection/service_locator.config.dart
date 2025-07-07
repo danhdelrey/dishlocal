@@ -102,6 +102,8 @@ import '../../ui/features/post_search/bloc/post_search_bloc.dart' as _i892;
 import '../../ui/features/profile_search/bloc/profile_search_bloc.dart' as _i32;
 import '../../ui/features/select_food_category/bloc/select_food_category_bloc.dart'
     as _i755;
+import '../../ui/features/select_price_range/bloc/select_price_range_bloc.dart'
+    as _i978;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../../ui/features/view_post/bloc/view_post_bloc.dart' as _i10;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
@@ -124,6 +126,7 @@ _i174.GetIt init(
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
   gh.factory<_i755.SelectFoodCategoryBloc>(
       () => _i755.SelectFoodCategoryBloc());
+  gh.factory<_i978.SelectPriceRangeBloc>(() => _i978.SelectPriceRangeBloc());
   gh.lazySingleton<_i116.GoogleSignIn>(
       () => firebaseInjectableModule.googleSignIn);
   gh.lazySingleton<_i59.FirebaseAuth>(

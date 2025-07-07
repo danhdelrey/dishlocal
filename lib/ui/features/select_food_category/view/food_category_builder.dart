@@ -4,8 +4,8 @@ import 'package:dishlocal/ui/features/select_food_category/bloc/select_food_cate
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FoodCategoryContainerBuilder extends StatelessWidget {
-  const FoodCategoryContainerBuilder({super.key, required this.builder, this.allowMultiSelect = false, required this.initialFoodCategory});
+class FoodCategoryBuilder extends StatelessWidget {
+  const FoodCategoryBuilder({super.key, required this.builder, this.allowMultiSelect = false, required this.initialFoodCategory});
 
   final Widget Function(BuildContext context, List<FoodCategory> allCategories, Set<FoodCategory> selectedCategories, bool allowMultiSelect) builder;
   final bool allowMultiSelect;
