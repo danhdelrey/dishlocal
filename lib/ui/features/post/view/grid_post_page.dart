@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/ui/features/filter_sort/view/filter_button.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -22,7 +23,7 @@ class GridPostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // THAY ĐỔI 3: Không còn `context.watch<PostBloc>()` nữa.
+    bool hasActiveFilters = true; // Giả sử bạn có một biến để kiểm tra bộ lọc
     return RefreshIndicator(
       onRefresh: onRefresh, // Gọi callback onRefresh
       child: Padding(
@@ -30,6 +31,9 @@ class GridPostPage extends StatelessWidget {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
           slivers: [
+            SliverToBoxAdapter(
+              child: FilterButton(hasActiveFilters: hasActiveFilters),
+            ),
             PagedSliverMasonryGrid<dynamic, Post>(
               // Dùng state và callback được truyền vào
               state: pagingState,

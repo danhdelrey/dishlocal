@@ -66,7 +66,7 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
   void _handleTabSelection() {
     final index = _tabController.index;
     if (!_initializedTabs.contains(index)) {
-      _postBlocs[index].add(const PostEvent.fetchNextPostPageRequested());
+      //_postBlocs[index].add(const PostEvent.fetchNextPostPageRequested());
       _initializedTabs.add(index);
     }
   }
@@ -76,10 +76,8 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
     if (_mainScrollController.hasClients) {
       _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
-    // Sử dụng PrimaryScrollController.of(context) có thể không đáng tin cậy trong NestedScrollView.
-    // Thay vào đó, chúng ta có thể dựa vào việc GridPostPage có scroll controller riêng
-    // hoặc đơn giản là để RefreshIndicator xử lý.
-    _postBlocs[index].add(const PostEvent.refreshRequested());
+
+    //_postBlocs[index].add(const PostEvent.refreshRequested());
   }
 
   @override
@@ -103,7 +101,6 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
           // Phần headerSliverBuilder không thay đổi
           return <Widget>[
             GlassSliverAppBar(
-              
               centerTitle: true,
               hasBorder: false,
               title: ShaderMask(

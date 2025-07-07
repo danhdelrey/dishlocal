@@ -2,7 +2,7 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
-import 'package:dishlocal/data/categories/post/model/post.dart'; 
+import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
@@ -81,7 +81,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
   void _handleTabSelection() {
     final index = _tabController.index;
     if (!_initializedTabs.contains(index)) {
-      _postBlocs[index].add(const PostEvent.fetchNextPostPageRequested());
+      //_postBlocs[index].add(const PostEvent.fetchNextPostPageRequested());
       _initializedTabs.add(index);
     }
   }
@@ -90,7 +90,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
     if (_mainScrollController.hasClients) {
       _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
-    _postBlocs[index].add(const PostEvent.refreshRequested());
+    //_postBlocs[index].add(const PostEvent.refreshRequested());
   }
 
   @override
