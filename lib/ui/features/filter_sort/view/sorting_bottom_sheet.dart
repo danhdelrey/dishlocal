@@ -28,8 +28,12 @@ class SortingBottomSheet extends StatelessWidget {
 
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.85,
-          child: ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          child: GlassContainer(
+            borderRadius: 30,
+            radiusBottomLeft: false,
+            radiusBottomRight: false,
+            borderTop: true,
+            backgroundColor: appColorScheme(context).surface,
             child: Scaffold(
               extendBodyBehindAppBar: true,
               backgroundColor: Colors.transparent,
@@ -197,19 +201,34 @@ class SortingBottomSheet extends StatelessWidget {
     required bool isSelected,
     required void Function(bool) onSelected,
   }) {
-    return ChoiceChip(
-      label: Text(label),
-      labelStyle: TextStyle(
-        color: isSelected ? appColorScheme(context).onPrimary : appColorScheme(context).onSurface,
+    return GlassContainer(
+      borderRadius: 12,
+      child: InkWell(
+        onTap: () => onSelected(!isSelected),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? appColorScheme(context).primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: isSelected
+                ? Border.all(
+                    color: appColorScheme(context).primary,
+                    width: 1,
+                  )
+                : Border.all(
+                    color: appColorScheme(context).onSurface.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? appColorScheme(context).onPrimary : appColorScheme(context).onSurface,
+            ),
+          ),
+        ),
       ),
-      selected: isSelected,
-      onSelected: onSelected,
-      selectedColor: appColorScheme(context).primary,
-      backgroundColor: appColorScheme(context).surfaceContainer,
-      side: BorderSide(color: appColorScheme(context).outlineVariant.withValues(alpha: 0.1)),
-      showCheckmark: false,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
   }
 
