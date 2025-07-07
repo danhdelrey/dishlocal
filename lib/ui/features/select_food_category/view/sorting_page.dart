@@ -1,5 +1,5 @@
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
-import 'package:dishlocal/core/enum/food_category.dart';
+import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
 import 'package:dishlocal/ui/features/select_food_category/bloc/select_food_category_bloc.dart';
 import 'package:dishlocal/ui/features/sorting/view/sorting_bottom_sheet.dart';
 import 'package:flutter/material.dart';

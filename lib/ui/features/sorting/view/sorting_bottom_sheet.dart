@@ -1,5 +1,5 @@
 import 'package:dishlocal/app/theme/theme.dart';
-import 'package:dishlocal/core/enum/sort_option.dart';
+import 'package:dishlocal/ui/features/filter_sort/model/sort_option.dart';
 import 'package:dishlocal/ui/features/select_food_category/bloc/select_food_category_bloc.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_chip_selector.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/food_category_builder.dart';
@@ -111,23 +111,7 @@ class SortingBottomSheet extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        Column(
-                          children: SortOption.values.map((sortOption) {
-                            return RadioListTile<SortOption>(
-                              title: Text(
-                                sortOption.displayName,
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                              value: sortOption,
-                              groupValue: SortOption.datePostedDesc, // Default selection
-                              onChanged: (value) {
-                                // Handle radio button selection
-                              },
-                              contentPadding: EdgeInsets.zero,
-                            );
-                          }).toList(),
-                        ),
-
+                        
                         const SizedBox(height: 24),
                         const Divider(),
                         const SizedBox(height: 16),

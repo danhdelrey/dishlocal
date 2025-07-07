@@ -94,6 +94,7 @@ import '../../ui/features/create_post/bloc/create_post_bloc.dart' as _i622;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
 import '../../ui/features/delete_post/bloc/delete_post_bloc.dart' as _i204;
+import '../../ui/features/filter_sort/bloc/filter_sort_bloc.dart' as _i441;
 import '../../ui/features/follow/bloc/follow_bloc.dart' as _i501;
 import '../../ui/features/map/bloc/map_bloc.dart' as _i936;
 import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
@@ -102,8 +103,6 @@ import '../../ui/features/post_search/bloc/post_search_bloc.dart' as _i892;
 import '../../ui/features/profile_search/bloc/profile_search_bloc.dart' as _i32;
 import '../../ui/features/select_food_category/bloc/select_food_category_bloc.dart'
     as _i755;
-import '../../ui/features/select_price_range/bloc/select_price_range_bloc.dart'
-    as _i978;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../../ui/features/view_post/bloc/view_post_bloc.dart' as _i10;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
@@ -126,7 +125,7 @@ _i174.GetIt init(
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
   gh.factory<_i755.SelectFoodCategoryBloc>(
       () => _i755.SelectFoodCategoryBloc());
-  gh.factory<_i978.SelectPriceRangeBloc>(() => _i978.SelectPriceRangeBloc());
+  gh.factory<_i441.FilterSortBloc>(() => _i441.FilterSortBloc());
   gh.lazySingleton<_i116.GoogleSignIn>(
       () => firebaseInjectableModule.googleSignIn);
   gh.lazySingleton<_i59.FirebaseAuth>(
