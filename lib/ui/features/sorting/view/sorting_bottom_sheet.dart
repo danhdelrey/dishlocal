@@ -43,7 +43,7 @@ class SortingBottomSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildCategorySection(state, bloc),
+                      _buildCategorySection(context, state, bloc),
                       _buildDivider(),
                       _buildPriceSection(state, bloc, textTheme, colorScheme, appColors),
                       _buildDivider(),
@@ -111,20 +111,38 @@ class SortingBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildCategorySection(FilterSortLoaded state, FilterSortBloc bloc) {
-    return ExpandableFoodCategoryChipSelector(
-      title: '📋 Loại món',
-      items: state.allCategories,
-      allowMultiSelect: true,
-      selectedItems: state.currentParams.categories,
-      onCategoryTapped: (category) {
-        bloc.add(FilterSortEvent.categoryToggled(category));
-      },
-      onSelectAllTapped: () {
-        bloc.add(const FilterSortEvent.allCategoriesToggled());
-      },
-      selectAllText: 'Tất cả loại món',
-      selectAllColor: Colors.indigo,
+  Widget _buildCategorySection(BuildContext context, FilterSortLoaded state, FilterSortBloc bloc) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('📋 Loại món', Theme.of(context).textTheme),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: [
+            // Nút "Tất cả loại món"
+            _buildChoiceChip(
+              label: 'Tất cả loại món',
+              isSelected: state.allCategories.isNotEmpty && state.currentParams.categories.length == state.allCategories.length,
+              onSelected: (_) => bloc.add(const FilterSortEvent.allCategoriesToggled()),
+              colorScheme: Theme.of(context).colorScheme,
+              appColors: appColorScheme(context),
+            ),
+            // Các chip loại món
+            ...state.allCategories.map((category) {
+              final isSelected = state.currentParams.categories.contains(category);
+              return _buildChoiceChip(
+                label: category.label,
+                isSelected: isSelected,
+                onSelected: (_) => bloc.add(FilterSortEvent.categoryToggled(category)),
+                colorScheme: Theme.of(context).colorScheme,
+                appColors: appColorScheme(context),
+              );
+            }),
+          ],
+        ),
+      ],
     );
   }
 
