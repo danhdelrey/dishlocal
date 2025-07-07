@@ -30,10 +30,7 @@ enum FoodCategory {
   bakery('🥐 Tiệm bánh', Color(0xFFBCAAA4)), // Màu bánh nướng
   coffeeAndTea('☕ Cà phê & Trà sữa', Colors.brown),
   beverages('🥤 Nước uống & Giải khát', Colors.blue),
-  barAndPub('🍻 Bar & Pub', Colors.indigo),
-
-  // === KHÁC ===
-  other('🍽️ Danh mục khác', Colors.blueGrey);
+  barAndPub('🍻 Bar & Pub', Colors.indigo);
 
   // Các thuộc tính của mỗi thành viên
   final String label;
