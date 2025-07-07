@@ -4,6 +4,7 @@ import 'package:dishlocal/ui/features/filter_sort/model/sort_option.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/filter_sort_builder.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_food_category_chip_selector.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -26,124 +27,129 @@ class SortingBottomSheet extends StatelessWidget {
       builder: (context, state) {
         final bloc = context.read<FilterSortBloc>();
 
-        return SizedBox(
+        return Container(
           height: MediaQuery.of(context).size.height * 0.85,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+            border: Border.all(
+              color: appColorScheme(context).onSurface.withValues(alpha: 0.1),
+              width: 1,
+            ),
+          ),
           child: GlassContainer(
             borderRadius: 30,
             radiusBottomLeft: false,
             radiusBottomRight: false,
-            borderTop: true,
             backgroundColor: appColorScheme(context).surface,
             child: Scaffold(
               extendBodyBehindAppBar: true,
               backgroundColor: Colors.transparent,
-              appBar: _buildAppBar(context, bloc),
-              body: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: kToolbarHeight + 16, left: 16, right: 16, bottom: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // --- Section Loại món ---
-                      _FilterSection(
-                        title: '📋 Loại món',
-                        children: state.allCategories.map((category) {
-                          return _buildChoiceChip(
-                            context: context,
-                            label: category.label,
-                            isSelected: state.currentParams.categories.contains(category),
-                            onSelected: (_) => bloc.add(FilterSortEvent.categoryToggled(category)),
-                          );
-                        }).toList(),
-                      ),
-                      _buildDivider(),
+              body: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  GlassSliverAppBar(
+                    hasBorder: false,
+                    pinned: true,
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Leading: "Đặt lại"
+                        TextButton(
+                          onPressed: () => bloc.add(const FilterSortEvent.filtersCleared()),
+                          style: TextButton.styleFrom(
+                            foregroundColor: appColorScheme(context).onSurface,
+                            textStyle: appTextTheme(context).labelMedium,
+                          ),
+                          child: const Text('Đặt lại'),
+                        ),
 
-                      // --- Section Mức giá ---
-                      _FilterSection(
-                        title: '💰 Mức giá',
-                        children: state.allRanges.map((range) {
-                          return _buildChoiceChip(
-                            context: context,
-                            label: range.displayName,
-                            isSelected: state.currentParams.range == range,
-                            onSelected: (_) => bloc.add(FilterSortEvent.priceRangeToggled(range)),
-                          );
-                        }).toList(),
-                      ),
-                      _buildDivider(),
+                        // Title
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'Bộ lọc & sắp xếp',
+                              style: appTextTheme(context).labelLarge,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
 
-                      // --- Section Khoảng cách ---
-                      _FilterSection(
-                        title: '📍 Khoảng cách',
-                        children: state.allDistances.map((distance) {
-                          return _buildChoiceChip(
-                            context: context,
-                            label: distance.displayName,
-                            isSelected: state.currentParams.distance == distance,
-                            onSelected: (_) => bloc.add(FilterSortEvent.distanceRangeToggled(distance)),
-                          );
-                        }).toList(),
-                      ),
-                      _buildDivider(),
-
-                      // --- Section Sắp xếp (được xử lý riêng do có logic phức tạp hơn) ---
-                      _buildSortSection(context, state, bloc),
-
-                      const SizedBox(height: 32),
-                    ],
+                        // Action: "Áp dụng"
+                        TextButton(
+                          onPressed: () {
+                            bloc.add(const FilterSortEvent.filtersSubmitted());
+                            context.pop();
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: appColorScheme(context).primary,
+                            textStyle: appTextTheme(context).labelMedium,
+                          ),
+                          child: const Text('Áp dụng'),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // --- Section Loại món ---
+                          _FilterSection(
+                            title: '📋 Loại món',
+                            children: state.allCategories.map((category) {
+                              return _buildChoiceChip(
+                                context: context,
+                                label: category.label,
+                                isSelected: state.currentParams.categories.contains(category),
+                                onSelected: (_) => bloc.add(FilterSortEvent.categoryToggled(category)),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 32), // Khoảng cách giữa các section
+
+                          // --- Section Mức giá ---
+                          _FilterSection(
+                            title: '💰 Mức giá',
+                            children: state.allRanges.map((range) {
+                              return _buildChoiceChip(
+                                context: context,
+                                label: range.displayName,
+                                isSelected: state.currentParams.range == range,
+                                onSelected: (_) => bloc.add(FilterSortEvent.priceRangeToggled(range)),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 32),
+                          // --- Section Khoảng cách ---
+                          _FilterSection(
+                            title: '📍 Khoảng cách',
+                            children: state.allDistances.map((distance) {
+                              return _buildChoiceChip(
+                                context: context,
+                                label: distance.displayName,
+                                isSelected: state.currentParams.distance == distance,
+                                onSelected: (_) => bloc.add(FilterSortEvent.distanceRangeToggled(distance)),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 32),
+
+                          // --- Section Sắp xếp (được xử lý riêng do có logic phức tạp hơn) ---
+                          _buildSortSection(context, state, bloc),
+
+                          const SizedBox(height: 32),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         );
       },
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(
-    BuildContext context,
-    FilterSortBloc bloc,
-  ) {
-    return AppBar(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      surfaceTintColor: Colors.transparent,
-      automaticallyImplyLeading: false,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Leading: "Đặt lại"
-          TextButton(
-            onPressed: () => bloc.add(const FilterSortEvent.filtersCleared()),
-            child: const Text('Đặt lại'),
-          ),
-
-          // Title
-          Expanded(
-            child: Center(
-              child: Text(
-                'Bộ lọc & sắp xếp',
-                style: appTextTheme(context).titleMedium,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-
-          // Action: "Áp dụng"
-          TextButton(
-            onPressed: () {
-              bloc.add(const FilterSortEvent.filtersSubmitted());
-              context.pop();
-            },
-            child: const Text('Áp dụng'),
-          ),
-        ],
-      ),
-      centerTitle: false, // Không cần vì title giờ nằm trong Row
     );
   }
 
@@ -165,10 +171,7 @@ class SortingBottomSheet extends StatelessWidget {
                   size: 16,
                 ),
                 label: Text(currentSortOption.direction == SortDirection.desc ? 'Giảm dần' : 'Tăng dần'),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
+                style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), tapTargetSize: MaterialTapTargetSize.shrinkWrap, textStyle: appTextTheme(context).labelMedium),
               ),
           ],
         ),
@@ -223,9 +226,9 @@ class SortingBottomSheet extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: TextStyle(
-              color: isSelected ? appColorScheme(context).onPrimary : appColorScheme(context).onSurface,
-            ),
+            style: appTextTheme(context).labelMedium?.copyWith(
+                  color: isSelected ? appColorScheme(context).onPrimary : appColorScheme(context).onSurface,
+                ),
           ),
         ),
       ),
@@ -235,14 +238,7 @@ class SortingBottomSheet extends StatelessWidget {
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Text(
       title,
-      style: appTextTheme(context).titleMedium?.copyWith(fontWeight: FontWeight.w600),
-    );
-  }
-
-  Widget _buildDivider() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 24),
-      child: Divider(height: 1, indent: 8, endIndent: 8),
+      style: appTextTheme(context).labelLarge,
     );
   }
 }
@@ -265,7 +261,7 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: appTextTheme(context).titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          style: appTextTheme(context).labelLarge,
         ),
         const SizedBox(height: 16),
         Wrap(
