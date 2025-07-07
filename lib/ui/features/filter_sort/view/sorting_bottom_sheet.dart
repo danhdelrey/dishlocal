@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/filter_sort/bloc/filter_sort_bloc.dart';
+import 'package:dishlocal/ui/features/filter_sort/model/filter_sort_params.dart';
 import 'package:dishlocal/ui/features/filter_sort/model/sort_option.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/filter_sort_builder.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_food_category_chip_selector.dart';
@@ -12,8 +13,8 @@ import 'package:go_router/go_router.dart';
 class SortingBottomSheet extends StatelessWidget {
   const SortingBottomSheet({super.key});
 
-  static Future<void> show(BuildContext context) {
-    return showModalBottomSheet(
+  static Future<FilterSortParams?> show(BuildContext context) {
+    return showModalBottomSheet<FilterSortParams?>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -78,7 +79,7 @@ class SortingBottomSheet extends StatelessWidget {
                         TextButton(
                           onPressed: () {
                             bloc.add(const FilterSortEvent.filtersSubmitted());
-                            context.pop();
+                            context.pop(state.currentParams);
                           },
                           style: TextButton.styleFrom(
                             foregroundColor: appColorScheme(context).primary,
