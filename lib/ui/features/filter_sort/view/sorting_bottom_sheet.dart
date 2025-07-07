@@ -31,11 +31,12 @@ class SortingBottomSheet extends StatelessWidget {
           child: ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             child: Scaffold(
-              backgroundColor: appColorScheme(context).surface,
+              extendBodyBehindAppBar: true,
+              backgroundColor: Colors.transparent,
               appBar: _buildAppBar(context, bloc),
               body: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.only(top: kToolbarHeight + 16, left: 16, right: 16, bottom: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -104,7 +105,7 @@ class SortingBottomSheet extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      backgroundColor: appColorScheme(context).surface,
+      backgroundColor: Colors.transparent,
       elevation: 0,
       surfaceTintColor: Colors.transparent,
       automaticallyImplyLeading: false,
