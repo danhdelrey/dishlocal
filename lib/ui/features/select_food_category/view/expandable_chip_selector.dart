@@ -65,7 +65,9 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
             style: appTextTheme(context).labelLarge,
           ),
           style: ElevatedButton.styleFrom(
-            shape: const StadiumBorder(),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
             backgroundColor: !widget.allowMultiSelect && widget.selectedItems.isNotEmpty ? widget.selectedItems.first.color.withAlpha(50) : null,
             foregroundColor: appColorScheme(context).onSurface,
             side: !widget.allowMultiSelect && widget.selectedItems.isNotEmpty ? BorderSide(color: widget.selectedItems.first.color) : null,
