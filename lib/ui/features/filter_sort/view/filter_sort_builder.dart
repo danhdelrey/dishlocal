@@ -1,5 +1,6 @@
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/filter_sort/bloc/filter_sort_bloc.dart';
+import 'package:dishlocal/ui/features/filter_sort/model/filter_sort_params.dart';
 import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
 import 'package:dishlocal/ui/features/filter_sort/model/price_range.dart';
 import 'package:dishlocal/ui/features/filter_sort/model/sort_option.dart';
@@ -10,17 +11,11 @@ class FilterSortBuilder extends StatelessWidget {
   const FilterSortBuilder({
     super.key,
     required this.builder,
-    this.initialCategories,
-    this.initialRange,
-    this.initialSort,
+    this.initialParams, // <-- Đổi thành initialParams
   });
 
-  /// Các lựa chọn ban đầu khi khởi tạo widget.
-  final Set<FoodCategory>? initialCategories;
-  final PriceRange? initialRange;
-  final SortOption? initialSort;
+  final FilterSortParams? initialParams; // <-- Đổi thành FilterSortParams
 
-  /// Hàm builder được gọi mỗi khi trạng thái thay đổi.
   final Widget Function(
     BuildContext context,
     FilterSortLoaded state,
@@ -32,18 +27,15 @@ class FilterSortBuilder extends StatelessWidget {
       create: (context) => getIt<FilterSortBloc>()
         ..add(
           FilterSortEvent.initialized(
-            initialCategories: initialCategories,
-            initialRange: initialRange,
-            initialSort: initialSort,
+            initialParams: initialParams, // <-- Truyền vào đây
           ),
         ),
       child: BlocBuilder<FilterSortBloc, FilterSortState>(
         builder: (context, state) {
           if (state is FilterSortLoaded) {
             return builder(context, state);
-          } else {
-            return const SizedBox.shrink();
           }
+          return const SizedBox.shrink();
         },
       ),
     );

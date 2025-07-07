@@ -55,7 +55,7 @@ class _ExpandableFoodCategoryChipSelectorState extends State<ExpandableFoodCateg
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         OutlinedButton.icon(
           onPressed: () => setState(() => _isExpanded = !_isExpanded),

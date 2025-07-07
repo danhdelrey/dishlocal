@@ -4,9 +4,7 @@ part of 'filter_sort_bloc.dart';
 class FilterSortEvent with _$FilterSortEvent {
   /// Khởi tạo BLoC với trạng thái ban đầu (có thể có hoặc không).
   const factory FilterSortEvent.initialized({
-    Set<FoodCategory>? initialCategories,
-    PriceRange? initialRange,
-    SortOption? initialSort,
+    FilterSortParams? initialParams,
   }) = _Initialized;
 
   /// Lật/tắt một danh mục thức ăn.
@@ -23,4 +21,6 @@ class FilterSortEvent with _$FilterSortEvent {
 
   /// Xóa tất cả các bộ lọc về trạng thái mặc định.
   const factory FilterSortEvent.filtersCleared() = _FiltersCleared;
+
+  const factory FilterSortEvent.filtersSubmitted() = _FiltersSubmitted;
 }

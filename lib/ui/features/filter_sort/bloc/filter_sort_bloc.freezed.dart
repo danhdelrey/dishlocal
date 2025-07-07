@@ -39,24 +39,9 @@ class $FilterSortEventCopyWith<$Res> {
 /// @nodoc
 
 class _Initialized implements FilterSortEvent {
-  const _Initialized(
-      {final Set<FoodCategory>? initialCategories,
-      this.initialRange,
-      this.initialSort})
-      : _initialCategories = initialCategories;
+  const _Initialized({this.initialParams});
 
-  final Set<FoodCategory>? _initialCategories;
-  Set<FoodCategory>? get initialCategories {
-    final value = _initialCategories;
-    if (value == null) return null;
-    if (_initialCategories is EqualUnmodifiableSetView)
-      return _initialCategories;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableSetView(value);
-  }
-
-  final PriceRange? initialRange;
-  final SortOption? initialSort;
+  final FilterSortParams? initialParams;
 
   /// Create a copy of FilterSortEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -70,24 +55,16 @@ class _Initialized implements FilterSortEvent {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _Initialized &&
-            const DeepCollectionEquality()
-                .equals(other._initialCategories, _initialCategories) &&
-            (identical(other.initialRange, initialRange) ||
-                other.initialRange == initialRange) &&
-            (identical(other.initialSort, initialSort) ||
-                other.initialSort == initialSort));
+            (identical(other.initialParams, initialParams) ||
+                other.initialParams == initialParams));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(_initialCategories),
-      initialRange,
-      initialSort);
+  int get hashCode => Object.hash(runtimeType, initialParams);
 
   @override
   String toString() {
-    return 'FilterSortEvent.initialized(initialCategories: $initialCategories, initialRange: $initialRange, initialSort: $initialSort)';
+    return 'FilterSortEvent.initialized(initialParams: $initialParams)';
   }
 }
 
@@ -98,12 +75,9 @@ abstract mixin class _$InitializedCopyWith<$Res>
           _Initialized value, $Res Function(_Initialized) _then) =
       __$InitializedCopyWithImpl;
   @useResult
-  $Res call(
-      {Set<FoodCategory>? initialCategories,
-      PriceRange? initialRange,
-      SortOption? initialSort});
+  $Res call({FilterSortParams? initialParams});
 
-  $SortOptionCopyWith<$Res>? get initialSort;
+  $FilterSortParamsCopyWith<$Res>? get initialParams;
 }
 
 /// @nodoc
@@ -117,23 +91,13 @@ class __$InitializedCopyWithImpl<$Res> implements _$InitializedCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? initialCategories = freezed,
-    Object? initialRange = freezed,
-    Object? initialSort = freezed,
+    Object? initialParams = freezed,
   }) {
     return _then(_Initialized(
-      initialCategories: freezed == initialCategories
-          ? _self._initialCategories
-          : initialCategories // ignore: cast_nullable_to_non_nullable
-              as Set<FoodCategory>?,
-      initialRange: freezed == initialRange
-          ? _self.initialRange
-          : initialRange // ignore: cast_nullable_to_non_nullable
-              as PriceRange?,
-      initialSort: freezed == initialSort
-          ? _self.initialSort
-          : initialSort // ignore: cast_nullable_to_non_nullable
-              as SortOption?,
+      initialParams: freezed == initialParams
+          ? _self.initialParams
+          : initialParams // ignore: cast_nullable_to_non_nullable
+              as FilterSortParams?,
     ));
   }
 
@@ -141,13 +105,13 @@ class __$InitializedCopyWithImpl<$Res> implements _$InitializedCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $SortOptionCopyWith<$Res>? get initialSort {
-    if (_self.initialSort == null) {
+  $FilterSortParamsCopyWith<$Res>? get initialParams {
+    if (_self.initialParams == null) {
       return null;
     }
 
-    return $SortOptionCopyWith<$Res>(_self.initialSort!, (value) {
-      return _then(_self.copyWith(initialSort: value));
+    return $FilterSortParamsCopyWith<$Res>(_self.initialParams!, (value) {
+      return _then(_self.copyWith(initialParams: value));
     });
   }
 }
@@ -398,6 +362,26 @@ class _FiltersCleared implements FilterSortEvent {
 }
 
 /// @nodoc
+
+class _FiltersSubmitted implements FilterSortEvent {
+  const _FiltersSubmitted();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _FiltersSubmitted);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'FilterSortEvent.filtersSubmitted()';
+  }
+}
+
+/// @nodoc
 mixin _$FilterSortState {
   @override
   bool operator ==(Object other) {
@@ -447,17 +431,14 @@ class FilterSortLoaded implements FilterSortState {
       {required final List<FoodCategory> allCategories,
       required final List<PriceRange> allRanges,
       required final List<SortOption> allSortOptions,
-      required final Set<FoodCategory> selectedCategories,
-      required this.selectedRange,
-      required this.selectedSortOption})
+      required this.currentParams})
       : _allCategories = allCategories,
         _allRanges = allRanges,
-        _allSortOptions = allSortOptions,
-        _selectedCategories = selectedCategories;
+        _allSortOptions = allSortOptions;
 
-// Dữ liệu đầy đủ để hiển thị
+// Dữ liệu tĩnh để hiển thị các lựa chọn trên UI
   final List<FoodCategory> _allCategories;
-// Dữ liệu đầy đủ để hiển thị
+// Dữ liệu tĩnh để hiển thị các lựa chọn trên UI
   List<FoodCategory> get allCategories {
     if (_allCategories is EqualUnmodifiableListView) return _allCategories;
     // ignore: implicit_dynamic_type
@@ -478,18 +459,8 @@ class FilterSortLoaded implements FilterSortState {
     return EqualUnmodifiableListView(_allSortOptions);
   }
 
-// Dữ liệu người dùng đã chọn
-  final Set<FoodCategory> _selectedCategories;
-// Dữ liệu người dùng đã chọn
-  Set<FoodCategory> get selectedCategories {
-    if (_selectedCategories is EqualUnmodifiableSetView)
-      return _selectedCategories;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableSetView(_selectedCategories);
-  }
-
-  final PriceRange? selectedRange;
-  final SortOption selectedSortOption;
+// MỚI: Một đối tượng duy nhất chứa tất cả các lựa chọn hiện tại
+  final FilterSortParams currentParams;
 
   /// Create a copy of FilterSortState
   /// with the given fields replaced by the non-null parameter values.
@@ -509,12 +480,8 @@ class FilterSortLoaded implements FilterSortState {
                 .equals(other._allRanges, _allRanges) &&
             const DeepCollectionEquality()
                 .equals(other._allSortOptions, _allSortOptions) &&
-            const DeepCollectionEquality()
-                .equals(other._selectedCategories, _selectedCategories) &&
-            (identical(other.selectedRange, selectedRange) ||
-                other.selectedRange == selectedRange) &&
-            (identical(other.selectedSortOption, selectedSortOption) ||
-                other.selectedSortOption == selectedSortOption));
+            (identical(other.currentParams, currentParams) ||
+                other.currentParams == currentParams));
   }
 
   @override
@@ -523,13 +490,11 @@ class FilterSortLoaded implements FilterSortState {
       const DeepCollectionEquality().hash(_allCategories),
       const DeepCollectionEquality().hash(_allRanges),
       const DeepCollectionEquality().hash(_allSortOptions),
-      const DeepCollectionEquality().hash(_selectedCategories),
-      selectedRange,
-      selectedSortOption);
+      currentParams);
 
   @override
   String toString() {
-    return 'FilterSortState.loaded(allCategories: $allCategories, allRanges: $allRanges, allSortOptions: $allSortOptions, selectedCategories: $selectedCategories, selectedRange: $selectedRange, selectedSortOption: $selectedSortOption)';
+    return 'FilterSortState.loaded(allCategories: $allCategories, allRanges: $allRanges, allSortOptions: $allSortOptions, currentParams: $currentParams)';
   }
 }
 
@@ -544,11 +509,9 @@ abstract mixin class $FilterSortLoadedCopyWith<$Res>
       {List<FoodCategory> allCategories,
       List<PriceRange> allRanges,
       List<SortOption> allSortOptions,
-      Set<FoodCategory> selectedCategories,
-      PriceRange? selectedRange,
-      SortOption selectedSortOption});
+      FilterSortParams currentParams});
 
-  $SortOptionCopyWith<$Res> get selectedSortOption;
+  $FilterSortParamsCopyWith<$Res> get currentParams;
 }
 
 /// @nodoc
@@ -566,9 +529,7 @@ class _$FilterSortLoadedCopyWithImpl<$Res>
     Object? allCategories = null,
     Object? allRanges = null,
     Object? allSortOptions = null,
-    Object? selectedCategories = null,
-    Object? selectedRange = freezed,
-    Object? selectedSortOption = null,
+    Object? currentParams = null,
   }) {
     return _then(FilterSortLoaded(
       allCategories: null == allCategories
@@ -583,18 +544,10 @@ class _$FilterSortLoadedCopyWithImpl<$Res>
           ? _self._allSortOptions
           : allSortOptions // ignore: cast_nullable_to_non_nullable
               as List<SortOption>,
-      selectedCategories: null == selectedCategories
-          ? _self._selectedCategories
-          : selectedCategories // ignore: cast_nullable_to_non_nullable
-              as Set<FoodCategory>,
-      selectedRange: freezed == selectedRange
-          ? _self.selectedRange
-          : selectedRange // ignore: cast_nullable_to_non_nullable
-              as PriceRange?,
-      selectedSortOption: null == selectedSortOption
-          ? _self.selectedSortOption
-          : selectedSortOption // ignore: cast_nullable_to_non_nullable
-              as SortOption,
+      currentParams: null == currentParams
+          ? _self.currentParams
+          : currentParams // ignore: cast_nullable_to_non_nullable
+              as FilterSortParams,
     ));
   }
 
@@ -602,9 +555,9 @@ class _$FilterSortLoadedCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $SortOptionCopyWith<$Res> get selectedSortOption {
-    return $SortOptionCopyWith<$Res>(_self.selectedSortOption, (value) {
-      return _then(_self.copyWith(selectedSortOption: value));
+  $FilterSortParamsCopyWith<$Res> get currentParams {
+    return $FilterSortParamsCopyWith<$Res>(_self.currentParams, (value) {
+      return _then(_self.copyWith(currentParams: value));
     });
   }
 }
