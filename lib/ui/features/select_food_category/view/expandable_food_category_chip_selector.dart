@@ -1,24 +1,18 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
-import 'package:dishlocal/ui/features/select_food_category/view/animated_category_chip.dart';
+import 'package:dishlocal/ui/features/select_food_category/view/animated_chip.dart';
 import 'package:flutter/material.dart';
 
 class ExpandableFoodCategoryChipSelector extends StatefulWidget {
   final String title;
   final List<FoodCategory> items;
-  final bool allowMultiSelect;
 
   // ----- THAY ĐỔI -----
   // Nhận các mục đã chọn từ bên ngoài (từ BLoC state)
   final Set<FoodCategory> selectedItems;
   // Nhận callback để xử lý khi một mục được nhấn
   final ValueChanged<FoodCategory> onCategoryTapped;
-  // Nhận callback cho nút "Chọn tất cả"
-  final VoidCallback? onSelectAllTapped;
   // -----------------
-
-  final String? selectAllText;
-  final Color? selectAllColor;
 
   const ExpandableFoodCategoryChipSelector({
     super.key,
@@ -26,10 +20,6 @@ class ExpandableFoodCategoryChipSelector extends StatefulWidget {
     required this.items,
     required this.selectedItems, // Bắt buộc
     required this.onCategoryTapped, // Bắt buộc
-    this.onSelectAllTapped,
-    this.allowMultiSelect = false,
-    this.selectAllText,
-    this.selectAllColor,
   });
 
   @override
@@ -45,13 +35,11 @@ class _ExpandableFoodCategoryChipSelectorState extends State<ExpandableFoodCateg
   @override
   Widget build(BuildContext context) {
     final String buttonLabel;
-    if (!widget.allowMultiSelect && widget.selectedItems.isNotEmpty) {
+    if (widget.selectedItems.isNotEmpty) {
       buttonLabel = widget.selectedItems.first.label;
     } else {
       buttonLabel = '${widget.title} (Đã chọn ${widget.selectedItems.length})';
     }
-
-    final isAllSelected = widget.allowMultiSelect && widget.items.isNotEmpty && widget.selectedItems.length == widget.items.length;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -66,9 +54,9 @@ class _ExpandableFoodCategoryChipSelectorState extends State<ExpandableFoodCateg
           ),
           style: ElevatedButton.styleFrom(
             shape: const StadiumBorder(),
-            backgroundColor: !widget.allowMultiSelect && widget.selectedItems.isNotEmpty ? widget.selectedItems.first.color.withAlpha(50) : null,
+            backgroundColor: widget.selectedItems.isNotEmpty ? widget.selectedItems.first.color.withAlpha(50) : null,
             foregroundColor: appColorScheme(context).onSurface,
-            side: !widget.allowMultiSelect && widget.selectedItems.isNotEmpty ? BorderSide(color: widget.selectedItems.first.color) : null,
+            side: widget.selectedItems.isNotEmpty ? BorderSide(color: widget.selectedItems.first.color) : null,
           ),
         ),
         AnimatedSwitcher(
@@ -86,17 +74,9 @@ class _ExpandableFoodCategoryChipSelectorState extends State<ExpandableFoodCateg
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      if (widget.allowMultiSelect && widget.selectAllText != null)
-                        AnimatedCategoryChip(
-                          label: widget.selectAllText!,
-                          isSelected: isAllSelected,
-                          color: widget.selectAllColor ?? Colors.indigo,
-                          // ----- THAY ĐỔI -----
-                          onSelected: (_) => widget.onSelectAllTapped?.call(),
-                        ),
                       ...widget.items.map((category) {
                         final isSelected = widget.selectedItems.contains(category);
-                        return AnimatedCategoryChip(
+                        return AnimatedChip(
                           label: category.label,
                           isSelected: isSelected,
                           color: category.color,

@@ -268,16 +268,10 @@ class _NewPostPageState extends State<NewPostPage> {
                                           ExpandableFoodCategoryChipSelector(
                                             title: '📋 Chọn loại món',
                                             items: allCategories,
-                                            allowMultiSelect: allowMultiSelect,
                                             selectedItems: selectedCategories,
                                             onCategoryTapped: (category) {
                                               context.read<SelectFoodCategoryBloc>().add(SelectFoodCategoryEvent.categoryToggled(category));
                                             },
-                                            onSelectAllTapped: () {
-                                              context.read<SelectFoodCategoryBloc>().add(const SelectFoodCategoryEvent.allToggled());
-                                            },
-                                            selectAllText: '📋 Tất cả',
-                                            selectAllColor: Colors.indigo,
                                           ),
                                           const SizedBox(height: 20),
                                           AppTextField(

@@ -183,26 +183,6 @@ class __$CategoryToggledCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _AllCategoriesToggled implements FilterSortEvent {
-  const _AllCategoriesToggled();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _AllCategoriesToggled);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() {
-    return 'FilterSortEvent.allCategoriesToggled()';
-  }
-}
-
-/// @nodoc
-
 class _PriceRangeToggled implements FilterSortEvent {
   const _PriceRangeToggled(this.range);
 

@@ -18,7 +18,6 @@ class FilterSortBloc extends Bloc<FilterSortEvent, FilterSortState> {
   FilterSortBloc() : super(const FilterSortState.initial()) {
     on<_Initialized>(_onInitialized);
     on<_CategoryToggled>(_onCategoryToggled);
-    on<_AllCategoriesToggled>(_onAllCategoriesToggled);
     on<_PriceRangeToggled>(_onPriceRangeToggled);
     on<_SortOptionSelected>(_onSortOptionSelected);
     on<_SortDirectionToggled>(_onSortDirectionToggled);
@@ -57,17 +56,6 @@ class FilterSortBloc extends Bloc<FilterSortEvent, FilterSortState> {
     }
   }
 
-  void _onAllCategoriesToggled(_AllCategoriesToggled event, Emitter<FilterSortState> emit) {
-    if (state is FilterSortLoaded) {
-      final currentState = state as FilterSortLoaded;
-      final isAllSelected = currentState.currentParams.categories.length == currentState.allCategories.length;
-      final newSelection = isAllSelected ? <FoodCategory>{} : Set<FoodCategory>.from(currentState.allCategories);
-
-      emit(currentState.copyWith(
-        currentParams: currentState.currentParams.copyWith(categories: newSelection),
-      ));
-    }
-  }
 
   void _onPriceRangeToggled(_PriceRangeToggled event, Emitter<FilterSortState> emit) {
     if (state is FilterSortLoaded) {
@@ -135,8 +123,7 @@ class FilterSortBloc extends Bloc<FilterSortEvent, FilterSortState> {
   ) {
     if (state is FilterSortLoaded) {
       final currentState = state as FilterSortLoaded;
-      // Freezed tự động tạo phương thức toString() rất đẹp!
-      _log.info('Filters Submitted: ${currentState.currentParams}');
+      _log.info(currentState.currentParams.toVietnameseString);
     }
   }
 

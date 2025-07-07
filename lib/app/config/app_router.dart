@@ -28,7 +28,6 @@ class AppRouter {
 
   late final router = GoRouter(
     initialLocation: '/sorting',
-    debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: _redirect,
     routes: [

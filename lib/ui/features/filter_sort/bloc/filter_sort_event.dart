@@ -10,8 +10,6 @@ class FilterSortEvent with _$FilterSortEvent {
   /// Lật/tắt một danh mục thức ăn.
   const factory FilterSortEvent.categoryToggled(FoodCategory category) = _CategoryToggled;
 
-  /// Lật/tắt nút "Chọn tất cả" cho danh mục.
-  const factory FilterSortEvent.allCategoriesToggled() = _AllCategoriesToggled;
 
   /// Lật/tắt một khoảng giá.
   const factory FilterSortEvent.priceRangeToggled(PriceRange range) = _PriceRangeToggled;

@@ -1,13 +1,13 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:flutter/material.dart';
 
-class AnimatedCategoryChip extends StatefulWidget {
+class AnimatedChip extends StatefulWidget {
   final String label;
   final bool isSelected;
   final Color color;
   final ValueChanged<bool> onSelected;
 
-  const AnimatedCategoryChip({
+  const AnimatedChip({
     super.key,
     required this.label,
     required this.isSelected,
@@ -16,10 +16,10 @@ class AnimatedCategoryChip extends StatefulWidget {
   });
 
   @override
-  State<AnimatedCategoryChip> createState() => _AnimatedCategoryChipState();
+  State<AnimatedChip> createState() => _AnimatedChipState();
 }
 
-class _AnimatedCategoryChipState extends State<AnimatedCategoryChip> {
+class _AnimatedChipState extends State<AnimatedChip> {
   double _scale = 1.0;
 
   void _onTapDown(TapDownDetails details) => setState(() => _scale = 0.95);

@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'dart:developer' as developer;
 
 import 'package:dishlocal/core/app_environment/app_environment.dart';
+import 'package:flutter/foundation.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -127,20 +129,26 @@ class _MyAppState extends State<MyApp> {
 }
 
 void _setupLogging() {
-  Logger.root.level = Level.ALL;
-  Logger.root.onRecord.listen((record) {
-    // Tự thêm record.time vào chuỗi message chính
-    final message = '[${record.level.name}] '
-        '${record.time.toIso8601String().substring(11, 23)} ----- ' // Định dạng giờ:phút:giây.mili
-        '${record.message} -----';
+  // Chỉ chạy trong chế độ debug
+  if (kDebugMode) {
+    Logger.root.level = Level.ALL;
 
-    log(
-      message, // Message đã được định dạng đầy đủ
-      time: record.time, // Vẫn gửi time để DevTools hiển thị đúng
-      level: record.level.value,
-      name: record.loggerName,
-      error: record.error,
-      stackTrace: record.stackTrace,
-    );
-  });
+    Logger.root.onRecord.listen((record) {
+      // THAY ĐỔI CỐT LÕI:
+      // Thay vì dùng debugPrint, chúng ta sẽ trực tiếp sử dụng hàm log()
+      // từ dart:developer. Đây là kênh giao tiếp chuẩn với các công cụ
+      // debug của Flutter và sẽ đảm bảo log không bị lặp lại.
+
+      developer.log(
+        record.message, // Nội dung chính của log
+        name: record.loggerName, // Tên logger (ví dụ: 'FilterSortBloc')
+        level: record.level.value, // Cấp độ log (INFO=800, WARNING=900, ...)
+        error: record.error, // Đối tượng lỗi (nếu có)
+        stackTrace: record.stackTrace, // Stack trace (nếu có)
+      );
+    });
+  } else {
+    // Trong chế độ release, tắt hết logging để tối ưu hiệu năng
+    Logger.root.level = Level.OFF;
+  }
 }

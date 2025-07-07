@@ -121,16 +121,7 @@ class SortingBottomSheet extends StatelessWidget {
           spacing: 8.0,
           runSpacing: 8.0,
           children: [
-            // Nút "Tất cả loại món"
-            _buildChoiceChip(
-              label: 'Tất cả loại món',
-              isSelected: state.allCategories.isNotEmpty && state.currentParams.categories.length == state.allCategories.length,
-              onSelected: (_) => bloc.add(const FilterSortEvent.allCategoriesToggled()),
-              colorScheme: Theme.of(context).colorScheme,
-              appColors: appColorScheme(context),
-            ),
-            // Các chip loại món
-            ...state.allCategories.map((category) {
+              ...state.allCategories.map((category) {
               final isSelected = state.currentParams.categories.contains(category);
               return _buildChoiceChip(
                 label: category.label,

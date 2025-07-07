@@ -15,7 +15,6 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$FilterSortParams {
-  /// Các danh mục món ăn đã chọn. Mặc định là một Set rỗng.
   Set<FoodCategory> get categories;
 
   /// Khoảng giá đã chọn. Có thể là null nếu không chọn.
@@ -127,18 +126,16 @@ class _$FilterSortParamsCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _FilterSortParams implements FilterSortParams {
+class _FilterSortParams extends FilterSortParams {
   const _FilterSortParams(
       {final Set<FoodCategory> categories = const {},
       this.range,
       this.distance,
       this.sortOption = SortOption.defaultSort})
-      : _categories = categories;
+      : _categories = categories,
+        super._();
 
-  /// Các danh mục món ăn đã chọn. Mặc định là một Set rỗng.
   final Set<FoodCategory> _categories;
-
-  /// Các danh mục món ăn đã chọn. Mặc định là một Set rỗng.
   @override
   @JsonKey()
   Set<FoodCategory> get categories {
