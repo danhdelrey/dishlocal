@@ -100,6 +100,7 @@ class SortingBottomSheet extends StatelessWidget {
                             title: '📋 Loại món',
                             children: state.allCategories.map((category) {
                               return _buildChoiceChip(
+                                itemColor: category.color,
                                 context: context,
                                 label: category.label,
                                 isSelected: state.currentParams.categories.contains(category),
@@ -114,6 +115,7 @@ class SortingBottomSheet extends StatelessWidget {
                             title: '💰 Mức giá',
                             children: state.allRanges.map((range) {
                               return _buildChoiceChip(
+                                itemColor: Colors.amber,
                                 context: context,
                                 label: range.displayName,
                                 isSelected: state.currentParams.range == range,
@@ -203,6 +205,7 @@ class SortingBottomSheet extends StatelessWidget {
     required String label,
     required bool isSelected,
     required void Function(bool) onSelected,
+    Color? itemColor,
   }) {
     return GlassContainer(
       borderRadius: 12,
@@ -212,11 +215,11 @@ class SortingBottomSheet extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? appColorScheme(context).primary : Colors.transparent,
+            color: isSelected ? itemColor?.withValues(alpha: 0.5) ?? appColorScheme(context).primary : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: isSelected
                 ? Border.all(
-                    color: appColorScheme(context).primary,
+                    color: itemColor ?? appColorScheme(context).primary,
                     width: 1,
                   )
                 : Border.all(
@@ -227,7 +230,7 @@ class SortingBottomSheet extends StatelessWidget {
           child: Text(
             label,
             style: appTextTheme(context).labelMedium?.copyWith(
-                  color: isSelected ? appColorScheme(context).onPrimary : appColorScheme(context).onSurface,
+                  color: isSelected ? (itemColor != null ? appColorScheme(context).onSurface : appColorScheme(context).onPrimary) : appColorScheme(context).onSurface,
                 ),
           ),
         ),
