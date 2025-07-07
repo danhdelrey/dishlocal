@@ -1,5 +1,4 @@
 import 'package:dishlocal/app/theme/theme.dart';
-import 'package:dishlocal/ui/features/select_food_category/view/expandable_chip_selector.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedCategoryChip extends StatefulWidget {

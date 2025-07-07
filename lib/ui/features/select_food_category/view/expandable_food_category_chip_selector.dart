@@ -3,7 +3,7 @@ import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/animated_category_chip.dart';
 import 'package:flutter/material.dart';
 
-class ExpandableChipSelector extends StatefulWidget {
+class ExpandableFoodCategoryChipSelector extends StatefulWidget {
   final String title;
   final List<FoodCategory> items;
   final bool allowMultiSelect;
@@ -20,7 +20,7 @@ class ExpandableChipSelector extends StatefulWidget {
   final String? selectAllText;
   final Color? selectAllColor;
 
-  const ExpandableChipSelector({
+  const ExpandableFoodCategoryChipSelector({
     super.key,
     required this.title,
     required this.items,
@@ -33,10 +33,10 @@ class ExpandableChipSelector extends StatefulWidget {
   });
 
   @override
-  State<ExpandableChipSelector> createState() => _ExpandableChipSelectorState();
+  State<ExpandableFoodCategoryChipSelector> createState() => _ExpandableFoodCategoryChipSelectorState();
 }
 
-class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
+class _ExpandableFoodCategoryChipSelectorState extends State<ExpandableFoodCategoryChipSelector> {
   // Không cần `_selectedItems` nữa, vì trạng thái được quản lý từ bên ngoài
   bool _isExpanded = false;
 

@@ -11,7 +11,7 @@ import 'package:dishlocal/ui/features/create_post/form_input/dish_name_input.dar
 import 'package:dishlocal/ui/features/create_post/form_input/exact_address_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/money_input.dart';
 import 'package:dishlocal/ui/features/select_food_category/bloc/select_food_category_bloc.dart';
-import 'package:dishlocal/ui/features/select_food_category/view/expandable_chip_selector.dart';
+import 'package:dishlocal/ui/features/select_food_category/view/expandable_food_category_chip_selector.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/food_category_builder.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
@@ -265,7 +265,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                       padding: const EdgeInsets.symmetric(horizontal: 15),
                                       child: Column(
                                         children: [
-                                          ExpandableChipSelector(
+                                          ExpandableFoodCategoryChipSelector(
                                             title: '📋 Chọn loại món',
                                             items: allCategories,
                                             allowMultiSelect: allowMultiSelect,
