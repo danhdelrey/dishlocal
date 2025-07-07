@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/ui/features/filter_sort/view/sorting_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 
 class FilterButton extends StatelessWidget {
@@ -14,22 +15,21 @@ class FilterButton extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: hasActiveFilters ? appColorScheme(context).primary.withOpacity(0.1) : appColorScheme(context).surfaceContainerHighest.withOpacity(0.5),
         borderRadius: BorderRadius.circular(12),
         elevation: 1,
         child: InkWell(
           onTap: () {
-            // Mở bộ lọc
+            SortingBottomSheet.show(context);
           },
           borderRadius: BorderRadius.circular(12),
-          splashColor: appColorScheme(context).primary.withOpacity(0.1),
+          splashColor: appColorScheme(context).primary.withValues(alpha: 0.1),
           highlightColor: Colors.transparent,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).outline.withOpacity(0.2),
+                color: hasActiveFilters ? appColorScheme(context).primary : Colors.white.withValues(alpha: 0.1),
               ),
             ),
             child: Row(
@@ -60,10 +60,9 @@ class FilterButton extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   hasActiveFilters ? 'Bộ lọc (đã áp dụng)' : 'Bộ lọc',
-                  style: TextStyle(
-                    color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: appTextTheme(context).labelLarge?.copyWith(
+                        color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurface,
+                      ),
                 ),
               ],
             ),

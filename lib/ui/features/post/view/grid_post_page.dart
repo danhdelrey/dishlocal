@@ -23,7 +23,6 @@ class GridPostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool hasActiveFilters = true; // Giả sử bạn có một biến để kiểm tra bộ lọc
     return RefreshIndicator(
       onRefresh: onRefresh, // Gọi callback onRefresh
       child: Padding(
@@ -31,8 +30,8 @@ class GridPostPage extends StatelessWidget {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
           slivers: [
-            SliverToBoxAdapter(
-              child: FilterButton(hasActiveFilters: hasActiveFilters),
+            const SliverToBoxAdapter(
+              child: FilterButton(hasActiveFilters: true),
             ),
             PagedSliverMasonryGrid<dynamic, Post>(
               // Dùng state và callback được truyền vào

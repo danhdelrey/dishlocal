@@ -39,9 +39,11 @@ class SortingBottomSheet extends StatelessWidget {
           ),
           child: GlassContainer(
             borderRadius: 30,
+            blur: 50,
             radiusBottomLeft: false,
             radiusBottomRight: false,
-            backgroundColor: appColorScheme(context).surface,
+            backgroundColor: Colors.black,
+            backgroundAlpha: 0.5,
             child: Scaffold(
               extendBodyBehindAppBar: true,
               backgroundColor: Colors.transparent,
@@ -143,7 +145,7 @@ class SortingBottomSheet extends StatelessWidget {
                           // --- Section Sắp xếp (được xử lý riêng do có logic phức tạp hơn) ---
                           _buildSortSection(context, state, bloc),
 
-                          const SizedBox(height: 32),
+                          const SizedBox(height: kBottomNavigationBarHeight + 16),
                         ],
                       ),
                     ),
@@ -217,6 +219,7 @@ class SortingBottomSheet extends StatelessWidget {
   }) {
     return GlassContainer(
       borderRadius: 12,
+      blur: 0,
       child: InkWell(
         onTap: () => onSelected(!isSelected),
         borderRadius: BorderRadius.circular(12),
