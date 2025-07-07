@@ -47,7 +47,9 @@ class SortingBottomSheet extends StatelessWidget {
                       _buildDivider(),
                       _buildPriceSection(state, bloc, textTheme, colorScheme, appColors),
                       _buildDivider(),
-                      _buildSortSection(state, bloc, textTheme, colorScheme, appColors),
+                      _buildDistanceRangeSection(state, bloc, textTheme, colorScheme),
+                      _buildDivider(),
+                      _buildSortSection(state, bloc, textTheme, colorScheme),
                       const SizedBox(height: 32),
                     ],
                   ),
@@ -156,34 +158,110 @@ class SortingBottomSheet extends StatelessWidget {
     );
   }
 
+  Widget _buildDistanceRangeSection(
+    FilterSortLoaded state,
+    FilterSortBloc bloc,
+    TextTheme textTheme,
+    ColorScheme colorScheme,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('📍 Khoảng cách', textTheme),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: state.allDistances.map((distance) {
+            final isSelected = state.currentParams.distance == distance;
+            return ChoiceChip(
+              label: Text(distance.displayName),
+              labelStyle: TextStyle(
+                color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+              selected: isSelected,
+              onSelected: (_) {
+                bloc.add(FilterSortEvent.distanceRangeToggled(distance));
+              },
+              selectedColor: colorScheme.primary,
+              backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              side: isSelected ? BorderSide.none : BorderSide(color: colorScheme.outline.withOpacity(0.5)),
+              showCheckmark: false,
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
   Widget _buildSortSection(
     FilterSortLoaded state,
     FilterSortBloc bloc,
     TextTheme textTheme,
     ColorScheme colorScheme,
-    dynamic appColors,
   ) {
+    // Lấy tùy chọn sắp xếp hiện tại
+    final currentSortOption = state.currentParams.sortOption;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('📊 Sắp xếp theo', textTheme),
-        const SizedBox(height: 16),
+        // Tiêu đề và nút đảo chiều
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSectionTitle('📊 Sắp xếp theo', textTheme),
+
+            // Chỉ hiển thị nút đảo chiều nếu trường hiện tại hỗ trợ
+            if (currentSortOption.isReversible)
+              TextButton.icon(
+                onPressed: () {
+                  bloc.add(const FilterSortEvent.sortDirectionToggled());
+                },
+                icon: Icon(
+                  currentSortOption.direction == SortDirection.desc ? Icons.arrow_downward : Icons.arrow_upward,
+                  size: 16,
+                ),
+                label: Text(
+                  currentSortOption.direction == SortDirection.desc ? 'Giảm dần' : 'Tăng dần',
+                ),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Các lựa chọn trường sắp xếp
         Wrap(
           spacing: 8.0,
           runSpacing: 8.0,
-          children: state.allSortOptions.map((option) {
-            final isSelected = state.currentParams.sortOption == option;
-            return _buildChoiceChip(
-              label: option.displayName,
-              isSelected: isSelected,
+          children: SortOption.uniqueFields.map((field) {
+            final isSelected = currentSortOption.field == field;
+
+            return ChoiceChip(
+              label: Text('${field.icon} ${field.label}'),
+              labelStyle: TextStyle(
+                color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+              selected: isSelected,
               onSelected: (_) {
                 if (!isSelected) {
-                  bloc.add(FilterSortEvent.sortOptionSelected(option));
+                  // Khi chọn một field mới, BLoC sẽ tự động chọn chiều mặc định.
+                  // Chúng ta chỉ cần gửi một SortOption với field đó.
+                  bloc.add(FilterSortEvent.sortOptionSelected(
+                    SortOption(field: field, direction: SortDirection.desc), // direction ở đây không quá quan trọng
+                  ));
                 }
               },
-              colorScheme: colorScheme,
-              appColors: appColors,
-              showCheckIcon: true,
+              selectedColor: colorScheme.primary,
+              backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              side: isSelected ? BorderSide.none : BorderSide(color: colorScheme.outline.withOpacity(0.5)),
+              showCheckmark: false,
             );
           }).toList(),
         ),

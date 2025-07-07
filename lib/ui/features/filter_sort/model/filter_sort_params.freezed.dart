@@ -20,6 +20,7 @@ mixin _$FilterSortParams {
 
   /// Khoảng giá đã chọn. Có thể là null nếu không chọn.
   PriceRange? get range;
+  DistanceRange? get distance;
 
   /// Tùy chọn sắp xếp. Luôn có giá trị, mặc định là sắp xếp theo ngày đăng mới nhất.
   SortOption get sortOption;
@@ -40,17 +41,23 @@ mixin _$FilterSortParams {
             const DeepCollectionEquality()
                 .equals(other.categories, categories) &&
             (identical(other.range, range) || other.range == range) &&
+            (identical(other.distance, distance) ||
+                other.distance == distance) &&
             (identical(other.sortOption, sortOption) ||
                 other.sortOption == sortOption));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(categories), range, sortOption);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(categories),
+      range,
+      distance,
+      sortOption);
 
   @override
   String toString() {
-    return 'FilterSortParams(categories: $categories, range: $range, sortOption: $sortOption)';
+    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption)';
   }
 }
 
@@ -61,7 +68,10 @@ abstract mixin class $FilterSortParamsCopyWith<$Res> {
       _$FilterSortParamsCopyWithImpl;
   @useResult
   $Res call(
-      {Set<FoodCategory> categories, PriceRange? range, SortOption sortOption});
+      {Set<FoodCategory> categories,
+      PriceRange? range,
+      DistanceRange? distance,
+      SortOption sortOption});
 
   $SortOptionCopyWith<$Res> get sortOption;
 }
@@ -81,6 +91,7 @@ class _$FilterSortParamsCopyWithImpl<$Res>
   $Res call({
     Object? categories = null,
     Object? range = freezed,
+    Object? distance = freezed,
     Object? sortOption = null,
   }) {
     return _then(_self.copyWith(
@@ -92,6 +103,10 @@ class _$FilterSortParamsCopyWithImpl<$Res>
           ? _self.range
           : range // ignore: cast_nullable_to_non_nullable
               as PriceRange?,
+      distance: freezed == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as DistanceRange?,
       sortOption: null == sortOption
           ? _self.sortOption
           : sortOption // ignore: cast_nullable_to_non_nullable
@@ -116,6 +131,7 @@ class _FilterSortParams implements FilterSortParams {
   const _FilterSortParams(
       {final Set<FoodCategory> categories = const {},
       this.range,
+      this.distance,
       this.sortOption = SortOption.defaultSort})
       : _categories = categories;
 
@@ -134,6 +150,8 @@ class _FilterSortParams implements FilterSortParams {
   /// Khoảng giá đã chọn. Có thể là null nếu không chọn.
   @override
   final PriceRange? range;
+  @override
+  final DistanceRange? distance;
 
   /// Tùy chọn sắp xếp. Luôn có giá trị, mặc định là sắp xếp theo ngày đăng mới nhất.
   @override
@@ -156,17 +174,23 @@ class _FilterSortParams implements FilterSortParams {
             const DeepCollectionEquality()
                 .equals(other._categories, _categories) &&
             (identical(other.range, range) || other.range == range) &&
+            (identical(other.distance, distance) ||
+                other.distance == distance) &&
             (identical(other.sortOption, sortOption) ||
                 other.sortOption == sortOption));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_categories), range, sortOption);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_categories),
+      range,
+      distance,
+      sortOption);
 
   @override
   String toString() {
-    return 'FilterSortParams(categories: $categories, range: $range, sortOption: $sortOption)';
+    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption)';
   }
 }
 
@@ -179,7 +203,10 @@ abstract mixin class _$FilterSortParamsCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Set<FoodCategory> categories, PriceRange? range, SortOption sortOption});
+      {Set<FoodCategory> categories,
+      PriceRange? range,
+      DistanceRange? distance,
+      SortOption sortOption});
 
   @override
   $SortOptionCopyWith<$Res> get sortOption;
@@ -200,6 +227,7 @@ class __$FilterSortParamsCopyWithImpl<$Res>
   $Res call({
     Object? categories = null,
     Object? range = freezed,
+    Object? distance = freezed,
     Object? sortOption = null,
   }) {
     return _then(_FilterSortParams(
@@ -211,6 +239,10 @@ class __$FilterSortParamsCopyWithImpl<$Res>
           ? _self.range
           : range // ignore: cast_nullable_to_non_nullable
               as PriceRange?,
+      distance: freezed == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as DistanceRange?,
       sortOption: null == sortOption
           ? _self.sortOption
           : sortOption // ignore: cast_nullable_to_non_nullable

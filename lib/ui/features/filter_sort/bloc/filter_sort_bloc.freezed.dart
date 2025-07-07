@@ -343,6 +343,92 @@ class __$SortOptionSelectedCopyWithImpl<$Res>
 
 /// @nodoc
 
+class _SortDirectionToggled implements FilterSortEvent {
+  const _SortDirectionToggled();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _SortDirectionToggled);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'FilterSortEvent.sortDirectionToggled()';
+  }
+}
+
+/// @nodoc
+
+class _DistanceRangeToggled implements FilterSortEvent {
+  const _DistanceRangeToggled(this.distance);
+
+  final DistanceRange distance;
+
+  /// Create a copy of FilterSortEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$DistanceRangeToggledCopyWith<_DistanceRangeToggled> get copyWith =>
+      __$DistanceRangeToggledCopyWithImpl<_DistanceRangeToggled>(
+          this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _DistanceRangeToggled &&
+            (identical(other.distance, distance) ||
+                other.distance == distance));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, distance);
+
+  @override
+  String toString() {
+    return 'FilterSortEvent.distanceRangeToggled(distance: $distance)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$DistanceRangeToggledCopyWith<$Res>
+    implements $FilterSortEventCopyWith<$Res> {
+  factory _$DistanceRangeToggledCopyWith(_DistanceRangeToggled value,
+          $Res Function(_DistanceRangeToggled) _then) =
+      __$DistanceRangeToggledCopyWithImpl;
+  @useResult
+  $Res call({DistanceRange distance});
+}
+
+/// @nodoc
+class __$DistanceRangeToggledCopyWithImpl<$Res>
+    implements _$DistanceRangeToggledCopyWith<$Res> {
+  __$DistanceRangeToggledCopyWithImpl(this._self, this._then);
+
+  final _DistanceRangeToggled _self;
+  final $Res Function(_DistanceRangeToggled) _then;
+
+  /// Create a copy of FilterSortEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? distance = null,
+  }) {
+    return _then(_DistanceRangeToggled(
+      null == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as DistanceRange,
+    ));
+  }
+}
+
+/// @nodoc
+
 class _FiltersCleared implements FilterSortEvent {
   const _FiltersCleared();
 
@@ -431,10 +517,12 @@ class FilterSortLoaded implements FilterSortState {
       {required final List<FoodCategory> allCategories,
       required final List<PriceRange> allRanges,
       required final List<SortOption> allSortOptions,
+      required final List<DistanceRange> allDistances,
       required this.currentParams})
       : _allCategories = allCategories,
         _allRanges = allRanges,
-        _allSortOptions = allSortOptions;
+        _allSortOptions = allSortOptions,
+        _allDistances = allDistances;
 
 // Dữ liệu tĩnh để hiển thị các lựa chọn trên UI
   final List<FoodCategory> _allCategories;
@@ -459,6 +547,13 @@ class FilterSortLoaded implements FilterSortState {
     return EqualUnmodifiableListView(_allSortOptions);
   }
 
+  final List<DistanceRange> _allDistances;
+  List<DistanceRange> get allDistances {
+    if (_allDistances is EqualUnmodifiableListView) return _allDistances;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_allDistances);
+  }
+
 // MỚI: Một đối tượng duy nhất chứa tất cả các lựa chọn hiện tại
   final FilterSortParams currentParams;
 
@@ -480,6 +575,8 @@ class FilterSortLoaded implements FilterSortState {
                 .equals(other._allRanges, _allRanges) &&
             const DeepCollectionEquality()
                 .equals(other._allSortOptions, _allSortOptions) &&
+            const DeepCollectionEquality()
+                .equals(other._allDistances, _allDistances) &&
             (identical(other.currentParams, currentParams) ||
                 other.currentParams == currentParams));
   }
@@ -490,11 +587,12 @@ class FilterSortLoaded implements FilterSortState {
       const DeepCollectionEquality().hash(_allCategories),
       const DeepCollectionEquality().hash(_allRanges),
       const DeepCollectionEquality().hash(_allSortOptions),
+      const DeepCollectionEquality().hash(_allDistances),
       currentParams);
 
   @override
   String toString() {
-    return 'FilterSortState.loaded(allCategories: $allCategories, allRanges: $allRanges, allSortOptions: $allSortOptions, currentParams: $currentParams)';
+    return 'FilterSortState.loaded(allCategories: $allCategories, allRanges: $allRanges, allSortOptions: $allSortOptions, allDistances: $allDistances, currentParams: $currentParams)';
   }
 }
 
@@ -509,6 +607,7 @@ abstract mixin class $FilterSortLoadedCopyWith<$Res>
       {List<FoodCategory> allCategories,
       List<PriceRange> allRanges,
       List<SortOption> allSortOptions,
+      List<DistanceRange> allDistances,
       FilterSortParams currentParams});
 
   $FilterSortParamsCopyWith<$Res> get currentParams;
@@ -529,6 +628,7 @@ class _$FilterSortLoadedCopyWithImpl<$Res>
     Object? allCategories = null,
     Object? allRanges = null,
     Object? allSortOptions = null,
+    Object? allDistances = null,
     Object? currentParams = null,
   }) {
     return _then(FilterSortLoaded(
@@ -544,6 +644,10 @@ class _$FilterSortLoadedCopyWithImpl<$Res>
           ? _self._allSortOptions
           : allSortOptions // ignore: cast_nullable_to_non_nullable
               as List<SortOption>,
+      allDistances: null == allDistances
+          ? _self._allDistances
+          : allDistances // ignore: cast_nullable_to_non_nullable
+              as List<DistanceRange>,
       currentParams: null == currentParams
           ? _self.currentParams
           : currentParams // ignore: cast_nullable_to_non_nullable

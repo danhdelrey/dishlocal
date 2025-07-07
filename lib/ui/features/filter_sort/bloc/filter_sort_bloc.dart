@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dishlocal/ui/features/filter_sort/model/distance_range.dart';
 import 'package:dishlocal/ui/features/filter_sort/model/filter_sort_params.dart';
 import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
 import 'package:dishlocal/ui/features/filter_sort/model/price_range.dart';
@@ -20,8 +21,10 @@ class FilterSortBloc extends Bloc<FilterSortEvent, FilterSortState> {
     on<_AllCategoriesToggled>(_onAllCategoriesToggled);
     on<_PriceRangeToggled>(_onPriceRangeToggled);
     on<_SortOptionSelected>(_onSortOptionSelected);
+    on<_SortDirectionToggled>(_onSortDirectionToggled);
     on<_FiltersCleared>(_onFiltersCleared);
     on<_FiltersSubmitted>(_onFiltersSubmitted);
+    on<_DistanceRangeToggled>(_onDistanceRangeToggled);
   }
 
   void _onInitialized(_Initialized event, Emitter<FilterSortState> emit) {
@@ -29,6 +32,7 @@ class FilterSortBloc extends Bloc<FilterSortEvent, FilterSortState> {
       allCategories: FoodCategory.values,
       allRanges: PriceRange.values,
       allSortOptions: SortOption.allOptions,
+      allDistances: DistanceRange.values,
       // Khởi tạo với params từ event hoặc params rỗng
       currentParams: event.initialParams ?? const FilterSortParams(),
     ));
@@ -76,12 +80,43 @@ class FilterSortBloc extends Bloc<FilterSortEvent, FilterSortState> {
     }
   }
 
-  void _onSortOptionSelected(_SortOptionSelected event, Emitter<FilterSortState> emit) {
+  void _onSortOptionSelected(
+    _SortOptionSelected event,
+    Emitter<FilterSortState> emit,
+  ) {
     if (state is FilterSortLoaded) {
       final currentState = state as FilterSortLoaded;
+
+      // Khi chọn một trường mới, mặc định là DESC (hoặc ASC nếu chỉ có 1 chiều)
+      // Chúng ta sẽ lấy option đầu tiên trong list allOptions có field tương ứng.
+      final newOption = SortOption.allOptions.firstWhere(
+        (opt) => opt.field == event.option.field,
+        orElse: () => event.option, // Dự phòng
+      );
+
       emit(currentState.copyWith(
-        currentParams: currentState.currentParams.copyWith(sortOption: event.option),
+        currentParams: currentState.currentParams.copyWith(sortOption: newOption),
       ));
+    }
+  }
+  void _onSortDirectionToggled(
+    _SortDirectionToggled event,
+    Emitter<FilterSortState> emit,
+  ) {
+    if (state is FilterSortLoaded) {
+      final currentState = state as FilterSortLoaded;
+      final currentOption = currentState.currentParams.sortOption;
+
+      // Chỉ đảo chiều nếu trường đó hỗ trợ
+      if (currentOption.isReversible) {
+        final newDirection = currentOption.direction == SortDirection.desc ? SortDirection.asc : SortDirection.desc;
+
+        emit(currentState.copyWith(
+          currentParams: currentState.currentParams.copyWith(
+            sortOption: currentOption.copyWith(direction: newDirection),
+          ),
+        ));
+      }
     }
   }
 
@@ -102,6 +137,20 @@ class FilterSortBloc extends Bloc<FilterSortEvent, FilterSortState> {
       final currentState = state as FilterSortLoaded;
       // Freezed tự động tạo phương thức toString() rất đẹp!
       _log.info('Filters Submitted: ${currentState.currentParams}');
+    }
+  }
+
+  void _onDistanceRangeToggled(
+    _DistanceRangeToggled event,
+    Emitter<FilterSortState> emit,
+  ) {
+    if (state is FilterSortLoaded) {
+      final currentState = state as FilterSortLoaded;
+      final newDistance = currentState.currentParams.distance == event.distance ? null : event.distance;
+
+      emit(currentState.copyWith(
+        currentParams: currentState.currentParams.copyWith(distance: newDistance),
+      ));
     }
   }
 }

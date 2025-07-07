@@ -1,4 +1,3 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'sort_option.freezed.dart';
@@ -7,8 +6,7 @@ enum SortField {
   datePosted('📅', 'Ngày đăng'),
   likes('❤️', 'Lượt thích'),
   comments('💬', 'Lượt bình luận'),
-  saves('🔖', 'Lượt lưu'),
-  location('📍', 'Gần nhất'); // Đổi thành "Gần nhất" cho rõ nghĩa
+  saves('🔖', 'Lượt lưu');
 
   final String icon;
   final String label;
@@ -37,10 +35,6 @@ abstract class SortOption with _$SortOption {
   String get displayName {
     final icon = field.icon;
     final label = field.label;
-    // Chỉ hiển thị mũi tên cho các trường có thứ tự rõ ràng
-    if (field == SortField.location) {
-      return '$icon $label';
-    }
     final arrow = direction == SortDirection.desc ? '↓' : '↑';
     return '$icon $label $arrow';
   }
@@ -59,7 +53,18 @@ abstract class SortOption with _$SortOption {
     // Lượt lưu
     const SortOption(field: SortField.saves, direction: SortDirection.desc),
     const SortOption(field: SortField.saves, direction: SortDirection.asc),
-    // Vị trí (chỉ có 1 hướng: gần nhất)
-    const SortOption(field: SortField.location, direction: SortDirection.asc),
   ];
+
+  /// Danh sách các trường sắp xếp duy nhất có thể chọn.
+  static final List<SortField> uniqueFields = [
+    SortField.datePosted,
+    SortField.likes,
+    SortField.comments,
+    SortField.saves,
+  ];
+
+  /// Kiểm tra xem một trường có hỗ trợ cả 2 chiều sắp xếp không.
+  bool get isReversible {
+    return true; // Ví dụ: Vị trí chỉ có 1 chiều là 'gần nhất'
+  }
 }

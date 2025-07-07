@@ -9,6 +9,7 @@ class FilterSortState with _$FilterSortState {
     required List<FoodCategory> allCategories,
     required List<PriceRange> allRanges,
     required List<SortOption> allSortOptions,
+    required List<DistanceRange> allDistances,
 
     // MỚI: Một đối tượng duy nhất chứa tất cả các lựa chọn hiện tại
     required FilterSortParams currentParams,

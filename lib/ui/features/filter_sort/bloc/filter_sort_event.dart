@@ -19,6 +19,10 @@ class FilterSortEvent with _$FilterSortEvent {
   /// Chọn một tùy chọn sắp xếp mới.
   const factory FilterSortEvent.sortOptionSelected(SortOption option) = _SortOptionSelected;
 
+  const factory FilterSortEvent.sortDirectionToggled() = _SortDirectionToggled;
+
+  const factory FilterSortEvent.distanceRangeToggled(DistanceRange distance) = _DistanceRangeToggled;
+
   /// Xóa tất cả các bộ lọc về trạng thái mặc định.
   const factory FilterSortEvent.filtersCleared() = _FiltersCleared;
 
