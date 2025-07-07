@@ -129,6 +129,7 @@ class SortingBottomSheet extends StatelessWidget {
                             title: '📍 Khoảng cách',
                             children: state.allDistances.map((distance) {
                               return _buildChoiceChip(
+                                itemColor: Colors.blue,
                                 context: context,
                                 label: distance.displayName,
                                 isSelected: state.currentParams.distance == distance,
@@ -173,7 +174,12 @@ class SortingBottomSheet extends StatelessWidget {
                   size: 16,
                 ),
                 label: Text(currentSortOption.direction == SortDirection.desc ? 'Giảm dần' : 'Tăng dần'),
-                style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), tapTargetSize: MaterialTapTargetSize.shrinkWrap, textStyle: appTextTheme(context).labelMedium),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  textStyle: appTextTheme(context).labelMedium,
+                  foregroundColor: Colors.lightGreen,
+                ),
               ),
           ],
         ),
@@ -183,6 +189,7 @@ class SortingBottomSheet extends StatelessWidget {
           runSpacing: 8.0,
           children: SortOption.uniqueFields.map((field) {
             return _buildChoiceChip(
+              itemColor: Colors.lightGreen,
               context: context,
               label: '${field.icon} ${field.label}',
               isSelected: currentSortOption.field == field,
