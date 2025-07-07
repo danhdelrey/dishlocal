@@ -1,4 +1,5 @@
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/enum/sort_option.dart';
 import 'package:dishlocal/ui/features/select_food_category/bloc/select_food_category_bloc.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_chip_selector.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/food_category_container_builder.dart';
@@ -91,6 +92,42 @@ class SortingBottomSheet extends StatelessWidget {
                           selectAllText: '📋 Tất cả',
                           selectAllColor: Colors.indigo,
                         ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        const Divider(),
+                        // Sắp xếp section
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.sort,
+                              size: 12,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Sắp xếp theo',
+                              style: Theme.of(context).textTheme.labelLarge,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Column(
+                          children: SortOption.values.map((sortOption) {
+                            return RadioListTile<SortOption>(
+                              title: Text(
+                                sortOption.displayName,
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              value: sortOption,
+                              groupValue: SortOption.datePostedDesc, // Default selection
+                              onChanged: (value) {
+                                // Handle radio button selection
+                              },
+                              contentPadding: EdgeInsets.zero,
+                            );
+                          }).toList(),
+                        ),
+
                         const SizedBox(height: 24),
                         const Divider(),
                         const SizedBox(height: 16),
@@ -121,5 +158,24 @@ class SortingBottomSheet extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getSortOptionLabel(String value) {
+    switch (value) {
+      case 'date_asc':
+        return 'Ngày đăng (Cũ → Mới)';
+      case 'date_desc':
+        return 'Ngày đăng (Mới → Cũ)';
+      case 'likes_desc':
+        return 'Lượt thích (Nhiều → Ít)';
+      case 'comments_desc':
+        return 'Lượt bình luận (Nhiều → Ít)';
+      case 'saves_desc':
+        return 'Lượt lưu (Nhiều → Ít)';
+      case 'location_asc':
+        return 'Vị trí (Gần → Xa)';
+      default:
+        return '';
+    }
   }
 }
