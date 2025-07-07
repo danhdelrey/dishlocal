@@ -159,23 +159,4 @@ class SortingBottomSheet extends StatelessWidget {
       ),
     );
   }
-
-  String _getSortOptionLabel(String value) {
-    switch (value) {
-      case 'date_asc':
-        return 'Ngày đăng (Cũ → Mới)';
-      case 'date_desc':
-        return 'Ngày đăng (Mới → Cũ)';
-      case 'likes_desc':
-        return 'Lượt thích (Nhiều → Ít)';
-      case 'comments_desc':
-        return 'Lượt bình luận (Nhiều → Ít)';
-      case 'saves_desc':
-        return 'Lượt lưu (Nhiều → Ít)';
-      case 'location_asc':
-        return 'Vị trí (Gần → Xa)';
-      default:
-        return '';
-    }
-  }
 }

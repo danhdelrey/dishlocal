@@ -48,7 +48,7 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
     if (!widget.allowMultiSelect && widget.selectedItems.isNotEmpty) {
       buttonLabel = widget.selectedItems.first.label;
     } else {
-      buttonLabel = '${widget.title} (${widget.selectedItems.length})';
+      buttonLabel = '${widget.title} (Đã chọn ${widget.selectedItems.length})';
     }
 
     final isAllSelected = widget.allowMultiSelect && widget.items.isNotEmpty && widget.selectedItems.length == widget.items.length;
