@@ -14,6 +14,7 @@ class SortingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FoodCategoryContainerBuilder(
+          allowMultiSelect: true,
           initialFoodCategory: const {},
           builder: (context, allCategories, selectedCategories, allowMultiSelect) {
             return SingleChildScrollView(

@@ -48,14 +48,14 @@ class _ExpandableChipSelectorState extends State<ExpandableChipSelector> {
     if (!widget.allowMultiSelect && widget.selectedItems.isNotEmpty) {
       buttonLabel = widget.selectedItems.first.label;
     } else {
-      buttonLabel = widget.title;
+      buttonLabel = '${widget.title} (${widget.selectedItems.length})';
     }
 
     final isAllSelected = widget.allowMultiSelect && widget.items.isNotEmpty && widget.selectedItems.length == widget.items.length;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         OutlinedButton.icon(
           onPressed: () => setState(() => _isExpanded = !_isExpanded),
