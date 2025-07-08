@@ -13,6 +13,7 @@ import 'package:dishlocal/data/services/search_service/interface/search_service.
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 @LazySingleton(as: AppUserRepository)
 class SqlAppUserRepositoryImpl implements AppUserRepository {
@@ -20,6 +21,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   final AuthenticationService _authService;
   final SqlDatabaseService _dbService;
   final SearchService _searchService;
+  final _supabase = Supabase.instance.client;
 
   // Sử dụng BehaviorSubject để lưu trữ và phát ra AppUser hiện tại
   // Nó sẽ giữ lại giá trị cuối cùng cho các subscriber mới.
@@ -345,59 +347,58 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   }) async {
     _log.info('🔍 Bắt đầu tìm kiếm profile với query: "$query"');
     try {
-      // 1. Gọi SearchService để lấy danh sách objectIds
+      // 1. Lấy danh sách ID từ dịch vụ tìm kiếm
       final searchResult = await _searchService.search(
         query: query,
         searchType: SearchableItem.profiles,
         page: page,
         hitsPerPage: hitsPerPage,
       );
+      _log.info('✅ Tìm kiếm thành công, nhận được ${searchResult.objectIds.length} ID profile.');
 
       if (searchResult.objectIds.isEmpty) {
-        _log.info('🔍 Không tìm thấy profile nào với query: "$query"');
         return const Right([]);
       }
 
-      // 2. Lấy chi tiết profiles từ database
+      // 2. Lấy chi tiết của TẤT CẢ profile trong MỘT lần gọi RPC
+      _log.info('📥 Bắt đầu lấy chi tiết cho ${searchResult.objectIds.length} profile trong một lần gọi...');
       final currentUserId = _authService.getCurrentUserId();
-      final List<AppUser> appUsers = [];
 
-      for (var userId in searchResult.objectIds) {
-        _log.info('📥 Bắt đầu lấy chi tiết profile ID: $userId');
-        final profile = await _dbService.readSingleById<ProfileEntity>(
-          tableName: 'profiles',
-          id: userId,
-          fromJson: ProfileEntity.fromJson,
+      // Gọi hàm RPC mới
+      final List<dynamic> profilesData = await _supabase.rpc('get_profile_details_by_ids', params: {
+        'p_user_ids': searchResult.objectIds, // <<< Mảng các ID
+        'p_current_user_id': currentUserId, // <<< ID người dùng hiện tại
+      });
+
+      // Chuyển đổi kết quả JSON thành danh sách các đối tượng AppUser
+      // Hàm RPC trả về các trường đã khớp sẵn với AppUser
+      final List<AppUser> unsortedUsers = profilesData.map((json) {
+        final data = json as Map<String, dynamic>;
+        // Ánh xạ trực tiếp từ kết quả RPC sang AppUser
+        return AppUser(
+          userId: data['id'],
+          email: '',
+          username: data['username'],
+          displayName: data['display_name'],
+          photoUrl: data['photo_url'],
+          bio: data['bio'],
+          followerCount: data['follower_count'],
+          followingCount: data['following_count'],
+          isSetupCompleted: data['is_setup_completed'],
+          isFollowing: data['is_following'], // <<< Lấy trực tiếp từ RPC
+          originalDisplayname: data['display_name'] ?? '',
         );
+      }).toList();
 
-        // Kiểm tra trạng thái following
-        bool isFollowing = false;
-        if (currentUserId != null && currentUserId != userId) {
-          final result = await _dbService.readList(
-            tableName: 'followers',
-            fromJson: (json) => json,
-            filters: {'user_id': userId, 'follower_id': currentUserId},
-          );
-          isFollowing = result.isNotEmpty;
-        }
+      // 3. SẮP XẾP LẠI KẾT QUẢ theo thứ tự từ dịch vụ tìm kiếm (quan trọng!)
+      final usersById = {for (var user in unsortedUsers) user.userId: user};
+      final List<AppUser> sortedUsers = searchResult.objectIds
+          .map((id) => usersById[id])
+          .whereType<AppUser>() // Lọc ra các user không tìm thấy (nếu có)
+          .toList();
 
-        final appUser = AppUser(
-          userId: profile.id,
-          email: '', // Không cần email khi tìm kiếm
-          username: profile.username,
-          displayName: profile.displayName,
-          photoUrl: profile.photoUrl,
-          bio: profile.bio,
-          followerCount: profile.followerCount,
-          followingCount: profile.followingCount,
-          isSetupCompleted: profile.isSetupCompleted,
-          isFollowing: isFollowing,
-          originalDisplayname: profile.displayName ?? '',
-        );
-        appUsers.add(appUser);
-      }
-      _log.info('🔍 Tìm kiếm thành công, tìm thấy ${appUsers.length} profiles.');
-      return Right(appUsers);
+      _log.info('🔍 Tìm kiếm thành công, tìm thấy và sắp xếp ${sortedUsers.length} profile.');
+      return Right(sortedUsers);
     } on SearchServiceException catch (e, st) {
       // 4. Bắt lỗi từ SearchService và ánh xạ sang AppUserFailure
       _log.severe('❌ Lỗi từ SearchService khi tìm kiếm profile', e, st);

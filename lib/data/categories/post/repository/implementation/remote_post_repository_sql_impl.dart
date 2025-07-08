@@ -436,40 +436,47 @@ class RemotePostRepositorySqlImpl implements PostRepository {
   }) async {
     _log.info('🔍 Bắt đầu tìm kiếm bài viết với query: "$query"');
     try {
-      // 1. Ủy quyền công việc tìm kiếm cho SearchService
+      // 1. Lấy danh sách ID từ dịch vụ tìm kiếm (Algolia, etc.)
       final searchResult = await _searchService.search(
         query: query,
         searchType: SearchableItem.posts,
         page: page,
         hitsPerPage: hitsPerPage,
       );
-      _log.info('✅ Tìm kiếm thành công, nhận được ${searchResult.objectIds.length} bài viết.');
+      _log.info('✅ Tìm kiếm thành công, nhận được ${searchResult.objectIds.length} ID bài viết.');
+
       if (searchResult.objectIds.isEmpty) {
-        _log.info('🔍 Không tìm thấy bài viết nào với query: "$query"');
         return const Right([]); // Trả về danh sách rỗng nếu không có kết quả
       }
-      _log.info('📥 Bắt đầu lấy chi tiết cho ${searchResult.objectIds.length} bài viết...');
-      // 2. Lấy chi tiết bài viết từ Supabase bằng RPC;
 
+      // 2. Lấy chi tiết của TẤT CẢ bài viết trong MỘT lần gọi RPC
+      _log.info('📥 Bắt đầu lấy chi tiết cho ${searchResult.objectIds.length} bài viết trong một lần gọi...');
       final currentUserId = _authenticationService.getCurrentUserId();
-      final List<Post> posts = [];
 
-      for (var postId in searchResult.objectIds) {
-        _log.info('📥 Bắt đầu lấy chi tiết bài viết ID: $postId');
-        final data = await _supabase.rpc('get_post_details_by_id', params: {
-          'p_post_id': postId,
-          'p_user_id': currentUserId,
-        }).single();
+      final List<dynamic> postsData = await _supabase.rpc('get_post_details_by_ids', params: {
+        'p_post_ids': searchResult.objectIds, // <<< Truyền vào toàn bộ mảng ID
+        'p_user_id': currentUserId,
+      });
 
-        final post = Post.fromJson(data);
-        posts.add(post);
-        _log.info('✅ Lấy chi tiết bài viết thành công.: ${post.toString()}');
-      }
+      // Chuyển đổi kết quả JSON thành danh sách các đối tượng Post
+      final List<Post> unsortedPosts = postsData.map((json) => Post.fromJson(json as Map<String, dynamic>)).toList();
 
-      // 2. Làm giàu dữ liệu với khoảng cách
-      final enrichedPosts = await _enrichPostsWithDistance(posts);
+      // 3. SẮP XẾP LẠI KẾT QUẢ THEO THỨ TỰ TỪ DỊCH VỤ TÌM KIẾM
+      // Database không đảm bảo thứ tự trả về, nhưng Algolia đã sắp xếp theo mức độ liên quan.
+      // Chúng ta cần sắp xếp lại danh sách `unsortedPosts` để khớp với thứ tự của `searchResult.objectIds`.
+      final postsById = {for (var post in unsortedPosts) post.postId: post};
+      final List<Post> sortedPosts = searchResult.objectIds
+          .map((id) => postsById[id])
+          .whereType<Post>() // Lọc ra các post không tìm thấy (nếu có)
+          .toList();
 
-      // 3. Trả về kết quả thành công
+      _log.info('✅ Lấy và sắp xếp chi tiết bài viết thành công.');
+
+      // 4. Làm giàu dữ liệu với khoảng cách (enrichment)
+      // Bước này vẫn cần thiết vì hàm RPC tìm kiếm không tính khoảng cách để tối ưu.
+      final enrichedPosts = await _enrichPostsWithDistance(sortedPosts);
+
+      // 5. Trả về kết quả thành công
       return Right(enrichedPosts);
     } on SearchServiceException catch (e, st) {
       // 4. Bắt các lỗi đã được định nghĩa từ SearchService và ánh xạ chúng sang PostFailure
