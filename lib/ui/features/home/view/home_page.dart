@@ -89,9 +89,7 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
               bottom: TabBar(
                 dividerColor: Colors.white.withAlpha(25), // Alpha 0.1
                 controller: _tabController,
-                onTap: (index) {
-                  //_scrollToTop();
-                },
+                
                 tabs: const [
                   Tab(text: 'Dành cho bạn'),
                   Tab(text: 'Đang theo dõi'),

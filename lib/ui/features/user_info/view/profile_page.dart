@@ -137,11 +137,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
                 delegate: _SliverAppBarDelegate(
                   TabBar(
                     controller: _tabController,
-                    onTap: (index) {
-                      // if (!_tabController.indexIsChanging) {
-                      //   _scrollToTopAndRefreshCurrentTab();
-                      // }
-                    },
+                   
                     dividerColor: Colors.white.withAlpha(25),
                     tabs: [
                       const Tab(icon: Icon(Icons.grid_view_rounded)),
