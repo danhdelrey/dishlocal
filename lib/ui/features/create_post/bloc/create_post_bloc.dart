@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/moderation/repository/interface/moderation_repository.dart';

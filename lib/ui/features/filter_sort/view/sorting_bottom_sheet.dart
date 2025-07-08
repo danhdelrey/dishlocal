@@ -1,7 +1,7 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/filter_sort/bloc/filter_sort_bloc.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/filter_sort_params.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/sort_option.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_option.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/filter_sort_builder.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_food_category_chip_selector.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';

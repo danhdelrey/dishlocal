@@ -1,4 +1,4 @@
-import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 class FoodCategoryConverter implements JsonConverter<FoodCategory?, String?> {

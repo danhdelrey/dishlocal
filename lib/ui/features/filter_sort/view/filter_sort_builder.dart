@@ -1,9 +1,9 @@
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/filter_sort/bloc/filter_sort_bloc.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/filter_sort_params.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/price_range.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/sort_option.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/price_range.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_option.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

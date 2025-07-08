@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/distance_range.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/filter_sort_params.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/price_range.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/sort_option.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/distance_range.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/price_range.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_option.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';

@@ -1,5 +1,5 @@
 import 'package:dishlocal/app/theme/theme.dart';
-import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/animated_chip.dart';
 import 'package:flutter/material.dart';
 

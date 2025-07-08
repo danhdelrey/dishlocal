@@ -1,6 +1,6 @@
 // file: lib/data/entities/post_entity.dart
 
-import 'package:dishlocal/ui/features/filter_sort/model/food_category.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
 import 'package:dishlocal/core/json_converter/date_time_converter.dart';
 import 'package:dishlocal/core/json_converter/food_category_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
