@@ -6,26 +6,37 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'filter_sort_params.freezed.dart';
 
-/// Một class bất biến để chứa tất cả các tham số lọc và sắp xếp.
+/// Một class bất biến để chứa tất cả các tham số lọc, sắp xếp và phân trang.
 ///
 /// Class này được sử dụng để đóng gói trạng thái bộ lọc thành một đối tượng duy nhất,
 /// giúp dễ dàng truyền dữ liệu giữa các lớp và ghi log.
 @freezed
 abstract class FilterSortParams with _$FilterSortParams {
-  const FilterSortParams._(); 
+  const FilterSortParams._();
   const factory FilterSortParams({
+    // --- Lọc (Filtering) ---
     @Default({}) Set<FoodCategory> categories,
-
-    /// Khoảng giá đã chọn. Có thể là null nếu không chọn.
     PriceRange? range,
     DistanceRange? distance,
 
-    /// Tùy chọn sắp xếp. Luôn có giá trị, mặc định là sắp xếp theo ngày đăng mới nhất.
+    // --- Sắp xếp (Sorting) ---
     @Default(SortOption.defaultSort) SortOption sortOption,
+
+    // --- Phân trang (Pagination) ---
+    @Default(10) int limit,
+
+    /// Con trỏ của mục cuối cùng trong trang trước.
+    /// Kiểu `dynamic` vì nó phụ thuộc vào trường sắp xếp
+    /// (ví dụ: `DateTime` cho ngày đăng, `int` cho lượt thích).
+    /// Là `null` nếu đây là yêu cầu cho trang đầu tiên.
+    dynamic lastCursor,
   }) = _FilterSortParams;
 
+  /// Tạo một bộ lọc mặc định.
+  factory FilterSortParams.defaultParams() => const FilterSortParams();
+
   String get toVietnameseString {
-    // Sử dụng StringBuffer để xây dựng chuỗi hiệu quả
+    // ... (phần này giữ nguyên, bạn có thể thêm limit và cursor nếu muốn) ...
     final buffer = StringBuffer();
     buffer.writeln('\n--- 📝 BỘ LỌC & SẮP XẾP ---');
 
@@ -33,7 +44,6 @@ abstract class FilterSortParams with _$FilterSortParams {
     if (categories.isEmpty) {
       buffer.writeln('  - 📋 Loại món: Tất cả');
     } else {
-      // Lấy tên của từng danh mục và nối chúng lại
       final categoryLabels = categories.map((e) => e.label).join(', ');
       buffer.writeln('  - 📋 Loại món: $categoryLabels');
     }
@@ -54,6 +64,10 @@ abstract class FilterSortParams with _$FilterSortParams {
 
     // 4. Sắp xếp
     buffer.writeln('  - 📊 Sắp xếp: ${sortOption.displayName}');
+
+    // 5. Phân trang
+    buffer.writeln('  - 📑 Giới hạn: $limit mục/trang');
+    buffer.writeln('  - 👉 Con trỏ trang: ${lastCursor ?? "Trang đầu"}');
 
     buffer.write('---------------------------');
     return buffer.toString();

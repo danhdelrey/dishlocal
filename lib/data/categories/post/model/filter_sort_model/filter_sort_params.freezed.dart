@@ -15,14 +15,18 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$FilterSortParams {
+// --- Lọc (Filtering) ---
   Set<FoodCategory> get categories;
-
-  /// Khoảng giá đã chọn. Có thể là null nếu không chọn.
   PriceRange? get range;
-  DistanceRange? get distance;
+  DistanceRange? get distance; // --- Sắp xếp (Sorting) ---
+  SortOption get sortOption; // --- Phân trang (Pagination) ---
+  int get limit;
 
-  /// Tùy chọn sắp xếp. Luôn có giá trị, mặc định là sắp xếp theo ngày đăng mới nhất.
-  SortOption get sortOption;
+  /// Con trỏ của mục cuối cùng trong trang trước.
+  /// Kiểu `dynamic` vì nó phụ thuộc vào trường sắp xếp
+  /// (ví dụ: `DateTime` cho ngày đăng, `int` cho lượt thích).
+  /// Là `null` nếu đây là yêu cầu cho trang đầu tiên.
+  dynamic get lastCursor;
 
   /// Create a copy of FilterSortParams
   /// with the given fields replaced by the non-null parameter values.
@@ -43,7 +47,10 @@ mixin _$FilterSortParams {
             (identical(other.distance, distance) ||
                 other.distance == distance) &&
             (identical(other.sortOption, sortOption) ||
-                other.sortOption == sortOption));
+                other.sortOption == sortOption) &&
+            (identical(other.limit, limit) || other.limit == limit) &&
+            const DeepCollectionEquality()
+                .equals(other.lastCursor, lastCursor));
   }
 
   @override
@@ -52,11 +59,13 @@ mixin _$FilterSortParams {
       const DeepCollectionEquality().hash(categories),
       range,
       distance,
-      sortOption);
+      sortOption,
+      limit,
+      const DeepCollectionEquality().hash(lastCursor));
 
   @override
   String toString() {
-    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption)';
+    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor)';
   }
 }
 
@@ -70,7 +79,9 @@ abstract mixin class $FilterSortParamsCopyWith<$Res> {
       {Set<FoodCategory> categories,
       PriceRange? range,
       DistanceRange? distance,
-      SortOption sortOption});
+      SortOption sortOption,
+      int limit,
+      dynamic lastCursor});
 
   $SortOptionCopyWith<$Res> get sortOption;
 }
@@ -92,6 +103,8 @@ class _$FilterSortParamsCopyWithImpl<$Res>
     Object? range = freezed,
     Object? distance = freezed,
     Object? sortOption = null,
+    Object? limit = null,
+    Object? lastCursor = freezed,
   }) {
     return _then(_self.copyWith(
       categories: null == categories
@@ -110,6 +123,14 @@ class _$FilterSortParamsCopyWithImpl<$Res>
           ? _self.sortOption
           : sortOption // ignore: cast_nullable_to_non_nullable
               as SortOption,
+      limit: null == limit
+          ? _self.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastCursor: freezed == lastCursor
+          ? _self.lastCursor
+          : lastCursor // ignore: cast_nullable_to_non_nullable
+              as dynamic,
     ));
   }
 
@@ -131,11 +152,15 @@ class _FilterSortParams extends FilterSortParams {
       {final Set<FoodCategory> categories = const {},
       this.range,
       this.distance,
-      this.sortOption = SortOption.defaultSort})
+      this.sortOption = SortOption.defaultSort,
+      this.limit = 10,
+      this.lastCursor})
       : _categories = categories,
         super._();
 
+// --- Lọc (Filtering) ---
   final Set<FoodCategory> _categories;
+// --- Lọc (Filtering) ---
   @override
   @JsonKey()
   Set<FoodCategory> get categories {
@@ -144,16 +169,25 @@ class _FilterSortParams extends FilterSortParams {
     return EqualUnmodifiableSetView(_categories);
   }
 
-  /// Khoảng giá đã chọn. Có thể là null nếu không chọn.
   @override
   final PriceRange? range;
   @override
   final DistanceRange? distance;
-
-  /// Tùy chọn sắp xếp. Luôn có giá trị, mặc định là sắp xếp theo ngày đăng mới nhất.
+// --- Sắp xếp (Sorting) ---
   @override
   @JsonKey()
   final SortOption sortOption;
+// --- Phân trang (Pagination) ---
+  @override
+  @JsonKey()
+  final int limit;
+
+  /// Con trỏ của mục cuối cùng trong trang trước.
+  /// Kiểu `dynamic` vì nó phụ thuộc vào trường sắp xếp
+  /// (ví dụ: `DateTime` cho ngày đăng, `int` cho lượt thích).
+  /// Là `null` nếu đây là yêu cầu cho trang đầu tiên.
+  @override
+  final dynamic lastCursor;
 
   /// Create a copy of FilterSortParams
   /// with the given fields replaced by the non-null parameter values.
@@ -174,7 +208,10 @@ class _FilterSortParams extends FilterSortParams {
             (identical(other.distance, distance) ||
                 other.distance == distance) &&
             (identical(other.sortOption, sortOption) ||
-                other.sortOption == sortOption));
+                other.sortOption == sortOption) &&
+            (identical(other.limit, limit) || other.limit == limit) &&
+            const DeepCollectionEquality()
+                .equals(other.lastCursor, lastCursor));
   }
 
   @override
@@ -183,11 +220,13 @@ class _FilterSortParams extends FilterSortParams {
       const DeepCollectionEquality().hash(_categories),
       range,
       distance,
-      sortOption);
+      sortOption,
+      limit,
+      const DeepCollectionEquality().hash(lastCursor));
 
   @override
   String toString() {
-    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption)';
+    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor)';
   }
 }
 
@@ -203,7 +242,9 @@ abstract mixin class _$FilterSortParamsCopyWith<$Res>
       {Set<FoodCategory> categories,
       PriceRange? range,
       DistanceRange? distance,
-      SortOption sortOption});
+      SortOption sortOption,
+      int limit,
+      dynamic lastCursor});
 
   @override
   $SortOptionCopyWith<$Res> get sortOption;
@@ -226,6 +267,8 @@ class __$FilterSortParamsCopyWithImpl<$Res>
     Object? range = freezed,
     Object? distance = freezed,
     Object? sortOption = null,
+    Object? limit = null,
+    Object? lastCursor = freezed,
   }) {
     return _then(_FilterSortParams(
       categories: null == categories
@@ -244,6 +287,14 @@ class __$FilterSortParamsCopyWithImpl<$Res>
           ? _self.sortOption
           : sortOption // ignore: cast_nullable_to_non_nullable
               as SortOption,
+      limit: null == limit
+          ? _self.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastCursor: freezed == lastCursor
+          ? _self.lastCursor
+          : lastCursor // ignore: cast_nullable_to_non_nullable
+              as dynamic,
     ));
   }
 
