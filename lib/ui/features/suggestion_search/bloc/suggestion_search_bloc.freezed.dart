@@ -145,9 +145,8 @@ class __$QueryChangedCopyWithImpl<$Res>
 
 /// @nodoc
 mixin _$SuggestionSearchState {
-  SuggestionStatus
-      get status; // Danh sách gợi ý, kiểu dynamic để chứa cả Post và AppUser
-  List<Suggestion> get suggestions; // Lưu lỗi nếu có
+  SuggestionStatus get status;
+  List<String> get suggestions; // Lưu lỗi nếu có
   Object? get failure;
 
   /// Create a copy of SuggestionSearchState
@@ -189,7 +188,7 @@ abstract mixin class $SuggestionSearchStateCopyWith<$Res> {
       _$SuggestionSearchStateCopyWithImpl;
   @useResult
   $Res call(
-      {SuggestionStatus status, List<Suggestion> suggestions, Object? failure});
+      {SuggestionStatus status, List<String> suggestions, Object? failure});
 }
 
 /// @nodoc
@@ -217,7 +216,7 @@ class _$SuggestionSearchStateCopyWithImpl<$Res>
       suggestions: null == suggestions
           ? _self.suggestions
           : suggestions // ignore: cast_nullable_to_non_nullable
-              as List<Suggestion>,
+              as List<String>,
       failure: freezed == failure ? _self.failure : failure,
     ));
   }
@@ -228,19 +227,17 @@ class _$SuggestionSearchStateCopyWithImpl<$Res>
 class _SuggestionSearchState implements SuggestionSearchState {
   const _SuggestionSearchState(
       {this.status = SuggestionStatus.initial,
-      final List<Suggestion> suggestions = const [],
+      final List<String> suggestions = const [],
       this.failure})
       : _suggestions = suggestions;
 
   @override
   @JsonKey()
   final SuggestionStatus status;
-// Danh sách gợi ý, kiểu dynamic để chứa cả Post và AppUser
-  final List<Suggestion> _suggestions;
-// Danh sách gợi ý, kiểu dynamic để chứa cả Post và AppUser
+  final List<String> _suggestions;
   @override
   @JsonKey()
-  List<Suggestion> get suggestions {
+  List<String> get suggestions {
     if (_suggestions is EqualUnmodifiableListView) return _suggestions;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_suggestions);
@@ -292,7 +289,7 @@ abstract mixin class _$SuggestionSearchStateCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {SuggestionStatus status, List<Suggestion> suggestions, Object? failure});
+      {SuggestionStatus status, List<String> suggestions, Object? failure});
 }
 
 /// @nodoc
@@ -320,7 +317,7 @@ class __$SuggestionSearchStateCopyWithImpl<$Res>
       suggestions: null == suggestions
           ? _self._suggestions
           : suggestions // ignore: cast_nullable_to_non_nullable
-              as List<Suggestion>,
+              as List<String>,
       failure: freezed == failure ? _self.failure : failure,
     ));
   }

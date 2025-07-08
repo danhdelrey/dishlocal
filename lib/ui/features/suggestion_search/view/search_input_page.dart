@@ -2,7 +2,6 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
-import 'package:dishlocal/data/services/search_service/model/suggestion_result.dart';
 import 'package:dishlocal/ui/features/suggestion_search/bloc/suggestion_search_bloc.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
 import 'package:flutter/cupertino.dart';
@@ -113,7 +112,7 @@ class _SearchInputPageState extends State<SearchInputPage> {
   }
 
   /// Widget xây dựng danh sách gợi ý
-  Widget _buildSuggestionList(List<Suggestion> suggestions) {
+  Widget _buildSuggestionList(List<String> suggestions) {
     // <<< Nhận vào List<Suggestion>
     return ListView.separated(
       itemCount: suggestions.length,
@@ -121,15 +120,13 @@ class _SearchInputPageState extends State<SearchInputPage> {
       itemBuilder: (context, index) {
         final suggestion = suggestions[index];
 
-        // Xác định icon dựa trên suggestion.type
-        final iconData = suggestion.type == SuggestionType.post ? CupertinoIcons.doc_text_search : CupertinoIcons.person_fill;
+        
 
         return ListTile(
-          leading: Icon(iconData, color: appColorScheme(context).onSurfaceVariant, size: 20),
-          title: Text(suggestion.displayText, maxLines: 1, overflow: TextOverflow.ellipsis),
+          title: Text(suggestion, maxLines: 1, overflow: TextOverflow.ellipsis),
           onTap: () {
             // Khi nhấn vào, điều hướng với displayText
-            _navigateToResultScreen(suggestion.displayText);
+            _navigateToResultScreen(suggestion);
           },
         );
       },

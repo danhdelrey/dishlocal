@@ -4,7 +4,6 @@ import 'package:dishlocal/data/categories/app_user/repository/interface/app_user
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/data/services/search_service/interface/search_service.dart';
-import 'package:dishlocal/data/services/search_service/model/suggestion_result.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -22,9 +21,8 @@ EventTransformer<E> debounce<E>(Duration duration) {
 @injectable
 class SuggestionSearchBloc extends Bloc<SuggestionSearchEvent, SuggestionSearchState> {
   final _log = Logger('SuggestionSearchBloc');
-  final SearchService _searchService;
 
-  SuggestionSearchBloc(this._searchService) : super(const SuggestionSearchState()) {
+  SuggestionSearchBloc() : super(const SuggestionSearchState()) {
     on<_QueryChanged>(_onQueryChanged, transformer: debounce(const Duration(milliseconds: 400)));
   }
 
@@ -38,31 +36,7 @@ class SuggestionSearchBloc extends Bloc<SuggestionSearchEvent, SuggestionSearchS
 
     emit(const SuggestionSearchState(status: SuggestionStatus.loading));
     _log.info('🔍 Đang tìm kiếm gợi ý cho: "$query"');
+    emit(const SuggestionSearchState(status: SuggestionStatus.empty));
 
-    try {
-      // Gọi song song để lấy gợi ý từ cả hai index
-      final postSuggestionsFuture = _searchService.getSuggestions(
-        query: query,
-        searchType: SearchableItem.posts,
-        hitsPerPage: 5,
-      );
-      final profileSuggestionsFuture = _searchService.getSuggestions(
-        query: query,
-        searchType: SearchableItem.profiles,
-        hitsPerPage: 3,
-      );
-      final results = await Future.wait([postSuggestionsFuture, profileSuggestionsFuture]);
-
-      final allSuggestions = [...results[0].suggestions, ...results[1].suggestions];
-
-      if (allSuggestions.isEmpty) {
-        emit(const SuggestionSearchState(status: SuggestionStatus.empty));
-      } else {
-        // State giờ đây sẽ chứa List<Suggestion> thay vì List<dynamic>
-        emit(SuggestionSearchState(status: SuggestionStatus.success, suggestions: allSuggestions));
-      }
-    } catch (e) {
-      emit(SuggestionSearchState(status: SuggestionStatus.failure, failure: e));
-    }
   }
 }

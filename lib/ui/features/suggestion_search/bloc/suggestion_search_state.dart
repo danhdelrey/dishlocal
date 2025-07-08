@@ -7,8 +7,7 @@ enum SuggestionStatus { initial, loading, success, failure, empty }
 sealed class SuggestionSearchState with _$SuggestionSearchState {
   const factory SuggestionSearchState({
     @Default(SuggestionStatus.initial) SuggestionStatus status,
-    // Danh sách gợi ý, kiểu dynamic để chứa cả Post và AppUser
-    @Default([]) List<Suggestion> suggestions,
+    @Default([]) List<String> suggestions,
     // Lưu lỗi nếu có
     Object? failure,
   }) = _SuggestionSearchState;

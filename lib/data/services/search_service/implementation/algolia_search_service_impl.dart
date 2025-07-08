@@ -5,7 +5,6 @@ import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:dishlocal/data/services/search_service/exception/search_service_exception.dart';
 import 'package:dishlocal/data/services/search_service/interface/search_service.dart';
 import 'package:dishlocal/data/services/search_service/model/search_result.dart';
-import 'package:dishlocal/data/services/search_service/model/suggestion_result.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
@@ -129,79 +128,5 @@ class AlgoliaSearchServiceImpl implements SearchService {
     }
   }
 
-  @override
-  Future<SuggestionResult> getSuggestions({
-    required String query,
-    required SearchableItem searchType,
-    int hitsPerPage = 5,
-  }) async {
-    _log.fine('Starting suggestion search for query: "$query" in type: ${searchType.name}');
-
-    if (query.trim().isEmpty) {
-      return const SuggestionResult(); // Trả về danh sách rỗng nếu query trống
-    }
-
-    final String indexName;
-    // Thuộc tính chúng ta muốn lấy về.
-    final List<String> attributesToRetrieve;
-    final SuggestionType suggestionType;
-
-    switch (searchType) {
-      case SearchableItem.posts:
-        indexName = 'posts';
-        // Chỉ lấy về trường 'dishName'
-        attributesToRetrieve = ['dishName'];
-        suggestionType = SuggestionType.post;
-        break;
-      case SearchableItem.profiles:
-        indexName = 'profiles';
-        // Chỉ lấy về 'username' và 'displayName'
-        attributesToRetrieve = ['username', 'displayName'];
-        suggestionType = SuggestionType.profile;
-        break;
-    }
-
-    try {
-      final searchRequest = SearchForHits(
-        indexName: indexName,
-        query: query,
-        page: 0, // Gợi ý luôn là trang đầu tiên
-        hitsPerPage: hitsPerPage,
-        // --- TỐI ƯU HÓA QUAN TRỌNG ---
-        // Yêu cầu Algolia chỉ trả về các thuộc tính này.
-        attributesToRetrieve: attributesToRetrieve,
-        // Không cần lấy các thuộc tính highlight hoặc snippet.
-        attributesToHighlight: [],
-        attributesToSnippet: [],
-      );
-
-      final response = await _searchClient.searchIndex(request: searchRequest);
-
-      // Xử lý kết quả trả về
-      final suggestions = response.hits
-          .map((hit) {
-            String displayText = '';
-            if (suggestionType == SuggestionType.post) {
-              displayText = hit['dishName'] as String? ?? '';
-            } else if (suggestionType == SuggestionType.profile) {
-              // Ưu tiên displayName, nếu không có thì dùng username
-              displayText = hit['displayName'] as String? ?? hit['username'] as String? ?? '';
-            }
-
-            return Suggestion(
-              displayText: displayText,
-              type: suggestionType,
-            );
-          })
-          .where((s) => s.displayText.isNotEmpty)
-          .toList(); // Lọc ra các gợi ý rỗng
-
-      return SuggestionResult(suggestions: suggestions);
-    } on Exception catch (e, st) {
-      // Bọc lỗi để không làm crash app, chỉ đơn giản là không hiển thị gợi ý.
-      _log.severe('Error fetching suggestions for query "$query". Error: $e', e, st);
-      // Trả về kết quả rỗng khi có lỗi.
-      return const SuggestionResult();
-    }
-  }
+  
 }
