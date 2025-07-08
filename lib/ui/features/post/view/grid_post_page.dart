@@ -107,8 +107,9 @@ class _GridPostPageState extends State<GridPostPage> {
         controller: _scrollController,
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         slivers: [
-          // Bạn có thể thêm FilterButton ở đây nếu muốn nó cuộn cùng nội dung
-          // const SliverToBoxAdapter(child: FilterButton(...)),
+          SliverToBoxAdapter(
+            child: FilterButton(),
+          ),
 
           SliverPadding(
             padding: const EdgeInsets.all(10),

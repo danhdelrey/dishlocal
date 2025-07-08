@@ -76,4 +76,8 @@ abstract class FilterSortParams with _$FilterSortParams {
     buffer.write('---------------------------');
     return buffer.toString();
   }
+  bool isDefault() {
+    // So sánh với một instance mặc định
+    return this == FilterSortParams.defaultParams();
+  }
 }

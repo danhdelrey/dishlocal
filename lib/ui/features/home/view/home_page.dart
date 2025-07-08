@@ -79,7 +79,7 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
     final currentFilters = currentBloc.state.filterSortParams;
 
     // TODO: Thay thế FilterSortBottomSheet bằng widget của bạn
-    final newFilters = await SortingBottomSheet.show(context,currentFilters);
+    final newFilters = await SortingBottomSheet.show(context, currentFilters);
 
     // Nếu người dùng xác nhận bộ lọc mới, gửi event tới BLoC
     if (newFilters != null && newFilters != currentFilters) {
@@ -91,13 +91,6 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      // Hiển thị nút lọc ở đây
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openFilterSortSheet,
-        label: const Text('Lọc & Sắp xếp'),
-        icon: const Icon(Icons.filter_list),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: NestedScrollView(
         controller: _mainScrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
