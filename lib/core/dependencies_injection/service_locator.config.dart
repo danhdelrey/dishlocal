@@ -99,10 +99,11 @@ import '../../ui/features/follow/bloc/follow_bloc.dart' as _i501;
 import '../../ui/features/map/bloc/map_bloc.dart' as _i936;
 import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
     as _i144;
-import '../../ui/features/post_search/bloc/post_search_bloc.dart' as _i892;
-import '../../ui/features/profile_search/bloc/profile_search_bloc.dart' as _i32;
+import '../../ui/features/result_search/bloc/result_search_bloc.dart' as _i531;
 import '../../ui/features/select_food_category/bloc/select_food_category_bloc.dart'
     as _i755;
+import '../../ui/features/suggestion_search/bloc/suggestion_search_bloc.dart'
+    as _i679;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../../ui/features/view_post/bloc/view_post_bloc.dart' as _i10;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
@@ -216,8 +217,6 @@ _i174.GetIt init(
         gh<_i749.AppUserRepository>(),
         post,
       ));
-  gh.factory<_i32.ProfileSearchBloc>(
-      () => _i32.ProfileSearchBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
   gh.lazySingleton<_i557.CommentRepository>(
@@ -235,12 +234,18 @@ _i174.GetIt init(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
       ));
+  gh.factory<_i531.ResultSearchBloc>(() => _i531.ResultSearchBloc(
+        gh<_i480.PostRepository>(),
+        gh<_i749.AppUserRepository>(),
+      ));
+  gh.factory<_i679.SuggestionSearchBloc>(() => _i679.SuggestionSearchBloc(
+        gh<_i480.PostRepository>(),
+        gh<_i749.AppUserRepository>(),
+      ));
   gh.factory<_i150.CurrentAddressBloc>(() => _i150.CurrentAddressBloc(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i204.DeletePostBloc>(
       () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
-  gh.factory<_i892.PostSearchBloc>(
-      () => _i892.PostSearchBloc(gh<_i480.PostRepository>()));
   gh.factory<_i511.AuthBloc>(
       () => _i511.AuthBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(
