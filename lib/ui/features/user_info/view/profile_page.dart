@@ -102,7 +102,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
     if (_mainScrollController.hasClients) {
       _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     }
-    _postBlocs[_tabController.index].add(const PostEvent.refreshRequested());
+    //_postBlocs[_tabController.index].add(const PostEvent.refreshRequested());
   }
 
   @override
