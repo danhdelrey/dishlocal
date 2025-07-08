@@ -21,8 +21,9 @@ class GlassIconLabelsWrap extends StatelessWidget {
       borderWidth: 0.5,
       horizontalPadding: 5,
       verticalPadding: 2,
-      blur: 10,
-      backgroundColor: Colors.transparent,
+      blur: 0,
+      backgroundColor: Colors.black,
+      backgroundAlpha: 0.2,
       child: Wrap(
         alignment: WrapAlignment.center,
         spacing: 5,
