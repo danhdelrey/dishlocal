@@ -215,19 +215,18 @@ class RemotePostRepositorySqlImpl implements PostRepository {
     };
 
     // 3. Xử lý lọc khoảng cách (cần vị trí người dùng)
+     try {
+      final userPosition = await _locationService.getCurrentPosition();
+      rpcParams['p_user_lat'] = userPosition.latitude;
+      rpcParams['p_user_lng'] = userPosition.longitude;
+    } catch (e) {
+      _log.warning('⚠️ Không thể lấy vị trí người dùng để tính khoảng cách.', e);
+      // Bỏ qua, không gửi p_user_lat và p_user_lng
+    }
+
     if (params.distance != null) {
-      _log.fine('🏃 Lọc theo khoảng cách, đang lấy vị trí người dùng...');
-      try {
-        final userPosition = await _locationService.getCurrentPosition();
-        rpcParams['p_user_lat'] = userPosition.latitude;
-        rpcParams['p_user_lng'] = userPosition.longitude;
-        // Gửi đi khoảng cách tối đa, DB sẽ xử lý `> min` và `<= max`
-        rpcParams['p_max_distance_meters'] = params.distance!.maxDistance == double.infinity ? null : params.distance!.maxDistance;
-        rpcParams['p_min_distance_meters'] = params.distance!.minDistance;
-      } catch (e) {
-        _log.warning('⚠️ Không thể lấy vị trí người dùng để lọc khoảng cách.', e);
-        // Có thể quyết định trả về danh sách rỗng hoặc bỏ qua bộ lọc khoảng cách
-      }
+      rpcParams['p_max_distance_meters'] = params.distance!.maxDistance == double.infinity ? null : params.distance!.maxDistance;
+      rpcParams['p_min_distance_meters'] = params.distance!.minDistance;
     }
 
      if (params.lastCursor is DateTime) {
