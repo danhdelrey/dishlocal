@@ -18,12 +18,9 @@ class SearchResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Cung cấp một ResultSearchBloc duy nhất cho toàn bộ màn hình
     return BlocProvider(
-      create: (context) => getIt<ResultSearchBloc>()
-        // Ngay khi BLoC được tạo, bắt đầu tìm kiếm với query được truyền vào
-        ..add(ResultSearchEvent.searchStarted(query: query)),
-      child: ConnectivityAndLocationGuard(
+      create: (context) => getIt<ResultSearchBloc>()..add(ResultSearchEvent.searchStarted(query: query)),
+      child:  ConnectivityAndLocationGuard(
         builder: (context) {
           return const _SearchResultContent();
         },
@@ -42,16 +39,12 @@ class _SearchResultContent extends StatefulWidget {
 
 class __SearchResultContentState extends State<_SearchResultContent> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  final _postScrollController = ScrollController();
-  final _profileScrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabSelection);
-    _postScrollController.addListener(_onPostScroll);
-    _profileScrollController.addListener(_onProfileScroll);
   }
 
   void _handleTabSelection() {
@@ -61,31 +54,10 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
     }
   }
 
-  void _onPostScroll() {
-    if (_isBottom(_postScrollController)) {
-      context.read<ResultSearchBloc>().add(const ResultSearchEvent.nextPageRequested());
-    }
-  }
-
-  void _onProfileScroll() {
-    if (_isBottom(_profileScrollController)) {
-      context.read<ResultSearchBloc>().add(const ResultSearchEvent.nextPageRequested());
-    }
-  }
-
-  bool _isBottom(ScrollController controller) {
-    if (!controller.hasClients) return false;
-    final maxScroll = controller.position.maxScrollExtent;
-    final currentScroll = controller.offset;
-    return currentScroll >= (maxScroll - 300.0);
-  }
-
   @override
   void dispose() {
     _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
-    _postScrollController.dispose();
-    _profileScrollController.dispose();
     super.dispose();
   }
 
@@ -142,9 +114,10 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
 
             return TabBarView(
               controller: _tabController,
-              children: [
-                _buildPostResults(state),
-                _buildProfileResults(state),
+              children: const [
+                // Sử dụng các widget con mới, chuyên biệt
+                _PostResultsView(key: PageStorageKey('search_posts_results')),
+                _ProfileResultsView(key: PageStorageKey('search_profiles_results')),
               ],
             );
           },
@@ -152,8 +125,56 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
       ),
     );
   }
+}
 
-  Widget _buildPostResults(ResultSearchState state) {
+// Widget chuyên hiển thị kết quả bài viết
+class _PostResultsView extends StatefulWidget {
+  const _PostResultsView({super.key});
+
+  @override
+  State<_PostResultsView> createState() => _PostResultsViewState();
+}
+
+class _PostResultsViewState extends State<_PostResultsView> {
+  ScrollController? _scrollController;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newScrollController = PrimaryScrollController.of(context);
+    if (_scrollController != newScrollController) {
+      _scrollController?.removeListener(_onScroll);
+      _scrollController = newScrollController;
+      _scrollController?.addListener(_onScroll);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController?.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      if (mounted) {
+        context.read<ResultSearchBloc>().add(const ResultSearchEvent.nextPageRequested());
+      }
+    }
+  }
+
+  bool get _isBottom {
+    if (_scrollController == null || !_scrollController!.hasClients) return false;
+    final maxScroll = _scrollController!.position.maxScrollExtent;
+    final currentScroll = _scrollController!.offset;
+    return currentScroll >= (maxScroll - 300.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<ResultSearchBloc>().state;
+
+    // Chỉ build khi đang ở đúng tab
     if (state.searchType != SearchType.posts) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -161,8 +182,7 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
     final posts = state.results.whereType<Post>().toList();
 
     return GridView.builder(
-      controller: _postScrollController,
-      key: const PageStorageKey('search_posts_grid'),
+      // GridView sẽ tự động sử dụng PrimaryScrollController
       padding: const EdgeInsets.all(10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -179,8 +199,56 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
       },
     );
   }
+}
 
-  Widget _buildProfileResults(ResultSearchState state) {
+// Widget chuyên hiển thị kết quả người dùng
+class _ProfileResultsView extends StatefulWidget {
+  const _ProfileResultsView({super.key});
+
+  @override
+  State<_ProfileResultsView> createState() => _ProfileResultsViewState();
+}
+
+class _ProfileResultsViewState extends State<_ProfileResultsView> {
+  ScrollController? _scrollController;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newScrollController = PrimaryScrollController.of(context);
+    if (_scrollController != newScrollController) {
+      _scrollController?.removeListener(_onScroll);
+      _scrollController = newScrollController;
+      _scrollController?.addListener(_onScroll);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController?.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      if (mounted) {
+        context.read<ResultSearchBloc>().add(const ResultSearchEvent.nextPageRequested());
+      }
+    }
+  }
+
+  bool get _isBottom {
+    if (_scrollController == null || !_scrollController!.hasClients) return false;
+    final maxScroll = _scrollController!.position.maxScrollExtent;
+    final currentScroll = _scrollController!.offset;
+    return currentScroll >= (maxScroll - 300.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<ResultSearchBloc>().state;
+
+    // Chỉ build khi đang ở đúng tab
     if (state.searchType != SearchType.profiles) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -188,35 +256,24 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
     final profiles = state.results.whereType<AppUser>().toList();
 
     return ListView.builder(
-      controller: _profileScrollController,
-      key: const PageStorageKey('search_profiles_list'),
+      // ListView sẽ tự động sử dụng PrimaryScrollController
       itemCount: state.hasNextPage ? profiles.length + 1 : profiles.length,
       itemBuilder: (context, index) {
         if (index >= profiles.length) {
           return const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()));
         }
         final profile = profiles[index];
-        // Thay thế ListTile bằng widget ProfileTile của bạn để đẹp hơn
         return ListTile(
           leading: CircleAvatar(
             backgroundImage: profile.photoUrl != null ? NetworkImage(profile.photoUrl!) : null,
             child: profile.photoUrl == null ? const Icon(Icons.person) : null,
           ),
           title: Text(profile.displayName ?? 'Người dùng'),
-          trailing: profile.isFollowing == true
-              ? const Text(
-                  'Đang theo dõi',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 12,
-                  ),
-                )
-              : null,
+          trailing: profile.isFollowing != null && profile.isFollowing! ? const Text('Đang theo dõi', style: TextStyle(color: Colors.blue, fontSize: 12)) : null,
           subtitle: Text('@${profile.username}'),
-          onTap: () {
-            // Điều hướng đến trang profile của người dùng này
-            context.push('/profile/${profile.userId}');
-          },
+          onTap: () => context.push('/search_result/profile', extra: {
+            'userId': profile.userId,
+          }),
         );
       },
     );
