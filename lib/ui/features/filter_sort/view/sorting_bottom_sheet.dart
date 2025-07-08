@@ -11,20 +11,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class SortingBottomSheet extends StatelessWidget {
-  const SortingBottomSheet({super.key});
+  const SortingBottomSheet({super.key, required this.initialParams});
+  final FilterSortParams initialParams;
 
-  static Future<FilterSortParams?> show(BuildContext context) {
+  static Future<FilterSortParams?> show(BuildContext context, FilterSortParams initialParams) {
     return showModalBottomSheet<FilterSortParams?>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => const SortingBottomSheet(),
+      builder: (_) =>  SortingBottomSheet(initialParams: initialParams,),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return FilterSortBuilder(
+      initialParams: initialParams,
       builder: (context, state) {
         final bloc = context.read<FilterSortBloc>();
 

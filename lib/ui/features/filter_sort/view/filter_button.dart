@@ -19,7 +19,7 @@ class FilterButton extends StatelessWidget {
         elevation: 1,
         child: InkWell(
           onTap: () {
-            SortingBottomSheet.show(context);
+            //SortingBottomSheet.show(context);
           },
           borderRadius: BorderRadius.circular(12),
           splashColor: appColorScheme(context).primary.withValues(alpha: 0.1),

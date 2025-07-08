@@ -46,56 +46,49 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
   late final List<PostBloc> _postBlocs;
   late final UserInfoBloc _userInfoBloc;
 
-  final Set<int> _initializedTabs = {};
+  bool _isMyProfile = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _userInfoBloc = getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId));
+
+    final appUserRepo = getIt<AppUserRepository>();
     final postRepository = getIt<PostRepository>();
+    final currentUserId = appUserRepo.getCurrentUserId();
+
+    // Xác định xem đây có phải trang cá nhân của người dùng hiện tại không
+    // Nếu widget.userId là null, nghĩa là đang xem trang của mình.
+    _isMyProfile = widget.userId == null || widget.userId == currentUserId;
+
+    // Khởi tạo tab controller với số lượng tab phù hợp
+    _tabController = TabController(length: _isMyProfile ? 2 : 1, vsync: this);
+
+    // Khởi tạo UserInfoBloc để lấy thông tin profile
+    _userInfoBloc = getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId));
+
+    // Khởi tạo các BLoC cho từng tab
     _postBlocs = [
+      // BLoC cho tab "Bài viết đã đăng"
       PostBloc(
-        ({required int limit, DateTime? startAfter}) => postRepository.getPostsByUserId(
+        ({required params}) => postRepository.getPostsByUserId(
           userId: widget.userId,
-          limit: limit,
-          startAfter: startAfter,
+          params: params,
         ),
       ),
-      PostBloc(
-        ({required int limit, DateTime? startAfter}) => postRepository.getSavedPosts(
-          userId: widget.userId,
-          limit: limit,
-          startAfter: startAfter,
+      // Chỉ thêm BLoC cho tab "Đã lưu" nếu là trang của mình
+      if (_isMyProfile)
+        PostBloc(
+          ({required params}) => postRepository.getSavedPosts(
+            // userId luôn là của người dùng hiện tại cho tab này
+            userId: currentUserId,
+            params: params,
+          ),
         ),
-      ),
     ];
-
-    if (_postBlocs.isNotEmpty) {
-      _postBlocs[0].add(const PostEvent.fetchNextPostPageRequested());
-      _initializedTabs.add(0);
-    }
-    _tabController.addListener(_handleTabSelection);
-  }
-
-  void _handleTabSelection() {
-    final index = _tabController.index;
-    if (!_initializedTabs.contains(index)) {
-      //_postBlocs[index].add(const PostEvent.fetchNextPostPageRequested());
-      _initializedTabs.add(index);
-    }
-  }
-
-  void _scrollToTopAndRefresh(int index) {
-    if (_mainScrollController.hasClients) {
-      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-    }
-    //_postBlocs[index].add(const PostEvent.refreshRequested());
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
     _mainScrollController.dispose();
     _userInfoBloc.close();
@@ -105,16 +98,25 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
     super.dispose();
   }
 
+  void _scrollToTopAndRefreshCurrentTab() {
+    if (_mainScrollController.hasClients) {
+      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+    }
+    _postBlocs[_tabController.index].add(const PostEvent.refreshRequested());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final currentUserId = getIt<AppUserRepository>().getCurrentUserId();
-    return BlocProvider.value(
-      value: _userInfoBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _userInfoBloc),
+        // Cung cấp các PostBlocs cho cây widget
+        // Chúng ta sẽ lấy BLoC cụ thể trong từng TabView
+      ],
       child: Scaffold(
         body: NestedScrollView(
           controller: _mainScrollController,
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            // Phần headerSliverBuilder không thay đổi.
             return <Widget>[
               GlassSliverAppBar(
                 leading: widget.userId != null
@@ -128,24 +130,14 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
                 title: BlocBuilder<UserInfoBloc, UserInfoState>(
                   builder: (context, state) {
                     if (state is UserInfoSuccess) {
-                      return Text(state.appUser.username ?? 'error');
+                      return Text(state.appUser.username ?? 'Profile');
                     }
                     return const SizedBox();
                   },
                 ),
                 centerTitle: true,
                 actions: [
-                  BlocBuilder<UserInfoBloc, UserInfoState>(
-                    builder: (context, state) {
-                      if (state is UserInfoSuccess) {
-                        final bool isMyProfile = currentUserId == state.appUser.userId;
-                        if (isMyProfile) {
-                          return const LogoutButton();
-                        }
-                      }
-                      return const SizedBox();
-                    },
-                  ),
+                  if (_isMyProfile) const LogoutButton(),
                 ],
               ),
               const SliverToBoxAdapter(child: ProfileInfo()),
@@ -154,14 +146,14 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
                   TabBar(
                     controller: _tabController,
                     onTap: (index) {
-                      if (_tabController.indexIsChanging == false) {
-                        _scrollToTopAndRefresh(index);
+                      if (!_tabController.indexIsChanging) {
+                        _scrollToTopAndRefreshCurrentTab();
                       }
                     },
                     dividerColor: Colors.white.withAlpha(25),
-                    tabs: const [
-                      Tab(icon: Icon(Icons.grid_view_rounded)),
-                      Tab(icon: Icon(Icons.bookmark_rounded)),
+                    tabs: [
+                      const Tab(icon: Icon(Icons.grid_view_rounded)),
+                      if (_isMyProfile) const Tab(icon: Icon(Icons.bookmark_rounded)),
                     ],
                   ),
                 ),
@@ -169,75 +161,35 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
               ),
             ];
           },
-          // THAY ĐỔI LỚN BẮT ĐẦU TỪ ĐÂY
           body: TabBarView(
             controller: _tabController,
             children: [
-              // Tab bài viết đã đăng
-              _buildPostTab(
-                bloc: _postBlocs[0],
-                pageKey: 'profilePosts',
-                noItemsMessage: 'Chưa có bài viết nào.',
+              // Tab 1: Bài viết đã đăng
+              BlocProvider.value(
+                value: _postBlocs[0],
+                child: const GridPostPage(
+                  key: PageStorageKey<String>('profilePosts'),
+                  noItemsFoundMessage: 'Chưa có bài viết nào.',
+                ),
               ),
-              // Tab bài viết đã lưu
-              _buildPostTab(
-                bloc: _postBlocs[1],
-                pageKey: 'profileSavedPosts',
-                noItemsMessage: 'Chưa có bài viết nào được lưu.',
-                // Chỉ hiển thị tab này nếu là trang của chính mình
-                //isVisible: currentUserId == (widget.userId ?? currentUserId),
-              ),
+              // Tab 2: Bài viết đã lưu (chỉ tồn tại nếu là trang của mình)
+              if (_isMyProfile)
+                BlocProvider.value(
+                  value: _postBlocs[1],
+                  child: const GridPostPage(
+                    key: PageStorageKey<String>('profileSavedPosts'),
+                    noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
+                  ),
+                ),
             ],
           ),
-          // KẾT THÚC THAY ĐỔI
         ),
-      ),
-    );
-  }
-
-  /// Widget helper để tạo một tab hiển thị bài viết, tránh lặp code.
-  Widget _buildPostTab({
-    required PostBloc bloc,
-    required String pageKey,
-    required String noItemsMessage,
-    bool isVisible = true, // Thêm tham số isVisible
-  }) {
-    // Nếu tab này không nên hiển thị (ví dụ: tab 'Đã lưu' của người khác),
-    // trả về một widget rỗng hoặc một thông báo.
-    if (!isVisible) {
-      return const Center(
-        child: Text("Bạn không thể xem các bài viết đã lưu của người khác."),
-      );
-    }
-
-    return BlocProvider.value(
-      value: bloc,
-      // Sử dụng BlocBuilder để rebuild khi state của BLoC thay đổi
-      child: BlocBuilder<PostBloc, PagingState<DateTime?, Post>>(
-        builder: (context, state) {
-          // Truyền state và các callback vào GridPostPage
-          return GridPostPage(
-            key: PageStorageKey<String>(pageKey),
-            pagingState: state,
-            onFetchNextPage: () {
-              // Khi GridPostPage yêu cầu trang mới, chúng ta bảo BLoC tương ứng fetch
-              bloc.add(const PostEvent.fetchNextPostPageRequested());
-            },
-            onRefresh: () async {
-              // Khi người dùng kéo để refresh, chúng ta gửi event refresh
-              bloc.add(const PostEvent.refreshRequested());
-              // Đợi BLoC xử lý xong để RefreshIndicator biết khi nào nên dừng
-              await bloc.stream.firstWhere((s) => !s.isLoading);
-            },
-            noItemsFoundMessage: noItemsMessage,
-          );
-        },
       ),
     );
   }
 }
 
-// Lớp _SliverAppBarDelegate không đổi
+// Lớp _SliverAppBarDelegate không đổi, chỉ cần copy và dán
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
   final TabBar _tabBar;

@@ -23,7 +23,7 @@ class _SortingPageState extends State<SortingPage> {
   Future<void> _openFilterSheet() async {
     // Gọi và chờ kết quả từ bottom sheet.
     // `showModalBottomSheet` trả về giá trị được truyền trong `context.pop(result)`.
-    final result = await SortingBottomSheet.show(context);
+    final result = await SortingBottomSheet.show(context,FilterSortParams.defaultParams());
 
     // Kiểm tra xem người dùng có nhấn "Áp dụng" hay không (result không null)
     // và kết quả có đúng là kiểu FilterSortParams không.

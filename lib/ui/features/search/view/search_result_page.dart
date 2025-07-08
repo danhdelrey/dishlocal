@@ -117,20 +117,20 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
           controller: _tabController,
           children: [
             // Tab bài viết
-            BlocBuilder<PostSearchBloc, PostSearchState>(
-              builder: (context, state) {
-                return GridPostPage(
-                  pagingState: state,
-                  onFetchNextPage: () => context.read<PostSearchBloc>().add(const PostSearchEvent.nextPageRequested()),
-                  onRefresh: () async {
-                    context.read<PostSearchBloc>().add(PostSearchEvent.searchStarted(widget.query));
-                    // Đợi BLoC xử lý xong
-                    await context.read<PostSearchBloc>().stream.firstWhere((s) => s.error != null || s.pages?.isNotEmpty == true);
-                  },
-                  noItemsFoundMessage: "Không tìm thấy bài viết nào.",
-                );
-              },
-            ),
+            // BlocBuilder<PostSearchBloc, PostSearchState>(
+            //   builder: (context, state) {
+            //     return GridPostPage(
+            //       pagingState: state,
+            //       onFetchNextPage: () => context.read<PostSearchBloc>().add(const PostSearchEvent.nextPageRequested()),
+            //       onRefresh: () async {
+            //         context.read<PostSearchBloc>().add(PostSearchEvent.searchStarted(widget.query));
+            //         // Đợi BLoC xử lý xong
+            //         await context.read<PostSearchBloc>().stream.firstWhere((s) => s.error != null || s.pages?.isNotEmpty == true);
+            //       },
+            //       noItemsFoundMessage: "Không tìm thấy bài viết nào.",
+            //     );
+            //   },
+            // ),
             // Tab người dùng
             BlocBuilder<ProfileSearchBloc, ProfileSearchState>(
               builder: (context, state) {

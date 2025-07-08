@@ -2,8 +2,10 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
+import 'package:dishlocal/ui/features/filter_sort/view/sorting_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
@@ -13,22 +15,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-/// BƯỚC 1: HomePage giờ trở thành một "Container" đơn giản, có thể là StatelessWidget.
-/// Nhiệm vụ duy nhất của nó là gọi Guard.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Khi Guard xác nhận điều kiện OK, nó sẽ tạo ra _HomePageContent.
-    // Chỉ khi đó, initState của _HomePageContent mới được gọi.
     return ConnectivityAndLocationGuard(
       builder: (context) => const _HomePageContent(),
     );
   }
 }
 
-/// BƯỚC 2: Tạo một StatefulWidget riêng để chứa toàn bộ logic và giao diện của trang.
 class _HomePageContent extends StatefulWidget {
   const _HomePageContent();
 
@@ -38,51 +35,24 @@ class _HomePageContent extends StatefulWidget {
 
 class _HomePageContentState extends State<_HomePageContent> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  final ScrollController _mainScrollController = ScrollController();
   late final List<PostBloc> _postBlocs;
-
-  final Set<int> _initializedTabs = {};
+  // ScrollController này chỉ dùng cho AppBar, không dùng cho phân trang.
+  final ScrollController _mainScrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-
     final postRepository = getIt<PostRepository>();
 
     _postBlocs = [
-      PostBloc(postRepository.getPosts),
-      PostBloc(postRepository.getFollowingPosts),
+      PostBloc(({required params}) => postRepository.getPosts(params: params)),
+      PostBloc(({required params}) => postRepository.getFollowingPosts(params: params)),
     ];
-
-    if (_postBlocs.isNotEmpty) {
-      _postBlocs[0].add(const PostEvent.fetchNextPostPageRequested());
-      _initializedTabs.add(0);
-    }
-
-    _tabController.addListener(_handleTabSelection);
-  }
-
-  void _handleTabSelection() {
-    final index = _tabController.index;
-    if (!_initializedTabs.contains(index)) {
-      //_postBlocs[index].add(const PostEvent.fetchNextPostPageRequested());
-      _initializedTabs.add(index);
-    }
-  }
-
-  void _scrollToTopAndRefresh(int index) {
-    // Logic này không thay đổi
-    if (_mainScrollController.hasClients) {
-      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-    }
-
-    //_postBlocs[index].add(const PostEvent.refreshRequested());
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
     _mainScrollController.dispose();
     for (var bloc in _postBlocs) {
@@ -91,14 +61,46 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
     super.dispose();
   }
 
+  void _scrollToTopAndRefreshCurrentTab() {
+    // Logic cuộn lên đầu vẫn giữ nguyên
+    if (_mainScrollController.hasClients) {
+      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+    }
+    // Gửi event refresh tới BLoC của tab hiện tại
+    _postBlocs[_tabController.index].add(const PostEvent.refreshRequested());
+  }
+
+  // Mở bottom sheet để thay đổi bộ lọc
+  void _openFilterSortSheet() async {
+    // Lấy BLoC của tab đang hoạt động
+    final currentBloc = _postBlocs[_tabController.index];
+
+    // Lấy bộ lọc hiện tại từ state của BLoC
+    final currentFilters = currentBloc.state.filterSortParams;
+
+    // TODO: Thay thế FilterSortBottomSheet bằng widget của bạn
+    final newFilters = await SortingBottomSheet.show(context,currentFilters);
+
+    // Nếu người dùng xác nhận bộ lọc mới, gửi event tới BLoC
+    if (newFilters != null && newFilters != currentFilters) {
+      currentBloc.add(PostEvent.filtersChanged(newFilters: newFilters));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      // Hiển thị nút lọc ở đây
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _openFilterSortSheet,
+        label: const Text('Lọc & Sắp xếp'),
+        icon: const Icon(Icons.filter_list),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: NestedScrollView(
         controller: _mainScrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          // Phần headerSliverBuilder không thay đổi
           return <Widget>[
             GlassSliverAppBar(
               centerTitle: true,
@@ -107,25 +109,21 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
                 shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
                 child: Text(
                   'DishLocal',
-                  style: appTextTheme(context).titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                  style: appTextTheme(context).titleLarge?.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
               actions: [
                 IconButton(
-                  icon: AppIcons.search.toSvg(
-                    color: appColorScheme(context).onSurfaceVariant,
-                  ),
+                  icon: AppIcons.search.toSvg(color: appColorScheme(context).onSurfaceVariant),
                   onPressed: () => context.push('/search_input'),
                 ),
               ],
               bottom: TabBar(
-                dividerColor: Colors.white.withValues(alpha: 0.1),
+                dividerColor: Colors.white.withAlpha(25), // Alpha 0.1
                 controller: _tabController,
                 onTap: (index) {
                   if (!_tabController.indexIsChanging) {
-                    _scrollToTopAndRefresh(index);
+                    _scrollToTopAndRefreshCurrentTab();
                   }
                 },
                 tabs: const [
@@ -139,57 +137,26 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
             ),
           ];
         },
-        // THAY ĐỔI LỚN BẮT ĐẦU TỪ ĐÂY
         body: TabBarView(
           controller: _tabController,
           children: [
-            // Tab 1: "Dành cho bạn"
-            _buildPostTab(
-              bloc: _postBlocs[0],
-              pageKey: 'homeForYouTab',
-              noItemsMessage: 'Chưa có bài viết nào để hiển thị.',
+            // Cung cấp BLoC cho mỗi GridPostPage tương ứng
+            BlocProvider.value(
+              value: _postBlocs[0],
+              child: const GridPostPage(
+                key: PageStorageKey<String>('homeForYouTab'), // Giữ state khi chuyển tab
+                noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
+              ),
             ),
-            // Tab 2: "Đang theo dõi"
-            _buildPostTab(
-              bloc: _postBlocs[1],
-              pageKey: 'homeFollowingTab',
-              noItemsMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
+            BlocProvider.value(
+              value: _postBlocs[1],
+              child: const GridPostPage(
+                key: PageStorageKey<String>('homeFollowingTab'),
+                noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
+              ),
             ),
           ],
         ),
-        // KẾT THÚC THAY ĐỔI
-      ),
-    );
-  }
-
-  /// Widget helper để tạo một tab hiển thị bài viết, tránh lặp code.
-  Widget _buildPostTab({
-    required PostBloc bloc,
-    required String pageKey,
-    required String noItemsMessage,
-  }) {
-    return BlocProvider.value(
-      value: bloc,
-      // Sử dụng BlocBuilder để rebuild khi state của BLoC thay đổi
-      child: BlocBuilder<PostBloc, PagingState<DateTime?, Post>>(
-        builder: (context, state) {
-          // Truyền state và các callback vào GridPostPage
-          return GridPostPage(
-            key: PageStorageKey<String>(pageKey),
-            pagingState: state,
-            onFetchNextPage: () {
-              // Khi GridPostPage yêu cầu trang mới, chúng ta bảo BLoC tương ứng fetch
-              bloc.add(const PostEvent.fetchNextPostPageRequested());
-            },
-            onRefresh: () async {
-              // Khi người dùng kéo để refresh, chúng ta gửi event refresh
-              bloc.add(const PostEvent.refreshRequested());
-              // Đợi BLoC xử lý xong để RefreshIndicator biết khi nào nên dừng
-              await bloc.stream.firstWhere((s) => !s.isLoading);
-            },
-            noItemsFoundMessage: noItemsMessage,
-          );
-        },
       ),
     );
   }
