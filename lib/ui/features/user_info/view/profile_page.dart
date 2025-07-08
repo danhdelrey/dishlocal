@@ -42,7 +42,6 @@ class _ProfilePageContent extends StatefulWidget {
 /// State logic được chuyển hết vào đây.
 class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  final ScrollController _mainScrollController = ScrollController();
   late final List<PostBloc> _postBlocs;
   late final UserInfoBloc _userInfoBloc;
 
@@ -90,7 +89,6 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
   @override
   void dispose() {
     _tabController.dispose();
-    _mainScrollController.dispose();
     _userInfoBloc.close();
     for (var bloc in _postBlocs) {
       bloc.close();
@@ -110,7 +108,6 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
       ],
       child: Scaffold(
         body: NestedScrollView(
-          controller: _mainScrollController,
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               GlassSliverAppBar(
