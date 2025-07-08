@@ -98,12 +98,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
     super.dispose();
   }
 
-  void _scrollToTopAndRefreshCurrentTab() {
-    if (_mainScrollController.hasClients) {
-      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-    }
-    //_postBlocs[_tabController.index].add(const PostEvent.refreshRequested());
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -146,9 +141,9 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
                   TabBar(
                     controller: _tabController,
                     onTap: (index) {
-                      if (!_tabController.indexIsChanging) {
-                        _scrollToTopAndRefreshCurrentTab();
-                      }
+                      // if (!_tabController.indexIsChanging) {
+                      //   _scrollToTopAndRefreshCurrentTab();
+                      // }
                     },
                     dividerColor: Colors.white.withAlpha(25),
                     tabs: [

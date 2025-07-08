@@ -61,14 +61,6 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
     super.dispose();
   }
 
-  void _scrollToTopAndRefreshCurrentTab() {
-    // Logic cuộn lên đầu vẫn giữ nguyên
-    if (_mainScrollController.hasClients) {
-      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 2000), curve: Curves.easeOut);
-    }
-    // Gửi event refresh tới BLoC của tab hiện tại
-    //_postBlocs[_tabController.index].add(const PostEvent.refreshRequested());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +90,7 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
                 dividerColor: Colors.white.withAlpha(25), // Alpha 0.1
                 controller: _tabController,
                 onTap: (index) {
-                  if (!_tabController.indexIsChanging) {
-                    _scrollToTopAndRefreshCurrentTab();
-                  }
+                  //_scrollToTop();
                 },
                 tabs: const [
                   Tab(text: 'Dành cho bạn'),
