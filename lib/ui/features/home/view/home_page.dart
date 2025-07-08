@@ -61,12 +61,14 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
       body: NestedScrollView(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         controller: _mainScrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
@@ -89,7 +91,7 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
               bottom: TabBar(
                 dividerColor: Colors.white.withAlpha(25), // Alpha 0.1
                 controller: _tabController,
-                
+
                 tabs: const [
                   Tab(text: 'Dành cho bạn'),
                   Tab(text: 'Đang theo dõi'),

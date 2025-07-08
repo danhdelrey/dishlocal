@@ -20,14 +20,13 @@ class GridPostPage extends StatefulWidget {
 }
 
 class _GridPostPageState extends State<GridPostPage> {
-  final _scrollController = ScrollController();
+  // THAY ĐỔI 2: Không tạo ScrollController mới, chỉ giữ một tham chiếu.
+  ScrollController? _scrollController;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
-    // Tải trang đầu tiên ngay khi widget được tạo
-    // (nếu danh sách đang rỗng)
+    // Tải trang đầu tiên ngay khi widget được tạo lần đầu
     final bloc = context.read<PostBloc>();
     if (bloc.state.status == PostStatus.initial) {
       bloc.add(const PostEvent.fetchNextPageRequested());
@@ -35,26 +34,42 @@ class _GridPostPageState extends State<GridPostPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // THAY ĐỔI 3: Đây là nơi an toàn để lấy PrimaryScrollController
+    // và gắn/cập nhật listener.
+    final newScrollController = PrimaryScrollController.of(context);
+    if (_scrollController != newScrollController) {
+      // Gỡ listener khỏi controller cũ nếu có
+      _scrollController?.removeListener(_onScroll);
+      // Gán controller mới và thêm listener
+      _scrollController = newScrollController;
+      _scrollController?.addListener(_onScroll);
+    }
+  }
+
+  @override
   void dispose() {
-    _scrollController
-      ..removeListener(_onScroll)
-      ..dispose();
+    // THAY ĐỔI 4: Gỡ bỏ listener khi widget bị hủy. Rất quan trọng!
+    _scrollController?.removeListener(_onScroll);
     super.dispose();
   }
 
   void _onScroll() {
+    // Logic này không đổi, nhưng giờ nó an toàn.
     if (_isBottom) {
-      // Gọi BLoC để tải trang tiếp theo
-      context.read<PostBloc>().add(const PostEvent.fetchNextPageRequested());
+      // Sử dụng context một cách an toàn vì listener sẽ được gỡ bỏ trong dispose.
+      if (mounted) {
+        context.read<PostBloc>().add(const PostEvent.fetchNextPageRequested());
+      }
     }
   }
 
   bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    // Trigger tải trang mới khi chỉ còn 300px nữa là đến cuối
-    return currentScroll >= (maxScroll - 300);
+    if (_scrollController == null || !_scrollController!.hasClients) return false;
+    final maxScroll = _scrollController!.position.maxScrollExtent;
+    final currentScroll = _scrollController!.offset;
+    return currentScroll >= (maxScroll - 300.0);
   }
 
   @override
@@ -123,6 +138,34 @@ class _GridPostPageState extends State<GridPostPage> {
           );
         }
 
+        // Trường hợp 3: Thành công nhưng không có bài viết nào
+        if (state.status == PostStatus.success && state.posts.isEmpty) {
+          return RefreshIndicator(
+            onRefresh: () async {
+              final bloc = context.read<PostBloc>();
+              bloc.add(const PostEvent.refreshRequested());
+              await bloc.stream.firstWhere((s) => s.status != PostStatus.loading);
+            },
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              slivers: [
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 15),
+                    child: FilterButton(),
+                  ),
+                ),
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Text(widget.noItemsFoundMessage),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
         // Trường hợp 4: Hiển thị danh sách bài viết
         return _buildPostList(context, state);
       },
@@ -138,7 +181,7 @@ class _GridPostPageState extends State<GridPostPage> {
         await bloc.stream.firstWhere((s) => s.status != PostStatus.loading);
       },
       child: CustomScrollView(
-        controller: _scrollController,
+        key: PageStorageKey<String>(state.filterSortParams.toString()),
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         slivers: [
           const SliverToBoxAdapter(

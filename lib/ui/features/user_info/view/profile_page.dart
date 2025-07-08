@@ -96,8 +96,6 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
     super.dispose();
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -108,6 +106,9 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
       ],
       child: Scaffold(
         body: NestedScrollView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               GlassSliverAppBar(
@@ -137,7 +138,6 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
                 delegate: _SliverAppBarDelegate(
                   TabBar(
                     controller: _tabController,
-                   
                     dividerColor: Colors.white.withAlpha(25),
                     tabs: [
                       const Tab(icon: Icon(Icons.grid_view_rounded)),
