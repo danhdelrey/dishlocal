@@ -88,8 +88,9 @@ class _GridPostPageState extends State<GridPostPage> {
         if (state.status == PostStatus.success && state.posts.isEmpty) {
           return Column(
             children: [
+              const SizedBox(height: 15),
               const FilterButton(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 15),
               Center(child: Text(widget.noItemsFoundMessage)),
             ],
           );
@@ -114,7 +115,10 @@ class _GridPostPageState extends State<GridPostPage> {
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         slivers: [
           const SliverToBoxAdapter(
-            child: FilterButton(),
+            child: Padding(
+              padding: EdgeInsets.only(top: 15),
+              child: FilterButton(),
+            ),
           ),
 
           SliverPadding(

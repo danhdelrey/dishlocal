@@ -70,22 +70,6 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
     _postBlocs[_tabController.index].add(const PostEvent.refreshRequested());
   }
 
-  // Mở bottom sheet để thay đổi bộ lọc
-  void _openFilterSortSheet() async {
-    // Lấy BLoC của tab đang hoạt động
-    final currentBloc = _postBlocs[_tabController.index];
-
-    // Lấy bộ lọc hiện tại từ state của BLoC
-    final currentFilters = currentBloc.state.filterSortParams;
-
-    // TODO: Thay thế FilterSortBottomSheet bằng widget của bạn
-    final newFilters = await SortingBottomSheet.show(context, currentFilters);
-
-    // Nếu người dùng xác nhận bộ lọc mới, gửi event tới BLoC
-    if (newFilters != null && newFilters != currentFilters) {
-      currentBloc.add(PostEvent.filtersChanged(newFilters: newFilters));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

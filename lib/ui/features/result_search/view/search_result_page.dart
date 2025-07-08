@@ -23,7 +23,7 @@ class SearchResultScreen extends StatelessWidget {
       create: (context) => getIt<ResultSearchBloc>()
         // Ngay khi BLoC được tạo, bắt đầu tìm kiếm với query được truyền vào
         ..add(ResultSearchEvent.searchStarted(query: query)),
-      child:  ConnectivityAndLocationGuard(
+      child: ConnectivityAndLocationGuard(
         builder: (context) {
           return const _SearchResultContent();
         },
@@ -203,6 +203,15 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
             child: profile.photoUrl == null ? const Icon(Icons.person) : null,
           ),
           title: Text(profile.displayName ?? 'Người dùng'),
+          trailing: profile.isFollowing == true
+              ? const Text(
+                  'Đang theo dõi',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 12,
+                  ),
+                )
+              : null,
           subtitle: Text('@${profile.username}'),
           onTap: () {
             // Điều hướng đến trang profile của người dùng này

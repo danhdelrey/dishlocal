@@ -39,35 +39,31 @@ class FilterButton extends StatelessWidget {
         final hasActiveFilters = !state.filterSortParams.isDefault();
 
         return Container(
-          // Căn chỉnh nút sang trái
-          alignment: Alignment.centerLeft,
-          margin: const EdgeInsets.only(bottom: 15, left: 10, right: 10),
+          width: double.infinity, // Kéo dài toàn bộ chiều rộng
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           child: Material(
-            color: appColorScheme(context).surfaceContainer, // Màu nền nhẹ
-            borderRadius: BorderRadius.circular(100), // Bo tròn như một viên thuốc (pill)
-            elevation: 1,
-            shadowColor: Colors.black.withOpacity(0.1),
+            color: Colors.transparent, // Để dùng màu nền trong BoxDecoration
+            borderRadius: BorderRadius.circular(12), // Bo tròn 12
             child: InkWell(
-              onTap: () => _openFilterSortSheet(context), // Gọi hàm đã được định nghĩa
-              borderRadius: BorderRadius.circular(100),
+              onTap: () => _openFilterSortSheet(context),
+              borderRadius: BorderRadius.circular(12),
               splashColor: appColorScheme(context).primary.withOpacity(0.1),
               highlightColor: appColorScheme(context).primary.withOpacity(0.05),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
+                  color: hasActiveFilters ? appColorScheme(context).primary.withOpacity(0.2) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    // Viền màu primary khi có filter, nếu không thì trong suốt
-                    color: hasActiveFilters ? appColorScheme(context).primary : Colors.transparent,
-                    width: 1.5,
+                    color: hasActiveFilters ? appColorScheme(context).primary : Colors.white.withOpacity(0.1),
+                    width: 1,
                   ),
                 ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Icon(
-                      // Đổi icon nếu có filter
-                      hasActiveFilters ? Icons.filter_1_outlined : Icons.tune_rounded,
+                      hasActiveFilters ? Icons.tune_rounded : Icons.tune_rounded,
                       size: 20,
                       color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
                     ),
@@ -79,7 +75,6 @@ class FilterButton extends StatelessWidget {
                             color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
                           ),
                     ),
-                    // Hiển thị một chấm nhỏ nếu có filter đang hoạt động
                     if (hasActiveFilters)
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
@@ -102,4 +97,3 @@ class FilterButton extends StatelessWidget {
     );
   }
 }
-
