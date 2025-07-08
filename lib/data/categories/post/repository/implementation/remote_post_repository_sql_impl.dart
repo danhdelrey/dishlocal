@@ -230,6 +230,16 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       }
     }
 
+     if (params.lastCursor is DateTime) {
+      rpcParams['p_last_cursor_date'] = (params.lastCursor as DateTime).toUtc().toIso8601String();
+    } else if (params.lastCursor is int) {
+      rpcParams['p_last_cursor_numeric'] = params.lastCursor;
+      // Đồng thời, gửi đi con trỏ phụ để phá vỡ thế hòa
+      if (params.lastDateCursorForTieBreak != null) {
+        rpcParams['p_last_cursor_date'] = params.lastDateCursorForTieBreak!.toUtc().toIso8601String();
+      }
+    }
+
     // Loại bỏ các khóa có giá trị null để không gửi đi các tham số không cần thiết
     rpcParams.removeWhere((key, value) => value == null);
 

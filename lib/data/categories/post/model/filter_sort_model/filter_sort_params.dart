@@ -30,6 +30,10 @@ abstract class FilterSortParams with _$FilterSortParams {
     /// (ví dụ: `DateTime` cho ngày đăng, `int` cho lượt thích).
     /// Là `null` nếu đây là yêu cầu cho trang đầu tiên.
     dynamic lastCursor,
+
+    /// Con trỏ phụ, chỉ dùng khi sắp xếp theo trường số (likes, comments, etc.)
+    /// để phá vỡ thế hòa (tie-breaking).
+    DateTime? lastDateCursorForTieBreak,
   }) = _FilterSortParams;
 
   /// Tạo một bộ lọc mặc định.

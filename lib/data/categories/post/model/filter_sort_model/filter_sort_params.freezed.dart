@@ -28,6 +28,10 @@ mixin _$FilterSortParams {
   /// Là `null` nếu đây là yêu cầu cho trang đầu tiên.
   dynamic get lastCursor;
 
+  /// Con trỏ phụ, chỉ dùng khi sắp xếp theo trường số (likes, comments, etc.)
+  /// để phá vỡ thế hòa (tie-breaking).
+  DateTime? get lastDateCursorForTieBreak;
+
   /// Create a copy of FilterSortParams
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -50,7 +54,10 @@ mixin _$FilterSortParams {
                 other.sortOption == sortOption) &&
             (identical(other.limit, limit) || other.limit == limit) &&
             const DeepCollectionEquality()
-                .equals(other.lastCursor, lastCursor));
+                .equals(other.lastCursor, lastCursor) &&
+            (identical(other.lastDateCursorForTieBreak,
+                    lastDateCursorForTieBreak) ||
+                other.lastDateCursorForTieBreak == lastDateCursorForTieBreak));
   }
 
   @override
@@ -61,11 +68,12 @@ mixin _$FilterSortParams {
       distance,
       sortOption,
       limit,
-      const DeepCollectionEquality().hash(lastCursor));
+      const DeepCollectionEquality().hash(lastCursor),
+      lastDateCursorForTieBreak);
 
   @override
   String toString() {
-    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor)';
+    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor, lastDateCursorForTieBreak: $lastDateCursorForTieBreak)';
   }
 }
 
@@ -81,7 +89,8 @@ abstract mixin class $FilterSortParamsCopyWith<$Res> {
       DistanceRange? distance,
       SortOption sortOption,
       int limit,
-      dynamic lastCursor});
+      dynamic lastCursor,
+      DateTime? lastDateCursorForTieBreak});
 
   $SortOptionCopyWith<$Res> get sortOption;
 }
@@ -105,6 +114,7 @@ class _$FilterSortParamsCopyWithImpl<$Res>
     Object? sortOption = null,
     Object? limit = null,
     Object? lastCursor = freezed,
+    Object? lastDateCursorForTieBreak = freezed,
   }) {
     return _then(_self.copyWith(
       categories: null == categories
@@ -131,6 +141,10 @@ class _$FilterSortParamsCopyWithImpl<$Res>
           ? _self.lastCursor
           : lastCursor // ignore: cast_nullable_to_non_nullable
               as dynamic,
+      lastDateCursorForTieBreak: freezed == lastDateCursorForTieBreak
+          ? _self.lastDateCursorForTieBreak
+          : lastDateCursorForTieBreak // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 
@@ -154,7 +168,8 @@ class _FilterSortParams extends FilterSortParams {
       this.distance,
       this.sortOption = SortOption.defaultSort,
       this.limit = 10,
-      this.lastCursor})
+      this.lastCursor,
+      this.lastDateCursorForTieBreak})
       : _categories = categories,
         super._();
 
@@ -189,6 +204,11 @@ class _FilterSortParams extends FilterSortParams {
   @override
   final dynamic lastCursor;
 
+  /// Con trỏ phụ, chỉ dùng khi sắp xếp theo trường số (likes, comments, etc.)
+  /// để phá vỡ thế hòa (tie-breaking).
+  @override
+  final DateTime? lastDateCursorForTieBreak;
+
   /// Create a copy of FilterSortParams
   /// with the given fields replaced by the non-null parameter values.
   @override
@@ -211,7 +231,10 @@ class _FilterSortParams extends FilterSortParams {
                 other.sortOption == sortOption) &&
             (identical(other.limit, limit) || other.limit == limit) &&
             const DeepCollectionEquality()
-                .equals(other.lastCursor, lastCursor));
+                .equals(other.lastCursor, lastCursor) &&
+            (identical(other.lastDateCursorForTieBreak,
+                    lastDateCursorForTieBreak) ||
+                other.lastDateCursorForTieBreak == lastDateCursorForTieBreak));
   }
 
   @override
@@ -222,11 +245,12 @@ class _FilterSortParams extends FilterSortParams {
       distance,
       sortOption,
       limit,
-      const DeepCollectionEquality().hash(lastCursor));
+      const DeepCollectionEquality().hash(lastCursor),
+      lastDateCursorForTieBreak);
 
   @override
   String toString() {
-    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor)';
+    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor, lastDateCursorForTieBreak: $lastDateCursorForTieBreak)';
   }
 }
 
@@ -244,7 +268,8 @@ abstract mixin class _$FilterSortParamsCopyWith<$Res>
       DistanceRange? distance,
       SortOption sortOption,
       int limit,
-      dynamic lastCursor});
+      dynamic lastCursor,
+      DateTime? lastDateCursorForTieBreak});
 
   @override
   $SortOptionCopyWith<$Res> get sortOption;
@@ -269,6 +294,7 @@ class __$FilterSortParamsCopyWithImpl<$Res>
     Object? sortOption = null,
     Object? limit = null,
     Object? lastCursor = freezed,
+    Object? lastDateCursorForTieBreak = freezed,
   }) {
     return _then(_FilterSortParams(
       categories: null == categories
@@ -295,6 +321,10 @@ class __$FilterSortParamsCopyWithImpl<$Res>
           ? _self.lastCursor
           : lastCursor // ignore: cast_nullable_to_non_nullable
               as dynamic,
+      lastDateCursorForTieBreak: freezed == lastDateCursorForTieBreak
+          ? _self.lastDateCursorForTieBreak
+          : lastDateCursorForTieBreak // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 

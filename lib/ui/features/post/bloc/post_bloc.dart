@@ -43,20 +43,29 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   /// Helper để tính toán con trỏ (cursor) cho yêu cầu tiếp theo
-  dynamic _calculateCursor(List<Post> currentPosts, SortOption sortOption) {
+  Map<String, dynamic> _calculateCursor(List<Post> currentPosts, SortOption sortOption) {
     if (currentPosts.isEmpty) {
-      return null;
+      return {'mainCursor': null, 'dateCursor': null};
     }
     final lastPost = currentPosts.last;
+
     switch (sortOption.field) {
       case SortField.datePosted:
-        return lastPost.createdAt;
+        // Sắp xếp theo ngày, chỉ cần con trỏ chính
+        return {'mainCursor': lastPost.createdAt, 'dateCursor': null};
       case SortField.likes:
-        return lastPost.likeCount;
       case SortField.comments:
-        return lastPost.commentCount;
       case SortField.saves:
-        return lastPost.saveCount;
+        // Sắp xếp theo số, cần cả hai
+        final numericValue = sortOption.field == SortField.likes
+            ? lastPost.likeCount
+            : sortOption.field == SortField.comments
+                ? lastPost.commentCount
+                : lastPost.saveCount;
+        return {
+          'mainCursor': numericValue,
+          'dateCursor': lastPost.createdAt,
+        };
     }
   }
 
@@ -73,13 +82,17 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       emit(state.copyWith(status: PostStatus.loading));
     }
 
-    final cursor = _calculateCursor(state.posts, state.filterSortParams.sortOption);
-    _log.info('📥 Đang tải trang tiếp theo. Cursor: $cursor, Filters: ${state.filterSortParams.sortOption.displayName}');
+    final cursorData = _calculateCursor(state.posts, state.filterSortParams.sortOption);
+
+    _log.info('📥 Đang tải trang tiếp theo. Cursor: ${cursorData['mainCursor']}, Tie-break: ${cursorData['dateCursor']}');
 
     final params = state.filterSortParams.copyWith(
-      lastCursor: cursor,
+      // Gán con trỏ vào các trường tương ứng
+      lastCursor: cursorData['mainCursor'],
+      lastDateCursorForTieBreak: cursorData['dateCursor'],
       limit: _pageSize,
     );
+
     final result = await _postFetcher(params: params);
 
     result.fold(
