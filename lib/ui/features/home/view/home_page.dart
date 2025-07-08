@@ -64,12 +64,11 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
   void _scrollToTopAndRefreshCurrentTab() {
     // Logic cuộn lên đầu vẫn giữ nguyên
     if (_mainScrollController.hasClients) {
-      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      _mainScrollController.animateTo(0.0, duration: const Duration(milliseconds: 2000), curve: Curves.easeOut);
     }
     // Gửi event refresh tới BLoC của tab hiện tại
-    _postBlocs[_tabController.index].add(const PostEvent.refreshRequested());
+    //_postBlocs[_tabController.index].add(const PostEvent.refreshRequested());
   }
-
 
   @override
   Widget build(BuildContext context) {

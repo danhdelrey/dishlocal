@@ -72,13 +72,40 @@ class _GridPostPageState extends State<GridPostPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Lỗi: ${state.failure?.toString() ?? "Không xác định"}'),
+                Icon(
+                  Icons.error_outline_rounded,
+                  size: 64,
+                  color: appColorScheme(context).error,
+                ),
                 const SizedBox(height: 16),
-                ElevatedButton(
+                Text(
+                  'Có lỗi xảy ra',
+                  style: appTextTheme(context).titleMedium?.copyWith(
+                        color: appColorScheme(context).onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Text(
+                    state.failure?.message ?? "Không xác định",
+                    style: appTextTheme(context).bodyMedium?.copyWith(
+                          color: appColorScheme(context).onSurface.withValues(alpha: 0.7),
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
                   onPressed: () {
                     context.read<PostBloc>().add(const PostEvent.refreshRequested());
                   },
-                  child: const Text('Thử lại'),
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Thử lại'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
                 ),
               ],
             ),
