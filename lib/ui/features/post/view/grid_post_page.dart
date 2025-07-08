@@ -86,7 +86,13 @@ class _GridPostPageState extends State<GridPostPage> {
         }
         // Trường hợp 3: Thành công nhưng không có bài viết nào
         if (state.status == PostStatus.success && state.posts.isEmpty) {
-          return Center(child: Text(widget.noItemsFoundMessage));
+          return Column(
+            children: [
+              const FilterButton(),
+              const SizedBox(height: 24),
+              Center(child: Text(widget.noItemsFoundMessage)),
+            ],
+          );
         }
 
         // Trường hợp 4: Hiển thị danh sách bài viết
@@ -107,7 +113,7 @@ class _GridPostPageState extends State<GridPostPage> {
         controller: _scrollController,
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         slivers: [
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: FilterButton(),
           ),
 
