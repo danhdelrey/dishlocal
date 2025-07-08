@@ -1,6 +1,7 @@
 // search_service.dart
 
 import 'package:dishlocal/data/services/search_service/model/search_result.dart';
+import 'package:dishlocal/data/services/search_service/model/suggestion_result.dart';
 
 /// Enum để xác định loại nội dung cần tìm kiếm.
 /// Giúp code dễ đọc và an toàn hơn so với việc dùng chuỗi ('posts', 'profiles').
@@ -26,6 +27,19 @@ abstract class SearchService {
     required SearchableItem searchType,
     int page = 0,
     int hitsPerPage = 20,
+  });
+
+  /// Thực hiện tìm kiếm "nhẹ", chỉ lấy các gợi ý văn bản.
+  ///
+  /// - [query]: Chuỗi tìm kiếm.
+  /// - [searchType]: Loại nội dung cần tìm.
+  /// - [hitsPerPage]: Số lượng gợi ý tối đa.
+  ///
+  /// Trả về một `SuggestionResult` chứa các chuỗi gợi ý.
+  Future<SuggestionResult> getSuggestions({
+    required String query,
+    required SearchableItem searchType,
+    int hitsPerPage = 5,
   });
 
   // Trong tương lai, bạn có thể dễ dàng thêm các phương thức khác ở đây

@@ -208,6 +208,8 @@ _i174.GetIt init(
         gh<_i886.ModerationRepository>(),
         gh<_i19.ImageProcessor>(),
       ));
+  gh.factory<_i679.SuggestionSearchBloc>(
+      () => _i679.SuggestionSearchBloc(gh<_i310.SearchService>()));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,
@@ -235,10 +237,6 @@ _i174.GetIt init(
         gh<_i749.AppUserRepository>(),
       ));
   gh.factory<_i531.ResultSearchBloc>(() => _i531.ResultSearchBloc(
-        gh<_i480.PostRepository>(),
-        gh<_i749.AppUserRepository>(),
-      ));
-  gh.factory<_i679.SuggestionSearchBloc>(() => _i679.SuggestionSearchBloc(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
       ));

@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/data/services/search_service/model/suggestion_result.dart';
 import 'package:dishlocal/ui/features/suggestion_search/bloc/suggestion_search_bloc.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
 import 'package:flutter/cupertino.dart';
@@ -112,38 +113,23 @@ class _SearchInputPageState extends State<SearchInputPage> {
   }
 
   /// Widget xây dựng danh sách gợi ý
-  Widget _buildSuggestionList(List<dynamic> suggestions) {
+  Widget _buildSuggestionList(List<Suggestion> suggestions) {
+    // <<< Nhận vào List<Suggestion>
     return ListView.separated(
       itemCount: suggestions.length,
       separatorBuilder: (context, index) => const Divider(height: 1, indent: 56),
       itemBuilder: (context, index) {
-        final item = suggestions[index];
-        String title = '';
-        IconData iconData = Icons.help_outline;
-        String? subtitle;
+        final suggestion = suggestions[index];
 
-        // Xác định thông tin để hiển thị dựa trên kiểu của item
-        if (item is Post) {
-          title = item.dishName ?? 'Bài viết không tên';
-          iconData = CupertinoIcons.doc_text_search;
-        } else if (item is AppUser) {
-          title = item.displayName ?? 'Người dùng';
-          iconData = CupertinoIcons.person_fill;
-          subtitle = '@${item.username}';
-        }
+        // Xác định icon dựa trên suggestion.type
+        final iconData = suggestion.type == SuggestionType.post ? CupertinoIcons.doc_text_search : CupertinoIcons.person_fill;
 
         return ListTile(
           leading: Icon(iconData, color: appColorScheme(context).onSurfaceVariant, size: 20),
-          title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-          subtitle: subtitle != null ? Text(subtitle) : null,
-          // Khi nhấn vào một gợi ý
+          title: Text(suggestion.displayText, maxLines: 1, overflow: TextOverflow.ellipsis),
           onTap: () {
-            // Cập nhật text field với tiêu đề của gợi ý được chọn
-            _searchController.text = title;
-            // Di chuyển con trỏ đến cuối
-            _searchController.selection = TextSelection.fromPosition(TextPosition(offset: title.length));
-            // Điều hướng đến trang kết quả
-            _navigateToResultScreen(title);
+            // Khi nhấn vào, điều hướng với displayText
+            _navigateToResultScreen(suggestion.displayText);
           },
         );
       },
