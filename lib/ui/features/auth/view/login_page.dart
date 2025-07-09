@@ -49,8 +49,19 @@ class LoginPage extends StatelessWidget {
             // và vô hiệu hóa nút bấm để tránh người dùng nhấn nhiều lần.
             final bool isLoading = state is InProgress;
 
-            return SizedBox(
+            return Container(
               width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: const [0.0, 1.0],
+                  colors: [
+                    colorScheme.primary.withValues(alpha: 0.5),
+                    const Color(0x00000000),
+                  ],
+                ),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -59,7 +70,6 @@ class LoginPage extends StatelessWidget {
                   ),
                   Column(
                     children: [
-                      // ... (Toàn bộ phần UI logo và text của bạn giữ nguyên) ...
                       Container(
                         width: 100,
                         height: 100,
@@ -75,7 +85,7 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 10),
                       ShaderMask(
                         shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                        child:  Text(
+                        child: Text(
                           'DishLocal',
                           style: appTextTheme(context).titleLarge?.copyWith(
                                 fontWeight: FontWeight.w700,
@@ -85,12 +95,12 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 10),
                       Text(
                         'Chia sẻ & Khám phá trực tiếp',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.titleMedium,
                         textAlign: TextAlign.center,
                       ),
                       Text(
                         'ẩm thực quanh bạn',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.titleMedium,
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -132,7 +142,7 @@ class LoginPage extends StatelessWidget {
                   const SizedBox(height: 15),
                   Text(
                     'Đăng nhập để tiếp tục...',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                   const SizedBox(height: 20),
                 ],

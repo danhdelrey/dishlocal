@@ -15,7 +15,7 @@ final darkTheme = ThemeData.dark().copyWith(
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: Colors.transparent,
   ),
-  textTheme: GoogleFonts.plusJakartaSansTextTheme(
+  textTheme: GoogleFonts.interTextTheme(
     ThemeData.dark().textTheme
   ),
 );
