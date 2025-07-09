@@ -64,65 +64,39 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
-      body: NestedScrollView(
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        controller: _mainScrollController,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            GlassSliverAppBar(
-              centerTitle: true,
-              hasBorder: false,
-              title: ShaderMask(
-                shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                child: Text(
-                  'DishLocal',
-                  style: appTextTheme(context).titleLarge?.copyWith(fontWeight: FontWeight.w700),
-                ),
-              ),
-              actions: [
-                IconButton(
-                  icon: AppIcons.search.toSvg(color: appColorScheme(context).onSurfaceVariant),
-                  onPressed: () => context.push('/search_input'),
-                ),
-              ],
-              bottom: TabBar(
-                dividerColor: Colors.white.withAlpha(25), // Alpha 0.1
-                controller: _tabController,
-
-                tabs: const [
-                  Tab(text: 'Dành cho bạn'),
-                  Tab(text: 'Đang theo dõi'),
-                ],
-              ),
-              floating: true,
-              snap: true,
-              pinned: true,
-            ),
-          ];
-        },
-        body: TabBarView(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        centerTitle: true,
+        titleSpacing: 0,
+        toolbarHeight: 0,
+        bottom: TabBar(
+          dividerColor: Colors.white.withAlpha(25), // Alpha 0.1
           controller: _tabController,
-          children: [
-            // Cung cấp BLoC cho mỗi GridPostPage tương ứng
-            BlocProvider.value(
-              value: _postBlocs[0],
-              child: const GridPostPage(
-                key: PageStorageKey<String>('homeForYouTab'), // Giữ state khi chuyển tab
-                noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
-              ),
-            ),
-            BlocProvider.value(
-              value: _postBlocs[1],
-              child: const GridPostPage(
-                key: PageStorageKey<String>('homeFollowingTab'),
-                noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
-              ),
-            ),
+          tabs: const [
+            Tab(text: 'Dành cho bạn'),
+            Tab(text: 'Đang theo dõi'),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Cung cấp BLoC cho mỗi GridPostPage tương ứng
+          BlocProvider.value(
+            value: _postBlocs[0],
+            child: const GridPostPage(
+              key: PageStorageKey<String>('homeForYouTab'), // Giữ state khi chuyển tab
+              noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
+            ),
+          ),
+          BlocProvider.value(
+            value: _postBlocs[1],
+            child: const GridPostPage(
+              key: PageStorageKey<String>('homeFollowingTab'),
+              noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
+            ),
+          ),
+        ],
       ),
     );
   }
