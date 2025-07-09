@@ -64,7 +64,6 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
         titleSpacing: 0,
