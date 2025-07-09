@@ -2,17 +2,14 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
-import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_info.dart';
-import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
-import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -39,7 +36,7 @@ class _ProfilePageContent extends StatefulWidget {
   State<_ProfilePageContent> createState() => _ProfilePageContentState();
 }
 
-/// State logic được chuyển hết vào đây.
+/// State logic được giữ nguyên, chỉ thay đổi phần `build`.
 class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   late final List<PostBloc> _postBlocs;
@@ -55,30 +52,22 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
     final postRepository = getIt<PostRepository>();
     final currentUserId = appUserRepo.getCurrentUserId();
 
-    // Xác định xem đây có phải trang cá nhân của người dùng hiện tại không
-    // Nếu widget.userId là null, nghĩa là đang xem trang của mình.
     _isMyProfile = widget.userId == null || widget.userId == currentUserId;
 
-    // Khởi tạo tab controller với số lượng tab phù hợp
     _tabController = TabController(length: _isMyProfile ? 2 : 1, vsync: this);
 
-    // Khởi tạo UserInfoBloc để lấy thông tin profile
     _userInfoBloc = getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId));
 
-    // Khởi tạo các BLoC cho từng tab
     _postBlocs = [
-      // BLoC cho tab "Bài viết đã đăng"
       PostBloc(
         ({required params}) => postRepository.getPostsByUserId(
           userId: widget.userId,
           params: params,
         ),
       ),
-      // Chỉ thêm BLoC cho tab "Đã lưu" nếu là trang của mình
       if (_isMyProfile)
         PostBloc(
           ({required params}) => postRepository.getSavedPosts(
-            // userId luôn là của người dùng hiện tại cho tab này
             userId: currentUserId,
             params: params,
           ),
@@ -98,105 +87,95 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
 
   @override
   Widget build(BuildContext context) {
+    // Cung cấp các BLoC cho cây widget
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _userInfoBloc),
-        // Cung cấp các PostBlocs cho cây widget
-        // Chúng ta sẽ lấy BLoC cụ thể trong từng TabView
+        // Các PostBloc sẽ được cung cấp bên trong TabBarView
       ],
+      // Sử dụng Scaffold với layout Column, không dùng Sliver
       child: Scaffold(
-        body: NestedScrollView(
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          // Nút quay lại chỉ hiển thị khi xem trang của người khác
+          leading: widget.userId != null
+              ? IconButton(
+                  onPressed: () => context.pop(),
+                  // Dùng Icon thay vì SVG để đơn giản hóa
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 16,
+                  ),
+                )
+              : null,
+          // Title lấy từ UserInfoBloc
+          title: BlocBuilder<UserInfoBloc, UserInfoState>(
+            builder: (context, state) {
+              if (state is UserInfoSuccess) {
+                return Text(state.appUser.username ?? 'Profile');
+              }
+              return const SizedBox(); // Hiển thị rỗng khi đang tải
+            },
           ),
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              GlassSliverAppBar(
-                leading: widget.userId != null
-                    ? IconButton(
-                        onPressed: () => context.pop(),
-                        icon: AppIcons.left.toSvg(color: appColorScheme(context).onSurface),
-                      )
-                    : null,
-                pinned: true,
-                floating: true,
-                title: BlocBuilder<UserInfoBloc, UserInfoState>(
-                  builder: (context, state) {
-                    if (state is UserInfoSuccess) {
-                      return Text(state.appUser.username ?? 'Profile');
-                    }
-                    return const SizedBox();
-                  },
-                ),
-                centerTitle: true,
-                actions: [
-                  if (_isMyProfile) const LogoutButton(),
+          titleTextStyle: appTextTheme(context).titleMedium,
+          centerTitle: true,
+          // Nút Logout chỉ hiển thị ở trang của mình
+          actions: [
+            if (_isMyProfile) const LogoutButton(),
+          ],
+        ),
+        body: Column(
+          children: [
+            // 1. Phần thông tin Profile
+            const ProfileInfo(),
+
+            // 2. Thanh TabBar
+            Container(
+              // Thêm một lớp Container để có thể tùy chỉnh nền nếu muốn
+              color: Colors.black.withAlpha(10), // Màu nền nhẹ cho TabBar
+              child: TabBar(
+                controller: _tabController,
+                dividerColor: Colors.white.withAlpha(25),
+                tabs: [
+                  const Tab(icon: Icon(Icons.grid_view_rounded)),
+                  if (_isMyProfile) const Tab(icon: Icon(Icons.bookmark_rounded)),
                 ],
               ),
-              const SliverToBoxAdapter(child: ProfileInfo()),
-              SliverPersistentHeader(
-                delegate: _SliverAppBarDelegate(
-                  TabBar(
-                    controller: _tabController,
-                    dividerColor: Colors.white.withAlpha(25),
-                    tabs: [
-                      const Tab(icon: Icon(Icons.grid_view_rounded)),
-                      if (_isMyProfile) const Tab(icon: Icon(Icons.bookmark_rounded)),
-                    ],
+            ),
+
+            // 3. Nội dung các Tab
+            // Bọc TabBarView trong Expanded để nó chiếm hết không gian còn lại
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  // Tab 1: Bài viết đã đăng
+                  BlocProvider.value(
+                    value: _postBlocs[0],
+                    child: const GridPostPage(
+                      key: PageStorageKey<String>('profilePosts'),
+                      noItemsFoundMessage: 'Chưa có bài viết nào.',
+                    ),
                   ),
-                ),
-                pinned: true,
+                  // Tab 2: Bài viết đã lưu (chỉ tồn tại nếu là trang của mình)
+                  if (_isMyProfile)
+                    BlocProvider.value(
+                      value: _postBlocs[1],
+                      child: const GridPostPage(
+                        key: PageStorageKey<String>('profileSavedPosts'),
+                        noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
+                      ),
+                    ),
+                ],
               ),
-            ];
-          },
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              // Tab 1: Bài viết đã đăng
-              BlocProvider.value(
-                value: _postBlocs[0],
-                child: const GridPostPage(
-                  key: PageStorageKey<String>('profilePosts'),
-                  noItemsFoundMessage: 'Chưa có bài viết nào.',
-                ),
-              ),
-              // Tab 2: Bài viết đã lưu (chỉ tồn tại nếu là trang của mình)
-              if (_isMyProfile)
-                BlocProvider.value(
-                  value: _postBlocs[1],
-                  child: const GridPostPage(
-                    key: PageStorageKey<String>('profileSavedPosts'),
-                    noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
-                  ),
-                ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// Lớp _SliverAppBarDelegate không đổi, chỉ cần copy và dán
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar);
-  final TabBar _tabBar;
-
-  @override
-  double get minExtent => _tabBar.preferredSize.height;
-  @override
-  double get maxExtent => _tabBar.preferredSize.height;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return GlassContainer(
-      backgroundColor: Colors.transparent,
-      borderRadius: 0,
-      blur: 50,
-      child: _tabBar,
-    );
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => false;
-}
+// Lớp _SliverAppBarDelegate không còn cần thiết và đã được xóa.
