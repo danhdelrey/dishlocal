@@ -2,10 +2,9 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -23,84 +22,80 @@ class MainShell extends StatelessWidget {
       index,
       initialLocation: isTappedAgain,
     );
-
-    
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
       // 1. Nội dung của các tab được hiển thị ở đây
       body: navigationShell,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.push("/camera");
+        },
+        shape: const CircleBorder(),
+        backgroundColor: appColorScheme(context).primary,
+        child: const Icon(
+          CupertinoIcons.add,
+        ),
+      ),
 
       // 3. BottomAppBar thay thế cho PersistentTabView
-      bottomNavigationBar: GlassContainer(
-        borderRadius: 0,
-        backgroundColor: Colors.transparent,
-        blur: 50,
-        borderTop: true,
-        child: BottomAppBar(
-          padding: const EdgeInsets.all(0),
-          height: kBottomNavigationBarHeight,
-          color: Colors.transparent,
-          child: Row(
-            // Chia các item ra các bên của vết lõm
+      bottomNavigationBar: BottomAppBar(
+        padding: const EdgeInsets.all(0),
+        height: kBottomNavigationBarHeight,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Row(
+          // Chia các item ra các bên của vết lõm
 
-            children: <Widget>[
-              // Item 0
-              _buildTabItem(
-                context: context,
-                activeIcon: AppIcons.home4.toSvg(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                icon: AppIcons.home41.toSvg(
-                  color: appColorScheme(context).onSurface,
-                ),
-                index: 0,
+          children: <Widget>[
+            // Item 0
+            _buildTabItem(
+              context: context,
+              activeIcon: AppIcons.home4.toSvg(
+                color: Theme.of(context).colorScheme.primary,
               ),
-              // Item 1
-              // _buildTabItem(
-              //   context: context,
-              //   activeIcon: AppIcons.search.toSvg(
-              //     color: Theme.of(context).colorScheme.primary,
-              //   ),
-              //   icon: AppIcons.search.toSvg(
-              //     color: appColorScheme(context).onSurface,
-              //   ),
-              //   index: 1,
-              // ),
-              // FAB
-              GradientFab(
-                onTap: () {
-                  context.push("/camera");
-                },
+              icon: AppIcons.home41.toSvg(
+                color: appColorScheme(context).onSurface,
               ),
-              // Item 3
-              _buildTabItem(
-                context: context,
-                activeIcon: AppIcons.rocketFill.toSvg(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                icon: AppIcons.rocketLine.toSvg(
-                  color: appColorScheme(context).onSurface,
-                ),
-                index: 1,
+              index: 0,
+            ),
+            // Item 1
+            // _buildTabItem(
+            //   context: context,
+            //   activeIcon: AppIcons.search.toSvg(
+            //     color: Theme.of(context).colorScheme.primary,
+            //   ),
+            //   icon: AppIcons.search.toSvg(
+            //     color: appColorScheme(context).onSurface,
+            //   ),
+            //   index: 1,
+            // ),
+            // FAB
+
+            // Item 3
+            _buildTabItem(
+              context: context,
+              activeIcon: AppIcons.rocketFill.toSvg(
+                color: Theme.of(context).colorScheme.primary,
               ),
-              // Item 4
-              _buildTabItem(
-                context: context,
-                activeIcon: AppIcons.user3.toSvg(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                icon: AppIcons.user31.toSvg(
-                  color: appColorScheme(context).onSurface,
-                ),
-                index: 2,
+              icon: AppIcons.rocketLine.toSvg(
+                color: appColorScheme(context).onSurface,
               ),
-            ],
-          ),
+              index: 1,
+            ),
+            // Item 4
+            _buildTabItem(
+              context: context,
+              activeIcon: AppIcons.user3.toSvg(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              icon: AppIcons.user31.toSvg(
+                color: appColorScheme(context).onSurface,
+              ),
+              index: 2,
+            ),
+          ],
         ),
       ),
     );

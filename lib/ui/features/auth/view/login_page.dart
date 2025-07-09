@@ -57,7 +57,7 @@ class LoginPage extends StatelessWidget {
                   end: Alignment.bottomRight,
                   stops: const [0.0, 1.0],
                   colors: [
-                    colorScheme.primary.withValues(alpha: 0.5),
+                    appColorScheme(context).primary.withValues(alpha: 0.5),
                     const Color(0x00000000),
                   ],
                 ),
