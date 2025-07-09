@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/config/main_shell.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
@@ -20,12 +21,34 @@ class _SearchInputPageState extends State<SearchInputPage> {
   // BLoC này chỉ dùng cho việc lấy gợi ý
   late final SuggestionSearchBloc _suggestionBloc;
   final _searchController = TextEditingController();
+  late final FocusNode _focusNode;
+
+  late int _lastResetValue;
 
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
     _suggestionBloc = getIt<SuggestionSearchBloc>();
     _searchController.addListener(_onQueryChanged);
+
+    _lastResetValue = searchTabResetNotifier.value;
+
+    searchTabResetNotifier.addListener(_onResetTriggered);
+  }
+
+  void _onResetTriggered() {
+    if (_lastResetValue != searchTabResetNotifier.value) {
+      _lastResetValue = searchTabResetNotifier.value;
+      _resetSearchState();
+    }
+    
+  }
+
+  void _resetSearchState() {
+    _searchController.clear();
+    _suggestionBloc.add(const SuggestionSearchEvent.queryChanged(query: ""));
+    _focusNode.requestFocus();
   }
 
   void _onQueryChanged() {
@@ -49,7 +72,10 @@ class _SearchInputPageState extends State<SearchInputPage> {
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _searchController.removeListener(_onQueryChanged);
+    searchTabResetNotifier.removeListener(_onResetTriggered);
+
     _searchController.dispose();
     _suggestionBloc.close();
     super.dispose();
@@ -62,28 +88,17 @@ class _SearchInputPageState extends State<SearchInputPage> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          titleSpacing: 0,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Row(
-            children: [
-              IconButton(
-                icon: const Icon(CupertinoIcons.back),
-                onPressed: () => context.pop(),
-              ),
-              Expanded(
-                child: CupertinoSearchTextField(
-                  controller: _searchController,
-                  placeholder: 'Tìm kiếm bài viết, người dùng...',
-                  autofocus: true,
-                  style: appTextTheme(context).bodyMedium?.copyWith(
-                        color: appColorScheme(context).onSurface,
-                      ),
-                  onSubmitted: _navigateToResultScreen,
+          title: CupertinoSearchTextField(
+            focusNode: _focusNode,
+            controller: _searchController,
+            placeholder: 'Tìm kiếm bài viết, người dùng...',
+            autofocus: true,
+            style: appTextTheme(context).bodyMedium?.copyWith(
+                  color: appColorScheme(context).onSurface,
                 ),
-              ),
-              const SizedBox(width: 15),
-            ],
+            onSubmitted: _navigateToResultScreen,
           ),
         ),
         body: BlocBuilder<SuggestionSearchBloc, SuggestionSearchState>(
@@ -119,8 +134,6 @@ class _SearchInputPageState extends State<SearchInputPage> {
       separatorBuilder: (context, index) => const Divider(height: 1, indent: 56),
       itemBuilder: (context, index) {
         final suggestion = suggestions[index];
-
-        
 
         return ListTile(
           title: Text(suggestion, maxLines: 1, overflow: TextOverflow.ellipsis),

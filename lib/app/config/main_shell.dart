@@ -5,9 +5,8 @@ import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-// Thay thế các icon AppIcons.xxx.toSvg() bằng các Icon widget chuẩn
-// hoặc giữ lại nếu bạn đã có sẵn.
-// Ví dụ: Icon(Icons.home)
+final searchTabResetNotifier = ValueNotifier<int>(0);
+
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -19,12 +18,19 @@ class MainShell extends StatelessWidget {
 
   // Hàm để chuyển tab
   void _onTap(BuildContext context, int index) {
+    final isTappedAgain = index == navigationShell.currentIndex;
+
     navigationShell.goBranch(
       index,
-      // duy trì state khi quay lại tab cũ nếu có thể
-      initialLocation: index == navigationShell.currentIndex,
+      initialLocation: isTappedAgain,
     );
+
+    // Nếu là tab Search (index 1) và được nhấn lại
+    if (isTappedAgain && index == 1) {
+      searchTabResetNotifier.value++;
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -59,16 +65,16 @@ class MainShell extends StatelessWidget {
                 index: 0,
               ),
               // Item 1
-              // _buildTabItem(
-              //   context: context,
-              //   activeIcon: AppIcons.rocketFill.toSvg(
-              //     color: Theme.of(context).colorScheme.primary,
-              //   ),
-              //   icon: AppIcons.rocketLine.toSvg(
-              //     color: appColorScheme(context).onSurface,
-              //   ),
-              //   index: 1,
-              // ),
+              _buildTabItem(
+                context: context,
+                activeIcon: AppIcons.search.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                icon: AppIcons.search.toSvg(
+                  color: appColorScheme(context).onSurface,
+                ),
+                index: 1,
+              ),
               // FAB
               GradientFab(
                 onTap: () {
@@ -76,19 +82,16 @@ class MainShell extends StatelessWidget {
                 },
               ),
               // Item 3
-              // _buildTabItem(
-              //   context: context,
-              //   activeIcon: AppIcons.mail.toSvg(
-              //     color: Theme.of(context).colorScheme.primary,
-              //   ),
-              //   icon: CustomBadge(
-              //     showBadge: false,
-              //     child: AppIcons.mail1.toSvg(
-              //       color: appColorScheme(context).onSurface,
-              //     ),
-              //   ),
-              //   index: 2,
-              // ),
+              _buildTabItem(
+                context: context,
+                activeIcon: AppIcons.rocketFill.toSvg(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                icon: AppIcons.rocketLine.toSvg(
+                  color: appColorScheme(context).onSurface,
+                ),
+                index: 2,
+              ),
               // Item 4
               _buildTabItem(
                 context: context,
@@ -98,7 +101,7 @@ class MainShell extends StatelessWidget {
                 icon: AppIcons.user31.toSvg(
                   color: appColorScheme(context).onSurface,
                 ),
-                index: 1,
+                index: 3,
               ),
             ],
           ),

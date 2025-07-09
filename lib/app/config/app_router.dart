@@ -19,6 +19,7 @@ import 'package:dishlocal/ui/features/select_food_category/view/sorting_page.dar
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
+import 'package:uuid/uuid.dart';
 
 class AppRouter {
   final AuthBloc authBloc;
@@ -39,29 +40,26 @@ class AppRouter {
         path: '/login',
         builder: (context, state) => const LoginPage(),
       ),
-      GoRoute(
-        path: '/search_input',
-        builder: (context, state) => const SearchInputPage(),
-      ),
+
       GoRoute(
         path: '/search_result',
-        builder: (context, state){
+        builder: (context, state) {
           final extraMap = state.extra as Map<String, dynamic>;
           final String query = extraMap['query'];
           return SearchResultScreen(query: query);
         },
         routes: [
-            GoRoute(
-              path: 'profile',
-              builder: (context, state) {
-                final extraMap = state.extra as Map<String, dynamic>;
-                final String userId = extraMap['userId'];
-                return ProfilePage(
-                  userId: userId,
-                );
-              },
-            ),
-          ],
+          GoRoute(
+            path: 'profile',
+            builder: (context, state) {
+              final extraMap = state.extra as Map<String, dynamic>;
+              final String userId = extraMap['userId'];
+              return ProfilePage(
+                userId: userId,
+              );
+            },
+          ),
+        ],
       ),
 
       GoRoute(
@@ -69,26 +67,27 @@ class AppRouter {
         builder: (context, state) => const AccountSetupPage(),
       ),
       GoRoute(
-          path: '/post_detail',
-          builder: (context, state) {
-            final extraMap = state.extra as Map<String, dynamic>;
-            final Post post = extraMap['post'];
-            return PostDetailPage(
-              post: post,
-            );
-          },
-          routes: [
-            GoRoute(
-              path: 'profile',
-              builder: (context, state) {
-                final extraMap = state.extra as Map<String, dynamic>;
-                final String userId = extraMap['userId'];
-                return ProfilePage(
-                  userId: userId,
-                );
-              },
-            ),
-          ],),
+        path: '/post_detail',
+        builder: (context, state) {
+          final extraMap = state.extra as Map<String, dynamic>;
+          final Post post = extraMap['post'];
+          return PostDetailPage(
+            post: post,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: 'profile',
+            builder: (context, state) {
+              final extraMap = state.extra as Map<String, dynamic>;
+              final String userId = extraMap['userId'];
+              return ProfilePage(
+                userId: userId,
+              );
+            },
+          ),
+        ],
+      ),
       GoRoute(
         path: '/camera',
         builder: (context, state) => CameraPage(),
@@ -119,11 +118,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/map',
-        builder: (context, state){
+        builder: (context, state) {
           final extraMap = state.extra as Map<String, dynamic>;
           final LocationData destination = extraMap['destination'];
           final String destinationName = extraMap['destinationName'];
-          return MapPage(destination: destination,destinationName: destinationName,);
+          return MapPage(
+            destination: destination,
+            destinationName: destinationName,
+          );
         },
       ),
 
@@ -143,25 +145,25 @@ class AppRouter {
               ),
             ],
           ),
-          // Branch 1: Khám phá
-          // StatefulShellBranch(
-          //   routes: [
-          //     GoRoute(
-          //       path: '/explore', // Đặt tên route rõ ràng
-          //       builder: (context, state) => const SizedBox(), // Dùng page tương ứng
-          //     ),
-          //   ],
-          // ),
+          // Branch 1: Tìm kiếm
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/search', // Đặt tên route rõ ràng
+                builder: (context, state) => const SearchInputPage(), // Dùng page tương ứng
+              ),
+            ],
+          ),
 
-          // Branch 2: Tin nhắn
-          // StatefulShellBranch(
-          //   routes: [
-          //     GoRoute(
-          //       path: '/messages',
-          //       builder: (context, state) => const SizedBox(),
-          //     ),
-          //   ],
-          // ),
+          // Branch 2: Khám phá
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/explore',
+                builder: (context, state) => const Placeholder(),
+              ),
+            ],
+          ),
           // Branch 3: Cá nhân
           StatefulShellBranch(
             routes: [
