@@ -5,7 +5,6 @@ import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final searchTabResetNotifier = ValueNotifier<int>(0);
 
 
 class MainShell extends StatelessWidget {
@@ -25,10 +24,7 @@ class MainShell extends StatelessWidget {
       initialLocation: isTappedAgain,
     );
 
-    // Nếu là tab Search (index 1) và được nhấn lại
-    if (isTappedAgain && index == 1) {
-      searchTabResetNotifier.value++;
-    }
+    
   }
 
 
@@ -65,16 +61,16 @@ class MainShell extends StatelessWidget {
                 index: 0,
               ),
               // Item 1
-              _buildTabItem(
-                context: context,
-                activeIcon: AppIcons.search.toSvg(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                icon: AppIcons.search.toSvg(
-                  color: appColorScheme(context).onSurface,
-                ),
-                index: 1,
-              ),
+              // _buildTabItem(
+              //   context: context,
+              //   activeIcon: AppIcons.search.toSvg(
+              //     color: Theme.of(context).colorScheme.primary,
+              //   ),
+              //   icon: AppIcons.search.toSvg(
+              //     color: appColorScheme(context).onSurface,
+              //   ),
+              //   index: 1,
+              // ),
               // FAB
               GradientFab(
                 onTap: () {
@@ -90,7 +86,7 @@ class MainShell extends StatelessWidget {
                 icon: AppIcons.rocketLine.toSvg(
                   color: appColorScheme(context).onSurface,
                 ),
-                index: 2,
+                index: 1,
               ),
               // Item 4
               _buildTabItem(
@@ -101,7 +97,7 @@ class MainShell extends StatelessWidget {
                 icon: AppIcons.user31.toSvg(
                   color: appColorScheme(context).onSurface,
                 ),
-                index: 3,
+                index: 2,
               ),
             ],
           ),

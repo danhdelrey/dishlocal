@@ -40,6 +40,10 @@ class AppRouter {
         path: '/login',
         builder: (context, state) => const LoginPage(),
       ),
+      GoRoute(
+        path: '/search_input', 
+        builder: (context, state) => const SearchInputPage(), 
+      ),
 
       GoRoute(
         path: '/search_result',
@@ -146,16 +150,16 @@ class AppRouter {
             ],
           ),
           // Branch 1: Tìm kiếm
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/search', // Đặt tên route rõ ràng
-                builder: (context, state) => const SearchInputPage(), // Dùng page tương ứng
-              ),
-            ],
-          ),
+          // StatefulShellBranch(
+          //   routes: [
+          //     GoRoute(
+          //       path: '/search', // Đặt tên route rõ ràng
+          //       builder: (context, state) => const SearchInputPage(), // Dùng page tương ứng
+          //     ),
+          //   ],
+          // ),
 
-          // Branch 2: Khám phá
+          // Branch 1: Khám phá
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -164,7 +168,7 @@ class AppRouter {
               ),
             ],
           ),
-          // Branch 3: Cá nhân
+          // Branch 2: Cá nhân
           StatefulShellBranch(
             routes: [
               GoRoute(

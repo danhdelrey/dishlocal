@@ -10,6 +10,7 @@ import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -66,8 +67,35 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        titleSpacing: 0,
-        toolbarHeight: 0,
+        backgroundColor: Colors.transparent,
+        title: GestureDetector(
+          onTap: () {
+            context.push('/search_input');
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: CupertinoColors.systemFill,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  CupertinoIcons.search,
+                  color: CupertinoColors.systemGrey,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Tìm kiếm bài viết, người dùng...',
+                  style: appTextTheme(context).bodyMedium?.copyWith(
+                        color: CupertinoColors.systemGrey,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ),
         bottom: TabBar(
           dividerColor: Colors.white.withAlpha(25), // Alpha 0.1
           controller: _tabController,

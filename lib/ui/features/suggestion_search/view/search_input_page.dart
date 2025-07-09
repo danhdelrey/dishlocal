@@ -21,34 +21,12 @@ class _SearchInputPageState extends State<SearchInputPage> {
   // BLoC này chỉ dùng cho việc lấy gợi ý
   late final SuggestionSearchBloc _suggestionBloc;
   final _searchController = TextEditingController();
-  late final FocusNode _focusNode;
-
-  late int _lastResetValue;
 
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
     _suggestionBloc = getIt<SuggestionSearchBloc>();
     _searchController.addListener(_onQueryChanged);
-
-    _lastResetValue = searchTabResetNotifier.value;
-
-    searchTabResetNotifier.addListener(_onResetTriggered);
-  }
-
-  void _onResetTriggered() {
-    if (_lastResetValue != searchTabResetNotifier.value) {
-      _lastResetValue = searchTabResetNotifier.value;
-      _resetSearchState();
-    }
-    
-  }
-
-  void _resetSearchState() {
-    _searchController.clear();
-    _suggestionBloc.add(const SuggestionSearchEvent.queryChanged(query: ""));
-    _focusNode.requestFocus();
   }
 
   void _onQueryChanged() {
@@ -60,7 +38,7 @@ class _SearchInputPageState extends State<SearchInputPage> {
     if (trimmedQuery.isNotEmpty) {
       // Ẩn bàn phím trước khi điều hướng để tránh lỗi UI
       FocusScope.of(context).unfocus();
-      context.push('/search_result', extra: {'query': query});
+      context.pushReplacement('/search_result', extra: {'query': query});
     } else {
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
@@ -72,9 +50,7 @@ class _SearchInputPageState extends State<SearchInputPage> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
     _searchController.removeListener(_onQueryChanged);
-    searchTabResetNotifier.removeListener(_onResetTriggered);
 
     _searchController.dispose();
     _suggestionBloc.close();
@@ -91,7 +67,6 @@ class _SearchInputPageState extends State<SearchInputPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           title: CupertinoSearchTextField(
-            focusNode: _focusNode,
             controller: _searchController,
             placeholder: 'Tìm kiếm bài viết, người dùng...',
             autofocus: true,
