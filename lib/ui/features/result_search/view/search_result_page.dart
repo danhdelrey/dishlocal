@@ -74,6 +74,8 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(CupertinoIcons.back),
           onPressed: () => context.pop(),
@@ -83,6 +85,7 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
           style: appTextTheme(context).titleMedium,
         ),
         bottom: TabBar(
+          dividerColor: Colors.white.withValues(alpha: 0.1),
           controller: _tabController,
           tabs: const [
             Tab(text: 'Bài viết'),
