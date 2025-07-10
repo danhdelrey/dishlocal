@@ -22,7 +22,7 @@ class ProfileInfo extends StatelessWidget {
 
           return Container(
             decoration: BoxDecoration(
-              color: Colors.black.withAlpha(25),
+              color: Theme.of(context).scaffoldBackgroundColor,
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -82,7 +82,7 @@ class ProfileInfo extends StatelessWidget {
         if (state is UserInfoLoading || state is UserInfoInitial) {
           return Container(
             decoration: BoxDecoration(
-              color: Colors.black.withAlpha(25),
+              color: Theme.of(context).scaffoldBackgroundColor,
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
