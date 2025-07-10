@@ -8,6 +8,7 @@ import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:dishlocal/ui/features/auth/view/login_page.dart';
 import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
 import 'package:dishlocal/ui/features/create_post/view/new_post_page.dart';
+import 'package:dishlocal/ui/features/explore/view/explore_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/map/view/map_page.dart';
 import 'package:dishlocal/ui/features/suggestion_search/view/search_input_page.dart';
@@ -164,7 +165,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/explore',
-                builder: (context, state) => const Placeholder(),
+                builder: (context, state) => const ExplorePage(),
               ),
             ],
           ),

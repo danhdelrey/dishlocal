@@ -38,58 +38,12 @@ class FilterButton extends StatelessWidget {
         // Kiểm tra xem có bộ lọc nào đang được áp dụng không
         final hasActiveFilters = !state.filterSortParams.isDefault();
 
-        return Container(
-          width: double.infinity, // Kéo dài toàn bộ chiều rộng
-          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          child: Material(
-            color: Colors.transparent, // Để dùng màu nền trong BoxDecoration
-            borderRadius: BorderRadius.circular(12), // Bo tròn 12
-            child: InkWell(
-              onTap: () => _openFilterSortSheet(context),
-              borderRadius: BorderRadius.circular(12),
-              splashColor: appColorScheme(context).primary.withOpacity(0.1),
-              highlightColor: appColorScheme(context).primary.withOpacity(0.05),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: hasActiveFilters ? appColorScheme(context).primary.withOpacity(0.2) : Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: hasActiveFilters ? appColorScheme(context).primary : Colors.white.withOpacity(0.1),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Icon(
-                      hasActiveFilters ? Icons.tune_rounded : Icons.tune_rounded,
-                      size: 20,
-                      color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Lọc & Sắp xếp bài viết',
-                      style: appTextTheme(context).labelLarge?.copyWith(
-                            color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
-                          ),
-                    ),
-                    if (hasActiveFilters)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: appColorScheme(context).primary,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
+        return IconButton(
+          onPressed: () => _openFilterSortSheet(context),
+          icon: Icon(
+            Icons.tune_rounded,
+            size: 24,
+            color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
           ),
         );
       },
