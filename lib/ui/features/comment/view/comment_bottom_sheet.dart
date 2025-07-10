@@ -47,17 +47,9 @@ class CommentBottomSheet extends StatefulWidget {
 }
 
 class _CommentBottomSheetState extends State<CommentBottomSheet> {
-  final _scrollController = ScrollController();
-
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 
   void _showErrorDialog(BuildContext context, String message) {
@@ -101,10 +93,6 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // Chiều cao 90% màn hình
-    final screenHeight = MediaQuery.of(context).size.height;
-    final bottomSheetHeight = screenHeight * 0.9;
-
     return BlocListener<CommentBloc, CommentState>(
       listener: (context, state) {
         // Sử dụng thuộc tính `failureMessage` như đã thống nhất
@@ -118,51 +106,58 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
           context.read<CommentBloc>().add(const CommentEvent.errorCleared());
         }
       },
-      child: GlassContainer(
-        borderRadius: 20,
-        radiusBottomLeft: false,
-        radiusBottomRight: false,
-        blur: 50,
-        backgroundColor: appColorScheme(context).surface,
-        backgroundAlpha: 0.5,
-        child: SizedBox(
-          height: bottomSheetHeight,
-          child: Stack(
-            children: [
-              Column(
+      child: DraggableScrollableSheet(
+          // Kích thước ban đầu 90% màn hình
+          initialChildSize: 0.8,
+          // Kích thước tối đa
+          maxChildSize: 0.8,
+          // Kích thước tối thiểu, cho phép kéo xuống một khoảng trước khi đóng
+          minChildSize: 0.6,
+          expand: false,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return GlassContainer(
+              borderRadius: 20,
+              radiusBottomLeft: false,
+              radiusBottomRight: false,
+              blur: 50,
+              backgroundColor: appColorScheme(context).surface,
+              backgroundAlpha: 0.5,
+              child: Stack(
                 children: [
-                  // Thanh kéo và tiêu đề
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: appColorScheme(context).outlineVariant,
-                        borderRadius: BorderRadius.circular(10),
+                  Column(
+                    children: [
+                      // Thanh kéo và tiêu đề
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Container(
+                          width: 40,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: appColorScheme(context).outlineVariant,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
 
-                  Expanded(
-                    child: CommentListView(
-                      scrollController: _scrollController,
-                      postAuthorId: widget.postAuthorId,
+                      Expanded(
+                        child: CommentListView(
+                          scrollController: scrollController,
+                          postAuthorId: widget.postAuthorId,
+                        ),
+                      ),
+                      // Ô nhập liệu
+                    ],
+                  ),
+                  const Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: CommentInputField(),
                     ),
                   ),
-                  // Ô nhập liệu
                 ],
               ),
-              const Positioned.fill(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: CommentInputField(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            );
+          }),
     );
   }
 }

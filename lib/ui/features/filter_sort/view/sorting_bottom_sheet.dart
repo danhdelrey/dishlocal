@@ -19,146 +19,158 @@ class SortingBottomSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) =>  SortingBottomSheet(initialParams: initialParams,),
+      builder: (_) => SortingBottomSheet(
+        initialParams: initialParams,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FilterSortBuilder(
-      initialParams: initialParams,
-      builder: (context, state) {
-        final bloc = context.read<FilterSortBloc>();
+    return DraggableScrollableSheet(
+        // Kích thước ban đầu của sheet (85% chiều cao màn hình)
+        initialChildSize: 0.8,
+        // Kích thước tối đa (không cho phép kéo to hơn kích thước ban đầu)
+        maxChildSize: 0.8,
+        // Kích thước tối thiểu trước khi đóng (có thể đặt thấp hơn để có hiệu ứng kéo dài hơn)
+        minChildSize: 0.6,
+        expand: false, // Quan trọng: không để nó tự động chiếm toàn màn hình
+        builder: (BuildContext context, ScrollController scrollController) {
+          return FilterSortBuilder(
+            initialParams: initialParams,
+            builder: (context, state) {
+              final bloc = context.read<FilterSortBloc>();
 
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.85,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-            border: Border.all(
-              color: appColorScheme(context).onSurface.withValues(alpha: 0.1),
-              width: 1,
-            ),
-          ),
-          child: GlassContainer(
-            borderRadius: 30,
-            blur: 50,
-            radiusBottomLeft: false,
-            radiusBottomRight: false,
-            backgroundColor: Colors.black,
-            backgroundAlpha: 0.5,
-            child: Scaffold(
-              extendBodyBehindAppBar: true,
-              backgroundColor: Colors.transparent,
-              body: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  GlassSliverAppBar(
-                    hasBorder: false,
-                    pinned: true,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Leading: "Đặt lại"
-                        TextButton(
-                          onPressed: () => bloc.add(const FilterSortEvent.filtersCleared()),
-                          style: TextButton.styleFrom(
-                            foregroundColor: appColorScheme(context).onSurface,
-                            textStyle: appTextTheme(context).labelMedium,
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                  border: Border.all(
+                    color: appColorScheme(context).onSurface.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+                child: GlassContainer(
+                  borderRadius: 30,
+                  blur: 50,
+                  radiusBottomLeft: false,
+                  radiusBottomRight: false,
+                  backgroundColor: Colors.black,
+                  backgroundAlpha: 0.5,
+                  child: Scaffold(
+                    extendBodyBehindAppBar: true,
+                    backgroundColor: Colors.transparent,
+                    body: CustomScrollView(
+                      controller: scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      slivers: [
+                        GlassSliverAppBar(
+                          hasBorder: false,
+                          pinned: true,
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Leading: "Đặt lại"
+                              TextButton(
+                                onPressed: () => bloc.add(const FilterSortEvent.filtersCleared()),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: appColorScheme(context).onSurface,
+                                  textStyle: appTextTheme(context).labelMedium,
+                                ),
+                                child: const Text('Đặt lại'),
+                              ),
+
+                              // Title
+                              Expanded(
+                                child: Center(
+                                  child: Text(
+                                    'Bộ lọc & sắp xếp',
+                                    style: appTextTheme(context).labelLarge,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+
+                              // Action: "Áp dụng"
+                              TextButton(
+                                onPressed: () {
+                                  bloc.add(const FilterSortEvent.filtersSubmitted());
+                                  context.pop(state.currentParams);
+                                },
+                                style: TextButton.styleFrom(
+                                  foregroundColor: appColorScheme(context).primary,
+                                  textStyle: appTextTheme(context).labelMedium,
+                                ),
+                                child: const Text('Áp dụng'),
+                              ),
+                            ],
                           ),
-                          child: const Text('Đặt lại'),
                         ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // --- Section Loại món ---
+                                _FilterSection(
+                                  title: '📋 Loại món',
+                                  children: state.allCategories.map((category) {
+                                    return _buildChoiceChip(
+                                      itemColor: category.color,
+                                      context: context,
+                                      label: category.label,
+                                      isSelected: state.currentParams.categories.contains(category),
+                                      onSelected: (_) => bloc.add(FilterSortEvent.categoryToggled(category)),
+                                    );
+                                  }).toList(),
+                                ),
+                                const SizedBox(height: 32), // Khoảng cách giữa các section
 
-                        // Title
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              'Bộ lọc & sắp xếp',
-                              style: appTextTheme(context).labelLarge,
-                              overflow: TextOverflow.ellipsis,
+                                // --- Section Mức giá ---
+                                _FilterSection(
+                                  title: '💰 Mức giá',
+                                  children: state.allRanges.map((range) {
+                                    return _buildChoiceChip(
+                                      itemColor: Colors.amber,
+                                      context: context,
+                                      label: range.displayName,
+                                      isSelected: state.currentParams.range == range,
+                                      onSelected: (_) => bloc.add(FilterSortEvent.priceRangeToggled(range)),
+                                    );
+                                  }).toList(),
+                                ),
+                                const SizedBox(height: 32),
+                                // --- Section Khoảng cách ---
+                                _FilterSection(
+                                  title: '📍 Khoảng cách',
+                                  children: state.allDistances.map((distance) {
+                                    return _buildChoiceChip(
+                                      itemColor: Colors.blue,
+                                      context: context,
+                                      label: distance.displayName,
+                                      isSelected: state.currentParams.distance == distance,
+                                      onSelected: (_) => bloc.add(FilterSortEvent.distanceRangeToggled(distance)),
+                                    );
+                                  }).toList(),
+                                ),
+                                const SizedBox(height: 32),
+
+                                // --- Section Sắp xếp (được xử lý riêng do có logic phức tạp hơn) ---
+                                _buildSortSection(context, state, bloc),
+
+                                const SizedBox(height: kBottomNavigationBarHeight + 16),
+                              ],
                             ),
                           ),
-                        ),
-
-                        // Action: "Áp dụng"
-                        TextButton(
-                          onPressed: () {
-                            bloc.add(const FilterSortEvent.filtersSubmitted());
-                            context.pop(state.currentParams);
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: appColorScheme(context).primary,
-                            textStyle: appTextTheme(context).labelMedium,
-                          ),
-                          child: const Text('Áp dụng'),
                         ),
                       ],
                     ),
                   ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // --- Section Loại món ---
-                          _FilterSection(
-                            title: '📋 Loại món',
-                            children: state.allCategories.map((category) {
-                              return _buildChoiceChip(
-                                itemColor: category.color,
-                                context: context,
-                                label: category.label,
-                                isSelected: state.currentParams.categories.contains(category),
-                                onSelected: (_) => bloc.add(FilterSortEvent.categoryToggled(category)),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 32), // Khoảng cách giữa các section
-
-                          // --- Section Mức giá ---
-                          _FilterSection(
-                            title: '💰 Mức giá',
-                            children: state.allRanges.map((range) {
-                              return _buildChoiceChip(
-                                itemColor: Colors.amber,
-                                context: context,
-                                label: range.displayName,
-                                isSelected: state.currentParams.range == range,
-                                onSelected: (_) => bloc.add(FilterSortEvent.priceRangeToggled(range)),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 32),
-                          // --- Section Khoảng cách ---
-                          _FilterSection(
-                            title: '📍 Khoảng cách',
-                            children: state.allDistances.map((distance) {
-                              return _buildChoiceChip(
-                                itemColor: Colors.blue,
-                                context: context,
-                                label: distance.displayName,
-                                isSelected: state.currentParams.distance == distance,
-                                onSelected: (_) => bloc.add(FilterSortEvent.distanceRangeToggled(distance)),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 32),
-
-                          // --- Section Sắp xếp (được xử lý riêng do có logic phức tạp hơn) ---
-                          _buildSortSection(context, state, bloc),
-
-                          const SizedBox(height: kBottomNavigationBarHeight + 16),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
+                ),
+              );
+            },
+          );
+        });
   }
 
   /// Widget riêng cho section Sắp xếp do có nút đảo chiều đặc biệt.
