@@ -108,7 +108,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
       },
       child: DraggableScrollableSheet(
           // Kích thước ban đầu 90% màn hình
-          initialChildSize: 0.8,
+          initialChildSize: 0.61,
           // Kích thước tối đa
           maxChildSize: 0.8,
           // Kích thước tối thiểu, cho phép kéo xuống một khoảng trước khi đóng

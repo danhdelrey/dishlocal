@@ -29,7 +29,7 @@ class SortingBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
         // Kích thước ban đầu của sheet (85% chiều cao màn hình)
-        initialChildSize: 0.8,
+        initialChildSize: 0.61,
         // Kích thước tối đa (không cho phép kéo to hơn kích thước ban đầu)
         maxChildSize: 0.8,
         // Kích thước tối thiểu trước khi đóng (có thể đặt thấp hơn để có hiệu ứng kéo dài hơn)
