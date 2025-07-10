@@ -117,6 +117,7 @@ class _PostGridTabViewState extends State<PostGridTabView> {
           }
 
           return GridView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
             controller: widget.scrollController,
             padding: const EdgeInsets.all(10.0),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

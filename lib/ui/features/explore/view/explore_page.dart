@@ -5,19 +5,31 @@ import 'package:dishlocal/ui/features/filter_sort/view/filter_button.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/shimmering_small_post.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
+import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class ExplorePage extends StatefulWidget {
+class ExplorePage extends StatelessWidget {
   const ExplorePage({super.key});
 
   @override
-  State<ExplorePage> createState() => _ExplorePageState();
+  Widget build(BuildContext context) {
+    return ConnectivityAndLocationGuard(builder: (context) {
+      return const _ExplorePageContent();
+    });
+  }
 }
 
-class _ExplorePageState extends State<ExplorePage> {
+class _ExplorePageContent extends StatefulWidget {
+  const _ExplorePageContent();
+
+  @override
+  State<_ExplorePageContent> createState() => _ExplorePageContentState();
+}
+
+class _ExplorePageContentState extends State<_ExplorePageContent> {
   late final PostBloc _bloc;
   final ScrollController _scrollController = ScrollController();
 
