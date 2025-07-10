@@ -69,9 +69,8 @@ class FilterButton extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Lọc & Sắp xếp',
+                      'Lọc & Sắp xếp bài viết',
                       style: appTextTheme(context).labelLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
                             color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
                           ),
                     ),
