@@ -120,7 +120,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
               radiusBottomLeft: false,
               radiusBottomRight: false,
               blur: 50,
-              backgroundColor: appColorScheme(context).surface,
+              backgroundColor: Colors.black,
               backgroundAlpha: 0.5,
               child: Stack(
                 children: [

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -9,6 +10,7 @@ final darkTheme = ThemeData.dark().copyWith(
     seedColor: const Color(0xFFFD735A),
     brightness: Brightness.dark,
     primary: const Color(0xFFFD735A),
+    outlineVariant: CupertinoColors.systemFill,
   ),
   pageTransitionsTheme: const PageTransitionsTheme(
     builders: {
