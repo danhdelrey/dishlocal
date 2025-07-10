@@ -61,94 +61,110 @@ class _GridPostPageState extends State<GridPostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PostBloc, PostState>(
-      builder: (context, state) {
-        if (state.status == PostStatus.loading && state.posts.isEmpty) {
-          return const _ShimmeringSliverGrid();
+    return BlocListener<PostBloc, PostState>(
+      listener: (context, state) {
+        if (state.status == PostStatus.success && state.posts.isNotEmpty) {
+          // Scroll về đầu khi có filters mới
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_scrollController.hasClients) {
+              _scrollController.animateTo(
+                0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+          });
         }
+      },
+      child: BlocBuilder<PostBloc, PostState>(
+        builder: (context, state) {
+          if (state.status == PostStatus.loading && state.posts.isEmpty) {
+            return const _ShimmeringSliverGrid();
+          }
 
-        if (state.status == PostStatus.failure && state.posts.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.error_outline_rounded, size: 64, color: appColorScheme(context).error),
-                const SizedBox(height: 16),
-                Text('Có lỗi xảy ra', style: appTextTheme(context).titleMedium),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                  child: Text(state.failure?.message ?? "Không xác định", textAlign: TextAlign.center),
+          if (state.status == PostStatus.failure && state.posts.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline_rounded, size: 64, color: appColorScheme(context).error),
+                  const SizedBox(height: 16),
+                  Text('Có lỗi xảy ra', style: appTextTheme(context).titleMedium),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: Text(state.failure?.message ?? "Không xác định", textAlign: TextAlign.center),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _onRefresh,
+                    icon: const Icon(Icons.refresh_rounded),
+                    label: const Text('Thử lại'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  sliver: SliverAppBar(
+                    primary: false,
+                    floating: true,
+                    snap: true,
+                    pinned: false,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    surfaceTintColor: Colors.transparent,
+                    elevation: 0,
+                    automaticallyImplyLeading: false,
+                    title: const FilterButton(),
+                  ),
                 ),
-                const SizedBox(height: 24),
-                ElevatedButton.icon(
-                  onPressed: _onRefresh,
-                  icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Thử lại'),
-                ),
+                if (state.posts.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Text(widget.noItemsFoundMessage),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    sliver: SliverGrid(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          if (index >= state.posts.length) {
+                            return state.status == PostStatus.loading ? const ShimmeringSmallPost() : const SizedBox.shrink();
+                          }
+                          final post = state.posts[index];
+                          return SmallPost(
+                            post: post,
+                            onDeletePostPopBack: () {
+                              context.read<PostBloc>().add(const PostEvent.refreshRequested());
+                            },
+                          );
+                        },
+                        childCount: state.hasNextPage ? state.posts.length + 1 : state.posts.length,
+                      ),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        childAspectRatio: 0.75,
+                      ),
+                    ),
+                  ),
               ],
             ),
           );
-        }
-
-        return RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: CustomScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                sliver: SliverAppBar(
-                  primary: false,
-                  floating: true,
-                  snap: true,
-                  pinned: false,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  surfaceTintColor: Colors.transparent,
-                  elevation: 0,
-                  automaticallyImplyLeading: false,
-                  title: const FilterButton(),
-                ),
-              ),
-              if (state.posts.isEmpty)
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Text(widget.noItemsFoundMessage),
-                  ),
-                )
-              else
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                  sliver: SliverGrid(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (index >= state.posts.length) {
-                          return state.status == PostStatus.loading ? const ShimmeringSmallPost() : const SizedBox.shrink();
-                        }
-                        final post = state.posts[index];
-                        return SmallPost(
-                          post: post,
-                          onDeletePostPopBack: () {
-                            context.read<PostBloc>().add(const PostEvent.refreshRequested());
-                          },
-                        );
-                      },
-                      childCount: state.hasNextPage ? state.posts.length + 1 : state.posts.length,
-                    ),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      childAspectRatio: 0.75,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 }
