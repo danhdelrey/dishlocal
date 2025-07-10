@@ -8,6 +8,7 @@ import 'package:dishlocal/data/categories/post/repository/interface/post_reposit
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
+import 'package:dishlocal/ui/features/post/view/post_grid_tab_view.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_info.dart';
