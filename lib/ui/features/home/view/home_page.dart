@@ -36,6 +36,9 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
   late final TabController _tabController;
   late final List<PostBloc> _postBlocs;
 
+  late final ScrollController forYouTabScrollController = ScrollController();
+  late final ScrollController followingTabScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +53,8 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
 
   @override
   void dispose() {
+    forYouTabScrollController.dispose();
+    followingTabScrollController.dispose();
     _tabController.dispose();
     for (var bloc in _postBlocs) {
       bloc.close();
@@ -97,14 +102,16 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
               children: [
                 BlocProvider.value(
                   value: _postBlocs[0],
-                  child: const PostGridTabView(
+                  child:  PostGridTabView(
+                    scrollController: forYouTabScrollController,
                     key: PageStorageKey<String>('homeForYouTab'),
                     noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
                   ),
                 ),
                 BlocProvider.value(
                   value: _postBlocs[1],
-                  child: const PostGridTabView(
+                  child:  PostGridTabView(
+                    scrollController: followingTabScrollController,
                     key: PageStorageKey<String>('homeFollowingTab'),
                     noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
                   ),
@@ -120,10 +127,11 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
 
 class PostGridTabView extends StatefulWidget {
   final String noItemsFoundMessage;
+  final ScrollController scrollController;
 
   const PostGridTabView({
     super.key,
-    required this.noItemsFoundMessage,
+    required this.noItemsFoundMessage, required this.scrollController,
   });
 
   @override
@@ -131,27 +139,20 @@ class PostGridTabView extends StatefulWidget {
 }
 
 class _PostGridTabViewState extends State<PostGridTabView> {
-  final ScrollController _scrollController = ScrollController();
   late PostBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     _bloc = context.read<PostBloc>();
-    _scrollController.addListener(_onScroll);
+    widget.scrollController.addListener(_onScroll);
 
     if (_bloc.state.status == PostStatus.initial) {
       _bloc.add(const PostEvent.fetchNextPageRequested());
     }
   }
 
-  @override
-  void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
+  
   void _onScroll() {
     if (_isBottom) {
       _bloc.add(const PostEvent.fetchNextPageRequested());
@@ -159,9 +160,9 @@ class _PostGridTabViewState extends State<PostGridTabView> {
   }
 
   bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
+    if (!widget.scrollController.hasClients) return false;
+    final maxScroll = widget.scrollController.position.maxScrollExtent;
+    final currentScroll = widget.scrollController.offset;
     return currentScroll >= (maxScroll - 500.0);
   }
 
@@ -178,7 +179,7 @@ class _PostGridTabViewState extends State<PostGridTabView> {
         builder: (context, state) {
           if (state.status == PostStatus.loading && state.posts.isEmpty) {
             return GridView.builder(
-              controller: _scrollController,
+              controller: widget.scrollController,
               padding: const EdgeInsets.all(10.0),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -234,7 +235,7 @@ class _PostGridTabViewState extends State<PostGridTabView> {
           }
 
           return GridView.builder(
-            controller: _scrollController,
+            controller: widget.scrollController,
             padding: const EdgeInsets.all(10.0),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
