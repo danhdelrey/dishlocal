@@ -96,9 +96,8 @@ class _ExplorePageState extends State<ExplorePage> {
                     ),
                     const FilterButton(),
                   ],
-                  pinned: false,
+                  pinned: true,
                   floating: true,
-                  snap: true,
                 ),
 
                 // Sử dụng BlocBuilder để render nội dung chính (lưới bài viết)

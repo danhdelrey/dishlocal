@@ -206,7 +206,10 @@ class _NewPostPageState extends State<NewPostPage> {
                         physics: const BouncingScrollPhysics(),
                         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                         slivers: [
-                          GlassSliverAppBar(
+                          SliverAppBar(
+                            titleTextStyle: appTextTheme(context).titleMedium,
+                            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                            surfaceTintColor: Colors.transparent,
                             title: Text(widget.inEditMode ? 'Chỉnh sửa bài đăng' : 'Bài đăng mới'),
                             centerTitle: true,
                             pinned: true,
