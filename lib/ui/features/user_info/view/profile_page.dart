@@ -9,6 +9,7 @@ import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_info.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,6 +96,16 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
       ],
       // Sử dụng Scaffold với layout Column, không dùng Sliver
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            context.push("/camera");
+          },
+          shape: const CircleBorder(),
+          backgroundColor: appColorScheme(context).primary,
+          child: const Icon(
+            CupertinoIcons.add,
+          ),
+        ),
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
