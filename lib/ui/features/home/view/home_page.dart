@@ -62,6 +62,23 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
     super.dispose();
   }
 
+  void _onTabTapped(int index) {
+    if (_tabController.index == index) {
+      // Scroll to top if tapping on current tab
+      final scrollController = index == 0 ? forYouTabScrollController : followingTabScrollController;
+      if (scrollController.hasClients) {
+        final currentOffset = scrollController.offset;
+        final duration = Duration(milliseconds: (currentOffset / 2).clamp(300, 1000).round());
+
+        scrollController.animateTo(
+          0,
+          duration: duration,
+          curve: Curves.easeOut,
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,6 +107,7 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
             color: Theme.of(context).scaffoldBackgroundColor,
             child: TabBar(
               controller: _tabController,
+              onTap: _onTabTapped,
               tabs: const [
                 Tab(text: 'Dành cho bạn'),
                 Tab(text: 'Đang theo dõi'),
@@ -102,17 +120,17 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
               children: [
                 BlocProvider.value(
                   value: _postBlocs[0],
-                  child:  PostGridTabView(
+                  child: PostGridTabView(
                     scrollController: forYouTabScrollController,
-                    key: PageStorageKey<String>('homeForYouTab'),
+                    key: const PageStorageKey<String>('homeForYouTab'),
                     noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
                   ),
                 ),
                 BlocProvider.value(
                   value: _postBlocs[1],
-                  child:  PostGridTabView(
+                  child: PostGridTabView(
                     scrollController: followingTabScrollController,
-                    key: PageStorageKey<String>('homeFollowingTab'),
+                    key: const PageStorageKey<String>('homeFollowingTab'),
                     noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
                   ),
                 ),
@@ -131,7 +149,8 @@ class PostGridTabView extends StatefulWidget {
 
   const PostGridTabView({
     super.key,
-    required this.noItemsFoundMessage, required this.scrollController,
+    required this.noItemsFoundMessage,
+    required this.scrollController,
   });
 
   @override
@@ -152,7 +171,6 @@ class _PostGridTabViewState extends State<PostGridTabView> {
     }
   }
 
-  
   void _onScroll() {
     if (_isBottom) {
       _bloc.add(const PostEvent.fetchNextPageRequested());
