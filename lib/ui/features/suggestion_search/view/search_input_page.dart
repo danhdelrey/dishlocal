@@ -66,14 +66,33 @@ class _SearchInputPageState extends State<SearchInputPage> {
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: CupertinoSearchTextField(
-            controller: _searchController,
-            placeholder: 'Tìm kiếm bài viết, người dùng...',
-            autofocus: true,
-            style: appTextTheme(context).bodyMedium?.copyWith(
-                  color: appColorScheme(context).onSurface,
+          centerTitle: false,
+          titleSpacing: 0,
+          title: Row(
+            children: [
+              IconButton(
+                icon: const Icon(CupertinoIcons.back),
+                onPressed: () {
+                  // Đóng bàn phím và trở về trang trước
+                  FocusScope.of(context).unfocus();
+                  context.pop();
+                },
+              ),
+              Expanded(
+                child: CupertinoSearchTextField(
+                  controller: _searchController,
+                  placeholder: 'Tìm kiếm bài viết, người dùng...',
+                  autofocus: true,
+                  style: appTextTheme(context).bodyMedium?.copyWith(
+                        color: appColorScheme(context).onSurface,
+                      ),
+                  onSubmitted: _navigateToResultScreen,
                 ),
-            onSubmitted: _navigateToResultScreen,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+            ],
           ),
         ),
         body: BlocBuilder<SuggestionSearchBloc, SuggestionSearchState>(
