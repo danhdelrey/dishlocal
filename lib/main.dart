@@ -117,7 +117,7 @@ class _MyAppState extends State<MyApp> {
         // Sử dụng Builder để lấy context có BlocProvider
         final router = AppRouter(context.read<AuthBloc>()).router;
         return MaterialApp.router(
-          title: 'Flutter Demo',
+          title: 'DishLocal',
           darkTheme: darkTheme,
           themeMode: ThemeMode.dark,
           debugShowCheckedModeBanner: AppEnvironment.isInDevelopment,
