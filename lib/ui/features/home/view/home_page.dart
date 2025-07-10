@@ -7,7 +7,7 @@ import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/sorting_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
-import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
+import 'package:dishlocal/ui/features/post/view/shimmering_small_post.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';

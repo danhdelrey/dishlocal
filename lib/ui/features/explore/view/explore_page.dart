@@ -3,7 +3,7 @@ import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/filter_button.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
-import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
+import 'package:dishlocal/ui/features/post/view/shimmering_small_post.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

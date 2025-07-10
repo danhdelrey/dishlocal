@@ -2,20 +2,21 @@ import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
+import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/ui/features/auth/view/logout_button.dart';
+import 'package:dishlocal/ui/features/home/view/home_page.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
-import 'package:dishlocal/ui/features/post/view/grid_post_page.dart';
+import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
 import 'package:dishlocal/ui/features/user_info/view/profile_info.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-/// Container đơn giản, truyền userId xuống.
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key, this.userId});
   final String? userId;
@@ -28,7 +29,6 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-/// Widget nội dung chính, chứa toàn bộ logic và giao diện.
 class _ProfilePageContent extends StatefulWidget {
   const _ProfilePageContent({this.userId});
   final String? userId;
@@ -37,11 +37,13 @@ class _ProfilePageContent extends StatefulWidget {
   State<_ProfilePageContent> createState() => _ProfilePageContentState();
 }
 
-/// State logic được giữ nguyên, chỉ thay đổi phần `build`.
-class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTickerProviderStateMixin {
+class _ProfilePageContentState extends State<_ProfilePageContent> with TickerProviderStateMixin {
   late final TabController _tabController;
   late final List<PostBloc> _postBlocs;
   late final UserInfoBloc _userInfoBloc;
+
+  late final ScrollController postsTabScrollController = ScrollController();
+  late final ScrollController savedTabScrollController = ScrollController();
 
   bool _isMyProfile = false;
 
@@ -78,6 +80,8 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
 
   @override
   void dispose() {
+    postsTabScrollController.dispose();
+    if (_isMyProfile) savedTabScrollController.dispose();
     _tabController.dispose();
     _userInfoBloc.close();
     for (var bloc in _postBlocs) {
@@ -86,96 +90,96 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
     super.dispose();
   }
 
+  void _onTabTapped(int index) {
+    if (_tabController.index == index) {
+      // Scroll to top if tapping on current tab
+      final scrollController = index == 0 ? postsTabScrollController : savedTabScrollController;
+      if (scrollController.hasClients) {
+        final currentOffset = scrollController.offset;
+        final duration = Duration(milliseconds: (currentOffset / 2).clamp(300, 1000).round());
+
+        scrollController.animateTo(
+          0,
+          duration: duration,
+          curve: Curves.easeOut,
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Cung cấp các BLoC cho cây widget
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _userInfoBloc),
-        // Các PostBloc sẽ được cung cấp bên trong TabBarView
       ],
-      // Sử dụng Scaffold với layout Column, không dùng Sliver
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            context.push("/camera");
-          },
+          onPressed: () => context.push("/camera"),
           shape: const CircleBorder(),
           backgroundColor: appColorScheme(context).primary,
-          child: const Icon(
-            CupertinoIcons.add,
-          ),
+          child: const Icon(CupertinoIcons.add),
         ),
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           surfaceTintColor: Colors.transparent,
-          // Nút quay lại chỉ hiển thị khi xem trang của người khác
+          elevation: 0,
           leading: widget.userId != null
               ? IconButton(
                   onPressed: () => context.pop(),
-                  // Dùng Icon thay vì SVG để đơn giản hóa
                   icon: const Icon(
                     Icons.arrow_back_ios_new,
                     size: 16,
                   ),
                 )
               : null,
-          // Title lấy từ UserInfoBloc
           title: BlocBuilder<UserInfoBloc, UserInfoState>(
             builder: (context, state) {
               if (state is UserInfoSuccess) {
                 return Text(state.appUser.username ?? 'Profile');
               }
-              return const SizedBox(); // Hiển thị rỗng khi đang tải
+              return const SizedBox();
             },
           ),
           titleTextStyle: appTextTheme(context).titleMedium,
           centerTitle: true,
-          // Nút Logout chỉ hiển thị ở trang của mình
           actions: [
             if (_isMyProfile) const LogoutButton(),
           ],
         ),
         body: Column(
           children: [
-            // 1. Phần thông tin Profile
             const ProfileInfo(),
-
-            // 2. Thanh TabBar
-            Container(
-              // Thêm một lớp Container để có thể tùy chỉnh nền nếu muốn
-              color: Colors.black.withAlpha(10), // Màu nền nhẹ cho TabBar
+            Material(
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: TabBar(
                 controller: _tabController,
-                dividerColor: Colors.white.withAlpha(25),
+                onTap: _onTabTapped,
                 tabs: [
                   const Tab(icon: Icon(Icons.grid_view_rounded)),
                   if (_isMyProfile) const Tab(icon: Icon(Icons.bookmark_rounded)),
                 ],
               ),
             ),
-
-            // 3. Nội dung các Tab
-            // Bọc TabBarView trong Expanded để nó chiếm hết không gian còn lại
             Expanded(
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  // Tab 1: Bài viết đã đăng
                   BlocProvider.value(
                     value: _postBlocs[0],
-                    child: const GridPostPage(
-                      key: PageStorageKey<String>('profilePosts'),
+                    child: PostGridTabView(
+                      scrollController: postsTabScrollController,
+                      key: const PageStorageKey<String>('profilePosts'),
                       noItemsFoundMessage: 'Chưa có bài viết nào.',
                     ),
                   ),
-                  // Tab 2: Bài viết đã lưu (chỉ tồn tại nếu là trang của mình)
                   if (_isMyProfile)
                     BlocProvider.value(
                       value: _postBlocs[1],
-                      child: const GridPostPage(
-                        key: PageStorageKey<String>('profileSavedPosts'),
+                      child: PostGridTabView(
+                        scrollController: savedTabScrollController,
+                        key: const PageStorageKey<String>('profileSavedPosts'),
                         noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
                       ),
                     ),
@@ -189,4 +193,3 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with SingleTic
   }
 }
 
-// Lớp _SliverAppBarDelegate không còn cần thiết và đã được xóa.
