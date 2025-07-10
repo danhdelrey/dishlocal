@@ -18,16 +18,13 @@ class GridPostPage extends StatefulWidget {
 }
 
 class _GridPostPageState extends State<GridPostPage> {
-  // MỚI: Tạo một ScrollController cục bộ. Đơn giản và hiệu quả.
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    // Gắn listener để phát hiện khi cuộn xuống cuối trang
     _scrollController.addListener(_onScroll);
 
-    // Tải trang đầu tiên nếu cần
     final bloc = context.read<PostBloc>();
     if (bloc.state.status == PostStatus.initial) {
       bloc.add(const PostEvent.fetchNextPageRequested());
@@ -36,7 +33,6 @@ class _GridPostPageState extends State<GridPostPage> {
 
   @override
   void dispose() {
-    // Quan trọng: Gỡ listener và hủy controller để tránh memory leak.
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
@@ -54,15 +50,12 @@ class _GridPostPageState extends State<GridPostPage> {
     if (!_scrollController.hasClients) return false;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    // Trigger load more sớm hơn để trải nghiệm người dùng mượt mà hơn
     return currentScroll >= (maxScroll - 500.0);
   }
 
-  // MỚI: Hàm xử lý refresh, tái sử dụng được
   Future<void> _onRefresh() async {
     final bloc = context.read<PostBloc>();
     bloc.add(const PostEvent.refreshRequested());
-    // Đợi đến khi BLoC không còn ở trạng thái loading nữa
     await bloc.stream.firstWhere((s) => s.status != PostStatus.loading);
   }
 
@@ -70,14 +63,10 @@ class _GridPostPageState extends State<GridPostPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<PostBloc, PostState>(
       builder: (context, state) {
-        // ---- CÁC TRƯỜNG HỢP BAN ĐẦU (LOADING, FAILURE, EMPTY) ----
-
-        // 1. Đang tải lần đầu tiên
         if (state.status == PostStatus.loading && state.posts.isEmpty) {
-          return const _ShimmeringGrid();
+          return const _ShimmeringSliverGrid();
         }
 
-        // 2. Lỗi khi tải lần đầu
         if (state.status == PostStatus.failure && state.posts.isEmpty) {
           return Center(
             child: Column(
@@ -93,7 +82,7 @@ class _GridPostPageState extends State<GridPostPage> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton.icon(
-                  onPressed: _onRefresh, // Dùng hàm _onRefresh
+                  onPressed: _onRefresh,
                   icon: const Icon(Icons.refresh_rounded),
                   label: const Text('Thử lại'),
                 ),
@@ -102,102 +91,93 @@ class _GridPostPageState extends State<GridPostPage> {
           );
         }
 
-        // ---- CÁC TRƯỜNG HỢP HIỂN THỊ DANH SÁCH ----
-
-        return Column(
-          children: [
-            // Luôn hiển thị FilterButton ở trên đầu
-            const Padding(
-              padding: EdgeInsets.only(top: 15, bottom: 5),
-              child: FilterButton(),
-            ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: _onRefresh,
-                child: _buildContent(context, state), // Gọi hàm xây dựng nội dung chính
+        return RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            slivers: [
+              SliverAppBar(
+                primary: false,
+                floating: true,
+                snap: true,
+                pinned: false,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                surfaceTintColor: Colors.transparent,
+                elevation: 0,
+                automaticallyImplyLeading: false,
+                title: const FilterButton(),
               ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // MỚI: Tách hàm build nội dung để code sạch sẽ hơn
-  Widget _buildContent(BuildContext context, PostState state) {
-    // 3. Thành công nhưng không có bài viết nào
-    if (state.posts.isEmpty) {
-      // Dùng ListView để cho phép RefreshIndicator hoạt động ngay cả khi list rỗng
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Center(
-                child: Text(widget.noItemsFoundMessage),
-              ),
-            ),
-          );
-        },
-      );
-    }
-
-    // 4. Hiển thị GridView với danh sách bài viết
-    return GridView.builder(
-      key: PageStorageKey<String>(state.filterSortParams.toString()), // Giữ vị trí cuộn khi filter
-      controller: _scrollController,
-      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, kBottomNavigationBarHeight + 40),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        childAspectRatio: 0.75,
-      ),
-      // Nếu có trang tiếp theo, thêm 1 item cho loading indicator
-      itemCount: state.hasNextPage ? state.posts.length + 1 : state.posts.length,
-      itemBuilder: (context, index) {
-        // Nếu là item cuối cùng và còn trang, hiển thị ShimmeringSmallPost
-        if (index >= state.posts.length) {
-          // Chỉ hiển thị Shimmering khi đang thực sự tải
-          return state.status == PostStatus.loading ? const ShimmeringSmallPost() : const SizedBox.shrink();
-        }
-
-        // Ngược lại, hiển thị bài viết
-        final post = state.posts[index];
-        return SmallPost(
-          post: post,
-          onDeletePostPopBack: () {
-            context.read<PostBloc>().add(const PostEvent.refreshRequested());
-          },
+              if (state.posts.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Text(widget.noItemsFoundMessage),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, kBottomNavigationBarHeight + 40),
+                  sliver: SliverGrid(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        if (index >= state.posts.length) {
+                          return state.status == PostStatus.loading ? const ShimmeringSmallPost() : const SizedBox.shrink();
+                        }
+                        final post = state.posts[index];
+                        return SmallPost(
+                          post: post,
+                          onDeletePostPopBack: () {
+                            context.read<PostBloc>().add(const PostEvent.refreshRequested());
+                          },
+                        );
+                      },
+                      childCount: state.hasNextPage ? state.posts.length + 1 : state.posts.length,
+                    ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      childAspectRatio: 0.75,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );
   }
 }
 
-class _ShimmeringGrid extends StatelessWidget {
-  const _ShimmeringGrid();
+class _ShimmeringSliverGrid extends StatelessWidget {
+  const _ShimmeringSliverGrid();
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return CustomScrollView(
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(10),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        childAspectRatio: 0.75,
-      ),
-      itemCount: 6, // Hiển thị 6 item shimmer
-      itemBuilder: (context, index) => const ShimmeringSmallPost(),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.all(10),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => const ShimmeringSmallPost(),
+              childCount: 6,
+            ),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 0.75,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-// Giữ nguyên widget ShimmeringSmallPost của bạn
 class ShimmeringSmallPost extends StatefulWidget {
   const ShimmeringSmallPost({super.key});
   @override
