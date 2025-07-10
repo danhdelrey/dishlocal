@@ -130,6 +130,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                               builder: (context, state) {
                                 if (state is ViewPostSuccess) {
                                   return SliverAppBar(
+                                    centerTitle: true,
                                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                                     surfaceTintColor: Colors.transparent,
                                     floating: true,
