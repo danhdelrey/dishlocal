@@ -83,12 +83,7 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push("/camera"),
-        shape: const CircleBorder(),
-        backgroundColor: appColorScheme(context).primary,
-        child: const Icon(CupertinoIcons.add),
-      ),
+      
       appBar: AppBar(
         centerTitle: true,
         title: ShaderMask(

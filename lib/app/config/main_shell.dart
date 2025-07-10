@@ -29,6 +29,12 @@ class MainShell extends StatelessWidget {
     return Scaffold(
       // 1. Nội dung của các tab được hiển thị ở đây
       body: navigationShell,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push("/camera"),
+        shape: const CircleBorder(),
+        backgroundColor: appColorScheme(context).primary,
+        child: const Icon(CupertinoIcons.add),
+      ),
 
       // 3. BottomAppBar thay thế cho PersistentTabView
       bottomNavigationBar: BottomAppBar(

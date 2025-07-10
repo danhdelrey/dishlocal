@@ -115,12 +115,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
         BlocProvider.value(value: _userInfoBloc),
       ],
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => context.push("/camera"),
-          shape: const CircleBorder(),
-          backgroundColor: appColorScheme(context).primary,
-          child: const Icon(CupertinoIcons.add),
-        ),
+        
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
