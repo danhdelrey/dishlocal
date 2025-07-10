@@ -112,20 +112,6 @@ class _GridPostPageState extends State<GridPostPage> {
               controller: _scrollController,
               physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  sliver: SliverAppBar(
-                    primary: false,
-                    floating: true,
-                    snap: true,
-                    pinned: false,
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    surfaceTintColor: Colors.transparent,
-                    elevation: 0,
-                    automaticallyImplyLeading: false,
-                    title: const FilterButton(),
-                  ),
-                ),
                 if (state.posts.isEmpty)
                   SliverFillRemaining(
                     hasScrollBody: false,

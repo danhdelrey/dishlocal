@@ -68,32 +68,13 @@ class _HomePageContentState extends State<_HomePageContent> with SingleTickerPro
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.transparent,
-        title: GestureDetector(
-          onTap: () {
-            context.push('/search_input');
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: CupertinoColors.systemFill,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  CupertinoIcons.search,
-                  color: CupertinoColors.systemGrey,
-                  size: 20,
+        title: ShaderMask(
+          shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+          child: Text(
+            'DishLocal',
+            style: appTextTheme(context).titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  'Tìm kiếm bài viết, người dùng...',
-                  style: appTextTheme(context).bodyMedium?.copyWith(
-                        color: CupertinoColors.systemGrey,
-                      ),
-                ),
-              ],
-            ),
           ),
         ),
         bottom: TabBar(
