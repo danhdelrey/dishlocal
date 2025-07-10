@@ -13,117 +13,113 @@ class ProfileInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Lấy ID của người dùng hiện tại đang đăng nhập (người xem)
     final currentUserId = getIt<AppUserRepository>().getCurrentUserId();
 
     return BlocBuilder<UserInfoBloc, UserInfoState>(
       builder: (context, state) {
         if (state is UserInfoSuccess) {
-          // So sánh ID người xem với ID của người trên trang profile
           final isMyProfile = currentUserId == state.appUser.userId;
 
           return Container(
             decoration: BoxDecoration(
-              color: Colors.black.withAlpha(25), // withValues deprecated
+              color: Colors.black.withAlpha(25),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      CachedCircleAvatar(
-                        circleRadius: 30,
-                        imageUrl: state.appUser.photoUrl ?? '',
-                      ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        // Bọc trong Expanded để tránh tràn khi tên quá dài
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              state.appUser.displayName ?? state.appUser.originalDisplayname,
-                              style: Theme.of(context).textTheme.titleMedium,
-                              overflow: TextOverflow.ellipsis, // Thêm để tránh tràn
-                            ),
-                            const SizedBox(height: 5),
-                            CustomRichText(
-                              label1: NumberFormatter.formatCompactNumberStable(state.appUser.followerCount),
-                              description1: ' người theo dõi • ',
-                              label2: NumberFormatter.formatCompactNumberStable(state.appUser.followingCount),
-                              description2: ' đang theo dõi',
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (state.appUser.bio != null && state.appUser.bio!.trim().isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    Text(
-                      state.appUser.bio!,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                  // Avatar
+                  Center(
+                    child: CachedCircleAvatar(
+                      circleRadius: 30,
+                      imageUrl: state.appUser.photoUrl ?? '',
                     ),
-                  ],
+                  ),
+                  const SizedBox(height: 15),
+                  // Display name
+                  Center(
+                    child: Text(
+                      state.appUser.displayName ?? state.appUser.originalDisplayname,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Follower - Following
+                  Center(
+                    child: CustomRichText(
+                      label1: NumberFormatter.formatCompactNumberStable(state.appUser.followerCount),
+                      description1: ' người theo dõi • ',
+                      label2: NumberFormatter.formatCompactNumberStable(state.appUser.followingCount),
+                      description2: ' đang theo dõi',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Bio
+                  if (state.appUser.bio != null && state.appUser.bio!.trim().isNotEmpty)
+                    Center(
+                      child: Text(
+                        state.appUser.bio!,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   const SizedBox(height: 20),
-
-                  // THÊM ĐIỀU KIỆN Ở ĐÂY
-                  // Chỉ hiển thị FollowButton nếu đây KHÔNG phải là trang của tôi
+                  // Follow button (if not my profile)
                   if (!isMyProfile)
                     FollowButton(
                       targetUser: state.appUser,
                     ),
-
                   const SizedBox(height: 20),
                 ],
               ),
             ),
           );
         }
-        // Hiển thị một placeholder loading đơn giản khi chưa có dữ liệu
-        // để tránh màn hình trống trơn lúc đầu
+
         if (state is UserInfoLoading || state is UserInfoInitial) {
           return Container(
             decoration: BoxDecoration(
-              color: Colors.black.withAlpha(25), // withValues deprecated
+              color: Colors.black.withAlpha(25),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      const CachedCircleAvatar(
-                        circleRadius: 30,
-                        imageUrl: 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg',
-                      ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        // Bọc trong Expanded để tránh tràn khi tên quá dài
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '???',
-                              style: Theme.of(context).textTheme.titleMedium,
-                              overflow: TextOverflow.ellipsis, // Thêm để tránh tràn
-                            ),
-                            const SizedBox(height: 5),
-                            const CustomRichText(
-                              label1: '???',
-                              description1: ' người theo dõi • ',
-                              label2: '???',
-                              description2: ' đang theo dõi',
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  const Center(
+                    child: CachedCircleAvatar(
+                      circleRadius: 30,
+                      imageUrl: 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg',
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Center(
+                    child: Text(
+                      '???',
+                      style: Theme.of(context).textTheme.titleMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Center(
+                    child: CustomRichText(
+                      label1: '???',
+                      description1: ' người theo dõi • ',
+                      label2: '???',
+                      description2: ' đang theo dõi',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Center(
+                    child: Text(
+                      '',
+                      style: TextStyle(),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   const SizedBox(height: 20),
                 ],
@@ -132,7 +128,6 @@ class ProfileInfo extends StatelessWidget {
           );
         }
 
-        // Trường hợp lỗi có thể hiển thị một thông báo
         if (state is UserInfoFailure) {
           return const Center(child: Text('Không thể tải thông tin người dùng.'));
         }
