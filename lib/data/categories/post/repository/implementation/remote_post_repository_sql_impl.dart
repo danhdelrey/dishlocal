@@ -6,6 +6,7 @@ import 'package:dishlocal/core/json_converter/food_category_converter.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_option.dart';
 import 'package:dishlocal/data/services/database_service/entity/post_entity.dart';
+import 'package:dishlocal/data/services/database_service/entity/post_review_entity.dart';
 import 'package:dishlocal/data/services/database_service/exception/sql_database_service_exception.dart';
 import 'package:dishlocal/data/services/geocoding_service/interface/geocoding_service.dart';
 import 'package:dishlocal/data/services/search_service/exception/search_service_exception.dart';
@@ -23,6 +24,7 @@ import 'package:dishlocal/data/services/distance_service/interface/distance_serv
 import 'package:dishlocal/data/services/location_service/interface/location_service.dart';
 import 'package:dishlocal/data/services/storage_service/interface/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 @LazySingleton(as: PostRepository)
 class RemotePostRepositorySqlImpl implements PostRepository {
@@ -146,12 +148,31 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         foodCategory: post.foodCategory,
       );
 
+      final postReviewEntity = post.reviews.map((review) {
+        return PostReviewEntity(
+          id: const Uuid().v4(),
+          postId: post.postId,
+          category: review.category,
+          rating: review.rating,
+          selectedChoices: review.selectedChoices,
+          createdAt: DateTime.now(),
+        );
+      }).toList();
+
       _log.fine('📤 Đang lưu bài viết vào bảng "posts"...');
       await _dbService.create(
         tableName: 'posts',
         data: postEntity.toJson(),
         fromJson: PostEntity.fromJson, // Dù không dùng kết quả, vẫn cần cung cấp
       );
+      for (var review in postReviewEntity) {
+        _log.fine('📤 Đang lưu đánh giá vào bảng "post_reviews"...');
+        await _dbService.create(
+          tableName: 'post_reviews',
+          data: review.toJson(),
+          fromJson: PostReviewEntity.fromJson,
+        );
+      }
       _log.info('🎉 Tạo bài viết thành công!');
     });
   }
@@ -192,8 +213,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
     const rpcName = 'get_posts_filtered'; // Tên hàm RPC mới/được cập nhật của bạn
     final currentUserId = _authenticationService.getCurrentUserId();
 
-
-   // 2. Chuẩn bị các tham số cho RPC
+    // 2. Chuẩn bị các tham số cho RPC
     final rpcParams = <String, dynamic>{
       'p_user_id': currentUserId,
       'p_limit': params.limit,
@@ -215,7 +235,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
     };
 
     // 3. Xử lý lọc khoảng cách (cần vị trí người dùng)
-     try {
+    try {
       final userPosition = await _locationService.getCurrentPosition();
       rpcParams['p_user_lat'] = userPosition.latitude;
       rpcParams['p_user_lng'] = userPosition.longitude;
@@ -229,7 +249,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       rpcParams['p_min_distance_meters'] = params.distance!.minDistance;
     }
 
-     if (params.lastCursor is DateTime) {
+    if (params.lastCursor is DateTime) {
       rpcParams['p_last_cursor_date'] = (params.lastCursor as DateTime).toUtc().toIso8601String();
     } else if (params.lastCursor is int) {
       rpcParams['p_last_cursor_numeric'] = params.lastCursor;
@@ -303,6 +323,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         'p_user_id': currentUserId,
       }).single(); // Giờ đây .single() sẽ hoạt động chính xác vì hàm RPC
       // được thiết kế để trả về đúng một dòng.
+      _log.fine('📥 Nhận được dữ liệu raw: ${data.toString()}');
 
       final post = Post.fromJson(data);
       _log.info('✅ Lấy chi tiết bài viết thành công.: ${post.toString()}');

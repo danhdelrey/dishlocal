@@ -224,6 +224,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           insight: state.insightInput.value,
           price: state.moneyInput.value,
           foodCategory: event.foodCategory,
+          reviews: event.reviews,
         ),
       );
       updateResult.fold(
@@ -260,6 +261,7 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           insight: insightInput.value,
           createdAt: event.createdAt,
           foodCategory: event.foodCategory,
+          reviews: event.reviews,
           likeCount: 0,
           saveCount: 0,
           commentCount: 0,

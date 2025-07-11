@@ -103,7 +103,8 @@ class _$ReviewItemCopyWithImpl<$Res> implements $ReviewItemCopyWith<$Res> {
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _ReviewItem implements ReviewItem {
   const _ReviewItem(
       {required this.category,

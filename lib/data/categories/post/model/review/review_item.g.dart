@@ -9,7 +9,7 @@ part of 'review_item.dart';
 _ReviewItem _$ReviewItemFromJson(Map<String, dynamic> json) => _ReviewItem(
       category: $enumDecode(_$ReviewCategoryEnumMap, json['category']),
       rating: (json['rating'] as num?)?.toInt() ?? 0,
-      selectedChoices: (json['selectedChoices'] as List<dynamic>?)
+      selectedChoices: (json['selected_choices'] as List<dynamic>?)
               ?.map((e) => $enumDecode(_$ReviewChoiceEnumMap, e))
               .toList() ??
           const [],
@@ -19,7 +19,7 @@ Map<String, dynamic> _$ReviewItemToJson(_ReviewItem instance) =>
     <String, dynamic>{
       'category': _$ReviewCategoryEnumMap[instance.category]!,
       'rating': instance.rating,
-      'selectedChoices': instance.selectedChoices
+      'selected_choices': instance.selectedChoices
           .map((e) => _$ReviewChoiceEnumMap[e]!)
           .toList(),
     };
