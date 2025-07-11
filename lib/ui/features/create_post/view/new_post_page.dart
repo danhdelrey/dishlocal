@@ -10,6 +10,7 @@ import 'package:dishlocal/ui/features/create_post/form_input/dining_location_nam
 import 'package:dishlocal/ui/features/create_post/form_input/dish_name_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/exact_address_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/money_input.dart';
+import 'package:dishlocal/ui/features/review/view/review_section.dart';
 import 'package:dishlocal/ui/features/select_food_category/bloc/select_food_category_bloc.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_food_category_chip_selector.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/food_category_builder.dart';
@@ -203,7 +204,6 @@ class _NewPostPageState extends State<NewPostPage> {
                       allowMultiSelect,
                     ) {
                       return CustomScrollView(
-                        physics: const BouncingScrollPhysics(),
                         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                         slivers: [
                           SliverAppBar(
@@ -354,6 +354,8 @@ class _NewPostPageState extends State<NewPostPage> {
                                             onChanged: (exactAddress) => context.read<CreatePostBloc>().add(ExactAddressInputChanged(exactAddress: exactAddress)),
                                             errorText: state.exactAddressInput.isNotValid && !state.exactAddressInput.isPure ? state.exactAddressInput.displayError?.getMessage() : null,
                                           ),
+                                          const SizedBox(height: 30),
+                                          const ReviewSection(),
                                           const SizedBox(height: 10),
                                           AppTextField(
                                             initialValue: widget.inEditMode ? widget.postToUpdate?.insight : null,
@@ -371,7 +373,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                   },
                                 ),
                                 const SizedBox(
-                                  height: 300,
+                                  height: 100,
                                 ),
                               ],
                             ),

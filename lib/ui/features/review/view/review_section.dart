@@ -50,80 +50,78 @@ class _ReviewSectionState extends State<ReviewSection> {
           // Khi state đã sẵn sàng, `state.reviewData` sẽ chứa dữ liệu
           final reviewData = state.reviewData;
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: ReviewCategory.values.map((category) {
-                // Lấy ra ReviewItem tương ứng với category hiện tại
-                final item = reviewData[category]!;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: ReviewCategory.values.map((category) {
+              // Lấy ra ReviewItem tương ứng với category hiện tại
+              final item = reviewData[category]!;
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        category.label,
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      category.label,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 10),
+                    RatingBar.builder(
+                      glow: false,
+                      // Lấy rating từ state
+                      initialRating: item.rating.toDouble(),
+                      minRating: 0,
+                      direction: Axis.horizontal,
+                      allowHalfRating: false, // Để rating là số nguyên
+                      itemCount: 5,
+                      itemSize: 24,
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      itemBuilder: (context, _) => const Icon(
+                        CupertinoIcons.star_fill,
+                        color: Colors.amber,
                       ),
-                      const SizedBox(height: 10),
-                      RatingBar.builder(
-                        glow: false,
-                        // Lấy rating từ state
-                        initialRating: item.rating.toDouble(),
-                        minRating: 0,
-                        direction: Axis.horizontal,
-                        allowHalfRating: false, // Để rating là số nguyên
-                        itemCount: 5,
-                        itemSize: 24,
-                        itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        itemBuilder: (context, _) => const Icon(
-                          CupertinoIcons.star_fill,
-                          color: Colors.amber,
-                        ),
-                        onRatingUpdate: (rating) {
-                          // Gửi sự kiện tới BLoC khi rating thay đổi
-                          context.read<ReviewBloc>().add(
-                                ReviewEvent.ratingChanged(
-                                  category: category,
-                                  newRating: rating,
-                                ),
-                              );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: category.availableChoices.map((choice) {
-                          // Kiểm tra xem choice này có được chọn không từ state
-                          final isSelected = item.selectedChoices.contains(choice);
+                      onRatingUpdate: (rating) {
+                        // Gửi sự kiện tới BLoC khi rating thay đổi
+                        context.read<ReviewBloc>().add(
+                              ReviewEvent.ratingChanged(
+                                category: category,
+                                newRating: rating,
+                              ),
+                            );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: category.availableChoices.map((choice) {
+                        // Kiểm tra xem choice này có được chọn không từ state
+                        final isSelected = item.selectedChoices.contains(choice);
 
-                          return CustomChoiceChip(
-                            borderRadius: 8,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            label: choice.label,
-                            isSelected: isSelected, // Cập nhật từ state
-                            onSelected: (selected) {
-                              // Gửi sự kiện tới BLoC khi choice được toggle
-                              context.read<ReviewBloc>().add(
-                                    ReviewEvent.choiceToggled(
-                                      category: category,
-                                      choice: choice,
-                                    ),
-                                  );
-                            },
-                            itemColor: category.color,
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+                        return CustomChoiceChip(
+                          borderRadius: 8,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          label: choice.label,
+                          isSelected: isSelected, // Cập nhật từ state
+                          onSelected: (selected) {
+                            // Gửi sự kiện tới BLoC khi choice được toggle
+                            context.read<ReviewBloc>().add(
+                                  ReviewEvent.choiceToggled(
+                                    category: category,
+                                    choice: choice,
+                                  ),
+                                );
+                          },
+                          itemColor: category.color,
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           );
         },
       ),
