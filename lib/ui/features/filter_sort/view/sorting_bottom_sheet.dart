@@ -117,7 +117,6 @@ class SortingBottomSheet extends StatelessWidget {
                                   title: '📋 Loại món',
                                   children: state.allCategories.map((category) {
                                     return CustomChoiceChip(
-                                      context: context,
                                       label: category.label,
                                       isSelected: state.currentParams.categories.contains(category),
                                       onSelected: (_) => bloc.add(FilterSortEvent.categoryToggled(category)),
@@ -132,7 +131,6 @@ class SortingBottomSheet extends StatelessWidget {
                                   title: '💰 Mức giá',
                                   children: state.allRanges.map((range) {
                                     return CustomChoiceChip(
-                                      context: context,
                                       label: range.displayName,
                                       isSelected: state.currentParams.range == range,
                                       onSelected: (_) => bloc.add(FilterSortEvent.priceRangeToggled(range)),
@@ -146,7 +144,6 @@ class SortingBottomSheet extends StatelessWidget {
                                   title: '📍 Khoảng cách',
                                   children: state.allDistances.map((distance) {
                                     return CustomChoiceChip(
-                                      context: context,
                                       label: distance.displayName,
                                       isSelected: state.currentParams.distance == distance,
                                       onSelected: (_) => bloc.add(FilterSortEvent.distanceRangeToggled(distance)),
@@ -207,7 +204,6 @@ class SortingBottomSheet extends StatelessWidget {
           runSpacing: 8.0,
           children: SortOption.uniqueFields.map((field) {
             return CustomChoiceChip(
-              context: context,
               label: '${field.icon} ${field.label}',
               isSelected: currentSortOption.field == field,
               onSelected: (_) {
