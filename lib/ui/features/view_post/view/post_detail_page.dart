@@ -225,7 +225,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                                      child: CachedImage(borderRadius: 30, blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
+                                      child: Hero(
+                                        tag: 'post_image_${widget.post.postId}',
+                                        child: CachedImage(borderRadius: 30, blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
+                                      ),
                                     ),
                                     BlocBuilder<ViewPostBloc, ViewPostState>(
                                       builder: (context, state) {

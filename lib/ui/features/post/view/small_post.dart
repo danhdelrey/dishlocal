@@ -46,9 +46,12 @@ class SmallPost extends StatelessWidget {
               ),
               Stack(
                 children: [
-                  CachedImage(
-                    imageUrl: post.imageUrl ?? '',
-                    blurHash: post.blurHash ?? '',
+                  Hero(
+                    tag: 'post_image_${post.postId}',
+                    child: CachedImage(
+                      imageUrl: post.imageUrl ?? '',
+                      blurHash: post.blurHash ?? '',
+                    ),
                   ),
                   Positioned.fill(
                     child: Align(
