@@ -1,6 +1,7 @@
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
 import 'package:dishlocal/core/json_converter/date_time_converter.dart';
 import 'package:dishlocal/core/json_converter/food_category_converter.dart';
+import 'package:dishlocal/data/categories/post/model/review/review_item.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 
@@ -32,6 +33,11 @@ abstract class Post with _$Post {
     
     @FoodCategoryConverter()
     FoodCategory? foodCategory,
+
+    /// Danh sách các đánh giá chi tiết theo từng hạng mục.
+    /// Ví dụ: [ReviewItem(category: food, ...), ReviewItem(category: ambiance, ...)]
+    /// Mặc định là một danh sách rỗng để tránh lỗi null trên UI.
+    @Default([]) List<ReviewItem> reviews,
   }) = _Post;
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);

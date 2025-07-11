@@ -23,6 +23,10 @@ _PostEntity _$PostEntityFromJson(Map<String, dynamic> json) => _PostEntity(
       commentCount: (json['comment_count'] as num?)?.toInt() ?? 0,
       foodCategory: const FoodCategoryConverter()
           .fromJson(json['food_category'] as String?),
+      reviews: (json['reviews'] as List<dynamic>?)
+              ?.map((e) => PostReviewEntity.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       createdAt:
           const DateTimeConverter().fromJson(json['created_at'] as String),
     );

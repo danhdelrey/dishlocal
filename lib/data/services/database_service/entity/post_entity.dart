@@ -3,6 +3,7 @@
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
 import 'package:dishlocal/core/json_converter/date_time_converter.dart';
 import 'package:dishlocal/core/json_converter/food_category_converter.dart';
+import 'package:dishlocal/data/services/database_service/entity/post_review_entity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'post_entity.freezed.dart';
@@ -56,6 +57,12 @@ abstract class PostEntity with _$PostEntity {
 
     @FoodCategoryConverter()
     FoodCategory? foodCategory,
+
+     /// Danh sách các đánh giá chi tiết cho bài post.
+    /// Dữ liệu này được join từ bảng `post_reviews`.
+    /// `includeToJson: false` để khi cập nhật post, trường này không bị gửi đi
+    /// vì nó không phải là một cột trong bảng `posts`.
+    @JsonKey(includeToJson: false) @Default([]) List<PostReviewEntity> reviews,
 
     /// Thời điểm bài post được tạo.
     @DateTimeConverter() required DateTime createdAt,

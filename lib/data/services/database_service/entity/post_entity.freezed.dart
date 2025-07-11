@@ -57,6 +57,13 @@ mixin _$PostEntity {
   @FoodCategoryConverter()
   FoodCategory? get foodCategory;
 
+  /// Danh sách các đánh giá chi tiết cho bài post.
+  /// Dữ liệu này được join từ bảng `post_reviews`.
+  /// `includeToJson: false` để khi cập nhật post, trường này không bị gửi đi
+  /// vì nó không phải là một cột trong bảng `posts`.
+  @JsonKey(includeToJson: false)
+  List<PostReviewEntity> get reviews;
+
   /// Thời điểm bài post được tạo.
   @DateTimeConverter()
   DateTime get createdAt;
@@ -103,6 +110,7 @@ mixin _$PostEntity {
                 other.commentCount == commentCount) &&
             (identical(other.foodCategory, foodCategory) ||
                 other.foodCategory == foodCategory) &&
+            const DeepCollectionEquality().equals(other.reviews, reviews) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -126,11 +134,12 @@ mixin _$PostEntity {
       saveCount,
       commentCount,
       foodCategory,
+      const DeepCollectionEquality().hash(reviews),
       createdAt);
 
   @override
   String toString() {
-    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, foodCategory: $foodCategory, createdAt: $createdAt)';
+    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, foodCategory: $foodCategory, reviews: $reviews, createdAt: $createdAt)';
   }
 }
 
@@ -156,6 +165,7 @@ abstract mixin class $PostEntityCopyWith<$Res> {
       int saveCount,
       int commentCount,
       @FoodCategoryConverter() FoodCategory? foodCategory,
+      @JsonKey(includeToJson: false) List<PostReviewEntity> reviews,
       @DateTimeConverter() DateTime createdAt});
 }
 
@@ -186,6 +196,7 @@ class _$PostEntityCopyWithImpl<$Res> implements $PostEntityCopyWith<$Res> {
     Object? saveCount = null,
     Object? commentCount = null,
     Object? foodCategory = freezed,
+    Object? reviews = null,
     Object? createdAt = null,
   }) {
     return _then(_self.copyWith(
@@ -249,6 +260,10 @@ class _$PostEntityCopyWithImpl<$Res> implements $PostEntityCopyWith<$Res> {
           ? _self.foodCategory
           : foodCategory // ignore: cast_nullable_to_non_nullable
               as FoodCategory?,
+      reviews: null == reviews
+          ? _self.reviews
+          : reviews // ignore: cast_nullable_to_non_nullable
+              as List<PostReviewEntity>,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -277,7 +292,10 @@ class _PostEntity implements PostEntity {
       this.saveCount = 0,
       this.commentCount = 0,
       @FoodCategoryConverter() this.foodCategory,
-      @DateTimeConverter() required this.createdAt});
+      @JsonKey(includeToJson: false)
+      final List<PostReviewEntity> reviews = const [],
+      @DateTimeConverter() required this.createdAt})
+      : _reviews = reviews;
   factory _PostEntity.fromJson(Map<String, dynamic> json) =>
       _$PostEntityFromJson(json);
 
@@ -341,6 +359,24 @@ class _PostEntity implements PostEntity {
   @FoodCategoryConverter()
   final FoodCategory? foodCategory;
 
+  /// Danh sách các đánh giá chi tiết cho bài post.
+  /// Dữ liệu này được join từ bảng `post_reviews`.
+  /// `includeToJson: false` để khi cập nhật post, trường này không bị gửi đi
+  /// vì nó không phải là một cột trong bảng `posts`.
+  final List<PostReviewEntity> _reviews;
+
+  /// Danh sách các đánh giá chi tiết cho bài post.
+  /// Dữ liệu này được join từ bảng `post_reviews`.
+  /// `includeToJson: false` để khi cập nhật post, trường này không bị gửi đi
+  /// vì nó không phải là một cột trong bảng `posts`.
+  @override
+  @JsonKey(includeToJson: false)
+  List<PostReviewEntity> get reviews {
+    if (_reviews is EqualUnmodifiableListView) return _reviews;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_reviews);
+  }
+
   /// Thời điểm bài post được tạo.
   @override
   @DateTimeConverter()
@@ -393,6 +429,7 @@ class _PostEntity implements PostEntity {
                 other.commentCount == commentCount) &&
             (identical(other.foodCategory, foodCategory) ||
                 other.foodCategory == foodCategory) &&
+            const DeepCollectionEquality().equals(other._reviews, _reviews) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -416,11 +453,12 @@ class _PostEntity implements PostEntity {
       saveCount,
       commentCount,
       foodCategory,
+      const DeepCollectionEquality().hash(_reviews),
       createdAt);
 
   @override
   String toString() {
-    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, foodCategory: $foodCategory, createdAt: $createdAt)';
+    return 'PostEntity(id: $id, authorId: $authorId, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, locationName: $locationName, locationAddress: $locationAddress, latitude: $latitude, longitude: $longitude, price: $price, insight: $insight, likeCount: $likeCount, saveCount: $saveCount, commentCount: $commentCount, foodCategory: $foodCategory, reviews: $reviews, createdAt: $createdAt)';
   }
 }
 
@@ -448,6 +486,7 @@ abstract mixin class _$PostEntityCopyWith<$Res>
       int saveCount,
       int commentCount,
       @FoodCategoryConverter() FoodCategory? foodCategory,
+      @JsonKey(includeToJson: false) List<PostReviewEntity> reviews,
       @DateTimeConverter() DateTime createdAt});
 }
 
@@ -478,6 +517,7 @@ class __$PostEntityCopyWithImpl<$Res> implements _$PostEntityCopyWith<$Res> {
     Object? saveCount = null,
     Object? commentCount = null,
     Object? foodCategory = freezed,
+    Object? reviews = null,
     Object? createdAt = null,
   }) {
     return _then(_PostEntity(
@@ -541,6 +581,10 @@ class __$PostEntityCopyWithImpl<$Res> implements _$PostEntityCopyWith<$Res> {
           ? _self.foodCategory
           : foodCategory // ignore: cast_nullable_to_non_nullable
               as FoodCategory?,
+      reviews: null == reviews
+          ? _self._reviews
+          : reviews // ignore: cast_nullable_to_non_nullable
+              as List<PostReviewEntity>,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable

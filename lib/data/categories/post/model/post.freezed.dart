@@ -37,6 +37,11 @@ mixin _$Post {
   @FoodCategoryConverter()
   FoodCategory? get foodCategory;
 
+  /// Danh sách các đánh giá chi tiết theo từng hạng mục.
+  /// Ví dụ: [ReviewItem(category: food, ...), ReviewItem(category: ambiance, ...)]
+  /// Mặc định là một danh sách rỗng để tránh lỗi null trên UI.
+  List<ReviewItem> get reviews;
+
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -83,7 +88,8 @@ mixin _$Post {
             (identical(other.commentCount, commentCount) ||
                 other.commentCount == commentCount) &&
             (identical(other.foodCategory, foodCategory) ||
-                other.foodCategory == foodCategory));
+                other.foodCategory == foodCategory) &&
+            const DeepCollectionEquality().equals(other.reviews, reviews));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -108,12 +114,13 @@ mixin _$Post {
         isLiked,
         isSaved,
         commentCount,
-        foodCategory
+        foodCategory,
+        const DeepCollectionEquality().hash(reviews)
       ]);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory, reviews: $reviews)';
   }
 }
 
@@ -141,7 +148,8 @@ abstract mixin class $PostCopyWith<$Res> {
       bool isLiked,
       bool isSaved,
       int commentCount,
-      @FoodCategoryConverter() FoodCategory? foodCategory});
+      @FoodCategoryConverter() FoodCategory? foodCategory,
+      List<ReviewItem> reviews});
 
   $AddressCopyWith<$Res>? get address;
 }
@@ -177,6 +185,7 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
     Object? isSaved = null,
     Object? commentCount = null,
     Object? foodCategory = freezed,
+    Object? reviews = null,
   }) {
     return _then(_self.copyWith(
       postId: null == postId
@@ -255,6 +264,10 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
           ? _self.foodCategory
           : foodCategory // ignore: cast_nullable_to_non_nullable
               as FoodCategory?,
+      reviews: null == reviews
+          ? _self.reviews
+          : reviews // ignore: cast_nullable_to_non_nullable
+              as List<ReviewItem>,
     ));
   }
 
@@ -296,7 +309,9 @@ class _Post implements Post {
       required this.isLiked,
       required this.isSaved,
       required this.commentCount,
-      @FoodCategoryConverter() this.foodCategory});
+      @FoodCategoryConverter() this.foodCategory,
+      final List<ReviewItem> reviews = const []})
+      : _reviews = reviews;
   factory _Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
   @override
@@ -339,6 +354,22 @@ class _Post implements Post {
   @override
   @FoodCategoryConverter()
   final FoodCategory? foodCategory;
+
+  /// Danh sách các đánh giá chi tiết theo từng hạng mục.
+  /// Ví dụ: [ReviewItem(category: food, ...), ReviewItem(category: ambiance, ...)]
+  /// Mặc định là một danh sách rỗng để tránh lỗi null trên UI.
+  final List<ReviewItem> _reviews;
+
+  /// Danh sách các đánh giá chi tiết theo từng hạng mục.
+  /// Ví dụ: [ReviewItem(category: food, ...), ReviewItem(category: ambiance, ...)]
+  /// Mặc định là một danh sách rỗng để tránh lỗi null trên UI.
+  @override
+  @JsonKey()
+  List<ReviewItem> get reviews {
+    if (_reviews is EqualUnmodifiableListView) return _reviews;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_reviews);
+  }
 
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
@@ -391,7 +422,8 @@ class _Post implements Post {
             (identical(other.commentCount, commentCount) ||
                 other.commentCount == commentCount) &&
             (identical(other.foodCategory, foodCategory) ||
-                other.foodCategory == foodCategory));
+                other.foodCategory == foodCategory) &&
+            const DeepCollectionEquality().equals(other._reviews, _reviews));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -416,12 +448,13 @@ class _Post implements Post {
         isLiked,
         isSaved,
         commentCount,
-        foodCategory
+        foodCategory,
+        const DeepCollectionEquality().hash(_reviews)
       ]);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory, reviews: $reviews)';
   }
 }
 
@@ -450,7 +483,8 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       bool isLiked,
       bool isSaved,
       int commentCount,
-      @FoodCategoryConverter() FoodCategory? foodCategory});
+      @FoodCategoryConverter() FoodCategory? foodCategory,
+      List<ReviewItem> reviews});
 
   @override
   $AddressCopyWith<$Res>? get address;
@@ -487,6 +521,7 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
     Object? isSaved = null,
     Object? commentCount = null,
     Object? foodCategory = freezed,
+    Object? reviews = null,
   }) {
     return _then(_Post(
       postId: null == postId
@@ -565,6 +600,10 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
           ? _self.foodCategory
           : foodCategory // ignore: cast_nullable_to_non_nullable
               as FoodCategory?,
+      reviews: null == reviews
+          ? _self._reviews
+          : reviews // ignore: cast_nullable_to_non_nullable
+              as List<ReviewItem>,
     ));
   }
 

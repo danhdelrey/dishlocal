@@ -30,6 +30,10 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
       commentCount: (json['commentCount'] as num).toInt(),
       foodCategory: const FoodCategoryConverter()
           .fromJson(json['foodCategory'] as String?),
+      reviews: (json['reviews'] as List<dynamic>?)
+              ?.map((e) => ReviewItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
@@ -53,4 +57,5 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'commentCount': instance.commentCount,
       'foodCategory':
           const FoodCategoryConverter().toJson(instance.foodCategory),
+      'reviews': instance.reviews.map((e) => e.toJson()).toList(),
     };
