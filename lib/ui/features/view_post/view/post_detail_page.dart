@@ -410,6 +410,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 width: 16,
                 color: Colors.white,
               ),
+              color1: post.foodCategory?.color,
+              color2: post.foodCategory?.color.withValues(alpha: 0.8),
               label: 'Xem trên bản đồ',
               onTap: () {
                 if (post.address != null) {
