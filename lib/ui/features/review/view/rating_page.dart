@@ -1,6 +1,6 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
-import 'package:dishlocal/ui/features/rating/view/rating_section.dart';
+import 'package:dishlocal/ui/features/review/view/review_section.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/custom_choice_chip.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ class RatingPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Test screen'),
       ),
-      body: const RatingSection(),
+      body: const ReviewSection(),
     );
   }
 }

@@ -100,6 +100,7 @@ import '../../ui/features/map/bloc/map_bloc.dart' as _i936;
 import '../../ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart'
     as _i144;
 import '../../ui/features/result_search/bloc/result_search_bloc.dart' as _i531;
+import '../../ui/features/review/bloc/review_bloc.dart' as _i994;
 import '../../ui/features/select_food_category/bloc/select_food_category_bloc.dart'
     as _i755;
 import '../../ui/features/suggestion_search/bloc/suggestion_search_bloc.dart'
@@ -128,6 +129,7 @@ _i174.GetIt init(
   gh.factory<_i755.SelectFoodCategoryBloc>(
       () => _i755.SelectFoodCategoryBloc());
   gh.factory<_i679.SuggestionSearchBloc>(() => _i679.SuggestionSearchBloc());
+  gh.factory<_i994.ReviewBloc>(() => _i994.ReviewBloc());
   gh.lazySingleton<_i116.GoogleSignIn>(
       () => firebaseInjectableModule.googleSignIn);
   gh.lazySingleton<_i59.FirebaseAuth>(
