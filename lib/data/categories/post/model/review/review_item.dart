@@ -1,5 +1,4 @@
-import 'package:dishlocal/data/categories/post/model/review/review_category.dart';
-import 'package:dishlocal/data/categories/post/model/review/review_choice.dart';
+import 'package:dishlocal/data/categories/post/model/review/review_enums.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'review_item.freezed.dart';
