@@ -17,7 +17,7 @@ import 'package:dishlocal/ui/features/result_search/view/search_result_page.dart
 import 'package:dishlocal/ui/features/user_info/view/profile_page.dart';
 import 'package:dishlocal/ui/features/account_setup/view/account_setup_page.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
-import 'package:dishlocal/ui/features/select_food_category/view/sorting_page.dart';
+import 'package:dishlocal/ui/features/select_food_category/view/rating_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
@@ -30,21 +30,21 @@ class AppRouter {
   final _log = Logger('AppRouter');
 
   late final router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/sorting',
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: _redirect,
     routes: [
       GoRoute(
         path: '/sorting',
-        builder: (context, state) => const SortingPage(),
+        builder: (context, state) => const RatingPage(),
       ),
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
-        path: '/search_input', 
-        builder: (context, state) => const SearchInputPage(), 
+        path: '/search_input',
+        builder: (context, state) => const SearchInputPage(),
       ),
 
       GoRoute(
@@ -94,7 +94,7 @@ class AppRouter {
           ),
           GoRoute(
             path: 'explore',
-            builder: (context, state){
+            builder: (context, state) {
               final extraMap = state.extra as Map<String, dynamic>;
               final FilterSortParams filterSortParams = extraMap['filterSortParams'];
               return ExplorePage(

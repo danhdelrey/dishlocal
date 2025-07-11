@@ -6,6 +6,7 @@ import 'package:dishlocal/ui/features/filter_sort/view/filter_sort_builder.dart'
 import 'package:dishlocal/ui/features/select_food_category/view/expandable_food_category_chip_selector.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/glass_sliver_app_bar.dart';
+import 'package:dishlocal/ui/widgets/input_widgets/custom_choice_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -115,12 +116,12 @@ class SortingBottomSheet extends StatelessWidget {
                                 _FilterSection(
                                   title: '📋 Loại món',
                                   children: state.allCategories.map((category) {
-                                    return _buildChoiceChip(
-                                      itemColor: category.color,
+                                    return CustomChoiceChip(
                                       context: context,
                                       label: category.label,
                                       isSelected: state.currentParams.categories.contains(category),
                                       onSelected: (_) => bloc.add(FilterSortEvent.categoryToggled(category)),
+                                      itemColor: category.color,
                                     );
                                   }).toList(),
                                 ),
@@ -130,12 +131,12 @@ class SortingBottomSheet extends StatelessWidget {
                                 _FilterSection(
                                   title: '💰 Mức giá',
                                   children: state.allRanges.map((range) {
-                                    return _buildChoiceChip(
-                                      itemColor: Colors.amber,
+                                    return CustomChoiceChip(
                                       context: context,
                                       label: range.displayName,
                                       isSelected: state.currentParams.range == range,
                                       onSelected: (_) => bloc.add(FilterSortEvent.priceRangeToggled(range)),
+                                      itemColor: Colors.amber,
                                     );
                                   }).toList(),
                                 ),
@@ -144,12 +145,12 @@ class SortingBottomSheet extends StatelessWidget {
                                 _FilterSection(
                                   title: '📍 Khoảng cách',
                                   children: state.allDistances.map((distance) {
-                                    return _buildChoiceChip(
-                                      itemColor: Colors.blue,
+                                    return CustomChoiceChip(
                                       context: context,
                                       label: distance.displayName,
                                       isSelected: state.currentParams.distance == distance,
                                       onSelected: (_) => bloc.add(FilterSortEvent.distanceRangeToggled(distance)),
+                                      itemColor: Colors.blue,
                                     );
                                   }).toList(),
                                 ),
@@ -205,8 +206,7 @@ class SortingBottomSheet extends StatelessWidget {
           spacing: 8.0,
           runSpacing: 8.0,
           children: SortOption.uniqueFields.map((field) {
-            return _buildChoiceChip(
-              itemColor: Colors.lightGreen,
+            return CustomChoiceChip(
               context: context,
               label: '${field.icon} ${field.label}',
               isSelected: currentSortOption.field == field,
@@ -215,51 +215,11 @@ class SortingBottomSheet extends StatelessWidget {
                   bloc.add(FilterSortEvent.sortOptionSelected(SortOption(field: field, direction: SortDirection.desc)));
                 }
               },
+              itemColor: Colors.lightGreen,
             );
           }).toList(),
         ),
       ],
-    );
-  }
-
-  /// Hàm helper duy nhất để tạo và tạo kiểu cho tất cả các ChoiceChip.
-  /// Việc thay đổi giao diện chip giờ chỉ cần sửa ở một nơi duy nhất.
-  Widget _buildChoiceChip({
-    required BuildContext context,
-    required String label,
-    required bool isSelected,
-    required void Function(bool) onSelected,
-    Color? itemColor,
-  }) {
-    return GlassContainer(
-      borderRadius: 12,
-      blur: 0,
-      child: InkWell(
-        onTap: () => onSelected(!isSelected),
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected ? itemColor?.withValues(alpha: 0.5) ?? appColorScheme(context).primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            border: isSelected
-                ? Border.all(
-                    color: itemColor ?? appColorScheme(context).primary,
-                    width: 1,
-                  )
-                : Border.all(
-                    color: appColorScheme(context).onSurface.withValues(alpha: 0.1),
-                    width: 1,
-                  ),
-          ),
-          child: Text(
-            label,
-            style: appTextTheme(context).labelMedium?.copyWith(
-                  color: isSelected ? (itemColor != null ? appColorScheme(context).onSurface : appColorScheme(context).onPrimary) : appColorScheme(context).onSurface,
-                ),
-          ),
-        ),
-      ),
     );
   }
 

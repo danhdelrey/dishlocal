@@ -98,6 +98,7 @@ dependencies:
   mapbox_maps_flutter: ^2.9.0
   latlong2: ^0.9.1
   turf: ^0.0.10
+  flutter_rating_bar: ^4.0.1
   
 
 dev_dependencies:
