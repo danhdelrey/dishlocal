@@ -124,9 +124,9 @@ _i174.GetIt init(
   );
   final firebaseInjectableModule = _$FirebaseInjectableModule();
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
+  gh.factory<_i441.FilterSortBloc>(() => _i441.FilterSortBloc());
   gh.factory<_i755.SelectFoodCategoryBloc>(
       () => _i755.SelectFoodCategoryBloc());
-  gh.factory<_i441.FilterSortBloc>(() => _i441.FilterSortBloc());
   gh.factory<_i679.SuggestionSearchBloc>(() => _i679.SuggestionSearchBloc());
   gh.lazySingleton<_i116.GoogleSignIn>(
       () => firebaseInjectableModule.googleSignIn);
@@ -231,11 +231,11 @@ _i174.GetIt init(
         gh<_i749.AppUserRepository>(),
         gh<_i886.ModerationRepository>(),
       ));
-  gh.factory<_i10.ViewPostBloc>(() => _i10.ViewPostBloc(
+  gh.factory<_i531.ResultSearchBloc>(() => _i531.ResultSearchBloc(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
       ));
-  gh.factory<_i531.ResultSearchBloc>(() => _i531.ResultSearchBloc(
+  gh.factory<_i10.ViewPostBloc>(() => _i10.ViewPostBloc(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
       ));
