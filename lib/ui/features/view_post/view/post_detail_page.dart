@@ -5,6 +5,7 @@ import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/direction/model/location_data.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/delete_post/bloc/delete_post_bloc.dart';
@@ -328,7 +329,40 @@ class _PostDetailPageState extends State<PostDetailPage> {
         const SizedBox(
           height: 20,
         ),
+        if (post.foodCategory != null)
+          FadeSlideUp(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: InkWell(
+                  onTap: () {
+                    context.push('/post_detail/explore', extra: {
+                      'filterSortParams': FilterSortParams.defaultParams().copyWith(
+                        categories: {post.foodCategory!},
+                      )
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: post.foodCategory!.color.withAlpha(50),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: post.foodCategory!.color),
+                    ),
+                    child: Text(
+                      post.foodCategory!.label,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: appColorScheme(context).onSurface,
+                          ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         FadeSlideUp(
+          delay: const Duration(milliseconds: 100),
           child: CustomIconWithLabel(
             icon: AppIcons.location1.toSvg(
               width: 16,
@@ -338,14 +372,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
           ),
         ),
         FadeSlideUp(
-          delay: const Duration(milliseconds: 100),
+          delay: const Duration(milliseconds: 200),
           child: Text(
             post.diningLocationName ?? '',
             style: Theme.of(context).textTheme.labelLarge,
           ),
         ),
         FadeSlideUp(
-          delay: const Duration(milliseconds: 200),
+          delay: const Duration(milliseconds: 300),
           child: Text(
             '${post.address?.exactAddress ?? ''}, ${post.address?.displayName ?? ''}',
             style: Theme.of(context).textTheme.bodyMedium,
@@ -355,7 +389,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           height: 10,
         ),
         FadeSlideUp(
-          delay: const Duration(milliseconds: 300),
+          delay: const Duration(milliseconds: 400),
           child: CustomIconWithLabel(
             icon: AppIcons.wallet4.toSvg(
               width: 16,
@@ -368,7 +402,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           height: 20,
         ),
         FadeSlideUp(
-          delay: const Duration(milliseconds: 400),
+          delay: const Duration(milliseconds: 500),
           child: Material(
             child: GradientFilledButton(
               maxWidth: true,
@@ -395,12 +429,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
           height: 20,
         ),
         FadeSlideUp(
-          delay: const Duration(milliseconds: 500),
+          delay: const Duration(milliseconds: 600),
           child: _buildAuthorInfo(post, context, currentUserId, author),
         ),
         if (post.insight != null && post.insight!.trim().isNotEmpty)
           FadeSlideUp(
-            delay: const Duration(milliseconds: 600),
+            delay: const Duration(milliseconds: 700),
             child: Padding(
               padding: const EdgeInsets.only(top: 15),
               child: Text(
@@ -414,7 +448,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
             builder: (context, state) {
               return FadeSlideUp(
-                delay: const Duration(milliseconds: 700),
+                delay: const Duration(milliseconds: 800),
                 child: Padding(
                   padding: const EdgeInsets.only(top: 15),
                   child: ReactionBar(

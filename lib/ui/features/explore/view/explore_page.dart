@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/filter_button.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
@@ -12,18 +13,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ExplorePage extends StatelessWidget {
-  const ExplorePage({super.key});
+  const ExplorePage({super.key, this.initialFilterSortParams});
+  final FilterSortParams? initialFilterSortParams;
 
   @override
   Widget build(BuildContext context) {
     return ConnectivityAndLocationGuard(builder: (context) {
-      return const _ExplorePageContent();
+      return _ExplorePageContent(
+        initialFilterSortParams: initialFilterSortParams,
+      );
     });
   }
 }
 
 class _ExplorePageContent extends StatefulWidget {
-  const _ExplorePageContent();
+  const _ExplorePageContent({required this.initialFilterSortParams});
+  final FilterSortParams? initialFilterSortParams;
 
   @override
   State<_ExplorePageContent> createState() => _ExplorePageContentState();
@@ -41,7 +46,13 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
 
     // Bắt đầu fetch dữ liệu ngay khi bloc được khởi tạo
     if (_bloc.state.status == PostStatus.initial) {
-      _bloc.add(const PostEvent.fetchNextPageRequested());
+      if (widget.initialFilterSortParams != null) {
+        // Nếu có bộ lọc ban đầu, sử dụng nó
+        _bloc.add(PostEvent.filtersChanged(newFilters: widget.initialFilterSortParams!));
+      } else {
+        // Nếu không, sử dụng bộ lọc mặc định
+        _bloc.add(const PostEvent.fetchNextPageRequested());
+      }
     }
 
     _scrollController.addListener(_onScroll);
