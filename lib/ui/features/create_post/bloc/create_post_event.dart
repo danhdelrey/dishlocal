@@ -10,7 +10,7 @@ sealed class CreatePostEvent extends Equatable {
 final class CreatePostInitialized extends CreatePostEvent {
   final Post? postToUpdate;
 
-  const CreatePostInitialized({ this.postToUpdate});
+  const CreatePostInitialized({this.postToUpdate});
   @override
   List<Object?> get props => [postToUpdate];
 }
@@ -61,13 +61,21 @@ final class CreatePostRequested extends CreatePostEvent {
   final String blurHash;
   final DateTime createdAt;
   final FoodCategory? foodCategory;
+  final List<ReviewItem> reviews;
   final Post? postToUpdate;
 
-  const CreatePostRequested({required this.address, required this.imagePath, required this.createdAt, required this.blurHash, this.postToUpdate, this.foodCategory});
+  const CreatePostRequested({
+    required this.address,
+    required this.imagePath,
+    required this.createdAt,
+    required this.blurHash,
+    this.postToUpdate,
+    this.foodCategory,
+    required this.reviews,
+  });
   @override
   List<Object?> get props => [address, imagePath, createdAt];
 }
-
 
 // Sự kiện mới để báo hiệu rằng yêu cầu focus đã được UI xử lý
 final class FocusRequestHandled extends CreatePostEvent {}

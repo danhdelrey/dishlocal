@@ -8,6 +8,7 @@ import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/moderation/repository/interface/moderation_repository.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/data/categories/post/model/review/review_item.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/dining_location_name_input.dart';
 import 'package:dishlocal/ui/features/create_post/form_input/dish_name_input.dart';

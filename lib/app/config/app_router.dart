@@ -17,7 +17,6 @@ import 'package:dishlocal/ui/features/result_search/view/search_result_page.dart
 import 'package:dishlocal/ui/features/user_info/view/profile_page.dart';
 import 'package:dishlocal/ui/features/account_setup/view/account_setup_page.dart';
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
-import 'package:dishlocal/ui/features/review/view/rating_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
@@ -34,10 +33,7 @@ class AppRouter {
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: _redirect,
     routes: [
-      GoRoute(
-        path: '/sorting',
-        builder: (context, state) => const RatingPage(),
-      ),
+      
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginPage(),

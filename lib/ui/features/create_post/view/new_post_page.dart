@@ -226,6 +226,8 @@ class _NewPostPageState extends State<NewPostPage> {
                                     TextButton(
                                       onPressed: () {
                                         Logger('NewPostPage').info('food category selected: $selectedCategories');
+                                        Logger('NewPostPage').info('review items: ${reviewState.reviewData.values.toList().toString()}');
+
                                         context.read<CreatePostBloc>().add(
                                               CreatePostRequested(
                                                 address: widget.address,
@@ -233,6 +235,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                                 createdAt: now,
                                                 blurHash: widget.blurHash,
                                                 foodCategory: selectedCategories.isNotEmpty ? selectedCategories.first : null,
+                                                reviews: reviewState.reviewData.values.toList(),
                                                 postToUpdate: widget.inEditMode ? widget.postToUpdate : null,
                                               ),
                                             );
