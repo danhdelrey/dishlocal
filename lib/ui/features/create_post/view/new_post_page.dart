@@ -262,11 +262,11 @@ class _NewPostPageState extends State<NewPostPage> {
                                 widget.inEditMode
                                     ? Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                                        child: CachedImage(borderRadius: 12, blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? ''),
+                                        child: CachedImage(borderRadius: 30, blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? ''),
                                       )
                                     : Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                                        child: RoundedCornerImageFile(borderRadius: 12, imagePath: widget.imagePath),
+                                        child: RoundedCornerImageFile(borderRadius: 30, imagePath: widget.imagePath),
                                       ),
                                 const SizedBox(height: 20),
                                 // 4. Sử dụng BlocBuilder để rebuild UI khi trạng thái input thay đổi

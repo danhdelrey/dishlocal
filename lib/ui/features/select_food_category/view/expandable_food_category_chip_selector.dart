@@ -38,7 +38,7 @@ class _ExpandableFoodCategoryChipSelectorState extends State<ExpandableFoodCateg
     if (widget.selectedItems.isNotEmpty) {
       buttonLabel = widget.selectedItems.first.label;
     } else {
-      buttonLabel = '${widget.title} (Đã chọn ${widget.selectedItems.length})';
+      buttonLabel = widget.title;
     }
 
     return Column(

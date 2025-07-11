@@ -24,7 +24,7 @@ class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final squareSize = screenWidth;
+    final squareSize = screenWidth - 30;
 
     return LoaderOverlay(
       overlayColor: Colors.transparent,
@@ -131,13 +131,16 @@ class CameraPage extends StatelessWidget {
                           break;
                       }
                     },
-                    child: Column(
-                      children: [
-                        _buildHeader(context, address),
-                        _buildCamera(squareSize),
-                        const Spacer(),
-                        _buildCameraCapture(),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        children: [
+                          _buildHeader(context, address),
+                          _buildCamera(squareSize),
+                          const Spacer(),
+                          _buildCameraCapture(),
+                        ],
+                      ),
                     ),
                   ),
                 );
