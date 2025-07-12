@@ -2,11 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 
-class CachedImage extends StatefulWidget {
+class CachedImage extends StatelessWidget {
   const CachedImage({
     super.key,
     required this.imageUrl,
-    required this.blurHash,  this.borderRadius = 12,
+    required this.blurHash,
+    this.borderRadius = 12,
   });
 
   final String imageUrl;
@@ -14,55 +15,20 @@ class CachedImage extends StatefulWidget {
   final double borderRadius;
 
   @override
-  State<CachedImage> createState() => _CachedImageState();
-}
-
-class _CachedImageState extends State<CachedImage> {
-  bool _showPlaceholder = true;
-
-  void _onImageLoaded() async {
-    // Đợi 500ms trước khi ẩn placeholder
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (mounted) {
-      setState(() {
-        _showPlaceholder = false;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(widget.borderRadius),
+      borderRadius: BorderRadius.circular(borderRadius),
       child: AspectRatio(
         aspectRatio: 1,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: widget.imageUrl,
-              // Khi ảnh đã load xong
-              imageBuilder: (context, imageProvider) {
-                _onImageLoaded();
-                return Image(
-                  image: imageProvider,
-                  fit: BoxFit.cover,
-                );
-              },
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-            ),
-            AnimatedOpacity(
-              opacity: _showPlaceholder ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeOut,
-              child: BlurHash(
-                hash: widget.blurHash,
-                imageFit: BoxFit.cover,
-                color: Colors.transparent,
-              ),
-            ),
-          ],
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          // Sử dụng placeholder builder
+          placeholder: (context, url) => BlurHash(hash: blurHash, imageFit: BoxFit.cover),
+          // Thêm hiệu ứng fade in mượt mà
+          fadeInDuration: const Duration(milliseconds: 300),
+          // Widget hiển thị khi có lỗi
+          errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       ),
     );
