@@ -69,10 +69,12 @@ class ProfileInfo extends StatelessWidget {
                   const SizedBox(height: 20),
                   // Follow button (if not my profile)
                   if (!isMyProfile)
-                    FollowButton(
-                      targetUser: state.appUser,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: FollowButton(
+                        targetUser: state.appUser,
+                      ),
                     ),
-                  const SizedBox(height: 20),
                 ],
               ),
             ),
