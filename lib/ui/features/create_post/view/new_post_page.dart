@@ -279,10 +279,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                       widget.inEditMode
                                           ? Padding(
                                               padding: const EdgeInsets.symmetric(horizontal: 15),
-                                              child: Hero(
-                                                tag: 'post_image_${widget.postToUpdate!.postId}',
-                                                child: CachedImage(borderRadius: 30, blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? ''),
-                                              ),
+                                              child: CachedImage(borderRadius: 30, blurHash: widget.postToUpdate?.blurHash ?? '', imageUrl: widget.postToUpdate?.imageUrl ?? ''),
                                             )
                                           : Padding(
                                               padding: const EdgeInsets.symmetric(horizontal: 15),

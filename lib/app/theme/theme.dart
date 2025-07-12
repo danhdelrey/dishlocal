@@ -12,12 +12,12 @@ final darkTheme = ThemeData.dark().copyWith(
     primary: const Color(0xFFFD735A),
     outlineVariant: CupertinoColors.systemFill,
   ),
-  // pageTransitionsTheme: const PageTransitionsTheme(
-  //   builders: {
-  //     TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-  //     TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-  //   },
-  // ),
+  pageTransitionsTheme: const PageTransitionsTheme(
+    builders: {
+      TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+    },
+  ),
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: Colors.transparent,
   ),
