@@ -387,7 +387,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                         },
                                       ),
                                       const SizedBox(
-                                        height: 100,
+                                        height: 30,
                                       ),
                                     ],
                                   ),

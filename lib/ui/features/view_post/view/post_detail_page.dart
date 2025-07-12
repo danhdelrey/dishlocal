@@ -128,7 +128,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           return false; // không chặn event
                         },
                         child: CustomScrollView(
-                          physics: const AlwaysScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
+                          physics: const AlwaysScrollableScrollPhysics(),
                           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                           slivers: [
                             BlocBuilder<ViewPostBloc, ViewPostState>(
@@ -221,7 +221,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             ),
                             SliverToBoxAdapter(
                               child: Padding(
-                                padding: const EdgeInsets.only(top: 10, bottom: 150),
+                                padding: const EdgeInsets.only(top: 10, bottom: 30),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -576,14 +576,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 ),
                 CustomIconWithLabel(
                   icon: AppIcons.locationCheckFilled.toSvg(
-                    color: Colors.blue,
+                    color: CupertinoColors.activeGreen,
                     width: 14,
                   ),
                   labelStyle: appTextTheme(context).labelMedium!.copyWith(
-                        color: Colors.blue,
+                        color: CupertinoColors.activeGreen,
                       ),
                   label: TimeFormatter.formatDateTimeFull(post.createdAt),
-                  labelColor: Colors.blue,
+                  labelColor: CupertinoColors.activeGreen,
                 ),
               ],
             ),
