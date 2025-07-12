@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/food_category.dart';
 import 'package:dishlocal/ui/features/select_food_category/view/animated_chip.dart';
+import 'package:dishlocal/ui/widgets/input_widgets/custom_choice_chip.dart';
 import 'package:flutter/material.dart';
 
 class ExpandableFoodCategoryChipSelector extends StatefulWidget {
@@ -43,20 +44,42 @@ class _ExpandableFoodCategoryChipSelectorState extends State<ExpandableFoodCateg
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        OutlinedButton.icon(
-          onPressed: () => setState(() => _isExpanded = !_isExpanded),
-          icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
-          label: Text(
-            buttonLabel,
-            style: appTextTheme(context).labelLarge,
-          ),
-          style: ElevatedButton.styleFrom(
-            shape: const StadiumBorder(),
-            backgroundColor: widget.selectedItems.isNotEmpty ? widget.selectedItems.first.color.withAlpha(50) : null,
-            foregroundColor: appColorScheme(context).onSurface,
-            side: widget.selectedItems.isNotEmpty ? BorderSide(color: widget.selectedItems.first.color) : null,
+        GestureDetector(
+          onTap: () => setState(() => _isExpanded = !_isExpanded),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: widget.selectedItems.isNotEmpty ? widget.selectedItems.first.color.withValues(alpha: 0.5) : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+              border: widget.selectedItems.isNotEmpty
+                  ? Border.all(
+                      color: widget.selectedItems.first.color,
+                      width: 1,
+                    )
+                  : Border.all(
+                      color: appColorScheme(context).onSurface.withValues(alpha: 0.1),
+                      width: 1,
+                    ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  buttonLabel,
+                  style: appTextTheme(context).labelMedium?.copyWith(
+                        color: widget.selectedItems.isNotEmpty ? appColorScheme(context).onSurface : appColorScheme(context).onSurface,
+                      ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  _isExpanded ? Icons.expand_less : Icons.expand_more,
+                  size: 20,
+                  color: widget.selectedItems.isNotEmpty ? appColorScheme(context).onSurface : appColorScheme(context).onSurface,
+                ),
+              ],
+            ),
           ),
         ),
         AnimatedSwitcher(
@@ -76,11 +99,10 @@ class _ExpandableFoodCategoryChipSelectorState extends State<ExpandableFoodCateg
                     children: [
                       ...widget.items.map((category) {
                         final isSelected = widget.selectedItems.contains(category);
-                        return AnimatedChip(
+                        return CustomChoiceChip(
                           label: category.label,
                           isSelected: isSelected,
-                          color: category.color,
-                          // ----- THAY ĐỔI -----
+                          itemColor: category.color,
                           onSelected: (_) => widget.onCategoryTapped(category),
                         );
                       }),

@@ -333,33 +333,19 @@ class _PostDetailPageState extends State<PostDetailPage> {
         ),
         if (post.foodCategory != null)
           FadeSlideUp(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: InkWell(
-                  onTap: () {
-                    context.push('/post_detail/explore', extra: {
-                      'filterSortParams': FilterSortParams.defaultParams().copyWith(
-                        categories: {post.foodCategory!},
-                      )
-                    });
-                  },
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: post.foodCategory!.color.withAlpha(50),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: post.foodCategory!.color),
-                    ),
-                    child: Text(
-                      post.foodCategory!.label,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: appColorScheme(context).onSurface,
-                          ),
-                    ),
-                  ),
-                ),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: CustomChoiceChip(
+                label: post.foodCategory!.label,
+                isSelected: false,
+                itemColor: post.foodCategory!.color,
+                onSelected: (selected) {
+                  context.push('/post_detail/explore', extra: {
+                    'filterSortParams': FilterSortParams.defaultParams().copyWith(
+                      categories: {post.foodCategory!},
+                    )
+                  });
+                },
               ),
             ),
           ),
