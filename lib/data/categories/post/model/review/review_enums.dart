@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 /// Mỗi hạng mục có nhãn, emoji, màu sắc và một getter để lấy danh sách
 /// các lựa chọn (choices) tương ứng.
 enum ReviewCategory {
-  food('🍽️ Món ăn', Colors.orange),
-  ambiance('🖼️ Không gian', Colors.teal),
-  price('💰 Giá cả', Colors.green),
-  service('💁 Phục vụ', Colors.blue);
+  food('Món ăn', Colors.orange),
+  ambiance('Không gian', Colors.teal),
+  price('Giá cả', Colors.green),
+  service('Phục vụ', Colors.blue);
 
   final String label;
   final Color color;

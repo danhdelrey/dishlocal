@@ -21,6 +21,8 @@ import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_filled_button.dart
 import 'package:dishlocal/ui/widgets/image_widgets/blurred_edge_widget.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';
+import 'package:dishlocal/ui/widgets/input_widgets/custom_choice_chip.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -445,33 +447,81 @@ class _PostDetailPageState extends State<PostDetailPage> {
               ),
             ),
           ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 15),
+            ...post.reviews.asMap().entries.map((entry) {
+              int index = entry.key;
+              var review = entry.value;
+              return FadeSlideUp(
+                delay: Duration(milliseconds: 800 + (index * 100)),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            review.category.label,
+                            style: appTextTheme(context).labelLarge?.copyWith(
+                                  color: appColorScheme(context).onSurface,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                          const SizedBox(width: 10),
+                          Row(
+                            children: List.generate(5, (index) {
+                              return Icon(
+                                index < review.rating ? CupertinoIcons.star_fill : CupertinoIcons.star,
+                                color: Colors.amber,
+                                size: 16,
+                              );
+                            }),
+                          ),
+                        ],
+                      ),
+                      if (review.selectedChoices.isNotEmpty) ...[
+                        Text(
+                          review.selectedChoices.map((choice) => choice.label).join(', '),
+                          style: appTextTheme(context).bodyMedium?.copyWith(
+                                color: appColorScheme(context).outline,
+                              ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            }),
+            const SizedBox(height: 10),
+          ],
+        ),
         BlocProvider(
           create: (context) => getIt<PostReactionBarBloc>(param1: post),
           child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
             builder: (context, state) {
               return FadeSlideUp(
                 delay: const Duration(milliseconds: 800),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 15),
-                  child: ReactionBar(
-                    likeColor: Colors.pink,
-                    saveColor: Colors.amber,
-                    isLiked: state.isLiked,
-                    likeCount: state.likeCount,
-                    commentCount: post.commentCount,
-                    onCommentTap: () {
-                      showCommentBottomSheet(context, postId: post.postId, postAuthorId: post.authorUserId, totalCommentCount: post.commentCount);
-                    },
-                    isSaved: state.isSaved,
-                    saveCount: state.saveCount,
-                    // Khi nhấn, gửi event đến BLoC
-                    onLikeTap: () {
-                      context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
-                    },
-                    onSaveTap: () {
-                      context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
-                    },
-                  ),
+                child: ReactionBar(
+                  likeColor: Colors.pink,
+                  saveColor: Colors.amber,
+                  isLiked: state.isLiked,
+                  likeCount: state.likeCount,
+                  commentCount: post.commentCount,
+                  onCommentTap: () {
+                    showCommentBottomSheet(context, postId: post.postId, postAuthorId: post.authorUserId, totalCommentCount: post.commentCount);
+                  },
+                  isSaved: state.isSaved,
+                  saveCount: state.saveCount,
+                  // Khi nhấn, gửi event đến BLoC
+                  onLikeTap: () {
+                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
+                  },
+                  onSaveTap: () {
+                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
+                  },
                 ),
               );
             },

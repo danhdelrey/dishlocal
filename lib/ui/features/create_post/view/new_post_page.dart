@@ -454,7 +454,6 @@ class _NewPostPageState extends State<NewPostPage> {
 
                   return CustomChoiceChip(
                     borderRadius: 8,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     label: choice.label,
                     isSelected: isSelected, // Cập nhật từ state
                     onSelected: (selected) {
