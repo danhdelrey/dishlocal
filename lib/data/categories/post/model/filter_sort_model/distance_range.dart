@@ -24,4 +24,17 @@ enum DistanceRange {
   bool contains(double distanceInMeters) {
     return distanceInMeters >= minDistance && distanceInMeters < maxDistance;
   }
+
+  /// Tìm phạm vi khoảng cách phù hợp cho một khoảng cách cụ thể.
+  /// 
+  /// Trả về [DistanceRange] đầu tiên chứa [distanceInMeters].
+  /// Nếu không tìm thấy phạm vi phù hợp, trả về null.
+  static DistanceRange? fromDistance(double distanceInMeters) {
+    for (final range in DistanceRange.values) {
+      if (range.contains(distanceInMeters)) {
+        return range;
+      }
+    }
+    return null;
+  }
 }

@@ -5,7 +5,9 @@ import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/direction/model/location_data.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/distance_range.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/price_range.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/delete_post/bloc/delete_post_bloc.dart';
@@ -331,66 +333,90 @@ class _PostDetailPageState extends State<PostDetailPage> {
         const SizedBox(
           height: 20,
         ),
-        if (post.foodCategory != null)
-          FadeSlideUp(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: CustomChoiceChip(
-                label: post.foodCategory!.label,
+        FadeSlideUp(
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              if (post.foodCategory != null)
+                CustomChoiceChip(
+                  label: post.foodCategory!.label,
+                  isSelected: false,
+                  itemColor: post.foodCategory!.color,
+                  onSelected: (selected) {
+                    context.push('/post_detail/explore', extra: {
+                      'filterSortParams': FilterSortParams.defaultParams().copyWith(
+                        categories: {post.foodCategory!},
+                      )
+                    });
+                  },
+                ),
+              CustomChoiceChip(
+                label: '💵 ${NumberFormatter.formatMoney(post.price ?? 0)}',
                 isSelected: false,
                 itemColor: post.foodCategory!.color,
                 onSelected: (selected) {
                   context.push('/post_detail/explore', extra: {
                     'filterSortParams': FilterSortParams.defaultParams().copyWith(
-                      categories: {post.foodCategory!},
+                      range: PriceRange.fromPrice(post.price?.toDouble() ?? 9999999),
                     )
                   });
                 },
               ),
-            ),
-          ),
-        FadeSlideUp(
-          delay: const Duration(milliseconds: 100),
-          child: CustomIconWithLabel(
-            icon: AppIcons.location1.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            label: 'Khoảng ${NumberFormatter.formatDistance(post.distance)}',
-          ),
-        ),
-        FadeSlideUp(
-          delay: const Duration(milliseconds: 200),
-          child: Text(
-            post.diningLocationName ?? '',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-        ),
-        FadeSlideUp(
-          delay: const Duration(milliseconds: 300),
-          child: Text(
-            '${post.address?.exactAddress ?? ''}, ${post.address?.displayName ?? ''}',
-            style: Theme.of(context).textTheme.bodyMedium,
+              CustomChoiceChip(
+                label: '📍 ${NumberFormatter.formatDistance(post.distance)}',
+                isSelected: false,
+                itemColor: post.foodCategory!.color,
+                onSelected: (selected) {
+                  context.push('/post_detail/explore', extra: {
+                    'filterSortParams': FilterSortParams.defaultParams().copyWith(
+                      distance: DistanceRange.fromDistance(post.distance ?? 999),
+                    )
+                  });
+                },
+              ),
+            ],
           ),
         ),
         const SizedBox(
-          height: 10,
+          height: 20,
         ),
-        FadeSlideUp(
-          delay: const Duration(milliseconds: 400),
-          child: CustomIconWithLabel(
-            icon: AppIcons.wallet4.toSvg(
-              width: 16,
-              color: Theme.of(context).colorScheme.onSurface,
+        if (post.diningLocationName != null && post.diningLocationName!.trim().isNotEmpty)
+          FadeSlideUp(
+            delay: const Duration(milliseconds: 200),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: Text(
+                '📍 ${post.diningLocationName}',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
             ),
-            label: 'Giá: ${NumberFormatter.formatMoney(post.price ?? 0)}',
+          ),
+        FadeSlideUp(
+          delay: const Duration(milliseconds: 200),
+          child: RichText(
+            text: TextSpan(
+              style: Theme.of(context).textTheme.bodyMedium,
+              children: [
+                if (post.address?.exactAddress != null && post.address!.exactAddress!.isNotEmpty)
+                  TextSpan(
+                    text: '(${post.address!.exactAddress!}) ',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontStyle: FontStyle.italic,
+                        ),
+                  ),
+                if (post.address?.displayName != null && post.address!.displayName!.isNotEmpty) TextSpan(text: post.address!.displayName!),
+              ],
+            ),
           ),
         ),
         const SizedBox(
           height: 20,
         ),
         FadeSlideUp(
-          delay: const Duration(milliseconds: 500),
+          delay: const Duration(milliseconds: 300),
           child: Material(
             child: GradientFilledButton(
               maxWidth: true,
@@ -419,12 +445,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
           height: 20,
         ),
         FadeSlideUp(
-          delay: const Duration(milliseconds: 600),
+          delay: const Duration(milliseconds: 400),
           child: _buildAuthorInfo(post, context, currentUserId, author),
         ),
         if (post.insight != null && post.insight!.trim().isNotEmpty)
           FadeSlideUp(
-            delay: const Duration(milliseconds: 700),
+            delay: const Duration(milliseconds: 500),
             child: Padding(
               padding: const EdgeInsets.only(top: 15),
               child: Text(
@@ -441,7 +467,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
               int index = entry.key;
               var review = entry.value;
               return FadeSlideUp(
-                delay: Duration(milliseconds: 800 + (index * 100)),
+                delay: Duration(milliseconds: 700 + (index * 100)),
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 5),
                   child: Column(
@@ -489,7 +515,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
             builder: (context, state) {
               return FadeSlideUp(
-                delay: const Duration(milliseconds: 800),
+                delay: Duration(milliseconds: 800 + (post.reviews.length * 100)),
                 child: ReactionBar(
                   likeColor: Colors.pink,
                   saveColor: Colors.amber,
