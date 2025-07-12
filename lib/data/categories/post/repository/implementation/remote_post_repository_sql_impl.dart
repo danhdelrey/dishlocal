@@ -379,7 +379,9 @@ class RemotePostRepositorySqlImpl implements PostRepository {
   @override
   Future<Either<PostFailure, void>> updatePost(Post post) {
     return _handleErrors(() async {
-      _log.info('🔄 Bắt đầu cập nhật bài viết ID: ${post.postId}');
+      _log.info('🔄 Bắt đầu cập nhật bài viết và các review liên quan cho ID: ${post.postId}');
+
+      // --- BƯỚC 1: CẬP NHẬT THÔNG TIN CHÍNH CỦA BÀI POST ---
       final dataToUpdate = {
         'dish_name': post.dishName,
         'location_name': post.diningLocationName,
@@ -391,17 +393,64 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         'food_category': const FoodCategoryConverter().toJson(post.foodCategory),
       };
 
-      // Loại bỏ các giá trị null để không ghi đè dữ liệu hiện có bằng null
-      //dataToUpdate.removeWhere((key, value) => value == null);
-
+      // Không cần remove null vì `update` của Supabase sẽ bỏ qua chúng.
+      _log.fine('📝 Dữ liệu cập nhật cho bảng "posts": $dataToUpdate');
       await _dbService.update(
         tableName: 'posts',
         id: post.postId,
         data: dataToUpdate,
-        fromJson: (json) => {},
+        fromJson: (json) => {}, // Không cần kết quả trả về
       );
-      _log.info('✅ Cập nhật bài viết ${post.postId} thành công.');
-      _log.info('Data to update: $dataToUpdate');
+      _log.fine('✅ Cập nhật bảng "posts" thành công.');
+
+      // --- BƯỚC 2: UPSERT CÁC REVIEW ---
+      _log.fine('🔄 Chuẩn bị dữ liệu để upsert các review qua RPC...');
+
+      final List<Map<String, dynamic>> reviewsToUpsert = post.reviews.where((item) => item.rating > 0).map((item) {
+        final json = item.toJson();
+        json['post_id'] = post.postId;
+        return json;
+      }).toList();
+
+      if (reviewsToUpsert.isNotEmpty) {
+        _log.fine('📤 Đang gọi RPC "upsert_post_reviews" với ${reviewsToUpsert.length} review...');
+        // Thay thế _dbService.upsert bằng một lệnh gọi RPC trực tiếp
+        await _supabase.rpc(
+          'upsert_post_reviews',
+          params: {
+            'reviews_data': reviewsToUpsert // Truyền toàn bộ danh sách vào tham số của hàm
+          },
+        );
+        _log.fine('✅ Gọi RPC "upsert_post_reviews" thành công.');
+      } else {
+        _log.info('ℹ️ Không có review nào hợp lệ để upsert.');
+      }
+
+      // --- BƯỚC 3 (TÙY CHỌN): XÓA CÁC REVIEW KHÔNG CÒN HỢP LỆ ---
+      // Nếu người dùng chỉnh sửa một review từ 4 sao về 0 sao, bước 2 sẽ không
+      // upsert nó. Dòng đó vẫn còn trong DB. Chúng ta cần xóa nó đi.
+
+      // Lấy danh sách các category mà người dùng đã đặt lại về 0.
+      final categoriesToReset = post.reviews.where((item) => item.rating == 0).map((item) => item.category.name).toList();
+
+      if (categoriesToReset.isNotEmpty) {
+        _log.fine('🗑️ Đang xóa các review đã bị đặt lại về 0 sao cho các category: $categoriesToReset');
+
+        // Bắt đầu xây dựng một bộ lọc 'OR'
+        final orFilter = categoriesToReset
+            .map((categoryName) => 'category.eq.$categoryName') // Tạo các cặp 'cột.toán_tử.giá_trị'
+            .join(','); // Nối chúng bằng dấu phẩy
+
+        await _supabase
+            .from('post_reviews')
+            .delete()
+            .eq('post_id', post.postId) // Điều kiện VÀ: post_id phải khớp
+            .or(orFilter); // Điều kiện HOẶC: category là một trong các giá trị trong danh sách
+
+        _log.fine('✅ Xóa các review không hợp lệ thành công.');
+      }
+
+      _log.info('🎉 Hoàn thành cập nhật bài viết và các review cho ID: ${post.postId}');
     });
   }
 

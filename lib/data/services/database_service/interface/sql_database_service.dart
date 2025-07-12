@@ -80,6 +80,23 @@ abstract class SqlDatabaseService {
     required Map<String, dynamic> filters,
   });
 
+  /// Chèn một danh sách các bản ghi. Nếu một bản ghi đã tồn tại (dựa trên
+  /// các cột `onConflict`), nó sẽ được cập nhật.
+  ///
+  /// - [tableName]: Tên của bảng.
+  /// - [data]: Danh sách các Map chứa dữ liệu để upsert.
+  /// - [fromJson]: Hàm để chuyển đổi kết quả trả về thành đối tượng <T>.
+  /// - [onConflict]: (Quan trọng) Danh sách các tên cột tạo thành một khóa
+  ///   duy nhất để xác định xung đột. Ví dụ: ['post_id', 'category'].
+  ///
+  /// Trả về một `List<T>` các đối tượng đã được upsert.
+  Future<List<T>> upsert<T>({
+    required String tableName,
+    required List<Map<String, dynamic>> data,
+    required T Function(Map<String, dynamic> json) fromJson,
+    required List<String> onConflict,
+  });
+
   Future<void> rpc(String functionName, {Map<String, dynamic>? params});
 
 }

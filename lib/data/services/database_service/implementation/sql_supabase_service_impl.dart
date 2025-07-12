@@ -208,4 +208,38 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
   Future<void> rpc(String functionName, {Map<String, dynamic>? params}) async {
     await _supabase.rpc(functionName, params: params);
   }
+  
+  @override
+  Future<List<T>> upsert<T>({
+    required String tableName,
+    required List<Map<String, dynamic>> data,
+    required T Function(Map<String, dynamic> json) fromJson,
+    required List<String> onConflict,
+  }) {
+    final operationName = 'UPSERT into "$tableName"';
+    return _wrapDbOperation(operationName, () async {
+      _log.info(
+          'upsert(): ➡️ $operationName: Bắt đầu thực hiện upsert ${data.length} bản ghi.');
+      _log.finer(
+          'upsert(): 📝 Payload: $data, OnConflict: ${onConflict.join(',')}');
+
+      // 1. Thực hiện lệnh upsert và yêu cầu trả về dữ liệu mới.
+      final result = await _supabase
+          .from(tableName)
+          .upsert(
+            data,
+            // onConflict báo cho Supabase: "Nếu một dòng mới có cùng giá trị
+            // cho các cột này với một dòng đã có, hãy thực hiện UPDATE thay vì INSERT"
+            onConflict: onConflict.join(','),
+          )
+          .select(); // .select() để lấy lại tất cả các dòng đã được chèn/cập nhật.
+
+      _log.info(
+          'upsert(): ✅ $operationName: Upsert thành công, xử lý ${result.length} bản ghi.');
+
+      // 2. Chuyển đổi kết quả JSON thành danh sách các đối tượng <T>.
+      return result.map((json) => fromJson(json)).toList();
+    });
+  }
+
 }
