@@ -275,9 +275,9 @@ class CreatePostBloc extends Bloc<CreatePostEvent, CreatePostState> {
           _log.severe('Submit thất bại', failure);
           emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.failure));
         },
-        (_) {
+        (createdPost) {
           _log.info('Submit dữ liệu thành công');
-          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success));
+          emit(state.copyWith(formzSubmissionStatus: FormzSubmissionStatus.success, createdPost: createdPost));
         },
       );
     }

@@ -342,7 +342,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 CustomChoiceChip(
                   label: post.foodCategory!.label,
                   isSelected: false,
-                  itemColor: post.foodCategory!.color,
+                  itemColor: post.foodCategory?.color ?? Colors.transparent,
                   onSelected: (selected) {
                     context.push('/post_detail/explore', extra: {
                       'filterSortParams': FilterSortParams.defaultParams().copyWith(
@@ -354,7 +354,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
               CustomChoiceChip(
                 label: '💵 ${NumberFormatter.formatMoney(post.price ?? 0)}',
                 isSelected: false,
-                itemColor: post.foodCategory!.color,
+                itemColor: post.foodCategory?.color ?? Colors.transparent,
                 onSelected: (selected) {
                   context.push('/post_detail/explore', extra: {
                     'filterSortParams': FilterSortParams.defaultParams().copyWith(
@@ -366,7 +366,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
               CustomChoiceChip(
                 label: '📍 ${NumberFormatter.formatDistance(post.distance)}',
                 isSelected: false,
-                itemColor: post.foodCategory!.color,
+                itemColor: post.foodCategory?.color ?? Colors.transparent,
                 onSelected: (selected) {
                   context.push('/post_detail/explore', extra: {
                     'filterSortParams': FilterSortParams.defaultParams().copyWith(

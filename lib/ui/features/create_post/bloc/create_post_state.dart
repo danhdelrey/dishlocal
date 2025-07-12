@@ -20,9 +20,11 @@ class CreatePostState extends Equatable {
     this.formzSubmissionStatus = FormzSubmissionStatus.initial,
     this.fieldToFocus,
     this.errorMessage,
+    this.createdPost,
   });
 
   final String? errorMessage;
+  final Post? createdPost;
 
   //1. Khai báo trường của form
   final DishNameInput dishNameInput;
@@ -39,6 +41,7 @@ class CreatePostState extends Equatable {
 
   CreatePostState copyWith({
     String? errorMessage,
+    Post? createdPost,
     //4. Thêm trường của form vào copyWith
     DishNameInput? dishNameInput,
     DiningLocationNameInput? diningLocationNameInput,
@@ -51,6 +54,7 @@ class CreatePostState extends Equatable {
   }) {
     return CreatePostState(
       errorMessage: errorMessage ?? this.errorMessage,
+      createdPost: createdPost ?? this.createdPost,
       //5. thêm trường của form vào
       dishNameInput: dishNameInput ?? this.dishNameInput,
       diningLocationNameInput: diningLocationNameInput ?? this.diningLocationNameInput,
@@ -75,5 +79,6 @@ class CreatePostState extends Equatable {
         insightInput,
         moneyInput,
         errorMessage,
+        createdPost,
       ];
 }

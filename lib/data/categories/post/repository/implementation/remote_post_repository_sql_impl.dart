@@ -119,10 +119,11 @@ class RemotePostRepositorySqlImpl implements PostRepository {
   }
 
   @override
-  Future<Either<PostFailure, void>> createPost({required Post post, required File imageFile}) async {
+  Future<Either<PostFailure, Post>> createPost({required Post post, required File imageFile}) async {
     return _handleErrors(() async {
       _log.info('👉 Bắt đầu tạo bài viết mới...');
 
+      // --- BƯỚC 1: TẢI ẢNH LÊN STORAGE ---
       _log.fine('🔄 Đang tải ảnh lên Storage...');
       final imageUrl = await _storageService.uploadFile(
         folder: 'posts',
@@ -131,7 +132,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       );
       _log.fine('✅ Tải ảnh thành công. URL: $imageUrl');
 
-      // Chuyển đổi từ UI Model 'Post' sang 'PostEntity' để lưu vào DB
+      // --- BƯỚC 2: TẠO BẢN GHI CHÍNH TRONG BẢNG "posts" ---
       final postEntity = PostEntity(
         id: post.postId,
         authorId: post.authorUserId,
@@ -148,58 +149,62 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         foodCategory: post.foodCategory,
       );
 
-      final postReviewEntity = post.reviews.map((review) {
-        return PostReviewEntity(
-          id: const Uuid().v4(),
-          postId: post.postId,
-          category: review.category,
-          rating: review.rating,
-          selectedChoices: review.selectedChoices,
-          createdAt: DateTime.now(),
-        );
-      }).toList();
-
       _log.fine('📤 Đang lưu bài viết vào bảng "posts"...');
       await _dbService.create(
         tableName: 'posts',
         data: postEntity.toJson(),
-        fromJson: PostEntity.fromJson, // Dù không dùng kết quả, vẫn cần cung cấp
+        fromJson: PostEntity.fromJson,
       );
-      for (var review in postReviewEntity) {
-        _log.fine('📤 Đang lưu đánh giá vào bảng "post_reviews"...');
-        await _dbService.create(
-          tableName: 'post_reviews',
-          data: review.toJson(),
-          fromJson: PostReviewEntity.fromJson,
+      _log.fine('✅ Lưu bài viết vào bảng "posts" thành công.');
+
+      // --- BƯỚC 3 (TỐI ƯU): TẠO TẤT CẢ REVIEW BẰNG MỘT LỆNH GỌI RPC ---
+      // Lọc ra các review có rating > 0 để chèn vào DB.
+      final List<Map<String, dynamic>> reviewsToInsert = post.reviews.where((item) => item.rating > 0).map((item) {
+        // Chuyển ReviewItem (UI model) thành JSON.
+        final json = item.toJson();
+        // QUAN TRỌNG: Thêm 'post_id' vào mỗi review để liên kết chúng.
+        json['post_id'] = post.postId;
+        return json;
+      }).toList();
+
+      // Chỉ gọi RPC nếu có review để chèn.
+      if (reviewsToInsert.isNotEmpty) {
+        _log.fine('📤 Đang lưu ${reviewsToInsert.length} đánh giá vào bảng "post_reviews" qua RPC...');
+        await _supabase.rpc(
+          'upsert_post_reviews',
+          params: {'reviews_data': reviewsToInsert},
         );
+        _log.fine('✅ Lưu các review thành công.');
       }
+
       _log.info('🎉 Tạo bài viết thành công!');
+      return post.copyWith(imageUrl: imageUrl);
     });
   }
 
   // Phương thức chung để gọi RPC và xử lý kết quả
-  Future<List<Post>> _fetchPostsViaRpc({
-    required String rpcName,
-    required Map<String, dynamic> params,
-  }) async {
-    _log.info('📡 Gọi RPC "$rpcName" với params: $params');
-    final data = await _supabase.rpc(rpcName, params: params);
+  // Future<List<Post>> _fetchPostsViaRpc({
+  //   required String rpcName,
+  //   required Map<String, dynamic> params,
+  // }) async {
+  //   _log.info('📡 Gọi RPC "$rpcName" với params: $params');
+  //   final data = await _supabase.rpc(rpcName, params: params);
 
-    if (data is! List) {
-      _log.warning('⚠️ RPC "$rpcName" không trả về một List. Kết quả: $data');
-      return [];
-    }
+  //   if (data is! List) {
+  //     _log.warning('⚠️ RPC "$rpcName" không trả về một List. Kết quả: $data');
+  //     return [];
+  //   }
 
-    final posts = data.map((json) => Post.fromJson(json as Map<String, dynamic>)).toList();
-    _log.info('✅ RPC "$rpcName" thành công, nhận được ${posts.length} bài viết.');
-    _log.info(posts.map(
-      (post) {
-        _log.info('${post.toString()} \n\n');
-      },
-    ));
+  //   final posts = data.map((json) => Post.fromJson(json as Map<String, dynamic>)).toList();
+  //   _log.info('✅ RPC "$rpcName" thành công, nhận được ${posts.length} bài viết.');
+  //   _log.info(posts.map(
+  //     (post) {
+  //       _log.info('${post.toString()} \n\n');
+  //     },
+  //   ));
 
-    return await _enrichPostsWithDistance(posts);
-  }
+  //   return await _enrichPostsWithDistance(posts);
+  // }
 
   Future<List<Post>> _getFilteredAndSortedPosts({
     required FilterSortParams params,

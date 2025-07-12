@@ -165,7 +165,13 @@ class _NewPostPageState extends State<NewPostPage> {
                       );
 
                     // context.pop(true) để báo cho màn hình trước đó rằng có sự thay đổi.
-                    context.pop(true);
+                    if (widget.inEditMode) {
+                      context.pop(true);
+                    } else {
+                      context.pushReplacement('/post_detail', extra: {
+                        "post": state.createdPost!,
+                      });
+                    }
                   }
                 },
               ),

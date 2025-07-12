@@ -6,7 +6,7 @@ import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_so
 import 'package:dishlocal/data/categories/post/model/post.dart';
 
 abstract class PostRepository {
-  Future<Either<PostFailure, void>> createPost({required Post post, required File imageFile});
+  Future<Either<PostFailure, Post>> createPost({required Post post, required File imageFile});
 
   /// Lấy danh sách bài viết dựa trên các tiêu chí lọc và sắp xếp.
   ///
