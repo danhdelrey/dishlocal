@@ -102,26 +102,29 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
   @override
   Future<Either<AppUserFailure, AppUser>> getUserProfile([String? userId]) {
     return _handleErrors(() async {
-      // ---- LOGIC ĐƯỢC TẬP TRUNG VÀO ĐÂY ----
       // 1. Xác định ID cần lấy
       final idToFetch = userId ?? _authService.getCurrentUserId();
 
       // 2. Kiểm tra xem có ID để lấy không
       if (idToFetch == null) {
         _log.warning('getUserProfile: ⚠️ Cố gắng lấy profile nhưng không có userId và cũng chưa đăng nhập.');
-        throw const NotAuthenticatedFailure(); // Ném ra lỗi để _handleErrors bắt
+        throw const NotAuthenticatedFailure();
       }
 
-      _log.fine('getUserProfile: 🔄 Đang lấy profile cho user ID: $idToFetch');
+      _log.fine('getUserProfile: 🔄 Đang gọi RPC get_user_profile_with_stats cho user ID: $idToFetch');
 
-      // 3. Lấy dữ liệu profile từ DB
-      final profile = await _dbService.readSingleById<ProfileEntity>(
-        tableName: 'profiles',
-        id: idToFetch,
-        fromJson: ProfileEntity.fromJson,
-      );
+      // 3. Gọi RPC để lấy dữ liệu profile và các thống kê
+      // .single() được sử dụng vì chúng ta mong đợi RPC trả về đúng một dòng dữ liệu.
+      final profileData = await _supabase.rpc(
+        'get_user_profile_with_stats',
+        params: {'p_user_id': idToFetch},
+      ).single();
 
-      // 4. Kiểm tra trạng thái 'isFollowing' (nếu cần)
+      // 4. Gọi AppUser.fromJson. Bây giờ nó sẽ hoạt động an toàn!
+      // Các trường như id, displayName, postCount, likeCount... sẽ được điền tự động.
+      final appUserFromRpc = AppUser.fromJson(profileData);
+
+      // 5. Kiểm tra trạng thái 'isFollowing' (logic này vẫn cần thiết)
       bool isFollowing = false;
       final currentUserId = _authService.getCurrentUserId();
       if (currentUserId != null && currentUserId != idToFetch) {
@@ -133,19 +136,17 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         isFollowing = result.isNotEmpty;
       }
 
-      // 5. Tạo và trả về đối tượng AppUser hoàn chỉnh
-      return AppUser(
-        userId: profile.id,
-        email: (idToFetch == currentUserId) ? (_authService.getCurrentUser()?.email ?? '') : '',
-        username: profile.username,
-        displayName: profile.displayName,
-        photoUrl: profile.photoUrl,
-        bio: profile.bio,
-        followerCount: profile.followerCount,
-        followingCount: profile.followingCount,
-        isSetupCompleted: profile.isSetupCompleted,
+      // 6. Tạo đối tượng AppUser hoàn chỉnh bằng cách sử dụng .copyWith()
+      // để thêm các thông tin chỉ có ở client-side.
+      return appUserFromRpc.copyWith(
+        // Gán email nếu đây là người dùng hiện tại
+        email: (idToFetch == currentUserId) ? (_authService.getCurrentUser()?.email ?? '') : null,
+
+        // Gán trạng thái following
         isFollowing: isFollowing,
-        originalDisplayname: profile.displayName ?? '',
+
+        // Khởi tạo originalDisplayname từ displayName đã lấy được
+        originalDisplayname: appUserFromRpc.displayName,
       );
     });
   }

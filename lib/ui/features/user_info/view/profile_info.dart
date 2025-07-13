@@ -42,7 +42,7 @@ class ProfileInfo extends StatelessWidget {
                   // Display name
                   Center(
                     child: Text(
-                      state.appUser.displayName ?? state.appUser.originalDisplayname,
+                      state.appUser.displayName ?? state.appUser.originalDisplayname ?? '',
                       style: Theme.of(context).textTheme.titleMedium,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -53,12 +53,12 @@ class ProfileInfo extends StatelessWidget {
                     children: [
                       _buildNumberInformation(
                         context: context,
-                        count: state.appUser.followerCount,
+                        count: state.appUser.postCount,
                         label: 'Bài viết',
                       ),
                       _buildNumberInformation(
                         context: context,
-                        count: state.appUser.followerCount,
+                        count: state.appUser.likeCount,
                         label: 'Lượt thích',
                       ),
                       _buildNumberInformation(
@@ -75,6 +75,16 @@ class ProfileInfo extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   // Bio
+                  if (state.appUser.bio != null && state.appUser.bio!.trim().isNotEmpty)
+                    Center(
+                      child: Text(
+                        'Tiểu sử:',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: appColorScheme(context).outline,
+                            ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   if (state.appUser.bio != null && state.appUser.bio!.trim().isNotEmpty)
                     Center(
                       child: Text(

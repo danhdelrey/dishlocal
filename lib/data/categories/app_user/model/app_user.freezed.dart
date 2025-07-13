@@ -15,13 +15,27 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$AppUser {
+  /// Sửa lỗi: Sử dụng @JsonKey để khớp với cột 'id' trả về từ RPC.
+  @JsonKey(name: 'id')
   String get userId;
-  String get originalDisplayname;
-  String get email;
+
+  /// Sửa lỗi: `email` không có trong RPC, nó được thêm vào sau.
+  /// Do đó, nó phải là tùy chọn trong `fromJson`.
+  String? get email;
+
+  /// `username` có thể null nếu chưa hoàn tất setup.
   String? get username;
+
+  /// `displayName` có thể null.
   String? get displayName;
+
+  /// Sửa lỗi: Đây là trường chỉ dùng trong UI, không nên là `required`.
+  /// Nó sẽ được khởi tạo từ `displayName`.
+  String? get originalDisplayname;
   String? get photoUrl;
   String? get bio;
+  int get postCount;
+  int get likeCount;
   int get followerCount;
   int get followingCount;
   bool? get isFollowing;
@@ -43,16 +57,20 @@ mixin _$AppUser {
         (other.runtimeType == runtimeType &&
             other is AppUser &&
             (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.originalDisplayname, originalDisplayname) ||
-                other.originalDisplayname == originalDisplayname) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.displayName, displayName) ||
                 other.displayName == displayName) &&
+            (identical(other.originalDisplayname, originalDisplayname) ||
+                other.originalDisplayname == originalDisplayname) &&
             (identical(other.photoUrl, photoUrl) ||
                 other.photoUrl == photoUrl) &&
             (identical(other.bio, bio) || other.bio == bio) &&
+            (identical(other.postCount, postCount) ||
+                other.postCount == postCount) &&
+            (identical(other.likeCount, likeCount) ||
+                other.likeCount == likeCount) &&
             (identical(other.followerCount, followerCount) ||
                 other.followerCount == followerCount) &&
             (identical(other.followingCount, followingCount) ||
@@ -68,12 +86,14 @@ mixin _$AppUser {
   int get hashCode => Object.hash(
       runtimeType,
       userId,
-      originalDisplayname,
       email,
       username,
       displayName,
+      originalDisplayname,
       photoUrl,
       bio,
+      postCount,
+      likeCount,
       followerCount,
       followingCount,
       isFollowing,
@@ -81,7 +101,7 @@ mixin _$AppUser {
 
   @override
   String toString() {
-    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, isSetupCompleted: $isSetupCompleted)';
+    return 'AppUser(userId: $userId, email: $email, username: $username, displayName: $displayName, originalDisplayname: $originalDisplayname, photoUrl: $photoUrl, bio: $bio, postCount: $postCount, likeCount: $likeCount, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -91,13 +111,15 @@ abstract mixin class $AppUserCopyWith<$Res> {
       _$AppUserCopyWithImpl;
   @useResult
   $Res call(
-      {String userId,
-      String originalDisplayname,
-      String email,
+      {@JsonKey(name: 'id') String userId,
+      String? email,
       String? username,
       String? displayName,
+      String? originalDisplayname,
       String? photoUrl,
       String? bio,
+      int postCount,
+      int likeCount,
       int followerCount,
       int followingCount,
       bool? isFollowing,
@@ -117,12 +139,14 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
   @override
   $Res call({
     Object? userId = null,
-    Object? originalDisplayname = null,
-    Object? email = null,
+    Object? email = freezed,
     Object? username = freezed,
     Object? displayName = freezed,
+    Object? originalDisplayname = freezed,
     Object? photoUrl = freezed,
     Object? bio = freezed,
+    Object? postCount = null,
+    Object? likeCount = null,
     Object? followerCount = null,
     Object? followingCount = null,
     Object? isFollowing = freezed,
@@ -133,14 +157,10 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
           ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      originalDisplayname: null == originalDisplayname
-          ? _self.originalDisplayname
-          : originalDisplayname // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
+      email: freezed == email
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       username: freezed == username
           ? _self.username
           : username // ignore: cast_nullable_to_non_nullable
@@ -148,6 +168,10 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
       displayName: freezed == displayName
           ? _self.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      originalDisplayname: freezed == originalDisplayname
+          ? _self.originalDisplayname
+          : originalDisplayname // ignore: cast_nullable_to_non_nullable
               as String?,
       photoUrl: freezed == photoUrl
           ? _self.photoUrl
@@ -157,6 +181,14 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
           ? _self.bio
           : bio // ignore: cast_nullable_to_non_nullable
               as String?,
+      postCount: null == postCount
+          ? _self.postCount
+          : postCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      likeCount: null == likeCount
+          ? _self.likeCount
+          : likeCount // ignore: cast_nullable_to_non_nullable
+              as int,
       followerCount: null == followerCount
           ? _self.followerCount
           : followerCount // ignore: cast_nullable_to_non_nullable
@@ -178,16 +210,19 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _AppUser implements AppUser {
   const _AppUser(
-      {required this.userId,
-      required this.originalDisplayname,
-      required this.email,
+      {@JsonKey(name: 'id') required this.userId,
+      this.email,
       this.username,
       this.displayName,
+      this.originalDisplayname,
       this.photoUrl,
       this.bio,
+      this.postCount = 0,
+      this.likeCount = 0,
       this.followerCount = 0,
       this.followingCount = 0,
       this.isFollowing,
@@ -195,20 +230,38 @@ class _AppUser implements AppUser {
   factory _AppUser.fromJson(Map<String, dynamic> json) =>
       _$AppUserFromJson(json);
 
+  /// Sửa lỗi: Sử dụng @JsonKey để khớp với cột 'id' trả về từ RPC.
   @override
+  @JsonKey(name: 'id')
   final String userId;
+
+  /// Sửa lỗi: `email` không có trong RPC, nó được thêm vào sau.
+  /// Do đó, nó phải là tùy chọn trong `fromJson`.
   @override
-  final String originalDisplayname;
-  @override
-  final String email;
+  final String? email;
+
+  /// `username` có thể null nếu chưa hoàn tất setup.
   @override
   final String? username;
+
+  /// `displayName` có thể null.
   @override
   final String? displayName;
+
+  /// Sửa lỗi: Đây là trường chỉ dùng trong UI, không nên là `required`.
+  /// Nó sẽ được khởi tạo từ `displayName`.
+  @override
+  final String? originalDisplayname;
   @override
   final String? photoUrl;
   @override
   final String? bio;
+  @override
+  @JsonKey()
+  final int postCount;
+  @override
+  @JsonKey()
+  final int likeCount;
   @override
   @JsonKey()
   final int followerCount;
@@ -242,16 +295,20 @@ class _AppUser implements AppUser {
         (other.runtimeType == runtimeType &&
             other is _AppUser &&
             (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.originalDisplayname, originalDisplayname) ||
-                other.originalDisplayname == originalDisplayname) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.displayName, displayName) ||
                 other.displayName == displayName) &&
+            (identical(other.originalDisplayname, originalDisplayname) ||
+                other.originalDisplayname == originalDisplayname) &&
             (identical(other.photoUrl, photoUrl) ||
                 other.photoUrl == photoUrl) &&
             (identical(other.bio, bio) || other.bio == bio) &&
+            (identical(other.postCount, postCount) ||
+                other.postCount == postCount) &&
+            (identical(other.likeCount, likeCount) ||
+                other.likeCount == likeCount) &&
             (identical(other.followerCount, followerCount) ||
                 other.followerCount == followerCount) &&
             (identical(other.followingCount, followingCount) ||
@@ -267,12 +324,14 @@ class _AppUser implements AppUser {
   int get hashCode => Object.hash(
       runtimeType,
       userId,
-      originalDisplayname,
       email,
       username,
       displayName,
+      originalDisplayname,
       photoUrl,
       bio,
+      postCount,
+      likeCount,
       followerCount,
       followingCount,
       isFollowing,
@@ -280,7 +339,7 @@ class _AppUser implements AppUser {
 
   @override
   String toString() {
-    return 'AppUser(userId: $userId, originalDisplayname: $originalDisplayname, email: $email, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, isSetupCompleted: $isSetupCompleted)';
+    return 'AppUser(userId: $userId, email: $email, username: $username, displayName: $displayName, originalDisplayname: $originalDisplayname, photoUrl: $photoUrl, bio: $bio, postCount: $postCount, likeCount: $likeCount, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -291,13 +350,15 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {String userId,
-      String originalDisplayname,
-      String email,
+      {@JsonKey(name: 'id') String userId,
+      String? email,
       String? username,
       String? displayName,
+      String? originalDisplayname,
       String? photoUrl,
       String? bio,
+      int postCount,
+      int likeCount,
       int followerCount,
       int followingCount,
       bool? isFollowing,
@@ -317,12 +378,14 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   $Res call({
     Object? userId = null,
-    Object? originalDisplayname = null,
-    Object? email = null,
+    Object? email = freezed,
     Object? username = freezed,
     Object? displayName = freezed,
+    Object? originalDisplayname = freezed,
     Object? photoUrl = freezed,
     Object? bio = freezed,
+    Object? postCount = null,
+    Object? likeCount = null,
     Object? followerCount = null,
     Object? followingCount = null,
     Object? isFollowing = freezed,
@@ -333,14 +396,10 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
           ? _self.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      originalDisplayname: null == originalDisplayname
-          ? _self.originalDisplayname
-          : originalDisplayname // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
+      email: freezed == email
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       username: freezed == username
           ? _self.username
           : username // ignore: cast_nullable_to_non_nullable
@@ -348,6 +407,10 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
       displayName: freezed == displayName
           ? _self.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      originalDisplayname: freezed == originalDisplayname
+          ? _self.originalDisplayname
+          : originalDisplayname // ignore: cast_nullable_to_non_nullable
               as String?,
       photoUrl: freezed == photoUrl
           ? _self.photoUrl
@@ -357,6 +420,14 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
           ? _self.bio
           : bio // ignore: cast_nullable_to_non_nullable
               as String?,
+      postCount: null == postCount
+          ? _self.postCount
+          : postCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      likeCount: null == likeCount
+          ? _self.likeCount
+          : likeCount // ignore: cast_nullable_to_non_nullable
+              as int,
       followerCount: null == followerCount
           ? _self.followerCount
           : followerCount // ignore: cast_nullable_to_non_nullable
