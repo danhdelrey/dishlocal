@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
@@ -46,17 +47,33 @@ class ProfileInfo extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  // Follower - Following
-                  Center(
-                    child: CustomRichText(
-                      label1: NumberFormatter.formatCompactNumberStable(state.appUser.followerCount),
-                      description1: ' người theo dõi • ',
-                      label2: NumberFormatter.formatCompactNumberStable(state.appUser.followingCount),
-                      description2: ' đang theo dõi',
-                    ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildNumberInformation(
+                        context: context,
+                        count: state.appUser.followerCount,
+                        label: 'Bài viết',
+                      ),
+                      _buildNumberInformation(
+                        context: context,
+                        count: state.appUser.followerCount,
+                        label: 'Lượt thích',
+                      ),
+                      _buildNumberInformation(
+                        context: context,
+                        count: state.appUser.followerCount,
+                        label: 'Followers',
+                      ),
+                      _buildNumberInformation(
+                        context: context,
+                        count: state.appUser.followingCount,
+                        label: 'Following',
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   // Bio
                   if (state.appUser.bio != null && state.appUser.bio!.trim().isNotEmpty)
                     Center(
@@ -136,6 +153,27 @@ class ProfileInfo extends StatelessWidget {
 
         return const SizedBox();
       },
+    );
+  }
+
+  Column _buildNumberInformation({
+    required BuildContext context,
+    required int count,
+    required String label,
+  }) {
+    return Column(
+      children: [
+        Text(
+          NumberFormatter.formatCompactNumberStable(count),
+          style: appTextTheme(context).labelLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+        ),
+        Text(label,
+            style: appTextTheme(context).labelSmall?.copyWith(
+                  color: appColorScheme(context).outline,
+                )),
+      ],
     );
   }
 }
