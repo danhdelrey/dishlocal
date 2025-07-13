@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:dishlocal/app/config/main_shell.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
@@ -71,6 +74,9 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
   // THAY ĐỔI: Một ScrollController duy nhất để quản lý toàn bộ trang.
   late final ScrollController _outerScrollController;
 
+  late final StreamSubscription<int> _refreshSubscription;
+  static const int myTabIndex = 2;
+
   @override
   void initState() {
     super.initState();
@@ -99,11 +105,17 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
           ),
         ),
     ];
+
+    _refreshSubscription = refreshManager.refreshStream.listen((tabIndex) {
+      if (tabIndex == myTabIndex) {
+        _triggerRefreshAndScroll();
+      }
+    });
   }
 
   @override
   void dispose() {
-    // THAY ĐỔI: Hủy controller
+    _refreshSubscription.cancel();
     _outerScrollController.dispose();
 
     _tabController.dispose();
@@ -132,6 +144,11 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
     activeBloc.add(const PostEvent.refreshRequested());
     // Đợi BLoC xử lý xong (không còn loading) để RefreshIndicator biến mất
     await activeBloc.stream.firstWhere((s) => s.status != PostStatus.loading);
+  }
+
+  void _triggerRefreshAndScroll() {
+    _scrollToTop();
+    _onRefresh();
   }
 
   @override
@@ -208,16 +225,16 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
             children: [
               BlocProvider.value(
                 value: _postBlocs[0],
-                child: PostGridTabView(
-                  key: const PageStorageKey<String>('profilePosts'),
+                child: const PostGridTabView(
+                  key: PageStorageKey<String>('profilePosts'),
                   noItemsFoundMessage: 'Chưa có bài viết nào.',
                 ),
               ),
               if (_isMyProfile)
                 BlocProvider.value(
                   value: _postBlocs[1],
-                  child: PostGridTabView(
-                    key: const PageStorageKey<String>('profileSavedPosts'),
+                  child: const PostGridTabView(
+                    key: PageStorageKey<String>('profileSavedPosts'),
                     noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
                   ),
                 ),

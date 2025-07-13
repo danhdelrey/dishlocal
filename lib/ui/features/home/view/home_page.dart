@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:dishlocal/app/config/main_shell.dart';
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
@@ -68,6 +71,9 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
   // THAY ĐỔI: Chỉ cần một ScrollController cho toàn bộ trang.
   late final ScrollController _scrollController;
 
+  late final StreamSubscription<int> _refreshSubscription;
+  static const int myTabIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -79,10 +85,18 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
       PostBloc(({required params}) => postRepository.getPosts(params: params)),
       PostBloc(({required params}) => postRepository.getFollowingPosts(params: params)),
     ];
+
+    _refreshSubscription = refreshManager.refreshStream.listen((tabIndex) {
+      // Nếu sự kiện là dành cho tab này, thì thực hiện làm mới.
+      if (tabIndex == myTabIndex) {
+        _triggerRefreshAndScroll();
+      }
+    });
   }
 
   @override
   void dispose() {
+    _refreshSubscription.cancel();
     _scrollController.dispose();
     _tabController.dispose();
     for (var bloc in _postBlocs) {
@@ -107,6 +121,11 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
     final activeBloc = _postBlocs[_tabController.index];
     activeBloc.add(const PostEvent.refreshRequested());
     await activeBloc.stream.firstWhere((s) => s.status != PostStatus.loading);
+  }
+
+  void _triggerRefreshAndScroll() {
+    _scrollToTop();
+    _onRefresh();
   }
 
   @override

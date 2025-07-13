@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
@@ -5,6 +7,30 @@ import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+/// Lớp quản lý sự kiện yêu cầu làm mới các tab.
+/// Đây là một Singleton Pattern đơn giản sử dụng Stream.
+class RefreshManager {
+  // Tạo một StreamController có thể phát sự kiện tới nhiều người nghe (broadcast).
+  // Stream này sẽ mang theo 'int' là chỉ số của tab cần làm mới.
+  final StreamController<int> _controller = StreamController<int>.broadcast();
+
+  /// Stream để các trang có thể lắng nghe sự kiện.
+  Stream<int> get refreshStream => _controller.stream;
+
+  /// Hàm để MainShell gọi khi muốn yêu cầu một tab làm mới.
+  void requestRefresh(int tabIndex) {
+    _controller.add(tabIndex);
+  }
+
+  // Hàm để đóng controller khi không cần thiết (thường là không cần trong vòng đời app).
+  void dispose() {
+    _controller.close();
+  }
+}
+
+// Tạo một instance duy nhất để toàn bộ ứng dụng sử dụng.
+final refreshManager = RefreshManager();
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -18,10 +44,16 @@ class MainShell extends StatelessWidget {
   void _onTap(BuildContext context, int index) {
     final isTappedAgain = index == navigationShell.currentIndex;
 
-    navigationShell.goBranch(
-      index,
-      initialLocation: isTappedAgain,
-    );
+    // THAY ĐỔI: Nếu nhấn lại vào tab hiện tại, hãy gửi yêu cầu làm mới.
+    if (isTappedAgain) {
+      refreshManager.requestRefresh(index);
+    } else {
+      // Nếu là tab khác, chỉ chuyển tab như bình thường.
+      navigationShell.goBranch(
+        index,
+        initialLocation: false, // Không cần reset stack khi chuyển tab
+      );
+    }
   }
 
   @override
