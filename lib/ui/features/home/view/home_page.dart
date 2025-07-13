@@ -133,14 +133,13 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 surfaceTintColor: Colors.transparent,
                 // Các thuộc tính quan trọng để AppBar hoạt động đúng trong NestedScrollView
+                pinned: false,
                 snap: true,
                 floating: true,
                 forceElevated: innerBoxIsScrolled, // Hiện bóng đổ khi cuộn
-              ),
-              // THAY ĐỔI: Sử dụng SliverPersistentHeader để ghim TabBar.
-              SliverPersistentHeader(
-                delegate: _SliverPersistentHeaderDelegate(
-                  TabBar(
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(kToolbarHeight), // Không có khoảng trống dưới AppBar
+                  child: TabBar(
                     controller: _tabController,
                     onTap: (index) {
                       // Nếu người dùng nhấn vào tab đang được chọn, cuộn lên đầu.
@@ -154,8 +153,26 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
                     ],
                   ),
                 ),
-                pinned: true, // Đây là thuộc tính làm cho nó "dính" lại.
               ),
+              // THAY ĐỔI: Sử dụng SliverPersistentHeader để ghim TabBar.
+              // SliverPersistentHeader(
+              //   delegate: _SliverPersistentHeaderDelegate(
+              //     TabBar(
+              //       controller: _tabController,
+              //       onTap: (index) {
+              //         // Nếu người dùng nhấn vào tab đang được chọn, cuộn lên đầu.
+              //         if (index == _tabController.index) {
+              //           _scrollToTop();
+              //         }
+              //       },
+              //       tabs: const [
+              //         Tab(text: 'Dành cho bạn'),
+              //         Tab(text: 'Đang theo dõi'),
+              //       ],
+              //     ),
+              //   ),
+              //   pinned: true, // Đây là thuộc tính làm cho nó "dính" lại.
+              // ),
             ];
           },
           // THAY ĐỔI: Body là TabBarView, không cần bọc trong Expanded.
