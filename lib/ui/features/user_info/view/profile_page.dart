@@ -182,7 +182,10 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
                     if (state is UserInfoSuccess) {
                       return Text(state.appUser.username ?? 'Profile');
                     }
-                    return const SizedBox();
+                    if (state is UserInfoLoading) {
+                      return const Text('Đang tải...');
+                    }
+                    return const Text('Đang tải...');
                   },
                 ),
                 titleTextStyle: appTextTheme(context).titleMedium,
