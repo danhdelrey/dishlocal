@@ -49,7 +49,31 @@ class FollowButton extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-              context.read<FollowBloc>().add(const FollowEvent.followToggled());
+              final bloc = context.read<FollowBloc>();
+              if (isFollowing) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Xác nhận'),
+                    content: const Text('Bạn có chắc chắn muốn bỏ theo dõi người này?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Hủy'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          bloc.add(const FollowEvent.followToggled());
+                        },
+                        child: const Text('Bỏ theo dõi'),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                context.read<FollowBloc>().add(const FollowEvent.followToggled());
+              }
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
