@@ -214,8 +214,8 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
                       }
                     },
                     tabs: [
-                      const Tab(icon: Icon(Icons.grid_view_rounded)),
-                      if (_isMyProfile) const Tab(icon: Icon(Icons.bookmark_rounded)),
+                      const Tab(text: 'Bài viết'),
+                      if (_isMyProfile) const Tab(text: 'Đã lưu'),
                     ],
                   ),
                 ),
