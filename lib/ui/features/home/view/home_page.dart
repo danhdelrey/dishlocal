@@ -17,16 +17,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+// Sử dụng lại delegate này để làm cho TabBar có thể "ghim" lại.
+// Có thể chuyển class này ra một file tiện ích chung.
+class _SliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
+  _SliverPersistentHeaderDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
+  }
+}
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ConnectivityAndLocationGuard(
-      builder: (context) {
-        return const _HomePageContent();
-      }
-    );
+    return ConnectivityAndLocationGuard(builder: (context) {
+      return const _HomePageContent();
+    });
   }
 }
 
@@ -41,12 +65,13 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
   late final TabController _tabController;
   late final List<PostBloc> _postBlocs;
 
-  late final ScrollController forYouTabScrollController = ScrollController();
-  late final ScrollController followingTabScrollController = ScrollController();
+  // THAY ĐỔI: Chỉ cần một ScrollController cho toàn bộ trang.
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     _tabController = TabController(length: 2, vsync: this);
     final postRepository = getIt<PostRepository>();
 
@@ -58,8 +83,7 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
 
   @override
   void dispose() {
-    forYouTabScrollController.dispose();
-    followingTabScrollController.dispose();
+    _scrollController.dispose();
     _tabController.dispose();
     for (var bloc in _postBlocs) {
       bloc.close();
@@ -67,78 +91,96 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
     super.dispose();
   }
 
-  void _onTabTapped(int index) {
-    if (_tabController.index == index) {
-      // Scroll to top if tapping on current tab
-      final scrollController = index == 0 ? forYouTabScrollController : followingTabScrollController;
-      if (scrollController.hasClients) {
-        final currentOffset = scrollController.offset;
-        final duration = Duration(milliseconds: (currentOffset / 2).clamp(300, 1000).round());
-
-        scrollController.animateTo(
-          0,
-          duration: duration,
-          curve: Curves.easeOut,
-        );
-      }
+  // THAY ĐỔI: Hàm để cuộn toàn bộ trang lên đầu.
+  void _scrollToTop() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
     }
+  }
+
+  // THAY ĐỔI: Hàm refresh chung cho cả trang.
+  Future<void> _onRefresh() async {
+    final activeBloc = _postBlocs[_tabController.index];
+    activeBloc.add(const PostEvent.refreshRequested());
+    await activeBloc.stream.firstWhere((s) => s.status != PostStatus.loading);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      appBar: AppBar(
-        centerTitle: true,
-        title: ShaderMask(
-          shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-          child: Text(
-            'DishLocal',
-            style: appTextTheme(context).titleLarge?.copyWith(fontWeight: FontWeight.w700),
+      // THAY ĐỔI: Bỏ cấu trúc AppBar và Column.
+      // Thay bằng RefreshIndicator và NestedScrollView.
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              // THAY ĐỔI: Sử dụng SliverAppBar thay cho AppBar.
+              SliverAppBar(
+                centerTitle: true,
+                title: ShaderMask(
+                  shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                  child: Text(
+                    'DishLocal',
+                    style: appTextTheme(context).titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                ),
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                surfaceTintColor: Colors.transparent,
+                // Các thuộc tính quan trọng để AppBar hoạt động đúng trong NestedScrollView
+                pinned: true,
+                floating: true,
+                forceElevated: innerBoxIsScrolled, // Hiện bóng đổ khi cuộn
+              ),
+              // THAY ĐỔI: Sử dụng SliverPersistentHeader để ghim TabBar.
+              SliverPersistentHeader(
+                delegate: _SliverPersistentHeaderDelegate(
+                  TabBar(
+                    controller: _tabController,
+                    onTap: (index) {
+                      // Nếu người dùng nhấn vào tab đang được chọn, cuộn lên đầu.
+                      if (index == _tabController.index) {
+                        _scrollToTop();
+                      }
+                    },
+                    tabs: const [
+                      Tab(text: 'Dành cho bạn'),
+                      Tab(text: 'Đang theo dõi'),
+                    ],
+                  ),
+                ),
+                pinned: true, // Đây là thuộc tính làm cho nó "dính" lại.
+              ),
+            ];
+          },
+          // THAY ĐỔI: Body là TabBarView, không cần bọc trong Expanded.
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              BlocProvider.value(
+                value: _postBlocs[0],
+                // PostGridTabView giờ đây hoạt động hoàn hảo trong cấu trúc này.
+                child: const PostGridTabView(
+                  key: PageStorageKey<String>('homeForYouTab'),
+                  noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
+                ),
+              ),
+              BlocProvider.value(
+                value: _postBlocs[1],
+                child: const PostGridTabView(
+                  key: PageStorageKey<String>('homeFollowingTab'),
+                  noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
+                ),
+              ),
+            ],
           ),
         ),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          Material(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: TabBar(
-              controller: _tabController,
-              onTap: _onTabTapped,
-              tabs: const [
-                Tab(text: 'Dành cho bạn'),
-                Tab(text: 'Đang theo dõi'),
-              ],
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                BlocProvider.value(
-                  value: _postBlocs[0],
-                  child: PostGridTabView(
-                    key: const PageStorageKey<String>('homeForYouTab'),
-                    noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
-                  ),
-                ),
-                BlocProvider.value(
-                  value: _postBlocs[1],
-                  child: PostGridTabView(
-                    key: const PageStorageKey<String>('homeFollowingTab'),
-                    noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 }
-
-
