@@ -133,7 +133,7 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 surfaceTintColor: Colors.transparent,
                 // Các thuộc tính quan trọng để AppBar hoạt động đúng trong NestedScrollView
-                pinned: true,
+                snap: true,
                 floating: true,
                 forceElevated: innerBoxIsScrolled, // Hiện bóng đổ khi cuộn
               ),
