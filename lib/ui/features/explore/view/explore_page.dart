@@ -179,7 +179,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                       );
                     }
 
-                    if (state.posts.isEmpty) {
+                    if (state.status == PostStatus.success && state.posts.isEmpty) {
                       return const SliverFillRemaining(
                         hasScrollBody: false,
                         child: Center(

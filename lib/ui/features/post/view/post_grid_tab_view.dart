@@ -108,7 +108,7 @@ class _PostGridTabViewState extends State<PostGridTabView> {
             );
           }
 
-          if (state.posts.isEmpty) {
+          if (state.status == PostStatus.success && state.posts.isEmpty) {
             // Dùng ListView để có thể cuộn và kích hoạt RefreshIndicator
             return ListView(
               children: [
