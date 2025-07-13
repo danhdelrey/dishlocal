@@ -18,6 +18,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+class _SliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
+  _SliverPersistentHeaderDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
+  }
+}
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key, this.userId});
   final String? userId;
@@ -42,26 +66,24 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
   late final TabController _tabController;
   late final List<PostBloc> _postBlocs;
   late final UserInfoBloc _userInfoBloc;
-
-  late final ScrollController postsTabScrollController = ScrollController();
-  late final ScrollController savedTabScrollController = ScrollController();
-
   bool _isMyProfile = false;
+
+  // THAY ĐỔI: Một ScrollController duy nhất để quản lý toàn bộ trang.
+  late final ScrollController _outerScrollController;
 
   @override
   void initState() {
     super.initState();
+
+    _outerScrollController = ScrollController();
 
     final appUserRepo = getIt<AppUserRepository>();
     final postRepository = getIt<PostRepository>();
     final currentUserId = appUserRepo.getCurrentUserId();
 
     _isMyProfile = widget.userId == null || widget.userId == currentUserId;
-
     _tabController = TabController(length: _isMyProfile ? 2 : 1, vsync: this);
-
     _userInfoBloc = getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId));
-
     _postBlocs = [
       PostBloc(
         ({required params}) => postRepository.getPostsByUserId(
@@ -81,8 +103,9 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
 
   @override
   void dispose() {
-    postsTabScrollController.dispose();
-    if (_isMyProfile) savedTabScrollController.dispose();
+    // THAY ĐỔI: Hủy controller
+    _outerScrollController.dispose();
+
     _tabController.dispose();
     _userInfoBloc.close();
     for (var bloc in _postBlocs) {
@@ -91,21 +114,24 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
     super.dispose();
   }
 
-  void _onTabTapped(int index) {
-    if (_tabController.index == index) {
-      // Scroll to top if tapping on current tab
-      final scrollController = index == 0 ? postsTabScrollController : savedTabScrollController;
-      if (scrollController.hasClients) {
-        final currentOffset = scrollController.offset;
-        final duration = Duration(milliseconds: (currentOffset / 2).clamp(300, 1000).round());
-
-        scrollController.animateTo(
-          0,
-          duration: duration,
-          curve: Curves.easeOut,
-        );
-      }
+  // THAY ĐỔI: Hàm cuộn lên đầu trang, được gọi khi nhấn vào tab đang active.
+  void _scrollToTop() {
+    if (_outerScrollController.hasClients) {
+      _outerScrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
     }
+  }
+
+  // THAY ĐỔI: Hàm onRefresh chung cho cả trang.
+  Future<void> _onRefresh() async {
+    // Tìm BLoC của tab đang hoạt động và gọi refresh
+    final activeBloc = _postBlocs[_tabController.index];
+    activeBloc.add(const PostEvent.refreshRequested());
+    // Đợi BLoC xử lý xong (không còn loading) để RefreshIndicator biến mất
+    await activeBloc.stream.firstWhere((s) => s.status != PostStatus.loading);
   }
 
   @override
@@ -115,74 +141,91 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
         BlocProvider.value(value: _userInfoBloc),
       ],
       child: Scaffold(
-        
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          leading: widget.userId != null
-              ? IconButton(
-                  onPressed: () => context.pop(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new,
-                    size: 16,
+        // THAY ĐỔI: Không còn AppBar ở đây.
+        // Toàn bộ cấu trúc được thay bằng RefreshIndicator và NestedScrollView.
+        body: RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: NestedScrollView(
+            // THAY ĐỔI: Gán controller duy nhất cho NestedScrollView.
+            controller: _outerScrollController,
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                // AppBar bây giờ là một SliverAppBar
+                SliverAppBar(
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  surfaceTintColor: Colors.transparent,
+                  leading: widget.userId != null
+                      ? IconButton(
+                          onPressed: () => context.pop(),
+                          icon: const Icon(Icons.arrow_back_ios_new, size: 16),
+                        )
+                      : null,
+                  title: BlocBuilder<UserInfoBloc, UserInfoState>(
+                    builder: (context, state) {
+                      if (state is UserInfoSuccess) {
+                        return Text(state.appUser.username ?? 'Profile');
+                      }
+                      return const SizedBox();
+                    },
                   ),
-                )
-              : null,
-          title: BlocBuilder<UserInfoBloc, UserInfoState>(
-            builder: (context, state) {
-              if (state is UserInfoSuccess) {
-                return Text(state.appUser.username ?? 'Profile');
-              }
-              return const SizedBox();
+                  titleTextStyle: appTextTheme(context).titleMedium,
+                  centerTitle: true,
+                  actions: [
+                    if (_isMyProfile) const LogoutButton(),
+                  ],
+                  // Thuộc tính quan trọng để ghim AppBar và hiển thị lại khi cuộn xuống.
+                  pinned: true,
+                  floating: true,
+                  forceElevated: innerBoxIsScrolled,
+                ),
+                // Widget ProfileInfo được bọc trong SliverToBoxAdapter.
+                const SliverToBoxAdapter(
+                  child: ProfileInfo(),
+                ),
+                // TabBar được ghim lại bằng SliverPersistentHeader.
+                SliverPersistentHeader(
+                  delegate: _SliverPersistentHeaderDelegate(
+                    TabBar(
+                      controller: _tabController,
+                      // THAY ĐỔI: Thêm logic để cuộn lên đầu khi nhấn vào tab đang active.
+                      onTap: (index) {
+                        if (index == _tabController.index) {
+                          _scrollToTop();
+                        }
+                      },
+                      tabs: [
+                        const Tab(icon: Icon(Icons.grid_view_rounded)),
+                        if (_isMyProfile) const Tab(icon: Icon(Icons.bookmark_rounded)),
+                      ],
+                    ),
+                  ),
+                  pinned: true,
+                ),
+              ];
             },
-          ),
-          titleTextStyle: appTextTheme(context).titleMedium,
-          centerTitle: true,
-          actions: [
-            if (_isMyProfile) const LogoutButton(),
-          ],
-        ),
-        body: Column(
-          children: [
-            const ProfileInfo(),
-            Material(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: TabBar(
-                controller: _tabController,
-                onTap: _onTabTapped,
-                tabs: [
-                  const Tab(icon: Icon(Icons.grid_view_rounded)),
-                  if (_isMyProfile) const Tab(icon: Icon(Icons.bookmark_rounded)),
-                ],
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
+            // Body là TabBarView chứa các GridView.
+            body: TabBarView(
+              controller: _tabController,
+              children: [
+                BlocProvider.value(
+                  value: _postBlocs[0],
+                  child: PostGridTabView(
+                    key: const PageStorageKey<String>('profilePosts'),
+                    noItemsFoundMessage: 'Chưa có bài viết nào.',
+                  ),
+                ),
+                if (_isMyProfile)
                   BlocProvider.value(
-                    value: _postBlocs[0],
+                    value: _postBlocs[1],
                     child: PostGridTabView(
-                      scrollController: postsTabScrollController,
-                      key: const PageStorageKey<String>('profilePosts'),
-                      noItemsFoundMessage: 'Chưa có bài viết nào.',
+                      key: const PageStorageKey<String>('profileSavedPosts'),
+                      noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
                     ),
                   ),
-                  if (_isMyProfile)
-                    BlocProvider.value(
-                      value: _postBlocs[1],
-                      child: PostGridTabView(
-                        scrollController: savedTabScrollController,
-                        key: const PageStorageKey<String>('profileSavedPosts'),
-                        noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
-                      ),
-                    ),
-                ],
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

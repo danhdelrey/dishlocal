@@ -121,7 +121,6 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
                 BlocProvider.value(
                   value: _postBlocs[0],
                   child: PostGridTabView(
-                    scrollController: forYouTabScrollController,
                     key: const PageStorageKey<String>('homeForYouTab'),
                     noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
                   ),
@@ -129,7 +128,6 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
                 BlocProvider.value(
                   value: _postBlocs[1],
                   child: PostGridTabView(
-                    scrollController: followingTabScrollController,
                     key: const PageStorageKey<String>('homeFollowingTab'),
                     noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
                   ),
