@@ -114,88 +114,85 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
     return Scaffold(
       // THAY ĐỔI: Bỏ cấu trúc AppBar và Column.
       // Thay bằng RefreshIndicator và NestedScrollView.
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: NestedScrollView(
-          controller: _scrollController,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              // THAY ĐỔI: Sử dụng SliverAppBar thay cho AppBar.
-              SliverAppBar(
-                centerTitle: true,
-                title: ShaderMask(
-                  shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                  child: Text(
-                    'DishLocal',
-                    style: appTextTheme(context).titleLarge?.copyWith(fontWeight: FontWeight.w700),
-                  ),
-                ),
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                surfaceTintColor: Colors.transparent,
-                // Các thuộc tính quan trọng để AppBar hoạt động đúng trong NestedScrollView
-                pinned: false,
-                snap: true,
-                floating: true,
-                forceElevated: innerBoxIsScrolled, // Hiện bóng đổ khi cuộn
-                bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(kToolbarHeight), // Không có khoảng trống dưới AppBar
-                  child: TabBar(
-                    controller: _tabController,
-                    onTap: (index) {
-                      // Nếu người dùng nhấn vào tab đang được chọn, cuộn lên đầu.
-                      if (index == _tabController.index) {
-                        _scrollToTop();
-                      }
-                    },
-                    tabs: const [
-                      Tab(text: 'Dành cho bạn'),
-                      Tab(text: 'Đang theo dõi'),
-                    ],
-                  ),
+      body: NestedScrollView(
+        controller: _scrollController,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            // THAY ĐỔI: Sử dụng SliverAppBar thay cho AppBar.
+            SliverAppBar(
+              centerTitle: true,
+              title: ShaderMask(
+                shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                child: Text(
+                  'DishLocal',
+                  style: appTextTheme(context).titleLarge?.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
-              // THAY ĐỔI: Sử dụng SliverPersistentHeader để ghim TabBar.
-              // SliverPersistentHeader(
-              //   delegate: _SliverPersistentHeaderDelegate(
-              //     TabBar(
-              //       controller: _tabController,
-              //       onTap: (index) {
-              //         // Nếu người dùng nhấn vào tab đang được chọn, cuộn lên đầu.
-              //         if (index == _tabController.index) {
-              //           _scrollToTop();
-              //         }
-              //       },
-              //       tabs: const [
-              //         Tab(text: 'Dành cho bạn'),
-              //         Tab(text: 'Đang theo dõi'),
-              //       ],
-              //     ),
-              //   ),
-              //   pinned: true, // Đây là thuộc tính làm cho nó "dính" lại.
-              // ),
-            ];
-          },
-          // THAY ĐỔI: Body là TabBarView, không cần bọc trong Expanded.
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              BlocProvider.value(
-                value: _postBlocs[0],
-                // PostGridTabView giờ đây hoạt động hoàn hảo trong cấu trúc này.
-                child: const PostGridTabView(
-                  key: PageStorageKey<String>('homeForYouTab'),
-                  noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              surfaceTintColor: Colors.transparent,
+              // Các thuộc tính quan trọng để AppBar hoạt động đúng trong NestedScrollView
+              pinned: false,
+              snap: true,
+              floating: true,
+              forceElevated: innerBoxIsScrolled, // Hiện bóng đổ khi cuộn
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight), // Không có khoảng trống dưới AppBar
+                child: TabBar(
+                  controller: _tabController,
+                  onTap: (index) {
+                    // Nếu người dùng nhấn vào tab đang được chọn, cuộn lên đầu.
+                    if (index == _tabController.index) {
+                      _scrollToTop();
+                    }
+                  },
+                  tabs: const [
+                    Tab(text: 'Dành cho bạn'),
+                    Tab(text: 'Đang theo dõi'),
+                  ],
                 ),
               ),
-              BlocProvider.value(
-                value: _postBlocs[1],
-                child: const PostGridTabView(
-                  key: PageStorageKey<String>('homeFollowingTab'),
-                  noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
-                ),
+            ),
+            // THAY ĐỔI: Sử dụng SliverPersistentHeader để ghim TabBar.
+            // SliverPersistentHeader(
+            //   delegate: _SliverPersistentHeaderDelegate(
+            //     TabBar(
+            //       controller: _tabController,
+            //       onTap: (index) {
+            //         // Nếu người dùng nhấn vào tab đang được chọn, cuộn lên đầu.
+            //         if (index == _tabController.index) {
+            //           _scrollToTop();
+            //         }
+            //       },
+            //       tabs: const [
+            //         Tab(text: 'Dành cho bạn'),
+            //         Tab(text: 'Đang theo dõi'),
+            //       ],
+            //     ),
+            //   ),
+            //   pinned: true, // Đây là thuộc tính làm cho nó "dính" lại.
+            // ),
+          ];
+        },
+        // THAY ĐỔI: Body là TabBarView, không cần bọc trong Expanded.
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            BlocProvider.value(
+              value: _postBlocs[0],
+              // PostGridTabView giờ đây hoạt động hoàn hảo trong cấu trúc này.
+              child: const PostGridTabView(
+                key: PageStorageKey<String>('homeForYouTab'),
+                noItemsFoundMessage: 'Chưa có bài viết nào để hiển thị.',
               ),
-            ],
-          ),
+            ),
+            BlocProvider.value(
+              value: _postBlocs[1],
+              child: const PostGridTabView(
+                key: PageStorageKey<String>('homeFollowingTab'),
+                noItemsFoundMessage: 'Bạn chưa theo dõi ai, hoặc họ chưa đăng bài mới.',
+              ),
+            ),
+          ],
         ),
       ),
     );

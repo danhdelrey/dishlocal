@@ -143,88 +143,85 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
       child: Scaffold(
         // THAY ĐỔI: Không còn AppBar ở đây.
         // Toàn bộ cấu trúc được thay bằng RefreshIndicator và NestedScrollView.
-        body: RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: NestedScrollView(
-            // THAY ĐỔI: Gán controller duy nhất cho NestedScrollView.
-            controller: _outerScrollController,
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                // AppBar bây giờ là một SliverAppBar
-                SliverAppBar(
-                  automaticallyImplyLeading: false,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  surfaceTintColor: Colors.transparent,
-                  leading: widget.userId != null
-                      ? IconButton(
-                          onPressed: () => context.pop(),
-                          icon: const Icon(Icons.arrow_back_ios_new, size: 16),
-                        )
-                      : null,
-                  title: BlocBuilder<UserInfoBloc, UserInfoState>(
-                    builder: (context, state) {
-                      if (state is UserInfoSuccess) {
-                        return Text(state.appUser.username ?? 'Profile');
+        body: NestedScrollView(
+          // THAY ĐỔI: Gán controller duy nhất cho NestedScrollView.
+          controller: _outerScrollController,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              // AppBar bây giờ là một SliverAppBar
+              SliverAppBar(
+                automaticallyImplyLeading: false,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                surfaceTintColor: Colors.transparent,
+                leading: widget.userId != null
+                    ? IconButton(
+                        onPressed: () => context.pop(),
+                        icon: const Icon(Icons.arrow_back_ios_new, size: 16),
+                      )
+                    : null,
+                title: BlocBuilder<UserInfoBloc, UserInfoState>(
+                  builder: (context, state) {
+                    if (state is UserInfoSuccess) {
+                      return Text(state.appUser.username ?? 'Profile');
+                    }
+                    return const SizedBox();
+                  },
+                ),
+                titleTextStyle: appTextTheme(context).titleMedium,
+                centerTitle: true,
+                actions: [
+                  if (_isMyProfile) const LogoutButton(),
+                ],
+                // Thuộc tính quan trọng để ghim AppBar và hiển thị lại khi cuộn xuống.
+                pinned: true,
+                floating: true,
+                forceElevated: innerBoxIsScrolled,
+              ),
+              // Widget ProfileInfo được bọc trong SliverToBoxAdapter.
+              const SliverToBoxAdapter(
+                child: ProfileInfo(),
+              ),
+              // TabBar được ghim lại bằng SliverPersistentHeader.
+              SliverPersistentHeader(
+                delegate: _SliverPersistentHeaderDelegate(
+                  TabBar(
+                    controller: _tabController,
+                    // THAY ĐỔI: Thêm logic để cuộn lên đầu khi nhấn vào tab đang active.
+                    onTap: (index) {
+                      if (index == _tabController.index) {
+                        _scrollToTop();
                       }
-                      return const SizedBox();
                     },
+                    tabs: [
+                      const Tab(icon: Icon(Icons.grid_view_rounded)),
+                      if (_isMyProfile) const Tab(icon: Icon(Icons.bookmark_rounded)),
+                    ],
                   ),
-                  titleTextStyle: appTextTheme(context).titleMedium,
-                  centerTitle: true,
-                  actions: [
-                    if (_isMyProfile) const LogoutButton(),
-                  ],
-                  // Thuộc tính quan trọng để ghim AppBar và hiển thị lại khi cuộn xuống.
-                  pinned: true,
-                  floating: true,
-                  forceElevated: innerBoxIsScrolled,
                 ),
-                // Widget ProfileInfo được bọc trong SliverToBoxAdapter.
-                const SliverToBoxAdapter(
-                  child: ProfileInfo(),
+                pinned: true,
+              ),
+            ];
+          },
+          // Body là TabBarView chứa các GridView.
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              BlocProvider.value(
+                value: _postBlocs[0],
+                child: PostGridTabView(
+                  key: const PageStorageKey<String>('profilePosts'),
+                  noItemsFoundMessage: 'Chưa có bài viết nào.',
                 ),
-                // TabBar được ghim lại bằng SliverPersistentHeader.
-                SliverPersistentHeader(
-                  delegate: _SliverPersistentHeaderDelegate(
-                    TabBar(
-                      controller: _tabController,
-                      // THAY ĐỔI: Thêm logic để cuộn lên đầu khi nhấn vào tab đang active.
-                      onTap: (index) {
-                        if (index == _tabController.index) {
-                          _scrollToTop();
-                        }
-                      },
-                      tabs: [
-                        const Tab(icon: Icon(Icons.grid_view_rounded)),
-                        if (_isMyProfile) const Tab(icon: Icon(Icons.bookmark_rounded)),
-                      ],
-                    ),
-                  ),
-                  pinned: true,
-                ),
-              ];
-            },
-            // Body là TabBarView chứa các GridView.
-            body: TabBarView(
-              controller: _tabController,
-              children: [
+              ),
+              if (_isMyProfile)
                 BlocProvider.value(
-                  value: _postBlocs[0],
+                  value: _postBlocs[1],
                   child: PostGridTabView(
-                    key: const PageStorageKey<String>('profilePosts'),
-                    noItemsFoundMessage: 'Chưa có bài viết nào.',
+                    key: const PageStorageKey<String>('profileSavedPosts'),
+                    noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
                   ),
                 ),
-                if (_isMyProfile)
-                  BlocProvider.value(
-                    value: _postBlocs[1],
-                    child: PostGridTabView(
-                      key: const PageStorageKey<String>('profileSavedPosts'),
-                      noItemsFoundMessage: 'Chưa có bài viết nào được lưu.',
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
