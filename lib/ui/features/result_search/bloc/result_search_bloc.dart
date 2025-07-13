@@ -15,7 +15,7 @@ class ResultSearchBloc extends Bloc<ResultSearchEvent, ResultSearchState> {
   final _log = Logger('ResultSearchBloc');
   final PostRepository _postRepository;
   final AppUserRepository _appUserRepository;
-  static const int _hitsPerPage = 15;
+  static const int _hitsPerPage = 10;
 
   ResultSearchBloc(this._postRepository, this._appUserRepository) : super(const ResultSearchState()) {
     on<_SearchStarted>(_onSearchStarted);

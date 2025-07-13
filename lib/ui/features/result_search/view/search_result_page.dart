@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/ui/features/post/view/shimmering_small_post.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/features/result_search/bloc/result_search_bloc.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
@@ -101,7 +102,10 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
           BlocProvider.value(
             value: _postsSearchBloc,
             // PageStorageKey giúp giữ trạng thái cuộn khi chuyển tab.
-            child: const _PostResultsView(key: PageStorageKey('search_posts_tab')),
+            child: _PostResultsView(
+              key: const PageStorageKey('search_posts_tab'),
+              query: widget.query,
+            ),
           ),
           // Cung cấp instance BLoC của người dùng cho view tương ứng.
           BlocProvider.value(
@@ -116,7 +120,8 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
 
 // Widget hiển thị kết quả bài viết, giờ chỉ cần lắng nghe BLoC được cung cấp.
 class _PostResultsView extends StatefulWidget {
-  const _PostResultsView({super.key});
+  const _PostResultsView({super.key, required this.query});
+  final String query;
 
   @override
   State<_PostResultsView> createState() => _PostResultsViewState();
@@ -157,7 +162,18 @@ class _PostResultsViewState extends State<_PostResultsView> {
       builder: (context, state) {
         // Các trường hợp loading, empty, failure
         if (state.status == SearchStatus.loading && state.results.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return GridView.builder(
+            key: const PageStorageKey<String>('shimmer_grid'),
+            padding: const EdgeInsets.all(10.0),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 0.75,
+            ),
+            itemCount: 8,
+            itemBuilder: (context, index) => const ShimmeringSmallPost(),
+          );
         }
         if (state.status == SearchStatus.empty) {
           return Center(child: Text('Không tìm thấy bài viết nào cho "${state.query}".'));
@@ -171,19 +187,26 @@ class _PostResultsViewState extends State<_PostResultsView> {
         // Hiển thị GridView với dữ liệu
         return GridView.builder(
           controller: _scrollController,
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10.0),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
             childAspectRatio: 0.75,
           ),
-          itemCount: state.hasNextPage ? posts.length + 1 : posts.length,
+          itemCount: state.hasNextPage ? posts.length + 2 : posts.length,
           itemBuilder: (context, index) {
             if (index >= posts.length) {
-              return const Center(child: CircularProgressIndicator());
+              return const ShimmeringSmallPost();
             }
-            return SmallPost(post: posts[index], onDeletePostPopBack: () {});
+            final post = posts[index];
+            return SmallPost(
+              post: post,
+              onDeletePostPopBack: () {
+                // Khi xóa bài viết, cần refresh lại BLoC để cập nhật danh sách.
+                context.read<ResultSearchBloc>().add(ResultSearchEvent.searchStarted(query: widget.query));
+              },
+            );
           },
         );
       },
