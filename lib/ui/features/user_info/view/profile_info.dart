@@ -34,7 +34,7 @@ class ProfileInfo extends StatelessWidget {
                   // Avatar
                   Center(
                     child: CachedCircleAvatar(
-                      circleRadius: 30,
+                      circleRadius: 40,
                       imageUrl: state.appUser.photoUrl ?? '',
                     ),
                   ),
