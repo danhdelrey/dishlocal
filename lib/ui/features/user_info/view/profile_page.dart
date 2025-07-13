@@ -142,6 +142,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
     // Tìm BLoC của tab đang hoạt động và gọi refresh
     final activeBloc = _postBlocs[_tabController.index];
     activeBloc.add(const PostEvent.refreshRequested());
+    _userInfoBloc.add(UserInfoRequested(userId: widget.userId));
     // Đợi BLoC xử lý xong (không còn loading) để RefreshIndicator biến mất
     await activeBloc.stream.firstWhere((s) => s.status != PostStatus.loading);
   }
