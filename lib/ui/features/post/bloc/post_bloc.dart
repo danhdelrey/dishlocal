@@ -15,9 +15,12 @@ part 'post_event.dart';
 part 'post_state.dart'; // Đổi tên file nếu bạn tách ra
 part 'post_bloc.freezed.dart';
 
-// PostFetcher bây giờ phải nhận FilterSortParams
 typedef PostFetcher = Future<Either<post_failure.PostFailure, List<Post>>> Function({
-  required FilterSortParams params,
+  // Tham số cho các feed thông thường (dùng cursor)
+  FilterSortParams? filterSortParams,
+  // Tham số cho feed gợi ý (dùng số trang)
+  int? page,
+  required int pageSize,
 });
 
 // Helper để tránh các yêu cầu fetch bị chồng chéo
@@ -30,20 +33,27 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 class PostBloc extends Bloc<PostEvent, PostState> {
   final _log = Logger('PostBloc');
   final PostFetcher _postFetcher;
+  final bool _isRecommendationFeed; // <-- THÊM CỜ MỚI
   static const _pageSize = 10;
 
-  PostBloc(this._postFetcher) : super(PostState(filterSortParams: FilterSortParams.defaultParams())) {
+  /// Constructor mới, nhận thêm một cờ để xác định loại feed
+  PostBloc(
+    this._postFetcher, {
+    bool isRecommendationFeed = false, // Mặc định là feed thông thường
+    FilterSortParams? initialFilterSortParams, // Cho phép truyền vào bộ lọc ban đầu
+  })  : _isRecommendationFeed = isRecommendationFeed,
+        super(PostState(filterSortParams: initialFilterSortParams ?? FilterSortParams.defaultParams())) {
     on<_FetchNextPageRequested>(
       _onFetchNextPageRequested,
-      // Ngăn người dùng spam yêu cầu tải trang
       transformer: throttleDroppable(const Duration(milliseconds: 500)),
     );
     on<_RefreshRequested>(_onRefreshRequested);
     on<_FiltersChanged>(_onFiltersChanged);
   }
 
-  /// Helper để tính toán con trỏ (cursor) cho yêu cầu tiếp theo
+  /// Helper để tính toán con trỏ (cursor) cho các feed THÔNG THƯỜNG
   Map<String, dynamic> _calculateCursor(List<Post> currentPosts, SortOption sortOption) {
+    // Logic này không thay đổi
     if (currentPosts.isEmpty) {
       return {'mainCursor': null, 'dateCursor': null};
     }
@@ -51,12 +61,10 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
     switch (sortOption.field) {
       case SortField.datePosted:
-        // Sắp xếp theo ngày, chỉ cần con trỏ chính
         return {'mainCursor': lastPost.createdAt, 'dateCursor': null};
       case SortField.likes:
       case SortField.comments:
       case SortField.saves:
-        // Sắp xếp theo số, cần cả hai
         final numericValue = sortOption.field == SortField.likes
             ? lastPost.likeCount
             : sortOption.field == SortField.comments
@@ -73,41 +81,46 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     _FetchNextPageRequested event,
     Emitter<PostState> emit,
   ) async {
-    // Ngăn chặn việc fetch nếu đang tải hoặc đã hết trang
     if (state.status == PostStatus.loading || !state.hasNextPage) return;
 
-    // Nếu đây là lần tải đầu tiên (danh sách rỗng), trạng thái là initial.
-    // Nếu không, vẫn giữ trạng thái success và hiển thị loading indicator ở cuối.
     if (state.status == PostStatus.initial) {
       emit(state.copyWith(status: PostStatus.loading));
     }
 
-    final cursorData = _calculateCursor(state.posts, state.filterSortParams.sortOption);
+    // --- LOGIC PHÂN NHÁNH QUAN TRỌNG ---
+    final Future<Either<post_failure.PostFailure, List<Post>>> fetchResult;
 
-    _log.info('📥 Đang tải trang tiếp theo. Cursor: ${cursorData['mainCursor']}, Tie-break: ${cursorData['dateCursor']}');
+    if (_isRecommendationFeed) {
+      // --- LUỒNG DÀNH CHO FEED GỢI Ý (DÙNG SỐ TRANG) ---
+      // Tính toán trang hiện tại dựa trên số lượng bài viết đã có
+      final currentPage = (state.posts.length / _pageSize).floor() + 1;
+      _log.info('📥 Đang tải trang gợi ý tiếp theo. Trang số: $currentPage');
+      fetchResult = _postFetcher(page: currentPage, pageSize: _pageSize);
+    } else {
+      // --- LUỒNG DÀNH CHO FEED THÔNG THƯỜNG (DÙNG CURSOR) ---
+      final cursorData = _calculateCursor(state.posts, state.filterSortParams.sortOption);
+      _log.info('📥 Đang tải trang tiếp theo. Cursor: ${cursorData['mainCursor']}');
 
-    final params = state.filterSortParams.copyWith(
-      // Gán con trỏ vào các trường tương ứng
-      lastCursor: cursorData['mainCursor'],
-      lastDateCursorForTieBreak: cursorData['dateCursor'],
-      limit: _pageSize,
-    );
+      final params = state.filterSortParams.copyWith(
+        lastCursor: cursorData['mainCursor'],
+        lastDateCursorForTieBreak: cursorData['dateCursor'],
+        limit: _pageSize,
+      );
+      fetchResult = _postFetcher(filterSortParams: params, pageSize: _pageSize);
+    }
 
-    final result = await _postFetcher(params: params);
-
+    // --- PHẦN XỬ LÝ KẾT QUẢ (GIỮ NGUYÊN) ---
+    final result = await fetchResult;
     result.fold(
-      // Trường hợp thất bại
       (failure) {
         _log.severe('❌ Lỗi khi tải bài viết: $failure');
         emit(state.copyWith(status: PostStatus.failure, failure: failure));
       },
-      // Trường hợp thành công
       (newPosts) {
         final isLastPage = newPosts.length < _pageSize;
         _log.info('✅ Tải được ${newPosts.length} bài viết. isLastPage: $isLastPage');
         emit(state.copyWith(
           status: PostStatus.success,
-          // Nối danh sách cũ với danh sách mới
           posts: List.of(state.posts)..addAll(newPosts),
           hasNextPage: !isLastPage,
         ));
@@ -120,9 +133,9 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     Emitter<PostState> emit,
   ) async {
     _log.info('🔄 Yêu cầu làm mới...');
-    // Reset state về ban đầu, nhưng giữ lại bộ lọc hiện tại
+    // Khi refresh, reset mọi thứ về trạng thái ban đầu, chỉ giữ lại bộ lọc
+    // Chú ý: Feed gợi ý không có bộ lọc, nên nó sẽ dùng giá trị mặc định.
     emit(PostState(filterSortParams: state.filterSortParams));
-    // Gọi event fetch để tải lại từ đầu
     add(const PostEvent.fetchNextPageRequested());
   }
 
@@ -130,10 +143,13 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     _FiltersChanged event,
     Emitter<PostState> emit,
   ) async {
+    // Bộ lọc chỉ có ý nghĩa với feed thông thường.
+    if (_isRecommendationFeed) {
+      _log.warning("⚠️ Bỏ qua sự kiện FiltersChanged vì đây là feed gợi ý.");
+      return;
+    }
     _log.info('🔄 Bộ lọc thay đổi. Đang làm mới với bộ lọc mới...');
-    // Reset hoàn toàn state và áp dụng bộ lọc mới
     emit(PostState(filterSortParams: event.newFilters));
-    // Gọi event fetch để tải lại từ đầu với bộ lọc mới
     add(const PostEvent.fetchNextPageRequested());
   }
 }
