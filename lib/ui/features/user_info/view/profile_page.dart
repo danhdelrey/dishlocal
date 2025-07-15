@@ -91,18 +91,25 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
     _tabController = TabController(length: _isMyProfile ? 2 : 1, vsync: this);
     _userInfoBloc = getIt<UserInfoBloc>()..add(UserInfoRequested(userId: widget.userId));
     _postBlocs = [
+      // --- BLOC DÀNH CHO CÁC BÀI ĐĂNG CỦA MỘT USER ---
       PostBloc(
-        ({required params}) => postRepository.getPostsByUserId(
-          userId: widget.userId,
-          params: params,
-        ),
+        ({filterSortParams, page, required pageSize}) {
+          return postRepository.getPostsByUserId(
+            userId: widget.userId,
+            params: filterSortParams!,
+          );
+        },
       ),
+
+      // --- BLOC DÀNH CHO CÁC BÀI ĐÃ LƯU (chỉ hiển thị nếu là profile của tôi) ---
       if (_isMyProfile)
         PostBloc(
-          ({required params}) => postRepository.getSavedPosts(
-            userId: currentUserId,
-            params: params,
-          ),
+          ({filterSortParams, page, required pageSize}) {
+            return postRepository.getSavedPosts(
+              userId: currentUserId,
+              params: filterSortParams!,
+            );
+          },
         ),
     ];
 

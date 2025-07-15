@@ -53,7 +53,11 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
   void initState() {
     super.initState();
     final postRepository = getIt<PostRepository>();
-    _bloc = PostBloc(({required params}) => postRepository.getPosts(params: params));
+    _bloc = PostBloc(
+      ({filterSortParams, page, required pageSize}) {
+        return postRepository.getPosts(params: filterSortParams!);
+      },
+    );
 
     if (_bloc.state.status == PostStatus.initial) {
       if (widget.initialFilterSortParams != null) {

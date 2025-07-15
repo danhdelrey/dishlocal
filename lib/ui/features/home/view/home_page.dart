@@ -82,8 +82,30 @@ class _HomePageContentState extends State<_HomePageContent> with TickerProviderS
     final postRepository = getIt<PostRepository>();
 
     _postBlocs = [
-      PostBloc(({required params}) => postRepository.getPosts(params: params)),
-      PostBloc(({required params}) => postRepository.getFollowingPosts(params: params)),
+      // --- BLOC DÀNH CHO FEED GỢI Ý ("DÀNH CHO BẠN") ---
+      PostBloc(
+        // 1. Kích hoạt chế độ gợi ý
+        isRecommendationFeed: true,
+
+        // 2. Cung cấp PostFetcher gọi đến hàm getRecommendedPosts
+        // Chữ ký của lambda function bây giờ phải khớp với typedef mới
+        ({filterSortParams, page, required pageSize}) {
+          // Vì đây là feed gợi ý, chúng ta chắc chắn 'page' sẽ có giá trị.
+          return postRepository.getRecommendedPosts(
+            page: page!,
+            pageSize: pageSize,
+          );
+        },
+      ),
+
+      // --- BLOC DÀNH CHO FEED "ĐANG THEO DÕI" (GIỮ NGUYÊN LOGIC CŨ) ---
+      PostBloc(
+        // Lambda function được cập nhật để khớp với typedef mới
+        ({filterSortParams, page, required pageSize}) {
+          // Vì đây là feed thông thường, chúng ta chắc chắn 'filterSortParams' sẽ có giá trị.
+          return postRepository.getFollowingPosts(params: filterSortParams!);
+        },
+      ),
     ];
 
     _refreshSubscription = refreshManager.refreshStream.listen((tabIndex) {
