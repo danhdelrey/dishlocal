@@ -38,6 +38,8 @@ abstract class Post with _$Post {
     /// Ví dụ: [ReviewItem(category: food, ...), ReviewItem(category: ambiance, ...)]
     /// Mặc định là một danh sách rỗng để tránh lỗi null trên UI.
     @Default([]) List<ReviewItem> reviews,
+
+    double? score,
   }) = _Post;
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);

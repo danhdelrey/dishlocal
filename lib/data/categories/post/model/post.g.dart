@@ -34,6 +34,7 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
               ?.map((e) => ReviewItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      score: (json['score'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
@@ -58,4 +59,5 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'foodCategory':
           const FoodCategoryConverter().toJson(instance.foodCategory),
       'reviews': instance.reviews.map((e) => e.toJson()).toList(),
+      'score': instance.score,
     };

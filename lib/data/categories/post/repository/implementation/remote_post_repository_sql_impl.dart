@@ -579,17 +579,18 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       return const Left(UnknownFailure());
     }
   }
-  
-    @override
+
+  @override
   Future<Either<PostFailure, List<Post>>> getRecommendedPosts({
     required int page,
     required int pageSize,
   }) {
-    
     return _handleErrors(() async {
       _log.info('📥 Bắt đầu lấy trang $page các bài viết được gợi ý (kích thước trang: $pageSize)...');
 
-      // 1. Gọi hàm RPC đã được tạo trong Supabase.
+      // =======================================================================
+      // === BƯỚC 1: GỌI RPC VÀ LOG DỮ LIỆU THÔ (RAW DATA) ======================
+      // =======================================================================
       final List<dynamic> data = await _supabase.rpc(
         'get_recommended_posts_paginated',
         params: {
@@ -598,18 +599,42 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         },
       );
 
-      // 2. Chuyển đổi dữ liệu JSON (List<Map<String, dynamic>>) thành danh sách các đối tượng Post.
-      final posts = data.map((json) => Post.fromJson(json as Map<String, dynamic>)).toList();
-      _log.info('✅ Lấy thành công ${posts.length} bài viết gợi ý.');
+      // In ra dữ liệu thô để kiểm tra thứ tự từ server
+      _log.info('🗄️ DỮ LIỆU THÔ TỪ SUPABASE RPC:');
+      for (var i = 0; i < data.length; i++) {
+        final item = data[i] as Map<String, dynamic>;
+        // In ra tên món ăn và điểm số để dễ so sánh
+        _log.info('  [${i + 1}] ${item['dishName']} - score: ${item['score']}');
+      }
 
-      // 3. Làm giàu dữ liệu với khoảng cách.
+      // =======================================================================
+      // === BƯỚC 2: CHUYỂN ĐỔI VÀ LOG DANH SÁCH POST ==========================
+      // =======================================================================
+      final posts = data.map((json) => Post.fromJson(json as Map<String, dynamic>)).toList();
+      _log.info('✅ Chuyển đổi thành công ${posts.length} bài viết gợi ý.');
+
+      // In ra danh sách Post sau khi chuyển đổi
+      _log.info('📜 DANH SÁCH POST SAU KHI CHUYỂN ĐỔI (TRƯỚC KHI LÀM GIÀU):');
+      for (var i = 0; i < posts.length; i++) {
+        _log.info('  [${i + 1}] ${posts[i].dishName} - score: (lấy từ Post object)'); // Score có thể không có trực tiếp trên Post model
+      }
+
+      // =======================================================================
+      // === BƯỚC 3: LÀM GIÀU DỮ LIỆU VÀ LOG KẾT QUẢ CUỐI CÙNG =================
+      // =======================================================================
       if (posts.isNotEmpty) {
-        return _enrichPostsWithDistance(posts);
+        final enrichedPosts = await _enrichPostsWithDistance(posts);
+
+        // In ra danh sách Post sau khi đã được làm giàu
+        _log.info('✨ DANH SÁCH POST SAU KHI LÀM GIÀU (TRƯỚC KHI TRẢ VỀ):');
+        for (var i = 0; i < enrichedPosts.length; i++) {
+          _log.info('  [${i + 1}] ${enrichedPosts[i].dishName} - distance: ${enrichedPosts[i].distance}');
+        }
+
+        return enrichedPosts;
       }
 
       return posts;
     });
   }
-  
-  
 }

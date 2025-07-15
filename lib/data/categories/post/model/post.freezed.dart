@@ -41,6 +41,7 @@ mixin _$Post {
   /// Ví dụ: [ReviewItem(category: food, ...), ReviewItem(category: ambiance, ...)]
   /// Mặc định là một danh sách rỗng để tránh lỗi null trên UI.
   List<ReviewItem> get reviews;
+  double? get score;
 
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
@@ -89,7 +90,8 @@ mixin _$Post {
                 other.commentCount == commentCount) &&
             (identical(other.foodCategory, foodCategory) ||
                 other.foodCategory == foodCategory) &&
-            const DeepCollectionEquality().equals(other.reviews, reviews));
+            const DeepCollectionEquality().equals(other.reviews, reviews) &&
+            (identical(other.score, score) || other.score == score));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -115,12 +117,13 @@ mixin _$Post {
         isSaved,
         commentCount,
         foodCategory,
-        const DeepCollectionEquality().hash(reviews)
+        const DeepCollectionEquality().hash(reviews),
+        score
       ]);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory, reviews: $reviews)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory, reviews: $reviews, score: $score)';
   }
 }
 
@@ -149,7 +152,8 @@ abstract mixin class $PostCopyWith<$Res> {
       bool isSaved,
       int commentCount,
       @FoodCategoryConverter() FoodCategory? foodCategory,
-      List<ReviewItem> reviews});
+      List<ReviewItem> reviews,
+      double? score});
 
   $AddressCopyWith<$Res>? get address;
 }
@@ -186,6 +190,7 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
     Object? commentCount = null,
     Object? foodCategory = freezed,
     Object? reviews = null,
+    Object? score = freezed,
   }) {
     return _then(_self.copyWith(
       postId: null == postId
@@ -268,6 +273,10 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
           ? _self.reviews
           : reviews // ignore: cast_nullable_to_non_nullable
               as List<ReviewItem>,
+      score: freezed == score
+          ? _self.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 
@@ -310,7 +319,8 @@ class _Post implements Post {
       required this.isSaved,
       required this.commentCount,
       @FoodCategoryConverter() this.foodCategory,
-      final List<ReviewItem> reviews = const []})
+      final List<ReviewItem> reviews = const [],
+      this.score})
       : _reviews = reviews;
   factory _Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
@@ -371,6 +381,9 @@ class _Post implements Post {
     return EqualUnmodifiableListView(_reviews);
   }
 
+  @override
+  final double? score;
+
   /// Create a copy of Post
   /// with the given fields replaced by the non-null parameter values.
   @override
@@ -423,7 +436,8 @@ class _Post implements Post {
                 other.commentCount == commentCount) &&
             (identical(other.foodCategory, foodCategory) ||
                 other.foodCategory == foodCategory) &&
-            const DeepCollectionEquality().equals(other._reviews, _reviews));
+            const DeepCollectionEquality().equals(other._reviews, _reviews) &&
+            (identical(other.score, score) || other.score == score));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -449,12 +463,13 @@ class _Post implements Post {
         isSaved,
         commentCount,
         foodCategory,
-        const DeepCollectionEquality().hash(_reviews)
+        const DeepCollectionEquality().hash(_reviews),
+        score
       ]);
 
   @override
   String toString() {
-    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory, reviews: $reviews)';
+    return 'Post(postId: $postId, authorUserId: $authorUserId, authorUsername: $authorUsername, authorAvatarUrl: $authorAvatarUrl, imageUrl: $imageUrl, blurHash: $blurHash, dishName: $dishName, diningLocationName: $diningLocationName, address: $address, distance: $distance, price: $price, insight: $insight, createdAt: $createdAt, likeCount: $likeCount, saveCount: $saveCount, isLiked: $isLiked, isSaved: $isSaved, commentCount: $commentCount, foodCategory: $foodCategory, reviews: $reviews, score: $score)';
   }
 }
 
@@ -484,7 +499,8 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       bool isSaved,
       int commentCount,
       @FoodCategoryConverter() FoodCategory? foodCategory,
-      List<ReviewItem> reviews});
+      List<ReviewItem> reviews,
+      double? score});
 
   @override
   $AddressCopyWith<$Res>? get address;
@@ -522,6 +538,7 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
     Object? commentCount = null,
     Object? foodCategory = freezed,
     Object? reviews = null,
+    Object? score = freezed,
   }) {
     return _then(_Post(
       postId: null == postId
@@ -604,6 +621,10 @@ class __$PostCopyWithImpl<$Res> implements _$PostCopyWith<$Res> {
           ? _self._reviews
           : reviews // ignore: cast_nullable_to_non_nullable
               as List<ReviewItem>,
+      score: freezed == score
+          ? _self.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 
