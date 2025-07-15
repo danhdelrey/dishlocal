@@ -59,4 +59,9 @@ abstract class PostRepository {
     int page = 0,
     int hitsPerPage = 20,
   });
+
+  Future<Either<PostFailure, List<Post>>> getRecommendedPosts({
+    required int page,
+    required int pageSize,
+  });
 }

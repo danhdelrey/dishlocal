@@ -579,4 +579,37 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       return const Left(UnknownFailure());
     }
   }
+  
+    @override
+  Future<Either<PostFailure, List<Post>>> getRecommendedPosts({
+    required int page,
+    required int pageSize,
+  }) {
+    
+    return _handleErrors(() async {
+      _log.info('📥 Bắt đầu lấy trang $page các bài viết được gợi ý (kích thước trang: $pageSize)...');
+
+      // 1. Gọi hàm RPC đã được tạo trong Supabase.
+      final List<dynamic> data = await _supabase.rpc(
+        'get_recommended_posts_paginated',
+        params: {
+          'p_page_number': page,
+          'p_page_size': pageSize,
+        },
+      );
+
+      // 2. Chuyển đổi dữ liệu JSON (List<Map<String, dynamic>>) thành danh sách các đối tượng Post.
+      final posts = data.map((json) => Post.fromJson(json as Map<String, dynamic>)).toList();
+      _log.info('✅ Lấy thành công ${posts.length} bài viết gợi ý.');
+
+      // 3. Làm giàu dữ liệu với khoảng cách.
+      if (posts.isNotEmpty) {
+        return _enrichPostsWithDistance(posts);
+      }
+
+      return posts;
+    });
+  }
+  
+  
 }
