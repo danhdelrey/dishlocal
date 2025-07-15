@@ -616,7 +616,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       // In ra danh sách Post sau khi chuyển đổi
       _log.info('📜 DANH SÁCH POST SAU KHI CHUYỂN ĐỔI (TRƯỚC KHI LÀM GIÀU):');
       for (var i = 0; i < posts.length; i++) {
-        _log.info('  [${i + 1}] ${posts[i].dishName} - score: (lấy từ Post object)'); // Score có thể không có trực tiếp trên Post model
+        _log.info('  [${i + 1}] ${posts[i].dishName} - score: ${posts[i].score} (lấy từ Post object)');
       }
 
       // =======================================================================
