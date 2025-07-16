@@ -64,4 +64,9 @@ abstract class PostRepository {
     required int page,
     required int pageSize,
   });
+
+  Future<Either<PostFailure, void>> recordPostView({
+    required String postId,
+    int? durationInMs,
+  });
 }

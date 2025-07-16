@@ -637,4 +637,36 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       return posts;
     });
   }
+  
+   @override
+  Future<Either<PostFailure, void>> recordPostView({
+    required String postId,
+    int? durationInMs,
+  }) {
+    // Sử dụng helper `_handleErrors` để tự động bắt lỗi và chuyển đổi sang PostFailure
+    return _handleErrors(() async {
+      _log.info('📝 Ghi nhận lượt xem cho bài viết ID: $postId...');
+
+      // 1. Chuẩn bị các tham số cho lệnh gọi RPC
+      final params = <String, dynamic>{
+        'p_post_id': postId,
+      };
+
+      // 2. Chỉ thêm tham số thời gian xem nếu nó hợp lệ
+      if (durationInMs != null && durationInMs > 0) {
+        params['p_view_duration_ms'] = durationInMs;
+        _log.fine('... với thời gian xem: ${durationInMs}ms');
+      }
+
+      // 3. Gọi hàm RPC trên Supabase
+      // Hàm này không trả về dữ liệu (void), nên chúng ta chỉ cần `await` nó
+      // để đảm bảo nó hoàn thành hoặc ném ra lỗi.
+      await _supabase.rpc(
+        'record_post_view',
+        params: params,
+      );
+
+      _log.fine('✅ Ghi nhận lượt xem thành công.');
+    });
+  }
 }

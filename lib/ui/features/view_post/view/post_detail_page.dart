@@ -31,179 +31,133 @@ import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
-class PostDetailPage extends StatefulWidget {
+class PostDetailPage extends StatelessWidget {
   const PostDetailPage({super.key, required this.post});
 
   final Post post;
 
   @override
-  State<PostDetailPage> createState() => _PostDetailPageState();
-}
-
-class _PostDetailPageState extends State<PostDetailPage> {
-  late final BouncingOverlayMenuController _menuController;
-
-  @override
-  void initState() {
-    super.initState();
-    _menuController = BouncingOverlayMenuController();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Cung cấp các BLoC cần thiết ở đây
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => getIt<ViewPostBloc>()..add(ViewPostEvent.started(widget.post)),
+          // Logic tạo BLoC và add event `started` được đặt ở đây.
+          create: (context) => getIt<ViewPostBloc>()..add(ViewPostEvent.started(post)),
         ),
         BlocProvider(
           create: (context) => getIt<DeletePostBloc>(),
         ),
       ],
-      child: Builder(builder: (context) {
-        return GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-            _menuController.hideIfVisible();
-          },
-          child: LoaderOverlay(
-            overlayWidgetBuilder: (progress) => const Center(
-              child: CustomLoadingIndicator(
-                indicatorSize: 40,
-                indicatorText: 'Đang xóa bài viết...',
-              ),
+      // Widget con _PostDetailView sẽ có quyền truy cập vào các BLoC này
+      child: _PostDetailView(post: post),
+    );
+  }
+}
+
+class _PostDetailView extends StatefulWidget {
+  const _PostDetailView({required this.post});
+  final Post post;
+
+  @override
+  State<_PostDetailView> createState() => _PostDetailViewState();
+}
+
+class _PostDetailViewState extends State<_PostDetailView> {
+  late final BouncingOverlayMenuController _menuController;
+  // Khai báo biến để lưu BLoC
+  late final ViewPostBloc _viewPostBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _menuController = BouncingOverlayMenuController();
+
+    // Bây giờ, vì _PostDetailView nằm dưới BlocProvider,
+    // context ở đây có thể tìm thấy ViewPostBloc một cách an toàn.
+    _viewPostBloc = context.read<ViewPostBloc>();
+  }
+
+  @override
+  void dispose() {
+    // Sử dụng biến đã lưu trong dispose, hoàn toàn an toàn.
+    _viewPostBloc.add(ViewPostEvent.pageExited(postId: widget.post.postId));
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(builder: (context) {
+      return GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          _menuController.hideIfVisible();
+        },
+        child: LoaderOverlay(
+          overlayWidgetBuilder: (progress) => const Center(
+            child: CustomLoadingIndicator(
+              indicatorSize: 40,
+              indicatorText: 'Đang xóa bài viết...',
             ),
-            child: BlocListener<DeletePostBloc, DeletePostState>(
-              listener: (context, state) {
-                if (state is DeletePostSuccess) {
-                  context.loaderOverlay.hide();
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Xóa bài viết thành công!',
-                        ),
-                        behavior: SnackBarBehavior.floating,
+          ),
+          child: BlocListener<DeletePostBloc, DeletePostState>(
+            listener: (context, state) {
+              if (state is DeletePostSuccess) {
+                context.loaderOverlay.hide();
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Xóa bài viết thành công!',
                       ),
-                    );
-                  context.pop(true);
-                }
-
-                if (state is DeletePostLoading) {
-                  context.loaderOverlay.show();
-                }
-
-                if (state is DeletePostFailure) {
-                  context.loaderOverlay.hide();
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Đã có lỗi xảy ra khi xóa bài viết.',
-                        ),
-                        behavior: SnackBarBehavior.floating,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                context.pop(true);
+              }
+    
+              if (state is DeletePostLoading) {
+                context.loaderOverlay.show();
+              }
+    
+              if (state is DeletePostFailure) {
+                context.loaderOverlay.hide();
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Đã có lỗi xảy ra khi xóa bài viết.',
                       ),
-                    );
-                }
-              },
-              child: Scaffold(
-                body: Stack(
-                  children: [
-                    RefreshIndicator(
-                      onRefresh: () => Future.sync(
-                        () => context.read<ViewPostBloc>().add(
-                              ViewPostEvent.started(widget.post),
-                            ),
-                      ),
-                      child: NotificationListener<ScrollStartNotification>(
-                        onNotification: (notification) {
-                          _menuController.hideIfVisible(); // 👈 Ẩn ngay khi bắt đầu chạm kéo
-                          return false; // không chặn event
-                        },
-                        child: CustomScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                          slivers: [
-                            BlocBuilder<ViewPostBloc, ViewPostState>(
-                              builder: (context, state) {
-                                if (state is ViewPostSuccess) {
-                                  return SliverAppBar(
-                                    centerTitle: true,
-                                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                                    surfaceTintColor: Colors.transparent,
-                                    floating: true,
-                                    pinned: true,
-                                    leading: IconButton(
-                                      onPressed: () {
-                                        context.pop();
-                                      },
-                                      icon: AppIcons.left.toSvg(
-                                        color: Theme.of(context).colorScheme.onSurface,
-                                      ),
-                                    ),
-                                    actions: [
-                                      if (state.currentUserId == widget.post.authorUserId)
-                                        BouncingOverlayMenu(
-                                          controller: _menuController,
-                                          menuItems: [
-                                            if (state.currentUserId == widget.post.authorUserId)
-                                              MenuActionItem(
-                                                icon: Icons.edit,
-                                                label: 'Chỉnh sửa bài viết',
-                                                onTap: () async {
-                                                  final result = await context.push('/edit_post', extra: state.post);
-                                                  if (result == true) {
-                                                    if (!context.mounted) {
-                                                      return;
-                                                    }
-                                                    context.read<ViewPostBloc>().add(
-                                                          ViewPostEvent.started(state.post),
-                                                        );
-                                                  }
-                                                },
-                                              ),
-                                            if (state.currentUserId == widget.post.authorUserId)
-                                              MenuActionItem(
-                                                icon: Icons.delete,
-                                                label: 'Xóa bài viết',
-                                                onTap: () async {
-                                                  final bool? confirmed = await _showDeleteConfirmationDialog(context);
-
-                                                  if (confirmed == true) {
-                                                    if (context.mounted) {
-                                                      context.read<DeletePostBloc>().add(
-                                                            DeletePostEvent.deletePostRequested(post: widget.post),
-                                                          );
-                                                    }
-                                                  }
-                                                },
-                                              ),
-                                            // if (state.currentUserId != widget.post.authorUserId)
-                                            //   MenuActionItem(
-                                            //     icon: Icons.report,
-                                            //     label: 'Báo cáo bài viết',
-                                            //     onTap: () {},
-                                            //   ),
-                                            // MenuActionItem(
-                                            //   icon: Icons.link,
-                                            //   label: 'Sao chép liên kết',
-                                            //   onTap: () {},
-                                            // ),
-                                          ],
-                                        )
-                                    ],
-                                    title: FadeSlideUp(child: Text(state.post.dishName ?? '')),
-                                    titleTextStyle: appTextTheme(context).titleMedium,
-                                  );
-                                }
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+              }
+            },
+            child: Scaffold(
+              body: Stack(
+                children: [
+                  RefreshIndicator(
+                    onRefresh: () => Future.sync(
+                      () => context.read<ViewPostBloc>().add(
+                            ViewPostEvent.started(widget.post),
+                          ),
+                    ),
+                    child: NotificationListener<ScrollStartNotification>(
+                      onNotification: (notification) {
+                        _menuController.hideIfVisible(); // 👈 Ẩn ngay khi bắt đầu chạm kéo
+                        return false; // không chặn event
+                      },
+                      child: CustomScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                        slivers: [
+                          BlocBuilder<ViewPostBloc, ViewPostState>(
+                            builder: (context, state) {
+                              if (state is ViewPostSuccess) {
                                 return SliverAppBar(
+                                  centerTitle: true,
                                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                                   surfaceTintColor: Colors.transparent,
                                   floating: true,
@@ -216,76 +170,143 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                       color: Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
-                                );
-                              },
-                            ),
-                            SliverToBoxAdapter(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 10, bottom: 30),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                                      child: CachedImage(borderRadius: 30, blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
-                                    ),
-                                    BlocBuilder<ViewPostBloc, ViewPostState>(
-                                      builder: (context, state) {
-                                        return switch (state) {
-                                          ViewPostLoading() => const Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SizedBox(
-                                                  height: 50,
-                                                ),
-                                                Center(
-                                                    child: CustomLoadingIndicator(
-                                                  indicatorSize: 40,
-                                                  indicatorText: 'Đang tải nội dung bài viết...',
-                                                )),
-                                              ],
+                                  actions: [
+                                    if (state.currentUserId == widget.post.authorUserId)
+                                      BouncingOverlayMenu(
+                                        controller: _menuController,
+                                        menuItems: [
+                                          if (state.currentUserId == widget.post.authorUserId)
+                                            MenuActionItem(
+                                              icon: Icons.edit,
+                                              label: 'Chỉnh sửa bài viết',
+                                              onTap: () async {
+                                                final result = await context.push('/edit_post', extra: state.post);
+                                                if (result == true) {
+                                                  if (!context.mounted) {
+                                                    return;
+                                                  }
+                                                  context.read<ViewPostBloc>().add(
+                                                        ViewPostEvent.started(state.post),
+                                                      );
+                                                }
+                                              },
                                             ),
-                                          ViewPostSuccess() => Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 15),
-                                              child: _buildMainContent(context, state.post, state.currentUserId, state.author),
+                                          if (state.currentUserId == widget.post.authorUserId)
+                                            MenuActionItem(
+                                              icon: Icons.delete,
+                                              label: 'Xóa bài viết',
+                                              onTap: () async {
+                                                final bool? confirmed = await _showDeleteConfirmationDialog(context);
+    
+                                                if (confirmed == true) {
+                                                  if (context.mounted) {
+                                                    context.read<DeletePostBloc>().add(
+                                                          DeletePostEvent.deletePostRequested(post: widget.post),
+                                                        );
+                                                  }
+                                                }
+                                              },
                                             ),
-                                          ViewPostFailure() => const Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SizedBox(
-                                                  height: 50,
-                                                ),
-                                                Center(child: Text('Có lỗi xảy ra khi tải bài viết!')),
-                                              ],
-                                            ),
-                                        };
-                                      },
-                                    ),
+                                          // if (state.currentUserId != widget.post.authorUserId)
+                                          //   MenuActionItem(
+                                          //     icon: Icons.report,
+                                          //     label: 'Báo cáo bài viết',
+                                          //     onTap: () {},
+                                          //   ),
+                                          // MenuActionItem(
+                                          //   icon: Icons.link,
+                                          //   label: 'Sao chép liên kết',
+                                          //   onTap: () {},
+                                          // ),
+                                        ],
+                                      )
                                   ],
+                                  title: FadeSlideUp(child: Text(state.post.dishName ?? '')),
+                                  titleTextStyle: appTextTheme(context).titleMedium,
+                                );
+                              }
+                              return SliverAppBar(
+                                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                surfaceTintColor: Colors.transparent,
+                                floating: true,
+                                pinned: true,
+                                leading: IconButton(
+                                  onPressed: () {
+                                    context.pop();
+                                  },
+                                  icon: AppIcons.left.toSvg(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
                                 ),
+                              );
+                            },
+                          ),
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10, bottom: 30),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                                    child: CachedImage(borderRadius: 30, blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
+                                  ),
+                                  BlocBuilder<ViewPostBloc, ViewPostState>(
+                                    builder: (context, state) {
+                                      return switch (state) {
+                                        ViewPostLoading() => const Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SizedBox(
+                                                height: 50,
+                                              ),
+                                              Center(
+                                                  child: CustomLoadingIndicator(
+                                                indicatorSize: 40,
+                                                indicatorText: 'Đang tải nội dung bài viết...',
+                                              )),
+                                            ],
+                                          ),
+                                        ViewPostSuccess() => Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                                            child: _buildMainContent(context, state.post, state.currentUserId, state.author),
+                                          ),
+                                        ViewPostFailure() => const Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SizedBox(
+                                                height: 50,
+                                              ),
+                                              Center(child: Text('Có lỗi xảy ra khi tải bài viết!')),
+                                            ],
+                                          ),
+                                      };
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    // const Positioned(
-                    //   left: 0,
-                    //   right: 0,
-                    //   bottom: 0,
-                    //   child: CommentInput(),
-                    // ),
-                  ],
-                ),
+                  ),
+                  // const Positioned(
+                  //   left: 0,
+                  //   right: 0,
+                  //   bottom: 0,
+                  //   child: CommentInput(),
+                  // ),
+                ],
               ),
             ),
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 
   //TODO: Làm cho nó glassy giống cái menu trong bài viết

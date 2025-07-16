@@ -15,76 +15,24 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$ViewPostEvent {
-  Post get post;
-
-  /// Create a copy of ViewPostEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  $ViewPostEventCopyWith<ViewPostEvent> get copyWith =>
-      _$ViewPostEventCopyWithImpl<ViewPostEvent>(
-          this as ViewPostEvent, _$identity);
-
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is ViewPostEvent &&
-            (identical(other.post, post) || other.post == post));
+        (other.runtimeType == runtimeType && other is ViewPostEvent);
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, post);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   String toString() {
-    return 'ViewPostEvent(post: $post)';
+    return 'ViewPostEvent()';
   }
 }
 
 /// @nodoc
-abstract mixin class $ViewPostEventCopyWith<$Res> {
-  factory $ViewPostEventCopyWith(
-          ViewPostEvent value, $Res Function(ViewPostEvent) _then) =
-      _$ViewPostEventCopyWithImpl;
-  @useResult
-  $Res call({Post post});
-
-  $PostCopyWith<$Res> get post;
-}
-
-/// @nodoc
-class _$ViewPostEventCopyWithImpl<$Res>
-    implements $ViewPostEventCopyWith<$Res> {
-  _$ViewPostEventCopyWithImpl(this._self, this._then);
-
-  final ViewPostEvent _self;
-  final $Res Function(ViewPostEvent) _then;
-
-  /// Create a copy of ViewPostEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? post = null,
-  }) {
-    return _then(_self.copyWith(
-      post: null == post
-          ? _self.post
-          : post // ignore: cast_nullable_to_non_nullable
-              as Post,
-    ));
-  }
-
-  /// Create a copy of ViewPostEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $PostCopyWith<$Res> get post {
-    return $PostCopyWith<$Res>(_self.post, (value) {
-      return _then(_self.copyWith(post: value));
-    });
-  }
+class $ViewPostEventCopyWith<$Res> {
+  $ViewPostEventCopyWith(ViewPostEvent _, $Res Function(ViewPostEvent) __);
 }
 
 /// @nodoc
@@ -92,12 +40,10 @@ class _$ViewPostEventCopyWithImpl<$Res>
 class Started implements ViewPostEvent {
   const Started(this.post);
 
-  @override
   final Post post;
 
   /// Create a copy of ViewPostEvent
   /// with the given fields replaced by the non-null parameter values.
-  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
   $StartedCopyWith<Started> get copyWith =>
@@ -125,11 +71,9 @@ abstract mixin class $StartedCopyWith<$Res>
     implements $ViewPostEventCopyWith<$Res> {
   factory $StartedCopyWith(Started value, $Res Function(Started) _then) =
       _$StartedCopyWithImpl;
-  @override
   @useResult
   $Res call({Post post});
 
-  @override
   $PostCopyWith<$Res> get post;
 }
 
@@ -142,7 +86,6 @@ class _$StartedCopyWithImpl<$Res> implements $StartedCopyWith<$Res> {
 
   /// Create a copy of ViewPostEvent
   /// with the given fields replaced by the non-null parameter values.
-  @override
   @pragma('vm:prefer-inline')
   $Res call({
     Object? post = null,
@@ -163,6 +106,69 @@ class _$StartedCopyWithImpl<$Res> implements $StartedCopyWith<$Res> {
     return $PostCopyWith<$Res>(_self.post, (value) {
       return _then(_self.copyWith(post: value));
     });
+  }
+}
+
+/// @nodoc
+
+class PageExited implements ViewPostEvent {
+  const PageExited({required this.postId});
+
+  final String postId;
+
+  /// Create a copy of ViewPostEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $PageExitedCopyWith<PageExited> get copyWith =>
+      _$PageExitedCopyWithImpl<PageExited>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PageExited &&
+            (identical(other.postId, postId) || other.postId == postId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, postId);
+
+  @override
+  String toString() {
+    return 'ViewPostEvent.pageExited(postId: $postId)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $PageExitedCopyWith<$Res>
+    implements $ViewPostEventCopyWith<$Res> {
+  factory $PageExitedCopyWith(
+          PageExited value, $Res Function(PageExited) _then) =
+      _$PageExitedCopyWithImpl;
+  @useResult
+  $Res call({String postId});
+}
+
+/// @nodoc
+class _$PageExitedCopyWithImpl<$Res> implements $PageExitedCopyWith<$Res> {
+  _$PageExitedCopyWithImpl(this._self, this._then);
+
+  final PageExited _self;
+  final $Res Function(PageExited) _then;
+
+  /// Create a copy of ViewPostEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? postId = null,
+  }) {
+    return _then(PageExited(
+      postId: null == postId
+          ? _self.postId
+          : postId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
   }
 }
 
