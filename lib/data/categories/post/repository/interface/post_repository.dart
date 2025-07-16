@@ -69,4 +69,11 @@ abstract class PostRepository {
     required String postId,
     int? durationInMs,
   });
+
+  /// Lấy một trang các bài đăng đang thịnh hành (trending).
+  /// Dùng làm cơ chế fallback cho người dùng mới.
+  Future<Either<PostFailure, List<Post>>> getTrendingPosts({
+    required int page,
+    required int pageSize,
+  });
 }

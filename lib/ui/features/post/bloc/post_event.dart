@@ -10,4 +10,7 @@ sealed class PostEvent with _$PostEvent {
 
   /// Được gọi khi người dùng thay đổi bộ lọc hoặc sắp xếp.
   const factory PostEvent.filtersChanged({required FilterSortParams newFilters}) = _FiltersChanged;
+
+  /// Yêu cầu chuyển sang feed gợi ý (trending feed).
+  const factory PostEvent.fallbackToTrendingFeedRequested() = _FallbackToTrendingFeedRequested;
 }

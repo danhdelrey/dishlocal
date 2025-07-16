@@ -153,12 +153,36 @@ class __$FiltersChangedCopyWithImpl<$Res>
 }
 
 /// @nodoc
+
+class _FallbackToTrendingFeedRequested implements PostEvent {
+  const _FallbackToTrendingFeedRequested();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _FallbackToTrendingFeedRequested);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'PostEvent.fallbackToTrendingFeedRequested()';
+  }
+}
+
+/// @nodoc
 mixin _$PostState {
 // Trạng thái hiện tại của việc tải dữ liệu.
   PostStatus get status; // Danh sách tất cả các bài viết đã được tải.
   List<Post> get posts; // Cờ cho biết liệu còn trang để tải tiếp hay không.
   bool get hasNextPage; // Trạng thái lọc và sắp xếp hiện tại.
-  FilterSortParams get filterSortParams; // Lưu trữ lỗi nếu có.
+  FilterSortParams get filterSortParams;
+
+  /// Cờ cho biết liệu feed hiện tại có phải là dữ liệu fallback không.
+  bool get isFallback; // Lưu trữ lỗi nếu có.
   post_failure.PostFailure? get failure;
 
   /// Create a copy of PostState
@@ -179,6 +203,8 @@ mixin _$PostState {
                 other.hasNextPage == hasNextPage) &&
             (identical(other.filterSortParams, filterSortParams) ||
                 other.filterSortParams == filterSortParams) &&
+            (identical(other.isFallback, isFallback) ||
+                other.isFallback == isFallback) &&
             (identical(other.failure, failure) || other.failure == failure));
   }
 
@@ -189,11 +215,12 @@ mixin _$PostState {
       const DeepCollectionEquality().hash(posts),
       hasNextPage,
       filterSortParams,
+      isFallback,
       failure);
 
   @override
   String toString() {
-    return 'PostState(status: $status, posts: $posts, hasNextPage: $hasNextPage, filterSortParams: $filterSortParams, failure: $failure)';
+    return 'PostState(status: $status, posts: $posts, hasNextPage: $hasNextPage, filterSortParams: $filterSortParams, isFallback: $isFallback, failure: $failure)';
   }
 }
 
@@ -207,6 +234,7 @@ abstract mixin class $PostStateCopyWith<$Res> {
       List<Post> posts,
       bool hasNextPage,
       FilterSortParams filterSortParams,
+      bool isFallback,
       post_failure.PostFailure? failure});
 
   $FilterSortParamsCopyWith<$Res> get filterSortParams;
@@ -228,6 +256,7 @@ class _$PostStateCopyWithImpl<$Res> implements $PostStateCopyWith<$Res> {
     Object? posts = null,
     Object? hasNextPage = null,
     Object? filterSortParams = null,
+    Object? isFallback = null,
     Object? failure = freezed,
   }) {
     return _then(_self.copyWith(
@@ -247,6 +276,10 @@ class _$PostStateCopyWithImpl<$Res> implements $PostStateCopyWith<$Res> {
           ? _self.filterSortParams
           : filterSortParams // ignore: cast_nullable_to_non_nullable
               as FilterSortParams,
+      isFallback: null == isFallback
+          ? _self.isFallback
+          : isFallback // ignore: cast_nullable_to_non_nullable
+              as bool,
       failure: freezed == failure
           ? _self.failure
           : failure // ignore: cast_nullable_to_non_nullable
@@ -273,6 +306,7 @@ class _PostState implements PostState {
       final List<Post> posts = const [],
       this.hasNextPage = true,
       required this.filterSortParams,
+      this.isFallback = false,
       this.failure})
       : _posts = posts;
 
@@ -298,6 +332,11 @@ class _PostState implements PostState {
 // Trạng thái lọc và sắp xếp hiện tại.
   @override
   final FilterSortParams filterSortParams;
+
+  /// Cờ cho biết liệu feed hiện tại có phải là dữ liệu fallback không.
+  @override
+  @JsonKey()
+  final bool isFallback;
 // Lưu trữ lỗi nếu có.
   @override
   final post_failure.PostFailure? failure;
@@ -321,6 +360,8 @@ class _PostState implements PostState {
                 other.hasNextPage == hasNextPage) &&
             (identical(other.filterSortParams, filterSortParams) ||
                 other.filterSortParams == filterSortParams) &&
+            (identical(other.isFallback, isFallback) ||
+                other.isFallback == isFallback) &&
             (identical(other.failure, failure) || other.failure == failure));
   }
 
@@ -331,11 +372,12 @@ class _PostState implements PostState {
       const DeepCollectionEquality().hash(_posts),
       hasNextPage,
       filterSortParams,
+      isFallback,
       failure);
 
   @override
   String toString() {
-    return 'PostState(status: $status, posts: $posts, hasNextPage: $hasNextPage, filterSortParams: $filterSortParams, failure: $failure)';
+    return 'PostState(status: $status, posts: $posts, hasNextPage: $hasNextPage, filterSortParams: $filterSortParams, isFallback: $isFallback, failure: $failure)';
   }
 }
 
@@ -352,6 +394,7 @@ abstract mixin class _$PostStateCopyWith<$Res>
       List<Post> posts,
       bool hasNextPage,
       FilterSortParams filterSortParams,
+      bool isFallback,
       post_failure.PostFailure? failure});
 
   @override
@@ -374,6 +417,7 @@ class __$PostStateCopyWithImpl<$Res> implements _$PostStateCopyWith<$Res> {
     Object? posts = null,
     Object? hasNextPage = null,
     Object? filterSortParams = null,
+    Object? isFallback = null,
     Object? failure = freezed,
   }) {
     return _then(_PostState(
@@ -393,6 +437,10 @@ class __$PostStateCopyWithImpl<$Res> implements _$PostStateCopyWith<$Res> {
           ? _self.filterSortParams
           : filterSortParams // ignore: cast_nullable_to_non_nullable
               as FilterSortParams,
+      isFallback: null == isFallback
+          ? _self.isFallback
+          : isFallback // ignore: cast_nullable_to_non_nullable
+              as bool,
       failure: freezed == failure
           ? _self.failure
           : failure // ignore: cast_nullable_to_non_nullable

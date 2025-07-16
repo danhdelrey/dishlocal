@@ -669,4 +669,33 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       _log.fine('✅ Ghi nhận lượt xem thành công.');
     });
   }
+  
+  @override
+  Future<Either<PostFailure, List<Post>>> getTrendingPosts({
+    required int page,
+    required int pageSize,
+  }) {
+    // Tận dụng lại cơ chế xử lý lỗi hiện có
+    return _handleErrors(() async {
+      _log.info('📥 Bắt đầu lấy trang $page các bài viết thịnh hành (fallback)...');
+
+      final List<dynamic> data = await _supabase.rpc(
+        'get_trending_posts_paginated',
+        params: {
+          'p_page_number': page,
+          'p_page_size': pageSize,
+        },
+      );
+
+      final posts = data.map((json) => Post.fromJson(json as Map<String, dynamic>)).toList();
+      _log.info('✅ Lấy thành công ${posts.length} bài viết thịnh hành.');
+
+      // Vẫn làm giàu dữ liệu để đảm bảo tính nhất quán
+      if (posts.isNotEmpty) {
+        return _enrichPostsWithDistance(posts);
+      }
+      
+      return posts;
+    });
+  }
 }

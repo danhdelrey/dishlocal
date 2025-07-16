@@ -18,6 +18,9 @@ sealed class PostState with _$PostState {
     // Trạng thái lọc và sắp xếp hiện tại.
     required FilterSortParams filterSortParams,
 
+    /// Cờ cho biết liệu feed hiện tại có phải là dữ liệu fallback không.
+    @Default(false) bool isFallback,
+
     // Lưu trữ lỗi nếu có.
     post_failure.PostFailure? failure,
   }) = _PostState;
