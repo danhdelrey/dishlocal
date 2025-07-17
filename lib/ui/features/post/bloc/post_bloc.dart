@@ -74,52 +74,64 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
-  Future<void> _onFetchNextPageRequested(
+    Future<void> _onFetchNextPageRequested(
     _FetchNextPageRequested event,
     Emitter<PostState> emit,
   ) async {
-    // Ngăn chặn fetch khi đang tải hoặc đã hết trang, hoặc khi đang fallback
-    if (state.status == PostStatus.loading || !state.hasNextPage || state.isFallback) return;
+    // SỬA ĐỔI 1: Loại bỏ `state.isFallback` khỏi điều kiện chặn.
+    // Chúng ta vẫn muốn fetch ngay cả khi đang fallback, chỉ là logic fetch sẽ khác.
+    if (state.status == PostStatus.loading || !state.hasNextPage) return;
 
     if (state.status == PostStatus.initial) {
       emit(state.copyWith(status: PostStatus.loading));
     }
 
-    final Future<Either<post_failure.PostFailure, List<Post>>> fetchResult;
+    // SỬA ĐỔI 2: Tạo một biến để giữ kết quả fetch, vì logic sẽ rẽ nhánh.
+    late final Future<Either<post_failure.PostFailure, List<Post>>> fetchResult;
 
-    if (_isRecommendationFeed) {
-      final currentPage = (state.posts.length / _pageSize).floor() + 1;
-      _log.info('📥 Đang tải trang gợi ý tiếp theo. Trang số: $currentPage');
-      fetchResult = _postFetcher(page: currentPage, pageSize: _pageSize);
-    } else {
-      final cursorData = _calculateCursor(state.posts, state.filterSortParams.sortOption);
-      _log.info('📥 Đang tải trang tiếp theo. Cursor: ${cursorData['mainCursor']}');
-      final params = state.filterSortParams.copyWith(
-        lastCursor: cursorData['mainCursor'],
-        lastDateCursorForTieBreak: cursorData['dateCursor'],
-        limit: _pageSize,
+    // SỬA ĐỔI 3: Thêm nhánh `if` để xử lý logic khi đang ở chế độ fallback.
+    if (state.isFallback) {
+      // --- LOGIC TẢI TRANG KHI ĐANG FALLBACK ---
+      final pageToFetch = (state.posts.length / _pageSize).floor() + 1;
+      _log.info('📥 Đang tải trang fallback tiếp theo. Trang số: $pageToFetch');
+
+      fetchResult = _postRepository.getTrendingPosts(
+        page: pageToFetch,
+        pageSize: _pageSize,
       );
-      fetchResult = _postFetcher(filterSortParams: params, pageSize: _pageSize);
+    } else {
+      // --- LOGIC TẢI TRANG GỐC (như cũ) ---
+      if (_isRecommendationFeed) {
+        final currentPage = (state.posts.length / _pageSize).floor() + 1;
+        _log.info('📥 Đang tải trang gợi ý tiếp theo. Trang số: $currentPage');
+        fetchResult = _postFetcher(page: currentPage, pageSize: _pageSize);
+      } else {
+        final cursorData = _calculateCursor(state.posts, state.filterSortParams.sortOption);
+        _log.info('📥 Đang tải trang tiếp theo. Cursor: ${cursorData['mainCursor']}');
+        final params = state.filterSortParams.copyWith(
+          lastCursor: cursorData['mainCursor'],
+          lastDateCursorForTieBreak: cursorData['dateCursor'],
+          limit: _pageSize,
+        );
+        fetchResult = _postFetcher(filterSortParams: params, pageSize: _pageSize);
+      }
     }
 
+    // Logic xử lý kết quả không đổi, nhưng cần đảm bảo `isFallback` được giữ lại.
     final result = await fetchResult;
     result.fold(
       (failure) {
         _log.severe('❌ Lỗi khi tải bài viết: $failure');
-        emit(state.copyWith(status: PostStatus.failure, failure: failure));
+        // Giữ lại isFallback flag nếu có lỗi xảy ra trong quá trình fallback
+        emit(state.copyWith(status: PostStatus.failure, failure: failure, isFallback: state.isFallback));
       },
       (newPosts) {
-        // <<<--- LOGIC FALLBACK ĐÃ ĐƯỢC SỬA LẠI ---
-        // Chỉ kích hoạt fallback nếu:
-        // 1. Đây là feed gợi ý (_isRecommendationFeed == true)
-        // 2. Đây là lần tải đầu tiên (state.posts.isEmpty)
-        // 3. Kết quả trả về là rỗng (newPosts.isEmpty)
-        if (_isRecommendationFeed && state.posts.isEmpty && newPosts.isEmpty) {
+        // Chỉ kích hoạt fallback nếu đang ở chế độ gốc và không có kết quả
+        if (!state.isFallback && _isRecommendationFeed && state.posts.isEmpty && newPosts.isEmpty) {
           _log.warning('⚠️ Không tìm thấy gợi ý cho người dùng. Kích hoạt cơ chế Fallback...');
           add(const PostEvent.fallbackToTrendingFeedRequested());
-          return; // Rất quan trọng: kết thúc hàm ở đây, không emit state mới
+          return;
         }
-        // --------------------------------------------->
 
         final isLastPage = newPosts.length < _pageSize;
         _log.info('✅ Tải được ${newPosts.length} bài viết. isLastPage: $isLastPage');
@@ -127,6 +139,9 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           status: PostStatus.success,
           posts: List.of(state.posts)..addAll(newPosts),
           hasNextPage: !isLastPage,
+          // SỬA ĐỔI 4: Luôn giữ lại cờ isFallback.
+          // Nếu nó là true, nó sẽ vẫn là true. Nếu là false, nó vẫn là false.
+          isFallback: state.isFallback,
         ));
       },
     );
