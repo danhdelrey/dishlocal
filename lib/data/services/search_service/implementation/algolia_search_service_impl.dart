@@ -44,21 +44,35 @@ class AlgoliaSearchServiceImpl implements SearchService {
     String indexName;
     if (searchType == SearchableItem.posts && filterParams != null) {
       // Logic chọn replica index dựa trên tùy chọn sắp xếp
-      switch (filterParams.sortOption.field) {
-        case SortField.likes:
-          indexName = filterParams.sortOption.direction == SortDirection.desc ? 'posts_like_count_desc' : 'posts_like_count_asc';
-          break;
+      final sortOption = filterParams.sortOption;
+      final isDescending = sortOption.direction == SortDirection.desc;
+
+      switch (sortOption.field) {
         case SortField.datePosted:
-          indexName = filterParams.sortOption.direction == SortDirection.desc ? 'posts' : 'posts_created_at_asc'; // Giả sử index chính sắp xếp theo ngày đăng giảm dần
+          // Nếu sắp xếp theo ngày đăng mới nhất, dùng index chính (sắp xếp theo relevance là ưu tiên).
+          // Nếu sắp xếp theo ngày cũ nhất, dùng replica tương ứng.
+          indexName = isDescending ? 'posts' : 'posts_created_at_asc';
           break;
-        // ... thêm các case khác cho save_count, comment_count
-        default:
-          indexName = 'posts'; // Fallback về index chính
+
+        case SortField.likes:
+          indexName = isDescending ? 'posts_like_count_desc' : 'posts_like_count_asc';
+          break;
+
+        case SortField.saves:
+          indexName = isDescending ? 'posts_save_count_desc' : 'posts_save_count_asc';
+          break;
+
+        case SortField.comments:
+          indexName = isDescending ? 'posts_comment_count_desc' : 'posts_comment_count_asc';
+          break;
+
+        
       }
     } else {
-      // Giữ nguyên logic cũ cho tìm kiếm profile hoặc post không có filter
+      // Giữ nguyên logic cũ cho tìm kiếm profile hoặc post không có filter/sort
       indexName = (searchType == SearchableItem.posts) ? 'posts' : 'profiles';
     }
+
     _log.finer('Using Algolia index: "$indexName"');
 
     // --- XÂY DỰNG BỘ LỌC CHO ALGOLIA ---
@@ -87,9 +101,7 @@ class AlgoliaSearchServiceImpl implements SearchService {
         // THÊM MỚI: Gắn bộ lọc vào request
         filters: filters.join(' AND '),
         // THÊM MỚI: Lọc theo vị trí
-        aroundLatLng: (filterParams?.distance != null)
-            ? latLongForGeoSearch
-            : null,
+        aroundLatLng: (filterParams?.distance != null) ? latLongForGeoSearch : null,
         aroundRadius: (filterParams?.distance != null) ? filterParams!.distance!.maxDistance.toInt() : null,
       );
 
@@ -162,6 +174,4 @@ class AlgoliaSearchServiceImpl implements SearchService {
       throw UnknownSearchApiException(message: 'Đã có lỗi không mong muốn xảy ra.');
     }
   }
-
-  
 }
