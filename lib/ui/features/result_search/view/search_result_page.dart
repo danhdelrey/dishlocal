@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/ui/features/filter_sort/view/filter_button.dart';
 import 'package:dishlocal/ui/features/post/view/shimmering_small_post.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/features/result_search/bloc/result_search_bloc.dart';
@@ -85,23 +86,6 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
           'Kết quả cho "${widget.query}"',
           style: appTextTheme(context).titleMedium,
         ),
-        actions: [
-          // Chỉ hiển thị nút lọc khi đang ở tab "Bài viết"
-          ValueListenableBuilder<int>(
-            valueListenable: ValueNotifier<int>(_tabController.index),
-            builder: (context, index, child) {
-              if (index == 0) {
-                // Tab "Bài viết"
-                return IconButton(
-                  icon: const Icon(Icons.filter_list),
-                  onPressed: () => _showFilterPanel(context),
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-        ],
-
         bottom: TabBar(
           dividerColor: Colors.white.withValues(alpha: 0.1),
           controller: _tabController,
@@ -133,26 +117,7 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
       ),
     );
   }
-
-  void _showFilterPanel(BuildContext parentContext) {
-    // Lấy ra BLoC của tab "Bài viết"
-    final bloc = parentContext.read<ResultSearchBloc>();
-    showModalBottomSheet(
-      context: parentContext,
-      isScrollControlled: true,
-      builder: (context) {
-        // Quan trọng: Cung cấp BLoC của tab bài viết cho bottom sheet,
-        // để nó có thể đọc state và gửi event.
-        return BlocProvider.value(
-          value: bloc,
-          child: YourFilterPanelWidget(), // Đây là Widget bộ lọc bạn sẽ tạo
-        );
-      },
-    );
-  }
 }
-
-
 
 // Widget hiển thị kết quả bài viết, giờ chỉ cần lắng nghe BLoC được cung cấp.
 class _PostResultsView extends StatefulWidget {
@@ -221,29 +186,36 @@ class _PostResultsViewState extends State<_PostResultsView> {
         final posts = state.results.whereType<Post>().toList();
 
         // Hiển thị GridView với dữ liệu
-        return GridView.builder(
-          controller: _scrollController,
-          padding: const EdgeInsets.all(10.0),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 0.75,
-          ),
-          itemCount: state.hasNextPage ? posts.length + 2 : posts.length,
-          itemBuilder: (context, index) {
-            if (index >= posts.length) {
-              return const ShimmeringSmallPost();
-            }
-            final post = posts[index];
-            return SmallPost(
-              post: post,
-              onDeletePostPopBack: () {
-                // Khi xóa bài viết, cần refresh lại BLoC để cập nhật danh sách.
-                context.read<ResultSearchBloc>().add(ResultSearchEvent.searchStarted(query: widget.query));
+        return Column(
+          children: [
+            FilterButton(
+              resultSearchBloc: context.read<ResultSearchBloc>(),
+            ),
+            GridView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(10.0),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 0.75,
+              ),
+              itemCount: state.hasNextPage ? posts.length + 2 : posts.length,
+              itemBuilder: (context, index) {
+                if (index >= posts.length) {
+                  return const ShimmeringSmallPost();
+                }
+                final post = posts[index];
+                return SmallPost(
+                  post: post,
+                  onDeletePostPopBack: () {
+                    // Khi xóa bài viết, cần refresh lại BLoC để cập nhật danh sách.
+                    context.read<ResultSearchBloc>().add(ResultSearchEvent.searchStarted(query: widget.query));
+                  },
+                );
               },
-            );
-          },
+            ),
+          ],
         );
       },
     );

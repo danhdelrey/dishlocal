@@ -143,7 +143,9 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                       icon: const Icon(CupertinoIcons.search),
                       onPressed: () => context.push('/search_input'),
                     ),
-                    const FilterButton(),
+                    FilterButton(
+                      postBloc: _bloc,
+                    ),
                   ],
                   pinned: false,
                   floating: true,
