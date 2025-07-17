@@ -177,7 +177,14 @@ class _PostResultsViewState extends State<_PostResultsView> {
           );
         }
         if (state.status == SearchStatus.empty) {
-          return Center(child: Text('Không tìm thấy bài viết nào cho "${state.query}".'));
+          return Column(
+            children: [
+              FilterButton(
+                resultSearchBloc: context.read<ResultSearchBloc>(),
+              ),
+              Center(child: Text('Không tìm thấy bài viết nào cho "${state.query}".')),
+            ],
+          );
         }
         if (state.status == SearchStatus.failure) {
           return Center(child: Text('Đã xảy ra lỗi: ${state.failure}'));
@@ -191,29 +198,31 @@ class _PostResultsViewState extends State<_PostResultsView> {
             FilterButton(
               resultSearchBloc: context.read<ResultSearchBloc>(),
             ),
-            GridView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(10.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 0.75,
+            Expanded(
+              child: GridView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(10.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 0.75,
+                ),
+                itemCount: state.hasNextPage ? posts.length + 2 : posts.length,
+                itemBuilder: (context, index) {
+                  if (index >= posts.length) {
+                    return const ShimmeringSmallPost();
+                  }
+                  final post = posts[index];
+                  return SmallPost(
+                    post: post,
+                    onDeletePostPopBack: () {
+                      // Khi xóa bài viết, cần refresh lại BLoC để cập nhật danh sách.
+                      context.read<ResultSearchBloc>().add(ResultSearchEvent.searchStarted(query: widget.query));
+                    },
+                  );
+                },
               ),
-              itemCount: state.hasNextPage ? posts.length + 2 : posts.length,
-              itemBuilder: (context, index) {
-                if (index >= posts.length) {
-                  return const ShimmeringSmallPost();
-                }
-                final post = posts[index];
-                return SmallPost(
-                  post: post,
-                  onDeletePostPopBack: () {
-                    // Khi xóa bài viết, cần refresh lại BLoC để cập nhật danh sách.
-                    context.read<ResultSearchBloc>().add(ResultSearchEvent.searchStarted(query: widget.query));
-                  },
-                );
-              },
             ),
           ],
         );

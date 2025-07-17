@@ -65,8 +65,6 @@ class AlgoliaSearchServiceImpl implements SearchService {
         case SortField.comments:
           indexName = isDescending ? 'posts_comment_count_desc' : 'posts_comment_count_asc';
           break;
-
-        
       }
     } else {
       // Giữ nguyên logic cũ cho tìm kiếm profile hoặc post không có filter/sort
@@ -77,6 +75,7 @@ class AlgoliaSearchServiceImpl implements SearchService {
 
     // --- XÂY DỰNG BỘ LỌC CHO ALGOLIA ---
     final List<String> filters = [];
+    int? radius;
     if (filterParams != null) {
       // 1. Lọc giá
       if (filterParams.range != null) {
@@ -90,6 +89,16 @@ class AlgoliaSearchServiceImpl implements SearchService {
         final categoryFilters = filterParams.categories.map((c) => "food_category:'${c.name}'").join(' OR ');
         filters.add('($categoryFilters)');
       }
+
+      // 3. Xử lý bán kính (radius)
+      if (filterParams.distance != null) {
+        // KIỂM TRA GIÁ TRỊ VÔ CỰC
+        if (filterParams.distance!.maxDistance != double.infinity) {
+          // Chỉ đặt radius nếu nó không phải là vô cực
+          radius = filterParams.distance!.maxDistance.toInt();
+        }
+        // Nếu là double.infinity, radius sẽ giữ nguyên giá trị null.
+      }
     }
 
     try {
@@ -98,11 +107,12 @@ class AlgoliaSearchServiceImpl implements SearchService {
         query: query,
         page: page,
         hitsPerPage: hitsPerPage,
-        // THÊM MỚI: Gắn bộ lọc vào request
-        filters: filters.join(' AND '),
-        // THÊM MỚI: Lọc theo vị trí
-        aroundLatLng: (filterParams?.distance != null) ? latLongForGeoSearch : null,
-        aroundRadius: (filterParams?.distance != null) ? filterParams!.distance!.maxDistance.toInt() : null,
+        // Tham số lọc thuộc tính
+        filters: filters.isNotEmpty ? filters.join(' AND ') : null,
+
+        // Tham số lọc vị trí
+        aroundLatLng: latLongForGeoSearch, // <-- Dùng trực tiếp từ tham số
+        aroundRadius: radius, // <-- Dùng radius đã được kiểm tra, có thể là null
       );
 
       // 2. Gọi API và truyền đối tượng vừa tạo vào tham số `request`
