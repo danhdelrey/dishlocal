@@ -14,6 +14,7 @@ part 'filter_sort_params.freezed.dart';
 abstract class FilterSortParams with _$FilterSortParams {
   const FilterSortParams._();
   const factory FilterSortParams({
+    @Default(FilterContext.explore) FilterContext context,
     // --- Lọc (Filtering) ---
     @Default({}) Set<FoodCategory> categories,
     PriceRange? range,
@@ -36,8 +37,15 @@ abstract class FilterSortParams with _$FilterSortParams {
     DateTime? lastDateCursorForTieBreak,
   }) = _FilterSortParams;
 
-  /// Tạo một bộ lọc mặc định.
-  factory FilterSortParams.defaultParams() => const FilterSortParams();
+  factory FilterSortParams.defaultParamsForContext(FilterContext context) {
+    if (context == FilterContext.search) {
+      return const FilterSortParams(
+        context: FilterContext.search,
+        sortOption: SortOption.relevanceSort,
+      );
+    }
+    return const FilterSortParams(context: FilterContext.explore);
+  }
 
   String get toVietnameseString {
     // ... (phần này giữ nguyên, bạn có thể thêm limit và cursor nếu muốn) ...
@@ -76,8 +84,8 @@ abstract class FilterSortParams with _$FilterSortParams {
     buffer.write('---------------------------');
     return buffer.toString();
   }
-  bool isDefault() {
+  bool isDefault(FilterContext context) {
     // So sánh với một instance mặc định
-    return this == FilterSortParams.defaultParams();
+    return this == FilterSortParams.defaultParamsForContext(context);
   }
 }

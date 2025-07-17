@@ -27,12 +27,15 @@ class FilterSortBloc extends Bloc<FilterSortEvent, FilterSortState> {
   }
 
   void _onInitialized(_Initialized event, Emitter<FilterSortState> emit) {
+    // Lấy ngữ cảnh từ initialParams, nếu không có thì mặc định là explore
+    final context = event.initialParams?.context ?? FilterContext.explore;
+
     emit(FilterSortState.loaded(
       allCategories: FoodCategory.values,
       allRanges: PriceRange.values,
-      allSortOptions: SortOption.allOptions,
+      // Sử dụng phương thức động để lấy đúng danh sách tùy chọn
+      allSortOptions: SortOption.getAllOptions(forContext: context),
       allDistances: DistanceRange.values,
-      // Khởi tạo với params từ event hoặc params rỗng
       currentParams: event.initialParams ?? const FilterSortParams(),
     ));
   }
@@ -75,13 +78,21 @@ class FilterSortBloc extends Bloc<FilterSortEvent, FilterSortState> {
     if (state is FilterSortLoaded) {
       final currentState = state as FilterSortLoaded;
 
-      // Khi chọn một trường mới, mặc định là DESC (hoặc ASC nếu chỉ có 1 chiều)
-      // Chúng ta sẽ lấy option đầu tiên trong list allOptions có field tương ứng.
-      final newOption = SortOption.allOptions.firstWhere(
+      // 1. Lấy ngữ cảnh hiện tại từ `currentParams` của state.
+      final context = currentState.currentParams.context;
+
+      // 2. Lấy danh sách các tùy chọn sắp xếp hợp lệ cho ngữ cảnh đó.
+      final validOptions = SortOption.getAllOptions(forContext: context);
+
+      // 3. Tìm tùy chọn đầu tiên trong danh sách hợp lệ có `field` khớp.
+      // Điều này đảm bảo khi người dùng nhấn vào "Ngày đăng", nó sẽ tự động
+      // chọn "Ngày đăng ↓" (giảm dần) làm mặc định.
+      final newOption = validOptions.firstWhere(
         (opt) => opt.field == event.option.field,
-        orElse: () => event.option, // Dự phòng
+        orElse: () => event.option, // Dự phòng nếu không tìm thấy
       );
 
+      // 4. Cập nhật state với tùy chọn mới.
       emit(currentState.copyWith(
         currentParams: currentState.currentParams.copyWith(sortOption: newOption),
       ));

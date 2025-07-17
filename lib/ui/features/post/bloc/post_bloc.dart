@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
@@ -44,7 +45,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     FilterSortParams? initialFilterSortParams,
   })  : _isRecommendationFeed = isRecommendationFeed,
         _postRepository = getIt<PostRepository>(),
-        super(PostState(filterSortParams: initialFilterSortParams ?? FilterSortParams.defaultParams())) {
+        super(PostState(filterSortParams: initialFilterSortParams ?? FilterSortParams.defaultParamsForContext(FilterContext.explore))) {
     on<_FetchNextPageRequested>(
       _onFetchNextPageRequested,
       transformer: throttleDroppable(const Duration(milliseconds: 500)),
@@ -60,6 +61,12 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
     final lastPost = currentPosts.last;
     switch (sortOption.field) {
+      case SortField.relevance:
+        // Khi sắp xếp theo relevance, việc phân trang được Algolia xử lý bằng `page`.
+        // Chúng ta không cần cursor dựa trên giá trị.
+        // Trả về null để BLoC không cập nhật các giá trị cursor của nó.
+        return {'mainCursor': null, 'dateCursor': null};
+
       case SortField.datePosted:
         return {'mainCursor': lastPost.createdAt, 'dateCursor': null};
       case SortField.likes:
@@ -74,7 +81,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
-    Future<void> _onFetchNextPageRequested(
+  Future<void> _onFetchNextPageRequested(
     _FetchNextPageRequested event,
     Emitter<PostState> emit,
   ) async {

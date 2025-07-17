@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$FilterSortParams {
-// --- Lọc (Filtering) ---
+  FilterContext get context; // --- Lọc (Filtering) ---
   Set<FoodCategory> get categories;
   PriceRange? get range;
   DistanceRange? get distance; // --- Sắp xếp (Sorting) ---
@@ -45,6 +45,7 @@ mixin _$FilterSortParams {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is FilterSortParams &&
+            (identical(other.context, context) || other.context == context) &&
             const DeepCollectionEquality()
                 .equals(other.categories, categories) &&
             (identical(other.range, range) || other.range == range) &&
@@ -63,6 +64,7 @@ mixin _$FilterSortParams {
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      context,
       const DeepCollectionEquality().hash(categories),
       range,
       distance,
@@ -73,7 +75,7 @@ mixin _$FilterSortParams {
 
   @override
   String toString() {
-    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor, lastDateCursorForTieBreak: $lastDateCursorForTieBreak)';
+    return 'FilterSortParams(context: $context, categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor, lastDateCursorForTieBreak: $lastDateCursorForTieBreak)';
   }
 }
 
@@ -84,7 +86,8 @@ abstract mixin class $FilterSortParamsCopyWith<$Res> {
       _$FilterSortParamsCopyWithImpl;
   @useResult
   $Res call(
-      {Set<FoodCategory> categories,
+      {FilterContext context,
+      Set<FoodCategory> categories,
       PriceRange? range,
       DistanceRange? distance,
       SortOption sortOption,
@@ -108,6 +111,7 @@ class _$FilterSortParamsCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? context = null,
     Object? categories = null,
     Object? range = freezed,
     Object? distance = freezed,
@@ -117,6 +121,10 @@ class _$FilterSortParamsCopyWithImpl<$Res>
     Object? lastDateCursorForTieBreak = freezed,
   }) {
     return _then(_self.copyWith(
+      context: null == context
+          ? _self.context
+          : context // ignore: cast_nullable_to_non_nullable
+              as FilterContext,
       categories: null == categories
           ? _self.categories
           : categories // ignore: cast_nullable_to_non_nullable
@@ -163,7 +171,8 @@ class _$FilterSortParamsCopyWithImpl<$Res>
 
 class _FilterSortParams extends FilterSortParams {
   const _FilterSortParams(
-      {final Set<FoodCategory> categories = const {},
+      {this.context = FilterContext.explore,
+      final Set<FoodCategory> categories = const {},
       this.range,
       this.distance,
       this.sortOption = SortOption.defaultSort,
@@ -173,6 +182,9 @@ class _FilterSortParams extends FilterSortParams {
       : _categories = categories,
         super._();
 
+  @override
+  @JsonKey()
+  final FilterContext context;
 // --- Lọc (Filtering) ---
   final Set<FoodCategory> _categories;
 // --- Lọc (Filtering) ---
@@ -222,6 +234,7 @@ class _FilterSortParams extends FilterSortParams {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _FilterSortParams &&
+            (identical(other.context, context) || other.context == context) &&
             const DeepCollectionEquality()
                 .equals(other._categories, _categories) &&
             (identical(other.range, range) || other.range == range) &&
@@ -240,6 +253,7 @@ class _FilterSortParams extends FilterSortParams {
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      context,
       const DeepCollectionEquality().hash(_categories),
       range,
       distance,
@@ -250,7 +264,7 @@ class _FilterSortParams extends FilterSortParams {
 
   @override
   String toString() {
-    return 'FilterSortParams(categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor, lastDateCursorForTieBreak: $lastDateCursorForTieBreak)';
+    return 'FilterSortParams(context: $context, categories: $categories, range: $range, distance: $distance, sortOption: $sortOption, limit: $limit, lastCursor: $lastCursor, lastDateCursorForTieBreak: $lastDateCursorForTieBreak)';
   }
 }
 
@@ -263,7 +277,8 @@ abstract mixin class _$FilterSortParamsCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Set<FoodCategory> categories,
+      {FilterContext context,
+      Set<FoodCategory> categories,
       PriceRange? range,
       DistanceRange? distance,
       SortOption sortOption,
@@ -288,6 +303,7 @@ class __$FilterSortParamsCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
+    Object? context = null,
     Object? categories = null,
     Object? range = freezed,
     Object? distance = freezed,
@@ -297,6 +313,10 @@ class __$FilterSortParamsCopyWithImpl<$Res>
     Object? lastDateCursorForTieBreak = freezed,
   }) {
     return _then(_FilterSortParams(
+      context: null == context
+          ? _self.context
+          : context // ignore: cast_nullable_to_non_nullable
+              as FilterContext,
       categories: null == categories
           ? _self._categories
           : categories // ignore: cast_nullable_to_non_nullable

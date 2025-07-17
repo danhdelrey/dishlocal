@@ -4,6 +4,7 @@ import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/result_search/bloc/result_search_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 class FilterButton extends StatelessWidget {
   const FilterButton({super.key, this.postBloc, this.resultSearchBloc});
@@ -12,29 +13,28 @@ class FilterButton extends StatelessWidget {
 
   /// Hàm này sẽ lấy BLoC, đọc state, và mở bottom sheet
   void _openFilterSortSheet(BuildContext context) async {
-    if (postBloc != null) {
-      // Lấy bộ lọc hiện tại từ state của BLoC
-      final currentFilters = postBloc!.state.filterSortParams;
+    final log = Logger('FilterButton'); // Tạo một logger tạm thời
 
-      // Hiển thị bottom sheet và chờ kết quả trả về
-      final newFilters = await SortingBottomSheet.show(context, currentFilters);
-
-      // Nếu người dùng xác nhận một bộ lọc mới và nó khác với bộ lọc cũ,
-      // gửi event 'filtersChanged' tới BLoC.
-      if (newFilters != null && newFilters != currentFilters) {
-        postBloc!.add(PostEvent.filtersChanged(newFilters: newFilters));
-      }
-    } else if (resultSearchBloc != null) {
-      // Lấy bộ lọc hiện tại từ state của BLoC
+    if (resultSearchBloc != null) {
       final currentFilters = resultSearchBloc!.state.filterParams;
+      log.info('🔵 Mở bộ lọc với params hiện tại: ${currentFilters.toVietnameseString}');
 
-      // Hiển thị bottom sheet và chờ kết quả trả về
       final newFilters = await SortingBottomSheet.show(context, currentFilters);
 
-      // Nếu người dùng xác nhận một bộ lọc mới và nó khác với bộ lọc cũ,
-      // gửi event 'filtersChanged' tới BLoC.
-      if (newFilters != null && newFilters != currentFilters) {
+      // LOG KẾT QUẢ TRẢ VỀ TỪ BOTTOM SHEET
+      if (newFilters == null) {
+        log.warning('🟡 Bottom sheet đã đóng mà không có kết quả (newFilters is null).');
+        return;
+      }
+
+      log.info('🟢 Bottom sheet trả về params mới: ${newFilters.toVietnameseString}');
+
+      // So sánh và gửi event
+      if (newFilters != currentFilters) {
+        log.info('✅ Params đã thay đổi! Gửi event filtersChanged...');
         resultSearchBloc!.add(ResultSearchEvent.filtersChanged(newFilters: newFilters));
+      } else {
+        log.warning('🟡 Params không thay đổi. Không gửi event.');
       }
     }
   }
@@ -49,7 +49,7 @@ class FilterButton extends StatelessWidget {
         buildWhen: (previous, current) => previous.filterSortParams != current.filterSortParams,
         builder: (context, state) {
           // Kiểm tra xem có bộ lọc nào đang được áp dụng không
-          final hasActiveFilters = !state.filterSortParams.isDefault();
+          final hasActiveFilters = !state.filterSortParams.isDefault(state.filterSortParams.context);
 
           return IconButton(
             onPressed: () => _openFilterSortSheet(context),
@@ -67,7 +67,7 @@ class FilterButton extends StatelessWidget {
         buildWhen: (previous, current) => previous.filterParams != current.filterParams,
         builder: (context, state) {
           // Kiểm tra xem có bộ lọc nào đang được áp dụng không
-          final hasActiveFilters = !state.filterParams.isDefault();
+          final hasActiveFilters = !state.filterParams.isDefault(state.filterParams.context);
 
           return IconButton(
             onPressed: () => _openFilterSortSheet(context),

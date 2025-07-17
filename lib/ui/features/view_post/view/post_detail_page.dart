@@ -8,6 +8,7 @@ import 'package:dishlocal/data/categories/direction/model/location_data.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/distance_range.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/price_range.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_option.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/delete_post/bloc/delete_post_bloc.dart';
@@ -363,7 +364,7 @@ class _PostDetailViewState extends State<_PostDetailView> {
                   itemColor: post.foodCategory?.color ?? Colors.transparent,
                   onSelected: (selected) {
                     context.push('/post_detail/explore', extra: {
-                      'filterSortParams': FilterSortParams.defaultParams().copyWith(
+                      'filterSortParams': FilterSortParams.defaultParamsForContext(FilterContext.explore).copyWith(
                         categories: {post.foodCategory!},
                       )
                     });
@@ -375,7 +376,7 @@ class _PostDetailViewState extends State<_PostDetailView> {
                 itemColor: post.foodCategory?.color ?? Colors.transparent,
                 onSelected: (selected) {
                   context.push('/post_detail/explore', extra: {
-                    'filterSortParams': FilterSortParams.defaultParams().copyWith(
+                    'filterSortParams': FilterSortParams.defaultParamsForContext(FilterContext.explore).copyWith(
                       range: PriceRange.fromPrice(post.price?.toDouble() ?? 9999999),
                     )
                   });
@@ -387,7 +388,7 @@ class _PostDetailViewState extends State<_PostDetailView> {
                 itemColor: post.foodCategory?.color ?? Colors.transparent,
                 onSelected: (selected) {
                   context.push('/post_detail/explore', extra: {
-                    'filterSortParams': FilterSortParams.defaultParams().copyWith(
+                    'filterSortParams': FilterSortParams.defaultParamsForContext(FilterContext.explore).copyWith(
                       distance: DistanceRange.fromDistance(post.distance ?? 999),
                     )
                   });

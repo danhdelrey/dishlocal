@@ -524,14 +524,28 @@ class RemotePostRepositorySqlImpl implements PostRepository {
   }) async {
     _log.info('🔍 Bắt đầu tìm kiếm bài viết với query: "$query"');
     try {
-      // 1. Lấy danh sách ID từ dịch vụ tìm kiếm (Algolia, etc.)
+      // =======================================================================
+      // === THAY ĐỔI QUAN TRỌNG Ở ĐÂY ==========================================
+      // =======================================================================
+
+      // 1. Khai báo latLngForGeoSearch là null ban đầu
+      String? latLngForGeoSearch;
+
+      // 2. Chỉ lấy vị trí và gán giá trị cho latLngForGeoSearch
+      //    NẾU người dùng đã chọn một bộ lọc khoảng cách.
+      if (filterParams?.distance != null) {
+        _log.info('🚶 Người dùng đã lọc theo khoảng cách, đang lấy vị trí...');
+        latLngForGeoSearch = await _getLatLngForGeoSearch();
+      }
+
+      // 3. Truyền các giá trị đã được xử lý xuống SearchService
       final searchResult = await _searchService.search(
         query: query,
         searchType: SearchableItem.posts,
         page: page,
         hitsPerPage: hitsPerPage,
         filterParams: filterParams,
-        latLongForGeoSearch: await _getLatLngForGeoSearch(),
+        latLongForGeoSearch: latLngForGeoSearch, // Có thể là null hoặc một chuỗi
       );
       _log.info('✅ Tìm kiếm thành công, nhận được ${searchResult.objectIds.length} ID bài viết.');
 

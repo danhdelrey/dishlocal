@@ -48,10 +48,13 @@ class AlgoliaSearchServiceImpl implements SearchService {
       final isDescending = sortOption.direction == SortDirection.desc;
 
       switch (sortOption.field) {
+        case SortField.relevance: // <-- THÊM MỚI
+          indexName = 'posts';
+          break;
         case SortField.datePosted:
           // Nếu sắp xếp theo ngày đăng mới nhất, dùng index chính (sắp xếp theo relevance là ưu tiên).
           // Nếu sắp xếp theo ngày cũ nhất, dùng replica tương ứng.
-          indexName = isDescending ? 'posts' : 'posts_created_at_asc';
+          indexName = isDescending ? 'posts_created_at_desc' : 'posts_created_at_asc';
           break;
 
         case SortField.likes:
@@ -76,30 +79,49 @@ class AlgoliaSearchServiceImpl implements SearchService {
     // --- XÂY DỰNG BỘ LỌC CHO ALGOLIA ---
     final List<String> filters = [];
     int? radius;
+
+    _log.info('🔍 Bắt đầu xây dựng bộ lọc. filterParams is null? ${filterParams == null}');
+
     if (filterParams != null) {
+      // LOG TOÀN BỘ PARAMS ĐỂ XEM
+      _log.info('⚙️ filterParams nhận được: ${filterParams.toVietnameseString}');
+
       // 1. Lọc giá
+      _log.info('  - Kiểm tra lọc giá: filterParams.range is null? ${filterParams.range == null}');
       if (filterParams.range != null) {
-        filters.add('price >= ${filterParams.range!.minPrice}');
-        if (filterParams.range!.maxPrice != double.infinity) {
-          filters.add('price < ${filterParams.range!.maxPrice}');
+        final min = filterParams.range!.minPrice.toInt();
+        final max = filterParams.range!.maxPrice;
+        filters.add('price >= $min');
+        _log.finer('    -> Thêm filter: price >= $min');
+        if (max != double.infinity) {
+          filters.add('price < ${max.toInt()}');
+          _log.finer('    -> Thêm filter: price < ${max.toInt()}');
         }
       }
+
       // 2. Lọc category
+      _log.info('  - Kiểm tra lọc category: filterParams.categories is empty? ${filterParams.categories.isEmpty}');
       if (filterParams.categories.isNotEmpty) {
         final categoryFilters = filterParams.categories.map((c) => "food_category:'${c.name}'").join(' OR ');
         filters.add('($categoryFilters)');
+        _log.finer('    -> Thêm filter: ($categoryFilters)');
       }
 
       // 3. Xử lý bán kính (radius)
+      _log.info('  - Kiểm tra lọc khoảng cách: filterParams.distance is null? ${filterParams.distance == null}');
       if (filterParams.distance != null) {
-        // KIỂM TRA GIÁ TRỊ VÔ CỰC
         if (filterParams.distance!.maxDistance != double.infinity) {
-          // Chỉ đặt radius nếu nó không phải là vô cực
           radius = filterParams.distance!.maxDistance.toInt();
+          _log.finer('    -> Đặt radius: $radius mét');
+        } else {
+          _log.finer('    -> Bán kính là vô cực, không giới hạn.');
         }
-        // Nếu là double.infinity, radius sẽ giữ nguyên giá trị null.
       }
     }
+
+    // LOG CHUỖI FILTER CUỐI CÙNG
+    final finalFilterString = filters.isNotEmpty ? filters.join(' AND ') : null;
+    _log.info('✅ Chuỗi filter cuối cùng: "$finalFilterString"');
 
     try {
       final searchRequest = SearchForHits(
@@ -107,13 +129,12 @@ class AlgoliaSearchServiceImpl implements SearchService {
         query: query,
         page: page,
         hitsPerPage: hitsPerPage,
-        // Tham số lọc thuộc tính
-        filters: filters.isNotEmpty ? filters.join(' AND ') : null,
-
-        // Tham số lọc vị trí
-        aroundLatLng: latLongForGeoSearch, // <-- Dùng trực tiếp từ tham số
-        aroundRadius: radius, // <-- Dùng radius đã được kiểm tra, có thể là null
+        filters: finalFilterString, // <-- Dùng biến đã log
+        aroundLatLng: latLongForGeoSearch,
+        aroundRadius: radius,
       );
+
+      _log.info('🚀 Sending Algolia Request:\n${searchRequest.toJson()}');
 
       // 2. Gọi API và truyền đối tượng vừa tạo vào tham số `request`
       final response = await _searchClient.searchIndex(

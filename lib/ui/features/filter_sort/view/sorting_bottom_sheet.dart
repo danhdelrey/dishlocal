@@ -173,7 +173,12 @@ class SortingBottomSheet extends StatelessWidget {
 
   /// Widget riêng cho section Sắp xếp do có nút đảo chiều đặc biệt.
   Widget _buildSortSection(BuildContext context, FilterSortLoaded state, FilterSortBloc bloc) {
-    final currentSortOption = state.currentParams.sortOption;
+    final currentParams = state.currentParams;
+    final currentSortOption = currentParams.sortOption;
+
+    // Lấy danh sách các trường sắp xếp dựa trên ngữ cảnh của params hiện tại
+    final uniqueFields = SortOption.getUniqueFields(forContext: currentParams.context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -202,13 +207,17 @@ class SortingBottomSheet extends StatelessWidget {
         Wrap(
           spacing: 8.0,
           runSpacing: 8.0,
-          children: SortOption.uniqueFields.map((field) {
+           children: uniqueFields.map((field) {
             return CustomChoiceChip(
               label: '${field.icon} ${field.label}',
               isSelected: currentSortOption.field == field,
               onSelected: (_) {
                 if (currentSortOption.field != field) {
-                  bloc.add(FilterSortEvent.sortOptionSelected(SortOption(field: field, direction: SortDirection.desc)));
+                  // Khi chọn một trường mới, tạo SortOption tương ứng
+                  final newOption = field == SortField.relevance
+                      ? SortOption.relevanceSort // Nếu là relevance, dùng hằng số
+                      : SortOption(field: field, direction: SortDirection.desc); // Ngược lại, mặc định là desc
+                  bloc.add(FilterSortEvent.sortOptionSelected(newOption));
                 }
               },
               itemColor: Colors.lightGreen,

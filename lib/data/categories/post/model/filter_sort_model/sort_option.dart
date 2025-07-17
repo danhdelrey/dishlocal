@@ -2,7 +2,14 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'sort_option.freezed.dart';
 
+// THÊM MỚI: Một enum để xác định ngữ cảnh, giúp code dễ đọc hơn.
+enum FilterContext {
+  explore,
+  search,
+}
+
 enum SortField {
+  relevance('🏆', 'Liên quan nhất'), // <-- THÊM MỚI
   datePosted('📅', 'Ngày đăng'),
   likes('❤️', 'Lượt thích'),
   comments('💬', 'Lượt bình luận'),
@@ -17,7 +24,6 @@ enum SortDirection { asc, desc }
 
 @freezed
 abstract class SortOption with _$SortOption {
-  // Constructor riêng tư để thêm các phương thức/getter tùy chỉnh
   const SortOption._();
 
   const factory SortOption({
@@ -25,46 +31,81 @@ abstract class SortOption with _$SortOption {
     required SortDirection direction,
   }) = _SortOption;
 
-  /// Lựa chọn sắp xếp mặc định: Ngày đăng mới nhất
+  /// Lựa chọn mặc định cho Explore Screen
   static const SortOption defaultSort = SortOption(
     field: SortField.datePosted,
     direction: SortDirection.desc,
   );
 
-  /// Getter để tạo tên hiển thị động
+  /// Lựa chọn mặc định cho Search Result Screen
+  static const SortOption relevanceSort = SortOption(
+    field: SortField.relevance,
+    direction: SortDirection.desc, // Direction không quan trọng nhưng phải có
+  );
+
   String get displayName {
     final icon = field.icon;
     final label = field.label;
+
+    // Không hiển thị mũi tên cho "Liên quan nhất"
+    if (field == SortField.relevance) {
+      return '$icon $label';
+    }
+
     final arrow = direction == SortDirection.desc ? '↓' : '↑';
     return '$icon $label $arrow';
   }
+  
+  /// THAY ĐỔI QUAN TRỌNG: Chuyển `allOptions` và `uniqueFields` thành phương thức động.
 
-  /// Danh sách tất cả các tùy chọn sắp xếp có thể có để hiển thị trên UI
-  static final List<SortOption> allOptions = [
-    // Ngày đăng
-    const SortOption(field: SortField.datePosted, direction: SortDirection.desc), // Mới nhất
-    const SortOption(field: SortField.datePosted, direction: SortDirection.asc), // Cũ nhất
-    // Lượt thích
-    const SortOption(field: SortField.likes, direction: SortDirection.desc),
-    const SortOption(field: SortField.likes, direction: SortDirection.asc),
-    // Lượt bình luận
-    const SortOption(field: SortField.comments, direction: SortDirection.desc),
-    const SortOption(field: SortField.comments, direction: SortDirection.asc),
-    // Lượt lưu
-    const SortOption(field: SortField.saves, direction: SortDirection.desc),
-    const SortOption(field: SortField.saves, direction: SortDirection.asc),
-  ];
+  /// Lấy danh sách tất cả các tùy chọn sắp xếp dựa trên ngữ cảnh.
+  static List<SortOption> getAllOptions({
+    required FilterContext forContext,
+  }) {
+    final baseOptions = [
+      const SortOption(field: SortField.datePosted, direction: SortDirection.desc),
+      const SortOption(field: SortField.datePosted, direction: SortDirection.asc),
+      const SortOption(field: SortField.likes, direction: SortDirection.desc),
+      const SortOption(field: SortField.likes, direction: SortDirection.asc),
+      const SortOption(field: SortField.comments, direction: SortDirection.desc),
+      const SortOption(field: SortField.comments, direction: SortDirection.asc),
+      const SortOption(field: SortField.saves, direction: SortDirection.desc),
+      const SortOption(field: SortField.saves, direction: SortDirection.asc),
+    ];
 
-  /// Danh sách các trường sắp xếp duy nhất có thể chọn.
-  static final List<SortField> uniqueFields = [
-    SortField.datePosted,
-    SortField.likes,
-    SortField.comments,
-    SortField.saves,
-  ];
+    if (forContext == FilterContext.search) {
+      // Nếu là màn hình tìm kiếm, thêm "Liên quan nhất" vào đầu danh sách.
+      return [relevanceSort, ...baseOptions];
+    }
+    
+    // Ngược lại, trả về danh sách cơ bản cho Explore.
+    return baseOptions;
+  }
+  
+  /// Lấy danh sách các trường sắp xếp duy nhất dựa trên ngữ cảnh.
+  static List<SortField> getUniqueFields({
+    required FilterContext forContext,
+  }) {
+    final baseFields = [
+      SortField.datePosted,
+      SortField.likes,
+      SortField.comments,
+      SortField.saves,
+    ];
 
-  /// Kiểm tra xem một trường có hỗ trợ cả 2 chiều sắp xếp không.
+    if (forContext == FilterContext.search) {
+      // Thêm "Liên quan nhất" vào đầu danh sách cho màn hình tìm kiếm.
+      return [SortField.relevance, ...baseFields];
+    }
+
+    return baseFields;
+  }
+
   bool get isReversible {
-    return true; // Ví dụ: Vị trí chỉ có 1 chiều là 'gần nhất'
+    // Relevance không thể đảo ngược chiều.
+    if (field == SortField.relevance) {
+      return false;
+    }
+    return true;
   }
 }
