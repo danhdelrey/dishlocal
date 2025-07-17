@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    // 1. Lấy các biến môi trường đã thiết lập
+    // 1. Lấy các biến môi trường đã thiết lập (không đổi)
     const algoliaAppId = Deno.env.get("ALGOLIA_APP_ID");
     const algoliaAdminApiKey = Deno.env.get("ALGOLIA_ADMIN_KEY");
     const algoliaIndexName = "posts";
@@ -23,14 +23,18 @@ serve(async (req) => {
       throw new Error("Algolia environment variables are not set.");
     }
 
-    // 2. Tạo Supabase client để truy vấn dữ liệu
+    // 2. Tạo Supabase client để truy vấn dữ liệu (không đổi)
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       { global: { headers: { Authorization: req.headers.get("Authorization")! } } }
     );
 
-    // 3. Lấy tất cả dữ liệu từ bảng 'posts' với các trường cần thiết
+    // 3. LẤY THÊM DỮ LIỆU TỪ BẢNG 'posts'
+    // =======================================================================
+    // === THAY ĐỔI QUAN TRỌNG NHẤT ==========================================
+    // =======================================================================
+    // Thêm các trường cần thiết cho việc lọc và sắp xếp vào câu lệnh `select`.
     const { data: posts, error: supabaseError } = await supabaseClient
       .from("posts")
       .select(`
@@ -42,7 +46,12 @@ serve(async (req) => {
         latitude, 
         longitude, 
         price, 
-        insight
+        insight,
+        like_count,
+        save_count,
+        comment_count,
+        food_category,
+        created_at
       `);
 
     if (supabaseError) throw supabaseError;
@@ -53,14 +62,13 @@ serve(async (req) => {
       });
     }
 
-    // 4. Chuẩn bị dữ liệu để gửi lên Algolia (Bao gồm cả _geoloc)
+    // 4. CHUẨN BỊ DỮ LIỆU ĐỂ GỬI LÊN ALGOLIA (với các trường mới)
     const algoliaObjects = posts.map(post => {
-      // *** THAY ĐỔI QUAN TRỌNG Ở ĐÂY ***
-      // Tạo object _geoloc theo đúng định dạng Algolia yêu cầu
       const geoData = (post.latitude && post.longitude) 
         ? { _geoloc: { lat: post.latitude, lng: post.longitude } }
         : {};
 
+      // THÊM CÁC TRƯỜNG MỚI VÀO OBJECT GỬI ĐI
       return {
         objectID: post.id,
         id: post.id,
@@ -70,9 +78,20 @@ serve(async (req) => {
         location_address: post.location_address,
         price: post.price,
         insight: post.insight,
-        // Thêm object _geoloc vào đây
         ...geoData,
-        // Chúng ta vẫn có thể giữ lại latitude và longitude riêng nếu cần hiển thị trên client
+        
+        // --- CÁC TRƯỜNG MỚI CHO FILTERING VÀ SORTING ---
+        like_count: post.like_count,
+        save_count: post.save_count,
+        comment_count: post.comment_count,
+        food_category: post.food_category,
+
+        // Algolia xử lý chuỗi ISO 8601 của timestamp rất tốt.
+        // Để có thể sắp xếp theo ngày, chúng ta cần gửi lên một giá trị số.
+        // Unix timestamp (giây) là một lựa chọn tuyệt vời.
+        created_at: Math.floor(new Date(post.created_at).getTime() / 1000),
+
+        // Chúng ta vẫn có thể giữ lại latitude và longitude riêng nếu cần
         latitude: post.latitude,
         longitude: post.longitude,
       };

@@ -1,7 +1,12 @@
+// File: supabase/functions/sync-post-to-algolia/index.ts
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-
-// Define a type for the post object
+// =======================================================================
+// === THAY ĐỔI 1: CẬP NHẬT KIỂU DỮ LIỆU `Post` ============================
+// =======================================================================
+// Thêm các trường mới mà trigger của Supabase sẽ gửi đến.
+// Đảm bảo tên trường khớp với tên cột trong bảng 'posts' của bạn.
 type Post = {
   id: string;
   image_url: string;
@@ -12,13 +17,25 @@ type Post = {
   insight: string;
   latitude?: number;
   longitude?: number;
+
+  // CÁC TRƯỜNG MỚI CHO FILTERING VÀ SORTING
+  like_count: number;
+  save_count: number;
+  comment_count: number;
+  food_category: string | null;
+  created_at: string; // Trigger gửi dưới dạng chuỗi ISO
 };
 
-// Tạo object Algolia từ record
+
+// =======================================================================
+// === THAY ĐỔI 2: CẬP NHẬT HÀM `toAlgoliaObject` =========================
+// =======================================================================
+// Chuyển đổi object Post nhận từ trigger thành object Algolia hoàn chỉnh.
 function toAlgoliaObject(post: Post) {
   const geoData = (post.latitude !== undefined && post.longitude !== undefined)
     ? { _geoloc: { lat: post.latitude, lng: post.longitude } }
     : {};
+
   return {
     objectID: post.id,
     id: post.id,
@@ -29,12 +46,23 @@ function toAlgoliaObject(post: Post) {
     price: post.price,
     insight: post.insight,
     ...geoData,
+
+    // --- THÊM CÁC TRƯỜG MỚI VÀO ĐÂY ---
+    like_count: post.like_count,
+    save_count: post.save_count,
+    comment_count: post.comment_count,
+    food_category: post.food_category,
+    
+    // Chuyển đổi `created_at` thành Unix timestamp (số) để sắp xếp
+    created_at: Math.floor(new Date(post.created_at).getTime() / 1000),
+
+    // Các trường này có thể giữ lại nếu cần
     latitude: post.latitude,
     longitude: post.longitude,
   };
 }
 
-// Hàm xử lý chính của Edge Function
+// Hàm xử lý chính của Edge Function (phần còn lại không cần thay đổi)
 serve(async (req) => {
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
@@ -61,10 +89,12 @@ serve(async (req) => {
 
     if (type === "INSERT") {
       algoliaAction = "addObject";
-      algoliaBody = toAlgoliaObject(record);
+      // Hàm toAlgoliaObject đã được cập nhật
+      algoliaBody = toAlgoliaObject(record); 
     } else if (type === "UPDATE") {
       algoliaAction = "updateObject";
-      algoliaBody = toAlgoliaObject(record);
+      // Hàm toAlgoliaObject đã được cập nhật
+      algoliaBody = toAlgoliaObject(record); 
     } else if (type === "DELETE") {
       algoliaAction = "deleteObject";
       algoliaBody = { objectID: old_record.id };
