@@ -58,6 +58,7 @@ abstract class PostRepository {
     required String query,
     int page = 0,
     int hitsPerPage = 20,
+    FilterSortParams? filterParams, 
   });
 
   Future<Either<PostFailure, List<Post>>> getRecommendedPosts({

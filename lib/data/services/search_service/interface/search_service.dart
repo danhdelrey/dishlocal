@@ -1,5 +1,4 @@
-// search_service.dart
-
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/services/search_service/model/search_result.dart';
 
 /// Enum để xác định loại nội dung cần tìm kiếm.
@@ -26,6 +25,9 @@ abstract class SearchService {
     required SearchableItem searchType,
     int page = 0,
     int hitsPerPage = 20,
+    // THÊM MỚI: Thêm tham số bộ lọc tùy chọn
+    FilterSortParams? filterParams,
+    String? latLongForGeoSearch,
   });
 
   /// Thực hiện tìm kiếm "nhẹ", chỉ lấy các gợi ý văn bản.
@@ -54,4 +56,6 @@ abstract class SearchService {
     int hitsPerPage = 20,
   });
   */
+
+  
 }

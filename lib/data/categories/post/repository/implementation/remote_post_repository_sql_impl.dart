@@ -503,11 +503,24 @@ class RemotePostRepositorySqlImpl implements PostRepository {
     });
   }
 
+  Future<String?> _getLatLngForGeoSearch() async {
+    // Logic lấy vị trí hiện tại của người dùng từ LocationService
+    // và trả về chuỗi "lat,lng", ví dụ: "21.028511,105.804817"
+    // Trả về null nếu không lấy được vị trí.
+    try {
+      final position = await _locationService.getCurrentPosition();
+      return '${position.latitude},${position.longitude}';
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
   Future<Either<PostFailure, List<Post>>> searchPosts({
     required String query,
     int page = 0,
     int hitsPerPage = 20,
+    FilterSortParams? filterParams,
   }) async {
     _log.info('🔍 Bắt đầu tìm kiếm bài viết với query: "$query"');
     try {
@@ -517,6 +530,8 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         searchType: SearchableItem.posts,
         page: page,
         hitsPerPage: hitsPerPage,
+        filterParams: filterParams,
+        latLongForGeoSearch: await _getLatLngForGeoSearch(),
       );
       _log.info('✅ Tìm kiếm thành công, nhận được ${searchResult.objectIds.length} ID bài viết.');
 
@@ -637,8 +652,8 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       return posts;
     });
   }
-  
-   @override
+
+  @override
   Future<Either<PostFailure, void>> recordPostView({
     required String postId,
     int? durationInMs,
@@ -669,7 +684,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       _log.fine('✅ Ghi nhận lượt xem thành công.');
     });
   }
-  
+
   @override
   Future<Either<PostFailure, List<Post>>> getTrendingPosts({
     required int page,
@@ -694,7 +709,7 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       if (posts.isNotEmpty) {
         return _enrichPostsWithDistance(posts);
       }
-      
+
       return posts;
     });
   }

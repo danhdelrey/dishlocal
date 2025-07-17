@@ -12,4 +12,8 @@ sealed class ResultSearchEvent with _$ResultSearchEvent {
 
   /// Thay đổi loại tìm kiếm (chuyển tab)
   const factory ResultSearchEvent.searchTypeChanged({required SearchType searchType}) = _SearchTypeChanged;
+
+  const factory ResultSearchEvent.filtersChanged({
+    required FilterSortParams newFilters,
+  }) = _FiltersChanged;
 }

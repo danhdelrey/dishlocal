@@ -186,6 +186,83 @@ class __$SearchTypeChangedCopyWithImpl<$Res>
 }
 
 /// @nodoc
+
+class _FiltersChanged implements ResultSearchEvent {
+  const _FiltersChanged({required this.newFilters});
+
+  final FilterSortParams newFilters;
+
+  /// Create a copy of ResultSearchEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$FiltersChangedCopyWith<_FiltersChanged> get copyWith =>
+      __$FiltersChangedCopyWithImpl<_FiltersChanged>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _FiltersChanged &&
+            (identical(other.newFilters, newFilters) ||
+                other.newFilters == newFilters));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, newFilters);
+
+  @override
+  String toString() {
+    return 'ResultSearchEvent.filtersChanged(newFilters: $newFilters)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$FiltersChangedCopyWith<$Res>
+    implements $ResultSearchEventCopyWith<$Res> {
+  factory _$FiltersChangedCopyWith(
+          _FiltersChanged value, $Res Function(_FiltersChanged) _then) =
+      __$FiltersChangedCopyWithImpl;
+  @useResult
+  $Res call({FilterSortParams newFilters});
+
+  $FilterSortParamsCopyWith<$Res> get newFilters;
+}
+
+/// @nodoc
+class __$FiltersChangedCopyWithImpl<$Res>
+    implements _$FiltersChangedCopyWith<$Res> {
+  __$FiltersChangedCopyWithImpl(this._self, this._then);
+
+  final _FiltersChanged _self;
+  final $Res Function(_FiltersChanged) _then;
+
+  /// Create a copy of ResultSearchEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? newFilters = null,
+  }) {
+    return _then(_FiltersChanged(
+      newFilters: null == newFilters
+          ? _self.newFilters
+          : newFilters // ignore: cast_nullable_to_non_nullable
+              as FilterSortParams,
+    ));
+  }
+
+  /// Create a copy of ResultSearchEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FilterSortParamsCopyWith<$Res> get newFilters {
+    return $FilterSortParamsCopyWith<$Res>(_self.newFilters, (value) {
+      return _then(_self.copyWith(newFilters: value));
+    });
+  }
+}
+
+/// @nodoc
 mixin _$ResultSearchState {
   SearchStatus get status;
   SearchType get searchType;
@@ -193,6 +270,7 @@ mixin _$ResultSearchState {
   List<dynamic> get results;
   int get currentPage;
   bool get hasNextPage;
+  FilterSortParams get filterParams;
   Object? get failure;
 
   /// Create a copy of ResultSearchState
@@ -217,6 +295,8 @@ mixin _$ResultSearchState {
                 other.currentPage == currentPage) &&
             (identical(other.hasNextPage, hasNextPage) ||
                 other.hasNextPage == hasNextPage) &&
+            (identical(other.filterParams, filterParams) ||
+                other.filterParams == filterParams) &&
             const DeepCollectionEquality().equals(other.failure, failure));
   }
 
@@ -229,11 +309,12 @@ mixin _$ResultSearchState {
       const DeepCollectionEquality().hash(results),
       currentPage,
       hasNextPage,
+      filterParams,
       const DeepCollectionEquality().hash(failure));
 
   @override
   String toString() {
-    return 'ResultSearchState(status: $status, searchType: $searchType, query: $query, results: $results, currentPage: $currentPage, hasNextPage: $hasNextPage, failure: $failure)';
+    return 'ResultSearchState(status: $status, searchType: $searchType, query: $query, results: $results, currentPage: $currentPage, hasNextPage: $hasNextPage, filterParams: $filterParams, failure: $failure)';
   }
 }
 
@@ -250,7 +331,10 @@ abstract mixin class $ResultSearchStateCopyWith<$Res> {
       List<dynamic> results,
       int currentPage,
       bool hasNextPage,
+      FilterSortParams filterParams,
       Object? failure});
+
+  $FilterSortParamsCopyWith<$Res> get filterParams;
 }
 
 /// @nodoc
@@ -272,6 +356,7 @@ class _$ResultSearchStateCopyWithImpl<$Res>
     Object? results = null,
     Object? currentPage = null,
     Object? hasNextPage = null,
+    Object? filterParams = null,
     Object? failure = freezed,
   }) {
     return _then(_self.copyWith(
@@ -299,8 +384,22 @@ class _$ResultSearchStateCopyWithImpl<$Res>
           ? _self.hasNextPage
           : hasNextPage // ignore: cast_nullable_to_non_nullable
               as bool,
+      filterParams: null == filterParams
+          ? _self.filterParams
+          : filterParams // ignore: cast_nullable_to_non_nullable
+              as FilterSortParams,
       failure: freezed == failure ? _self.failure : failure,
     ));
+  }
+
+  /// Create a copy of ResultSearchState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FilterSortParamsCopyWith<$Res> get filterParams {
+    return $FilterSortParamsCopyWith<$Res>(_self.filterParams, (value) {
+      return _then(_self.copyWith(filterParams: value));
+    });
   }
 }
 
@@ -314,6 +413,7 @@ class _ResultSearchState implements ResultSearchState {
       final List<dynamic> results = const [],
       this.currentPage = 0,
       this.hasNextPage = true,
+      this.filterParams = const FilterSortParams(),
       this.failure})
       : _results = results;
 
@@ -342,6 +442,9 @@ class _ResultSearchState implements ResultSearchState {
   @JsonKey()
   final bool hasNextPage;
   @override
+  @JsonKey()
+  final FilterSortParams filterParams;
+  @override
   final Object? failure;
 
   /// Create a copy of ResultSearchState
@@ -366,6 +469,8 @@ class _ResultSearchState implements ResultSearchState {
                 other.currentPage == currentPage) &&
             (identical(other.hasNextPage, hasNextPage) ||
                 other.hasNextPage == hasNextPage) &&
+            (identical(other.filterParams, filterParams) ||
+                other.filterParams == filterParams) &&
             const DeepCollectionEquality().equals(other.failure, failure));
   }
 
@@ -378,11 +483,12 @@ class _ResultSearchState implements ResultSearchState {
       const DeepCollectionEquality().hash(_results),
       currentPage,
       hasNextPage,
+      filterParams,
       const DeepCollectionEquality().hash(failure));
 
   @override
   String toString() {
-    return 'ResultSearchState(status: $status, searchType: $searchType, query: $query, results: $results, currentPage: $currentPage, hasNextPage: $hasNextPage, failure: $failure)';
+    return 'ResultSearchState(status: $status, searchType: $searchType, query: $query, results: $results, currentPage: $currentPage, hasNextPage: $hasNextPage, filterParams: $filterParams, failure: $failure)';
   }
 }
 
@@ -401,7 +507,11 @@ abstract mixin class _$ResultSearchStateCopyWith<$Res>
       List<dynamic> results,
       int currentPage,
       bool hasNextPage,
+      FilterSortParams filterParams,
       Object? failure});
+
+  @override
+  $FilterSortParamsCopyWith<$Res> get filterParams;
 }
 
 /// @nodoc
@@ -423,6 +533,7 @@ class __$ResultSearchStateCopyWithImpl<$Res>
     Object? results = null,
     Object? currentPage = null,
     Object? hasNextPage = null,
+    Object? filterParams = null,
     Object? failure = freezed,
   }) {
     return _then(_ResultSearchState(
@@ -450,8 +561,22 @@ class __$ResultSearchStateCopyWithImpl<$Res>
           ? _self.hasNextPage
           : hasNextPage // ignore: cast_nullable_to_non_nullable
               as bool,
+      filterParams: null == filterParams
+          ? _self.filterParams
+          : filterParams // ignore: cast_nullable_to_non_nullable
+              as FilterSortParams,
       failure: freezed == failure ? _self.failure : failure,
     ));
+  }
+
+  /// Create a copy of ResultSearchState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FilterSortParamsCopyWith<$Res> get filterParams {
+    return $FilterSortParamsCopyWith<$Res>(_self.filterParams, (value) {
+      return _then(_self.copyWith(filterParams: value));
+    });
   }
 }
 

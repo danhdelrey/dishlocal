@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -21,6 +22,21 @@ class ResultSearchBloc extends Bloc<ResultSearchEvent, ResultSearchState> {
     on<_SearchStarted>(_onSearchStarted);
     on<_NextPageRequested>(_onNextPageRequested, transformer: droppable());
     on<_SearchTypeChanged>(_onSearchTypeChanged);
+    on<_FiltersChanged>(_onFiltersChanged); 
+  }
+
+  Future<void> _onFiltersChanged(_FiltersChanged event, Emitter<ResultSearchState> emit) async {
+    // 1. Cập nhật state với bộ lọc mới
+    // 2. Reset lại danh sách kết quả và trang hiện tại
+    emit(state.copyWith(
+      filterParams: event.newFilters,
+      results: [],
+      currentPage: 0,
+      hasNextPage: true,
+      status: SearchStatus.initial, // Đặt lại status
+    ));
+    // 3. Trigger tải trang đầu tiên với bộ lọc mới
+    add(const ResultSearchEvent.nextPageRequested());
   }
 
   Future<void> _onSearchStarted(_SearchStarted event, Emitter<ResultSearchState> emit) async {
@@ -46,6 +62,8 @@ class ResultSearchBloc extends Bloc<ResultSearchEvent, ResultSearchState> {
           query: state.query,
           page: state.currentPage,
           hitsPerPage: _hitsPerPage,
+          // THÊM MỚI: Truyền bộ lọc từ state vào repository
+          filterParams: state.filterParams,
         );
         newItems = result.getOrElse(() => []);
       } else {

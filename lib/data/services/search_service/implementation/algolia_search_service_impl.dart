@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:algoliasearch/algoliasearch.dart';
 import 'package:dishlocal/core/app_environment/app_environment.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_option.dart';
 import 'package:dishlocal/data/services/search_service/exception/search_service_exception.dart';
 import 'package:dishlocal/data/services/search_service/interface/search_service.dart';
 import 'package:dishlocal/data/services/search_service/model/search_result.dart';
@@ -26,6 +28,8 @@ class AlgoliaSearchServiceImpl implements SearchService {
     required SearchableItem searchType,
     int page = 0,
     int hitsPerPage = 20,
+    FilterSortParams? filterParams,
+    String? latLongForGeoSearch,
   }) async {
     _log.fine(
       'Starting search for query: "$query" in type: ${searchType.name} '
@@ -37,25 +41,56 @@ class AlgoliaSearchServiceImpl implements SearchService {
       throw InvalidSearchQueryException('Truy vấn tìm kiếm không được để trống.');
     }
 
-    final String indexName;
-    switch (searchType) {
-      case SearchableItem.posts:
-        indexName = 'posts';
-        break;
-      case SearchableItem.profiles:
-        indexName = 'profiles';
-        break;
+    String indexName;
+    if (searchType == SearchableItem.posts && filterParams != null) {
+      // Logic chọn replica index dựa trên tùy chọn sắp xếp
+      switch (filterParams.sortOption.field) {
+        case SortField.likes:
+          indexName = filterParams.sortOption.direction == SortDirection.desc ? 'posts_like_count_desc' : 'posts_like_count_asc';
+          break;
+        case SortField.datePosted:
+          indexName = filterParams.sortOption.direction == SortDirection.desc ? 'posts' : 'posts_created_at_asc'; // Giả sử index chính sắp xếp theo ngày đăng giảm dần
+          break;
+        // ... thêm các case khác cho save_count, comment_count
+        default:
+          indexName = 'posts'; // Fallback về index chính
+      }
+    } else {
+      // Giữ nguyên logic cũ cho tìm kiếm profile hoặc post không có filter
+      indexName = (searchType == SearchableItem.posts) ? 'posts' : 'profiles';
     }
     _log.finer('Using Algolia index: "$indexName"');
 
+    // --- XÂY DỰNG BỘ LỌC CHO ALGOLIA ---
+    final List<String> filters = [];
+    if (filterParams != null) {
+      // 1. Lọc giá
+      if (filterParams.range != null) {
+        filters.add('price >= ${filterParams.range!.minPrice}');
+        if (filterParams.range!.maxPrice != double.infinity) {
+          filters.add('price < ${filterParams.range!.maxPrice}');
+        }
+      }
+      // 2. Lọc category
+      if (filterParams.categories.isNotEmpty) {
+        final categoryFilters = filterParams.categories.map((c) => "food_category:'${c.name}'").join(' OR ');
+        filters.add('($categoryFilters)');
+      }
+    }
+
     try {
-      // --- THAY ĐỔI QUAN TRỌNG Ở ĐÂY ---
-      // 1. Tạo một đối tượng SearchForHits để chứa tất cả các tham số tìm kiếm
       final searchRequest = SearchForHits(
         indexName: indexName,
         query: query,
         page: page,
         hitsPerPage: hitsPerPage,
+        // THÊM MỚI: Gắn bộ lọc vào request
+        filters: filters.join(' AND '),
+        // THÊM MỚI: Lọc theo vị trí
+        aroundLatLng: (filterParams?.distance != null)
+            ? latLongForGeoSearch
+            : null,
+        aroundRadius: (filterParams?.distance != null) ? filterParams!.distance!.maxDistance.toInt() : null,
       );
 
       // 2. Gọi API và truyền đối tượng vừa tạo vào tham số `request`

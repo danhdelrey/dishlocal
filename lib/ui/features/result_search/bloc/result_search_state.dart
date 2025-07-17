@@ -11,6 +11,7 @@ sealed class ResultSearchState with _$ResultSearchState {
     @Default([]) List<dynamic> results,
     @Default(0) int currentPage,
     @Default(true) bool hasNextPage,
+    @Default(FilterSortParams()) FilterSortParams filterParams,
     Object? failure,
   }) = _ResultSearchState;
 }

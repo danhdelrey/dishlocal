@@ -85,6 +85,23 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
           'Kết quả cho "${widget.query}"',
           style: appTextTheme(context).titleMedium,
         ),
+        actions: [
+          // Chỉ hiển thị nút lọc khi đang ở tab "Bài viết"
+          ValueListenableBuilder<int>(
+            valueListenable: ValueNotifier<int>(_tabController.index),
+            builder: (context, index, child) {
+              if (index == 0) {
+                // Tab "Bài viết"
+                return IconButton(
+                  icon: const Icon(Icons.filter_list),
+                  onPressed: () => _showFilterPanel(context),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
+
         bottom: TabBar(
           dividerColor: Colors.white.withValues(alpha: 0.1),
           controller: _tabController,
@@ -116,7 +133,26 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
       ),
     );
   }
+
+  void _showFilterPanel(BuildContext parentContext) {
+    // Lấy ra BLoC của tab "Bài viết"
+    final bloc = parentContext.read<ResultSearchBloc>();
+    showModalBottomSheet(
+      context: parentContext,
+      isScrollControlled: true,
+      builder: (context) {
+        // Quan trọng: Cung cấp BLoC của tab bài viết cho bottom sheet,
+        // để nó có thể đọc state và gửi event.
+        return BlocProvider.value(
+          value: bloc,
+          child: YourFilterPanelWidget(), // Đây là Widget bộ lọc bạn sẽ tạo
+        );
+      },
+    );
+  }
 }
+
+
 
 // Widget hiển thị kết quả bài viết, giờ chỉ cần lắng nghe BLoC được cung cấp.
 class _PostResultsView extends StatefulWidget {
