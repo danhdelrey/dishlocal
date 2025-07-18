@@ -143,60 +143,7 @@ class FilterButton extends StatelessWidget {
     // Nếu showWrap = true, hiển thị wrap với tất cả filter chips
     final filterChildren = [
       filterButton,
-
-      // Active filters chips
-      if (hasActiveFilters) ...[
-        // Categories chips
-        ...filterParams.categories.map((category) => CustomChoiceChip(
-              label: category.label,
-              isSelected: true,
-              onSelected: (_) {
-                _openFilterSortSheet(context);
-              }, // Disabled for display only
-              itemColor: category.color,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              borderRadius: 8,
-            )),
-
-        // Price range chip
-        if (filterParams.range != null)
-          CustomChoiceChip(
-            label: filterParams.range!.displayName,
-            isSelected: true,
-            onSelected: (_) {
-              _openFilterSortSheet(context);
-            }, // Disabled for display only
-            itemColor: Colors.amber,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            borderRadius: 8,
-          ),
-
-        // Distance chip
-        if (filterParams.distance != null)
-          CustomChoiceChip(
-            label: filterParams.distance!.displayName,
-            isSelected: true,
-            onSelected: (_) {
-              _openFilterSortSheet(context);
-            }, // Disabled for display only
-            itemColor: Colors.blue,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            borderRadius: 8,
-          ),
-
-        // Sort option chip with direction arrow
-        if (filterParams.sortOption.field != SortField.relevance)
-          CustomChoiceChip(
-            label: _buildSortLabel(filterParams.sortOption),
-            isSelected: true,
-            onSelected: (_) {
-              _openFilterSortSheet(context);
-            }, // Disabled for display only
-            itemColor: Colors.lightGreen,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            borderRadius: 8,
-          ),
-      ],
+      ..._buildFilterChips(context, filterParams),
     ];
 
     return Padding(
@@ -209,6 +156,72 @@ class FilterButton extends StatelessWidget {
         children: filterChildren,
       ),
     );
+  }
+
+  List<Widget> _buildFilterChips(BuildContext context, FilterSortParams filterParams) {
+    final hasActiveFilters = !filterParams.isDefault(filterParams.context);
+
+    if (!hasActiveFilters) {
+      return [];
+    }
+
+    final chips = <Widget>[];
+
+    // Categories chips
+    chips.addAll(filterParams.categories.map((category) => CustomChoiceChip(
+          label: category.label,
+          isSelected: true,
+          onSelected: (_) {
+            _openFilterSortSheet(context);
+          },
+          itemColor: category.color,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          borderRadius: 8,
+        )));
+
+    // Price range chip
+    if (filterParams.range != null) {
+      chips.add(CustomChoiceChip(
+        label: filterParams.range!.displayName,
+        isSelected: true,
+        onSelected: (_) {
+          _openFilterSortSheet(context);
+        },
+        itemColor: Colors.amber,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        borderRadius: 8,
+      ));
+    }
+
+    // Distance chip
+    if (filterParams.distance != null) {
+      chips.add(CustomChoiceChip(
+        label: filterParams.distance!.displayName,
+        isSelected: true,
+        onSelected: (_) {
+          _openFilterSortSheet(context);
+        },
+        itemColor: Colors.blue,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        borderRadius: 8,
+      ));
+    }
+
+    // Sort option chip with direction arrow
+    if (filterParams.sortOption.field != SortField.relevance) {
+      chips.add(CustomChoiceChip(
+        label: _buildSortLabel(filterParams.sortOption),
+        isSelected: true,
+        onSelected: (_) {
+          _openFilterSortSheet(context);
+        },
+        itemColor: Colors.lightGreen,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        borderRadius: 8,
+      ));
+    }
+
+    return chips;
   }
 
   String _buildSortLabel(SortOption sortOption) {
