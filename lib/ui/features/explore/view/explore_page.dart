@@ -6,6 +6,7 @@ import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/filter_button.dart';
+import 'package:dishlocal/ui/features/filter_sort/view/filters_wrap.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/shimmering_small_post.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
@@ -151,6 +152,16 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                   pinned: false,
                   floating: true,
                   snap: true,
+                ),
+                BlocBuilder<PostBloc, PostState>(
+                  builder: (context, state) {
+                    return SliverToBoxAdapter(
+                      child: FiltersWrap(
+                        filterParams: state.filterSortParams,
+                        openFilterSortSheet: (context) {},
+                      ),
+                    );
+                  },
                 ),
                 BlocBuilder<PostBloc, PostState>(
                   builder: (context, state) {

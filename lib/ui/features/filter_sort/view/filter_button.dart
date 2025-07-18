@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_option.dart';
+import 'package:dishlocal/ui/features/filter_sort/view/filters_wrap.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/sorting_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/result_search/bloc/result_search_bloc.dart';
@@ -141,91 +142,7 @@ class FilterButton extends StatelessWidget {
     }
 
     // Nếu showWrap = true, hiển thị wrap với tất cả filter chips
-    final filterChildren = [
-      filterButton,
-      ..._buildFilterChips(context, filterParams),
-    ];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-      child: Wrap(
-        spacing: 8.0,
-        runSpacing: 8.0,
-        alignment: WrapAlignment.start,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: filterChildren,
-      ),
-    );
-  }
-
-  List<Widget> _buildFilterChips(BuildContext context, FilterSortParams filterParams) {
-    final hasActiveFilters = !filterParams.isDefault(filterParams.context);
-
-    if (!hasActiveFilters) {
-      return [];
-    }
-
-    final chips = <Widget>[];
-
-    // Categories chips
-    chips.addAll(filterParams.categories.map((category) => CustomChoiceChip(
-          label: category.label,
-          isSelected: true,
-          onSelected: (_) {
-            _openFilterSortSheet(context);
-          },
-          itemColor: category.color,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          borderRadius: 8,
-        )));
-
-    // Price range chip
-    if (filterParams.range != null) {
-      chips.add(CustomChoiceChip(
-        label: filterParams.range!.displayName,
-        isSelected: true,
-        onSelected: (_) {
-          _openFilterSortSheet(context);
-        },
-        itemColor: Colors.amber,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        borderRadius: 8,
-      ));
-    }
-
-    // Distance chip
-    if (filterParams.distance != null) {
-      chips.add(CustomChoiceChip(
-        label: filterParams.distance!.displayName,
-        isSelected: true,
-        onSelected: (_) {
-          _openFilterSortSheet(context);
-        },
-        itemColor: Colors.blue,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        borderRadius: 8,
-      ));
-    }
-
-    // Sort option chip with direction arrow
-    if (filterParams.sortOption.field != SortField.relevance) {
-      chips.add(CustomChoiceChip(
-        label: _buildSortLabel(filterParams.sortOption),
-        isSelected: true,
-        onSelected: (_) {
-          _openFilterSortSheet(context);
-        },
-        itemColor: Colors.lightGreen,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        borderRadius: 8,
-      ));
-    }
-
-    return chips;
-  }
-
-  String _buildSortLabel(SortOption sortOption) {
-    final arrow = sortOption.direction == SortDirection.desc ? ' ↓' : ' ↑';
-    return '${sortOption.field.icon} ${sortOption.field.label}$arrow';
+    return FiltersWrap(filterParams: filterParams, openFilterSortSheet: _openFilterSortSheet);
   }
 }
