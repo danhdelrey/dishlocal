@@ -144,6 +144,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
                       onPressed: () => context.push('/search_input'),
                     ),
                     FilterButton(
+                      showWrap: false,
                       postBloc: _bloc,
                     ),
                   ],

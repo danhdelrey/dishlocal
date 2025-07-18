@@ -1,15 +1,25 @@
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
+import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_option.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/sorting_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/result_search/bloc/result_search_bloc.dart';
+import 'package:dishlocal/ui/widgets/input_widgets/custom_choice_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 
 class FilterButton extends StatelessWidget {
-  const FilterButton({super.key, this.postBloc, this.resultSearchBloc});
+  const FilterButton({
+    super.key,
+    this.postBloc,
+    this.resultSearchBloc,
+    this.showWrap = true,
+  });
+
   final PostBloc? postBloc;
   final ResultSearchBloc? resultSearchBloc;
+  final bool showWrap;
 
   /// Hàm này sẽ lấy BLoC, đọc state, và mở bottom sheet
   void _openFilterSortSheet(BuildContext context) async {
@@ -36,6 +46,29 @@ class FilterButton extends StatelessWidget {
       } else {
         log.warning('🟡 Params không thay đổi. Không gửi event.');
       }
+    } else if (postBloc != null) {
+      final currentFilters = postBloc!.state.filterSortParams;
+      log.info('🔵 Mở bộ lọc với params hiện tại: ${currentFilters.toVietnameseString}');
+
+      final newFilters = await SortingBottomSheet.show(context, currentFilters);
+
+      // LOG KẾT QUẢ TRẢ VỀ TỪ BOTTOM SHEET
+      if (newFilters == null) {
+        log.warning('🟡 Bottom sheet đã đóng mà không có kết quả (newFilters is null).');
+        return;
+      }
+
+      log.info('🟢 Bottom sheet trả về params mới: ${newFilters.toVietnameseString}');
+
+      // So sánh và gửi event
+      if (newFilters != currentFilters) {
+        log.info('✅ Params đã thay đổi! Gửi event filtersChanged...');
+        postBloc!.add(PostEvent.filtersChanged(newFilters: newFilters));
+      } else {
+        log.warning('🟡 Params không thay đổi. Không gửi event.');
+      }
+    } else {
+      log.severe('🔴 Không có BLoC nào được cung cấp để mở bộ lọc!');
     }
   }
 
@@ -48,17 +81,7 @@ class FilterButton extends StatelessWidget {
         // buildWhen giúp tối ưu hóa, chỉ rebuild khi filterSortParams thay đổi.
         buildWhen: (previous, current) => previous.filterSortParams != current.filterSortParams,
         builder: (context, state) {
-          // Kiểm tra xem có bộ lọc nào đang được áp dụng không
-          final hasActiveFilters = !state.filterSortParams.isDefault(state.filterSortParams.context);
-
-          return IconButton(
-            onPressed: () => _openFilterSortSheet(context),
-            icon: Icon(
-              Icons.tune_rounded,
-              size: 24,
-              color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
-            ),
-          );
+          return _buildFilterWidget(context, state.filterSortParams);
         },
       );
     } else if (resultSearchBloc != null) {
@@ -66,20 +89,101 @@ class FilterButton extends StatelessWidget {
         // buildWhen giúp tối ưu hóa, chỉ rebuild khi filterSortParams thay đổi.
         buildWhen: (previous, current) => previous.filterParams != current.filterParams,
         builder: (context, state) {
-          // Kiểm tra xem có bộ lọc nào đang được áp dụng không
-          final hasActiveFilters = !state.filterParams.isDefault(state.filterParams.context);
-
-          return IconButton(
-            onPressed: () => _openFilterSortSheet(context),
-            icon: Icon(
-              Icons.tune_rounded,
-              size: 24,
-              color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
-            ),
-          );
+          return _buildFilterWidget(context, state.filterParams);
         },
       );
     }
     return const SizedBox();
+  }
+
+  Widget _buildFilterWidget(BuildContext context, FilterSortParams filterParams) {
+    final hasActiveFilters = !filterParams.isDefault(filterParams.context);
+
+    // Filter button
+    final filterButton = IconButton(
+      onPressed: () => _openFilterSortSheet(context),
+      icon: Icon(
+        Icons.tune_rounded,
+        size: 24,
+        color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
+      ),
+    );
+
+    // Nếu showWrap = false, chỉ hiển thị nút duy nhất
+    if (!showWrap) {
+      return filterButton;
+    }
+
+    // Nếu showWrap = true, hiển thị wrap với tất cả filter chips
+    final filterChildren = [
+      filterButton,
+
+      // Active filters chips
+      if (hasActiveFilters) ...[
+        // Categories chips
+        ...filterParams.categories.map((category) => CustomChoiceChip(
+              label: category.label,
+              isSelected: true,
+              onSelected: (_) {
+                _openFilterSortSheet(context);
+              }, // Disabled for display only
+              itemColor: category.color,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              borderRadius: 8,
+            )),
+
+        // Price range chip
+        if (filterParams.range != null)
+          CustomChoiceChip(
+            label: filterParams.range!.displayName,
+            isSelected: true,
+            onSelected: (_) {
+              _openFilterSortSheet(context);
+            }, // Disabled for display only
+            itemColor: Colors.amber,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            borderRadius: 8,
+          ),
+
+        // Distance chip
+        if (filterParams.distance != null)
+          CustomChoiceChip(
+            label: filterParams.distance!.displayName,
+            isSelected: true,
+            onSelected: (_) {
+              _openFilterSortSheet(context);
+            }, // Disabled for display only
+            itemColor: Colors.blue,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            borderRadius: 8,
+          ),
+
+        // Sort option chip with direction arrow
+        if (filterParams.sortOption.field != SortField.relevance)
+          CustomChoiceChip(
+            label: _buildSortLabel(filterParams.sortOption),
+            isSelected: true,
+            onSelected: (_) {
+              _openFilterSortSheet(context);
+            }, // Disabled for display only
+            itemColor: Colors.lightGreen,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            borderRadius: 8,
+          ),
+      ],
+    ];
+
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      alignment: WrapAlignment.start,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: filterChildren,
+    );
+  }
+
+  String _buildSortLabel(SortOption sortOption) {
+    final arrow = sortOption.direction == SortDirection.desc ? ' ↓' : ' ↑';
+    return '${sortOption.field.icon} ${sortOption.field.label}$arrow';
   }
 }

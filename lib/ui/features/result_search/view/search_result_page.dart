@@ -194,6 +194,7 @@ class _PostResultsViewState extends State<_PostResultsView> {
 
         // Hiển thị GridView với dữ liệu
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             FilterButton(
               resultSearchBloc: context.read<ResultSearchBloc>(),
