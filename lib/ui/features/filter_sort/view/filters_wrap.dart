@@ -79,7 +79,7 @@ class _FiltersWrapState extends State<FiltersWrap> with SingleTickerProviderStat
                         color: appColorScheme(context).primary,
                       ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 10),
                 AnimatedRotation(
                   duration: const Duration(milliseconds: 300),
                   turns: _isExpanded ? 0.5 : 0.0,
