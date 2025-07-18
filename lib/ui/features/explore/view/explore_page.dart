@@ -5,7 +5,6 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
-import 'package:dishlocal/ui/features/filter_sort/view/filter_button.dart';
 import 'package:dishlocal/ui/features/filter_sort/view/filters_wrap.dart';
 import 'package:dishlocal/ui/features/post/bloc/post_bloc.dart';
 import 'package:dishlocal/ui/features/post/view/shimmering_small_post.dart';
@@ -128,10 +127,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
               icon: const Icon(CupertinoIcons.search),
               onPressed: () => context.push('/search_input'),
             ),
-            FilterButton(
-              showWrap: false,
-              postBloc: _bloc,
-            ),
+            
           ],
         ),
         body: Column(
@@ -141,7 +137,7 @@ class _ExplorePageContentState extends State<_ExplorePageContent> {
               builder: (context, state) {
                 return FiltersWrap(
                   filterParams: state.filterSortParams,
-                  openFilterSortSheet: (context) {},
+                  postBloc: context.read<PostBloc>(),
                 );
               },
             ),

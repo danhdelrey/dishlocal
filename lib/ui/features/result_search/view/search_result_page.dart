@@ -2,7 +2,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
-import 'package:dishlocal/ui/features/filter_sort/view/filter_button.dart';
+import 'package:dishlocal/ui/features/filter_sort/view/filters_wrap.dart';
 import 'package:dishlocal/ui/features/post/view/shimmering_small_post.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/features/result_search/bloc/result_search_bloc.dart';
@@ -159,48 +159,49 @@ class _PostResultsViewState extends State<_PostResultsView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ResultSearchBloc, ResultSearchState>(
-      builder: (context, state) {
-        // Các trường hợp loading, empty, failure
-        if (state.status == SearchStatus.loading && state.results.isEmpty) {
-          return GridView.builder(
-            key: const PageStorageKey<String>('shimmer_grid'),
-            padding: const EdgeInsets.all(10.0),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 0.75,
-            ),
-            itemCount: 8,
-            itemBuilder: (context, index) => const ShimmeringSmallPost(),
-          );
-        }
-        if (state.status == SearchStatus.empty) {
-          return Column(
-            children: [
-              FilterButton(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        BlocBuilder<ResultSearchBloc, ResultSearchState>(
+          builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: FiltersWrap(
+                filterParams: state.filterParams,
                 resultSearchBloc: context.read<ResultSearchBloc>(),
               ),
-              Center(child: Text('Không tìm thấy bài viết nào cho "${state.query}".')),
-            ],
-          );
-        }
-        if (state.status == SearchStatus.failure) {
-          return Center(child: Text('Đã xảy ra lỗi: ${state.failure}'));
-        }
+            );
+          },
+        ),
+        Expanded(
+          child: BlocBuilder<ResultSearchBloc, ResultSearchState>(
+            builder: (context, state) {
+              // Các trường hợp loading, empty, failure
+              if (state.status == SearchStatus.loading && state.results.isEmpty) {
+                return GridView.builder(
+                  key: const PageStorageKey<String>('shimmer_grid'),
+                  padding: const EdgeInsets.all(10.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemCount: 8,
+                  itemBuilder: (context, index) => const ShimmeringSmallPost(),
+                );
+              }
+              if (state.status == SearchStatus.empty) {
+                return Center(child: Text('Không tìm thấy bài viết nào cho "${state.query}".'));
+              }
+              if (state.status == SearchStatus.failure) {
+                return Center(child: Text('Đã xảy ra lỗi: ${state.failure}'));
+              }
 
-        final posts = state.results.whereType<Post>().toList();
+              final posts = state.results.whereType<Post>().toList();
 
-        // Hiển thị GridView với dữ liệu
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FilterButton(
-              resultSearchBloc: context.read<ResultSearchBloc>(),
-            ),
-            Expanded(
-              child: GridView.builder(
+              // Hiển thị GridView với dữ liệu
+              return GridView.builder(
                 controller: _scrollController,
                 padding: const EdgeInsets.all(10.0),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -223,11 +224,11 @@ class _PostResultsViewState extends State<_PostResultsView> {
                     },
                   );
                 },
-              ),
-            ),
-          ],
-        );
-      },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
