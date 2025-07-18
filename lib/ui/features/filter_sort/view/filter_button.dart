@@ -100,31 +100,40 @@ class FilterButton extends StatelessWidget {
     final hasActiveFilters = !filterParams.isDefault(filterParams.context);
 
     // Filter button
-    final filterButton = InkWell(
-      onTap: () => _openFilterSortSheet(context),
-      borderRadius: BorderRadius.circular(2),
-      child: Container(
-        padding: const EdgeInsets.all(2),
-        child: Row(
-          children: [
-            Icon(
+    final filterButton = showWrap
+        ? InkWell(
+            onTap: () => _openFilterSortSheet(context),
+            borderRadius: BorderRadius.circular(2),
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.tune_rounded,
+                    size: 20,
+                    color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    hasActiveFilters ? 'Lọc & Sắp xếp (đã áp dụng)' : 'Lọc & Sắp xếp',
+                    style: appTextTheme(context).labelLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : IconButton(
+            onPressed: () => _openFilterSortSheet(context),
+            icon: Icon(
               Icons.tune_rounded,
-              size: 20,
+              size: 24,
               color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
             ),
-            if (showWrap) const SizedBox(width: 8),
-            if (showWrap)
-              Text(
-                hasActiveFilters ? 'Lọc & Sắp xếp (đã áp dụng)' : 'Lọc & Sắp xếp',
-                style: appTextTheme(context).labelLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
-                    ),
-              ),
-          ],
-        ),
-      ),
-    );
+            tooltip: hasActiveFilters ? 'Lọc & Sắp xếp (đã áp dụng)' : 'Lọc & Sắp xếp',
+          );
 
     // Nếu showWrap = false, chỉ hiển thị nút duy nhất
     if (!showWrap) {
