@@ -100,12 +100,29 @@ class FilterButton extends StatelessWidget {
     final hasActiveFilters = !filterParams.isDefault(filterParams.context);
 
     // Filter button
-    final filterButton = IconButton(
-      onPressed: () => _openFilterSortSheet(context),
-      icon: Icon(
-        Icons.tune_rounded,
-        size: 24,
-        color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
+    final filterButton = InkWell(
+      onTap: () => _openFilterSortSheet(context),
+      borderRadius: BorderRadius.circular(2),
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        child: Row(
+          children: [
+            Icon(
+              Icons.tune_rounded,
+              size: 20,
+              color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
+            ),
+            if (showWrap) const SizedBox(width: 8),
+            if (showWrap)
+              Text(
+                hasActiveFilters ? 'Lọc & Sắp xếp (đã áp dụng)' : 'Lọc & Sắp xếp',
+                style: appTextTheme(context).labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: hasActiveFilters ? appColorScheme(context).primary : appColorScheme(context).onSurfaceVariant,
+                    ),
+              ),
+          ],
+        ),
       ),
     );
 
@@ -173,12 +190,15 @@ class FilterButton extends StatelessWidget {
       ],
     ];
 
-    return Wrap(
-      spacing: 8.0,
-      runSpacing: 8.0,
-      alignment: WrapAlignment.start,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: filterChildren,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 8.0,
+        alignment: WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: filterChildren,
+      ),
     );
   }
 
