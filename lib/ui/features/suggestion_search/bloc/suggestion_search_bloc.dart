@@ -26,7 +26,7 @@ class SuggestionSearchBloc extends Bloc<SuggestionSearchEvent, SuggestionSearchS
 
   SuggestionSearchBloc(this._searchService) // <-- Sửa constructor
       : super(const SuggestionSearchState()) {
-    on<_QueryChanged>(_onQueryChanged, transformer: debounce(const Duration(milliseconds: 300))); // Giảm debounce một chút
+    on<_QueryChanged>(_onQueryChanged, transformer: debounce(const Duration(milliseconds: 400)));
   }
 
   Future<void> _onQueryChanged(_QueryChanged event, Emitter<SuggestionSearchState> emit) async {

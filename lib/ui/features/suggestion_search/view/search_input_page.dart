@@ -122,19 +122,24 @@ class _SearchInputPageState extends State<SearchInputPage> {
     );
   }
 
-  /// Widget xây dựng danh sách gợi ý
   Widget _buildSuggestionList(List<String> suggestions) {
-    // <<< Nhận vào List<Suggestion>
-    return ListView.separated(
+    return ListView.builder(
       itemCount: suggestions.length,
-      separatorBuilder: (context, index) => const Divider(height: 1, indent: 56),
       itemBuilder: (context, index) {
         final suggestion = suggestions[index];
 
         return ListTile(
-          title: Text(suggestion, maxLines: 1, overflow: TextOverflow.ellipsis),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          leading: Icon(CupertinoIcons.search, size: 20, color: appColorScheme(context).outline),
+          title: Text(
+            suggestion,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: appTextTheme(context).bodyMedium?.copyWith(
+                  color: appColorScheme(context).onSurface,
+                ),
+          ),
           onTap: () {
-            // Khi nhấn vào, điều hướng với displayText
             _navigateToResultScreen(suggestion);
           },
         );
