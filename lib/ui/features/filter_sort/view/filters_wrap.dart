@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_option.dart';
 import 'package:dishlocal/ui/widgets/input_widgets/custom_choice_chip.dart';
@@ -10,15 +11,42 @@ class FiltersWrap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasActiveFilters = !filterParams.isDefault(filterParams.context);
+    if (!hasActiveFilters) {
+      return const SizedBox.shrink();
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-      child: Wrap(
-        spacing: 8.0,
-        runSpacing: 8.0,
-        alignment: WrapAlignment.start,
-        crossAxisAlignment: WrapCrossAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ..._buildFilterChips(context, filterParams),
+          Row(
+            children: [
+              Icon(
+                Icons.tune_rounded,
+                size: 20,
+                color: appColorScheme(context).primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Đã áp dụng bộ lọc',
+                style: appTextTheme(context).labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: appColorScheme(context).primary,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            alignment: WrapAlignment.start,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              ..._buildFilterChips(context, filterParams),
+            ],
+          ),
         ],
       ),
     );
