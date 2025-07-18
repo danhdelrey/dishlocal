@@ -43,6 +43,10 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
   late final ResultSearchBloc _postsSearchBloc;
   late final ResultSearchBloc _profilesSearchBloc;
 
+  // GlobalKeys để truy cập vào scroll controllers của các tab
+  final GlobalKey<_PostResultsViewState> _postsKey = GlobalKey<_PostResultsViewState>();
+  final GlobalKey<_ProfileResultsViewState> _profilesKey = GlobalKey<_ProfileResultsViewState>();
+
   @override
   void initState() {
     super.initState();
@@ -72,6 +76,20 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
     super.dispose();
   }
 
+  void _onTabTapped(int index) {
+    if (_tabController.index == index) {
+      // Nếu nhấn vào tab hiện tại, scroll to top
+      if (index == 0) {
+        _postsKey.currentState?.scrollToTop();
+      } else if (index == 1) {
+        _profilesKey.currentState?.scrollToTop();
+      }
+    } else {
+      // Nếu nhấn vào tab khác, chuyển tab bình thường
+      _tabController.animateTo(index);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,6 +107,7 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
         bottom: TabBar(
           dividerColor: Colors.white.withValues(alpha: 0.1),
           controller: _tabController,
+          onTap: _onTabTapped,
           tabs: const [
             Tab(text: 'Bài viết'),
             Tab(text: 'Người dùng'),
@@ -104,14 +123,14 @@ class __SearchResultContentState extends State<_SearchResultContent> with Single
             value: _postsSearchBloc,
             // PageStorageKey giúp giữ trạng thái cuộn khi chuyển tab.
             child: _PostResultsView(
-              key: const PageStorageKey('search_posts_tab'),
+              key: _postsKey,
               query: widget.query,
             ),
           ),
           // Cung cấp instance BLoC của người dùng cho view tương ứng.
           BlocProvider.value(
             value: _profilesSearchBloc,
-            child: const _ProfileResultsView(key: PageStorageKey('search_profiles_tab')),
+            child: _ProfileResultsView(key: _profilesKey),
           ),
         ],
       ),
@@ -155,6 +174,17 @@ class _PostResultsViewState extends State<_PostResultsView> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
     return currentScroll >= (maxScroll - 300.0);
+  }
+
+  // Phương thức public để scroll to top
+  void scrollToTop() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -268,6 +298,17 @@ class _ProfileResultsViewState extends State<_ProfileResultsView> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
     return currentScroll >= (maxScroll - 300.0);
+  }
+
+  // Phương thức public để scroll to top
+  void scrollToTop() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
