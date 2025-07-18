@@ -97,23 +97,25 @@ class _SearchInputPageState extends State<SearchInputPage> {
         ),
         body: BlocBuilder<SuggestionSearchBloc, SuggestionSearchState>(
           builder: (context, state) {
-            // Hiển thị loading indicator nhỏ gọn ở trên cùng
-            if (state.status == SuggestionStatus.loading) {
-              return const LinearProgressIndicator(minHeight: 2);
-            }
+            switch (state.status) {
+              case SuggestionStatus.loading:
+                // Hiển thị loading indicator
+                return const LinearProgressIndicator(minHeight: 2);
 
-            // Chỉ hiển thị danh sách khi có gợi ý thành công
-            if (state.status == SuggestionStatus.success) {
-              return _buildSuggestionList(state.suggestions);
-            }
+              case SuggestionStatus.success:
+                // Hiển thị danh sách khi có gợi ý
+                return _buildSuggestionList(state.suggestions);
 
-            // Hiển thị thông báo nếu tìm kiếm rỗng
-            if (state.status == SuggestionStatus.empty) {
-              return const Center(child: Text("Không có gợi ý nào."));
-            }
+              case SuggestionStatus.empty:
+                // Có thể hiển thị một thông báo nhẹ nhàng hoặc không gì cả
+                // return const Center(child: Text("Không có gợi ý nào."));
+                return const SizedBox.shrink(); // Ẩn đi để không làm phiền người dùng
 
-            // Không hiển thị gì cho các trạng thái khác (initial, failure)
-            return const SizedBox.shrink();
+              case SuggestionStatus.failure:
+              case SuggestionStatus.initial:
+                // Không hiển thị gì cho các trạng thái này
+                return const SizedBox.shrink();
+            }
           },
         ),
       ),

@@ -7,6 +7,7 @@ import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_opti
 import 'package:dishlocal/data/services/search_service/exception/search_service_exception.dart';
 import 'package:dishlocal/data/services/search_service/interface/search_service.dart';
 import 'package:dishlocal/data/services/search_service/model/search_result.dart';
+import 'package:dishlocal/data/services/search_service/model/suggestion_result.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
@@ -17,6 +18,8 @@ class AlgoliaSearchServiceImpl implements SearchService {
     appId: AppEnvironment.algoliaAppId,
     apiKey: AppEnvironment.algoliaApiKey,
   );
+
+  static const String _suggestionIndexName = 'dishlocal_query_suggestions'; 
 
   AlgoliaSearchServiceImpl() {
     _log.info('AlgoliaSearchServiceImpl initialized. App ID: ${AppEnvironment.algoliaAppId}');
@@ -203,6 +206,53 @@ class AlgoliaSearchServiceImpl implements SearchService {
         stackTrace,
       );
       throw UnknownSearchApiException(message: 'Đã có lỗi không mong muốn xảy ra.');
+    }
+  }
+
+  @override
+  Future<SuggestionResult> getSuggestions({
+    required String query,
+    int hitsPerPage = 5,
+  }) async {
+    _log.fine('🔍 [getSuggestions] Bắt đầu lấy gợi ý cho: "$query"');
+
+    final searchRequest = SearchForHits(
+      indexName: _suggestionIndexName,
+      query: query,
+      hitsPerPage: hitsPerPage,
+    );
+
+    // LOG REQUEST TRƯỚC KHI GỬI
+    _log.info('🚀 [getSuggestions] Gửi request tới Algolia:\n${searchRequest.toJson()}');
+
+    try {
+      final response = await _searchClient.searchIndex(request: searchRequest);
+
+      // LOG KẾT QUẢ NHẬN ĐƯỢC TỪ ALGOLIA
+      _log.info('✅ [getSuggestions] Nhận được response từ Algolia. Số lượng hits: ${response.nbHits}');
+
+      // (Tùy chọn) Log chi tiết từng hit nếu cần thiết
+      // _log.finer('Hits raw data: ${response.hits}');
+
+      // Trích xuất các chuỗi gợi ý
+      final suggestions = response.hits
+          .map((hit) {
+            // Kiểm tra xem trường 'query' có tồn tại và đúng kiểu không
+            if (hit.containsKey('query') && hit['query'] is String) {
+              return hit['query'] as String;
+            }
+            _log.warning('⚠️ [getSuggestions] Một hit không có trường "query" hợp lệ: $hit');
+            return '';
+          })
+          .where((s) => s.isNotEmpty)
+          .toList();
+
+      _log.info('💡 [getSuggestions] Đã trích xuất ${suggestions.length} gợi ý.');
+
+      return SuggestionResult(suggestions: suggestions);
+    } on AlgoliaException catch (e, stackTrace) {
+      _log.severe('❌ [getSuggestions] Lỗi khi lấy gợi ý từ Algolia', e, stackTrace);
+      return const SuggestionResult();
     }
   }
 }

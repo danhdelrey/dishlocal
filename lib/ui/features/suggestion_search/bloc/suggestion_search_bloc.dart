@@ -21,22 +21,46 @@ EventTransformer<E> debounce<E>(Duration duration) {
 @injectable
 class SuggestionSearchBloc extends Bloc<SuggestionSearchEvent, SuggestionSearchState> {
   final _log = Logger('SuggestionSearchBloc');
+  // THÊM MỚI: Inject SearchService
+  final SearchService _searchService;
 
-  SuggestionSearchBloc() : super(const SuggestionSearchState()) {
-    on<_QueryChanged>(_onQueryChanged, transformer: debounce(const Duration(milliseconds: 400)));
+  SuggestionSearchBloc(this._searchService) // <-- Sửa constructor
+      : super(const SuggestionSearchState()) {
+    on<_QueryChanged>(_onQueryChanged, transformer: debounce(const Duration(milliseconds: 300))); // Giảm debounce một chút
   }
 
   Future<void> _onQueryChanged(_QueryChanged event, Emitter<SuggestionSearchState> emit) async {
     final query = event.query.trim();
+    _log.info('➡️ [BLoC] Nhận event QueryChanged: "$query"'); // LOG KHI NHẬN EVENT
 
     if (query.isEmpty) {
+      _log.info('⬅️ [BLoC] Query rỗng, emit initial state.');
       emit(const SuggestionSearchState());
       return;
     }
 
     emit(const SuggestionSearchState(status: SuggestionStatus.loading));
-    _log.info('🔍 Đang tìm kiếm gợi ý cho: "$query"');
-    emit(const SuggestionSearchState(status: SuggestionStatus.empty));
+    _log.info('⏳ [BLoC] Emit state LOADING.');
 
+    try {
+      final result = await _searchService.getSuggestions(query: query);
+
+      // LOG KẾT QUẢ TỪ SERVICE TRƯỚC KHI EMIT
+      _log.info('💡 [BLoC] Nhận được ${result.suggestions.length} gợi ý từ Service.');
+
+      if (result.suggestions.isEmpty) {
+        emit(const SuggestionSearchState(status: SuggestionStatus.empty));
+        _log.info('⬅️ [BLoC] Emit state EMPTY.');
+      } else {
+        emit(SuggestionSearchState(
+          status: SuggestionStatus.success,
+          suggestions: result.suggestions,
+        ));
+        _log.info('⬅️ [BLoC] Emit state SUCCESS.');
+      }
+    } catch (e) {
+      _log.severe('❌ [BLoC] Lỗi khi xử lý _onQueryChanged', e);
+      emit(const SuggestionSearchState(status: SuggestionStatus.failure));
+    }
   }
 }

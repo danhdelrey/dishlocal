@@ -128,7 +128,6 @@ _i174.GetIt init(
   gh.factory<_i441.FilterSortBloc>(() => _i441.FilterSortBloc());
   gh.factory<_i755.SelectFoodCategoryBloc>(
       () => _i755.SelectFoodCategoryBloc());
-  gh.factory<_i679.SuggestionSearchBloc>(() => _i679.SuggestionSearchBloc());
   gh.factory<_i994.ReviewBloc>(() => _i994.ReviewBloc());
   gh.lazySingleton<_i116.GoogleSignIn>(
       () => firebaseInjectableModule.googleSignIn);
@@ -211,6 +210,8 @@ _i174.GetIt init(
         gh<_i886.ModerationRepository>(),
         gh<_i19.ImageProcessor>(),
       ));
+  gh.factory<_i679.SuggestionSearchBloc>(
+      () => _i679.SuggestionSearchBloc(gh<_i310.SearchService>()));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,
