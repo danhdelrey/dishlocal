@@ -615,16 +615,18 @@ class RemotePostRepositorySqlImpl implements PostRepository {
     required int pageSize,
   }) {
     return _handleErrors(() async {
-      _log.info('📥 Bắt đầu lấy trang $page các bài viết được gợi ý (kích thước trang: $pageSize)...');
+      _log.info('📥 Bắt đầu lấy trang $page các bài viết gợi ý (có vị trí)...');
 
-      // =======================================================================
-      // === BƯỚC 1: GỌI RPC VÀ LOG DỮ LIỆU THÔ (RAW DATA) ======================
-      // =======================================================================
+      // Lấy vị trí hiện tại của người dùng
+      final userPosition = await _locationService.getCurrentPosition();
+
       final List<dynamic> data = await _supabase.rpc(
         'get_recommended_posts_paginated',
         params: {
           'p_page_number': page,
           'p_page_size': pageSize,
+          'p_user_lat': userPosition.latitude, // Gửi vĩ độ
+          'p_user_lng': userPosition.longitude, // Gửi kinh độ
         },
       );
 
@@ -706,13 +708,18 @@ class RemotePostRepositorySqlImpl implements PostRepository {
   }) {
     // Tận dụng lại cơ chế xử lý lỗi hiện có
     return _handleErrors(() async {
-      _log.info('📥 Bắt đầu lấy trang $page các bài viết thịnh hành (fallback)...');
+      _log.info('📥 Bắt đầu lấy trang $page các bài viết thịnh hành (có vị trí)...');
+
+      // Lấy vị trí hiện tại của người dùng
+      final userPosition = await _locationService.getCurrentPosition();
 
       final List<dynamic> data = await _supabase.rpc(
         'get_trending_posts_paginated',
         params: {
           'p_page_number': page,
           'p_page_size': pageSize,
+          'p_user_lat': userPosition.latitude, // Gửi vĩ độ
+          'p_user_lng': userPosition.longitude, // Gửi kinh độ
         },
       );
 
