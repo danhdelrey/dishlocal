@@ -53,9 +53,17 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
 
     // Lấy ra item cần cập nhật.
     final itemToUpdate = newReviewData[event.category]!;
+    final newRatingInt = event.newRating.round();
 
-    // Cập nhật item với rating mới (chuyển double thành int).
-    newReviewData[event.category] = itemToUpdate.copyWith(rating: event.newRating.round());
+    // <<<--- LOGIC MỚI QUAN TRỌɢ ---
+    // Cập nhật item với rating mới VÀ xóa sạch danh sách lựa chọn cũ.
+    // Điều này đảm bảo khi người dùng đổi từ 5 sao (với các choice A, B)
+    // sang 1 sao, các choice A, B sẽ bị xóa đi.
+    newReviewData[event.category] = itemToUpdate.copyWith(
+      rating: newRatingInt,
+      selectedChoices: [], // Xóa sạch các lựa chọn cũ
+    );
+    // -------------------------------->
 
     // Phát ra trạng thái mới với dữ liệu đã được cập nhật.
     emit(currentState.copyWith(

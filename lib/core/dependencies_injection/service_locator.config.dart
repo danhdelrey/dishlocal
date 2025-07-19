@@ -126,9 +126,9 @@ _i174.GetIt init(
   final firebaseInjectableModule = _$FirebaseInjectableModule();
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
   gh.factory<_i441.FilterSortBloc>(() => _i441.FilterSortBloc());
+  gh.factory<_i994.ReviewBloc>(() => _i994.ReviewBloc());
   gh.factory<_i755.SelectFoodCategoryBloc>(
       () => _i755.SelectFoodCategoryBloc());
-  gh.factory<_i994.ReviewBloc>(() => _i994.ReviewBloc());
   gh.lazySingleton<_i116.GoogleSignIn>(
       () => firebaseInjectableModule.googleSignIn);
   gh.lazySingleton<_i59.FirebaseAuth>(

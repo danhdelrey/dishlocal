@@ -404,12 +404,17 @@ class _NewPostPageState extends State<NewPostPage> {
     );
   }
 
-  Column _buildReviewSection(Ready reviewState, BuildContext context) {
+ Column _buildReviewSection(Ready reviewState, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: ReviewCategory.values.map((category) {
         // Lấy ra ReviewItem tương ứng với category hiện tại
         final item = reviewState.reviewData[category]!;
+
+        // <<<--- LOGIC MỚI QUAN TRỌɢ ---
+        // Lấy danh sách các choice phù hợp với MỨC RATING HIỆN TẠI của item
+        final choicesToShow = category.availableChoices(rating: item.rating);
+        // -------------------------------->
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 24),
@@ -425,11 +430,10 @@ class _NewPostPageState extends State<NewPostPage> {
               const SizedBox(height: 10),
               RatingBar.builder(
                 glow: false,
-                // Lấy rating từ state
                 initialRating: item.rating.toDouble(),
                 minRating: 0,
                 direction: Axis.horizontal,
-                allowHalfRating: false, // Để rating là số nguyên
+                allowHalfRating: false,
                 itemCount: 5,
                 itemSize: 24,
                 itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
@@ -438,7 +442,6 @@ class _NewPostPageState extends State<NewPostPage> {
                   color: Colors.amber,
                 ),
                 onRatingUpdate: (rating) {
-                  // Gửi sự kiện tới BLoC khi rating thay đổi
                   context.read<ReviewBloc>().add(
                         ReviewEvent.ratingChanged(
                           category: category,
@@ -447,31 +450,33 @@ class _NewPostPageState extends State<NewPostPage> {
                       );
                 },
               ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: category.availableChoices.map((choice) {
-                  // Kiểm tra xem choice này có được chọn không từ state
-                  final isSelected = item.selectedChoices.contains(choice);
+              // Chỉ hiển thị Wrap nếu có choices để hiển thị
+              if (choicesToShow.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  // Sử dụng `choicesToShow` đã được lọc
+                  children: choicesToShow.map((choice) {
+                    final isSelected = item.selectedChoices.contains(choice);
 
-                  return CustomChoiceChip(
-                    borderRadius: 8,
-                    label: choice.label,
-                    isSelected: isSelected, // Cập nhật từ state
-                    onSelected: (selected) {
-                      // Gửi sự kiện tới BLoC khi choice được toggle
-                      context.read<ReviewBloc>().add(
-                            ReviewEvent.choiceToggled(
-                              category: category,
-                              choice: choice,
-                            ),
-                          );
-                    },
-                    itemColor: category.color,
-                  );
-                }).toList(),
-              ),
+                    return CustomChoiceChip(
+                      borderRadius: 8,
+                      label: choice.label,
+                      isSelected: isSelected,
+                      onSelected: (selected) {
+                        context.read<ReviewBloc>().add(
+                              ReviewEvent.choiceToggled(
+                                category: category,
+                                choice: choice,
+                              ),
+                            );
+                      },
+                      itemColor: category.color,
+                    );
+                  }).toList(),
+                ),
+              ],
             ],
           ),
         );
