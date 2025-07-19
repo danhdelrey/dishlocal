@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/utils/duration_formatter.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
@@ -7,6 +8,7 @@ import 'package:dishlocal/ui/widgets/element_widgets/custom_icon_with_label.dart
 import 'package:dishlocal/ui/widgets/element_widgets/glass_icon_labels_wrap.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:go_router/go_router.dart';
@@ -62,15 +64,30 @@ class SmallPost extends StatelessWidget {
                             GlassIconLabelsWrap(
                               iconLabels: [
                                 CustomIconWithLabel(
-                                  icon: AppIcons.location1.toSvg(
-                                    width: 12,
-                                    color: Theme.of(context).colorScheme.onSurface,
+                                  icon: Icon(
+                                    CupertinoIcons.map_pin,
+                                    size: 12,
+                                    color: appColorScheme(context).onSurface,
                                   ),
                                   label: NumberFormatter.formatDistance(post.distance),
                                   labelStyle: appTextTheme(context).labelSmall,
                                 ),
                               ],
                             ),
+                            if (post.distance != null)
+                              GlassIconLabelsWrap(
+                                iconLabels: [
+                                  CustomIconWithLabel(
+                                    icon: Icon(
+                                      CupertinoIcons.car,
+                                      size: 12,
+                                      color: appColorScheme(context).onSurface,
+                                    ),
+                                    label: DurationFormatter.formatEstimatedTime(post.distance!),
+                                    labelStyle: appTextTheme(context).labelSmall,
+                                  ),
+                                ],
+                              ),
                             GlassIconLabelsWrap(
                               iconLabels: [
                                 CustomIconWithLabel(

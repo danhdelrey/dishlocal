@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/core/utils/duration_formatter.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
@@ -117,11 +118,11 @@ class _PostDetailViewState extends State<_PostDetailView> {
                   );
                 context.pop(true);
               }
-    
+
               if (state is DeletePostLoading) {
                 context.loaderOverlay.show();
               }
-    
+
               if (state is DeletePostFailure) {
                 context.loaderOverlay.hide();
                 ScaffoldMessenger.of(context)
@@ -198,7 +199,7 @@ class _PostDetailViewState extends State<_PostDetailView> {
                                               label: 'Xóa bài viết',
                                               onTap: () async {
                                                 final bool? confirmed = await _showDeleteConfirmationDialog(context);
-    
+
                                                 if (confirmed == true) {
                                                   if (context.mounted) {
                                                     context.read<DeletePostBloc>().add(
@@ -382,18 +383,19 @@ class _PostDetailViewState extends State<_PostDetailView> {
                   });
                 },
               ),
-              CustomChoiceChip(
-                label: '📍 ${NumberFormatter.formatDistance(post.distance)}',
-                isSelected: false,
-                itemColor: post.foodCategory?.color ?? Colors.transparent,
-                onSelected: (selected) {
-                  context.push('/post_detail/explore', extra: {
-                    'filterSortParams': FilterSortParams.defaultParamsForContext(FilterContext.explore).copyWith(
-                      distance: DistanceRange.fromDistance(post.distance ?? 999),
-                    )
-                  });
-                },
-              ),
+              if (post.distance != null)
+                CustomChoiceChip(
+                  label: '📍 ${NumberFormatter.formatDistance(post.distance)} - ${DurationFormatter.formatEstimatedTime(post.distance!)}',
+                  isSelected: false,
+                  itemColor: post.foodCategory?.color ?? Colors.transparent,
+                  onSelected: (selected) {
+                    context.push('/post_detail/explore', extra: {
+                      'filterSortParams': FilterSortParams.defaultParamsForContext(FilterContext.explore).copyWith(
+                        distance: DistanceRange.fromDistance(post.distance ?? 999),
+                      )
+                    });
+                  },
+                ),
             ],
           ),
         ),

@@ -216,7 +216,7 @@ class _FiltersWrapState extends State<FiltersWrap> with SingleTickerProviderStat
     // Price range chip
     if (filterParams.range != null) {
       chips.add(CustomChoiceChip(
-        label: filterParams.range!.displayName,
+        label: '💰 ${filterParams.range!.displayName}',
         isSelected: true,
         onSelected: (_) {
           _openFilterSortSheet(context);
@@ -230,7 +230,7 @@ class _FiltersWrapState extends State<FiltersWrap> with SingleTickerProviderStat
     // Distance chip
     if (filterParams.distance != null) {
       chips.add(CustomChoiceChip(
-        label: filterParams.distance!.displayName,
+        label: '📍 ${filterParams.distance!.displayName}',
         isSelected: true,
         onSelected: (_) {
           _openFilterSortSheet(context);
