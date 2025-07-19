@@ -135,7 +135,7 @@ enum ReviewChoice {
   priceExcellentValue(ReviewCategory.price, 5, '💖 Giá trị nhận lại vượt trội'),
   priceHasPromotion(ReviewCategory.price, 5, '🎁 Có chương trình khuyến mãi tốt'),
   priceNoServiceCharge(ReviewCategory.price, 5, '💯 Không phụ thu'),
-  priceGenerous(ReviewCategory.price, 5, ' generous'),
+  priceGenerous(ReviewCategory.price, 5, '✨ Rất tốt'),
 
   // =============================================================
   // === 💁 LỰA CHỌN CHO PHỤC VỤ (SERVICE) ===

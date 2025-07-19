@@ -292,6 +292,7 @@ class _NewPostPageState extends State<NewPostPage> {
                                           return Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: 15),
                                             child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 ExpandableFoodCategoryChipSelector(
                                                   title: '📋 Chọn loại món',
@@ -404,7 +405,7 @@ class _NewPostPageState extends State<NewPostPage> {
     );
   }
 
- Column _buildReviewSection(Ready reviewState, BuildContext context) {
+  Column _buildReviewSection(Ready reviewState, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: ReviewCategory.values.map((category) {
