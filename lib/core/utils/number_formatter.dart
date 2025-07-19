@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 class NumberFormatter {
   static String formatMoney(int money) {
     return money.toCurrencyString(
-      trailingSymbol: 'đ',
+      trailingSymbol: 'vnđ',
       mantissaLength: 0,
       thousandSeparator: ThousandSeparator.Period,
       useSymbolPadding: true,
