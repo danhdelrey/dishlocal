@@ -37,7 +37,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   final PostFetcher _postFetcher;
   final PostRepository _postRepository;
   final bool _isRecommendationFeed;
-  static const _pageSize = 10;
+  static const _pageSize = 20;
 
   PostBloc(
     this._postFetcher, {
