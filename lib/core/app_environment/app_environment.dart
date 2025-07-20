@@ -124,4 +124,12 @@ class AppEnvironment {
     return dotenv.env['MAPBOX_ACCESS_TOKEN'] ?? '';
   }
 
+  //Gemini
+  static String get geminiApiKey {
+    if (isInDevelopment) {
+      return dotenv.env['GEMINI_API_KEY_DEV'] ?? '';
+    }
+    return dotenv.env['GEMINI_API_KEY_PROD'] ?? '';
+  }
+
 }
