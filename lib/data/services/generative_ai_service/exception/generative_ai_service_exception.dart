@@ -1,7 +1,7 @@
 import 'package:dishlocal/data/error/service_exception.dart';
 
 //base class
-class GenerativeAiServiceException extends ServiceException {
+sealed class GenerativeAiServiceException extends ServiceException {
   GenerativeAiServiceException(super.message);
 }
 
