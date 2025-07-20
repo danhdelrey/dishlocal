@@ -116,7 +116,7 @@ class GeminiAiServiceImpl implements GenerativeAiService {
       "contents": [
         {
           "parts": [
-            {"text": "Hãy viết một đoạn mô tả ẩm thực ngắn gọn (2-3 câu), hấp dẫn về món ăn có tên \"$dishName\". Dựa vào hình ảnh, hãy làm nổi bật vẻ ngoài, kết cấu có thể có, và gợi ý về hương vị để lôi cuốn người đọc."},
+            {"text": "Hãy viết một đoạn mô tả ẩm thực ngắn gọn (5-10 câu), hấp dẫn về món ăn có tên \"$dishName\". Nếu hình ảnh là về món ăn đó thì dựa vào hình ảnh, hãy làm nổi bật vẻ ngoài, kết cấu có thể có, và gợi ý về hương vị để lôi cuốn người đọc. Nếu hình ảnh không liên quan đến món ăn có tên \"$dishName\" thì bỏ qua phần hình ảnh mà chỉ viết mô tả về món ăn \"$dishName\"."},
             {
               "inline_data": {"mime_type": "image/jpeg", "data": base64Image}
             }
