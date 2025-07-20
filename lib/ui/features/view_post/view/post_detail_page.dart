@@ -224,8 +224,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
                                         ],
                                       )
                                   ],
-                                  title: FadeSlideUp(child: Text(state.post.dishName ?? '')),
-                                  titleTextStyle: appTextTheme(context).titleMedium,
+                                  // title: FadeSlideUp(child: Text(state.post.dishName ?? '')),
+                                  // titleTextStyle: appTextTheme(context).titleMedium,
                                 );
                               }
                               return SliverAppBar(
