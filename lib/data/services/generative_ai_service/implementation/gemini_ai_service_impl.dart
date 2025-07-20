@@ -52,7 +52,6 @@ class GeminiAiServiceImpl implements GenerativeAiService {
         schema: jsonSchema,
       );
 
-      _log.fine('Request Body gửi đi: ${jsonEncode(requestBody)}');
 
       final response = await _dio.post(
         _geminiApiUrl,

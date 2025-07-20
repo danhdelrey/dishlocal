@@ -46,7 +46,7 @@ class GeneratedContentRepositoryImpl implements GeneratedContentRepository {
       _log.info('Bắt đầu bước tạo mô tả chi tiết sử dụng JSON Mode.');
       // Sử dụng prompt chi tiết do bạn cung cấp
       final descriptionPrompt = '''
-      Viết một đoạn mô tả khách quan, rõ ràng và cô đọng về món ăn "$dishName".
+      Viết một đoạn mô tả khách quan, rõ ràng tầm 10 câu về món ăn "$dishName".
 
       Ảnh đã được xác nhận chỉ dùng để nhận dạng món ăn, không phải cơ sở duy nhất để mô tả.
 
@@ -57,17 +57,17 @@ class GeneratedContentRepositoryImpl implements GeneratedContentRepository {
       - Không dùng từ ngữ hoa mỹ hoặc cảm xúc chủ quan.
       - Không mô tả quá chi tiết hình ảnh cụ thể.
       - Văn phong khách quan, giống cách viết trong tài liệu hướng dẫn du lịch hoặc bách khoa ẩm thực.
-
-      Trả lời theo định dạng JSON được yêu cầu.
       ''';
 
       final descriptionResponseString = await _generativeAiService.generateContent(prompt: descriptionPrompt, imageUrl: imageUrl, jsonSchema: DishDetails.detailedDescriptionSchema);
+      _log.info('Đã nhận được phản hồi thô từ AI: $descriptionResponseString');
 
       // Giải mã JSON và tạo đối tượng DishDetails
       final Map<String, dynamic> descriptionJson = jsonDecode(descriptionResponseString);
       final dishDetails = DishDetails.fromJson(descriptionJson);
 
       _log.info('🎉 Tạo mô tả chi tiết thành công và đã được phân tích!');
+      _log.fine('Mô tả chi tiết: ${dishDetails.toString()}');
       return Right(dishDetails);
     } on FormatException catch (e, stackTrace) {
       _log.severe('Lỗi giải mã JSON từ service. AI có thể đã không trả về JSON hợp lệ.', e, stackTrace);
