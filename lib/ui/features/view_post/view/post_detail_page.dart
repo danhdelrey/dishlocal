@@ -354,7 +354,7 @@ class _PostDetailViewState extends State<_PostDetailView> {
         const SizedBox(
           height: 20,
         ),
-        DishDescriptionWidget(dishName: post.postId, imageUrl: post.imageUrl!),
+        DishDescriptionWidget(dishName: post.dishName!, imageUrl: post.imageUrl!),
         const SizedBox(
           height: 20,
         ),

@@ -23,7 +23,7 @@ class GeminiAiServiceImpl implements GenerativeAiService {
 
   static const String _geminiModel = 'gemini-2.5-flash';
   static const String _geminiApiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/$_geminiModel:generateContent';
-  static const Duration _apiTimeout = Duration(seconds: 45);
+  static const Duration _apiTimeout = Duration(seconds: 60);
 
   GeminiAiServiceImpl()
       : _log = Logger('GeminiAiServiceImpl'),
@@ -73,6 +73,7 @@ class GeminiAiServiceImpl implements GenerativeAiService {
       _log.info('✅ Nhận được phản hồi từ Gemini API (Status: ${response.statusCode})');
 
       final generatedText = _parseContentFromResponse(response.data);
+       _log.fine('Nội dung thô nhận được từ AI: $generatedText');
       _log.info('🎉 Service đã tạo nội dung thành công!');
       return generatedText;
     } on InvalidInputException {
@@ -104,7 +105,7 @@ class GeminiAiServiceImpl implements GenerativeAiService {
 
     final Map<String,dynamic> generationConfig = {
       'temperature': 0.3,
-      'maxOutputTokens': 2048,
+      'maxOutputTokens': 4096,
     };
 
     // Bật JSON Mode nếu schema được cung cấp
