@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/generated_content/model/generated_content.dart';
 import 'package:dishlocal/data/categories/generated_content/repository/failure/generated_content_failure.dart';
 import 'package:dishlocal/data/categories/generated_content/repository/interface/generated_content_repository.dart';
-import 'package:dishlocal/data/categories/generated_content/schemas/generated_content_schemas.dart';
+import 'package:dishlocal/data/categories/generated_content/model/dish_details.dart';
 import 'package:dishlocal/data/services/generative_ai_service/exception/generative_ai_service_exception.dart';
 import 'package:dishlocal/data/services/generative_ai_service/interface/generative_ai_service.dart';
 import 'package:injectable/injectable.dart';
@@ -18,11 +18,11 @@ class GeneratedContentRepositoryImpl implements GeneratedContentRepository {
   GeneratedContentRepositoryImpl(this._generativeAiService);
 
   @override
-  Future<Either<GeneratedContentFailure, GeneratedContent>> generateDishDescription({
+  Future<Either<GeneratedContentFailure, DishDetails>> generateDishDescription({
     required String imageUrl,
     required String dishName,
   }) async {
-    _log.info('Bắt đầu quy trình tạo mô tả cho món: "$dishName"');
+    _log.info('Bắt đầu quy trình tạo mô tả chi tiết cho món: "$dishName"');
 
     if (!_isDishNameValid(dishName)) {
       _log.warning('Tên món ăn "$dishName" không vượt qua kiểm tra sơ bộ.');
@@ -30,80 +30,55 @@ class GeneratedContentRepositoryImpl implements GeneratedContentRepository {
     }
 
     try {
-      // --- BƯỚC 1: XÁC THỰC SỰ KHỚP NHAU GIỮA ẢNH VÀ TÊN ---
-      // **[CẢI TIẾN 1] Cải thiện prompt để ra lệnh cho AI rõ ràng hơn**
-      _log.info('Bắt đầu bước xác thực bằng AI sử dụng JSON Schema.');
-      final validationPrompt = """
-      Nhiệm vụ của bạn là một chuyên gia xác thực món ăn. Dựa vào hình ảnh, hãy xác định nó có phải là món '$dishName' không.
-      QUAN TRỌNG:
-      - Nếu ảnh và tên KHỚP NHAU, hãy đặt `isMatch` thành `true` và `reason` thành một chuỗi rỗng "".
-      - Nếu ảnh và tên KHÔNG KHỚP, hãy đặt `isMatch` thành `false` và giải thích ngắn gọn lý do tại sao trong trường `reason`.
-      Hãy trả lời bằng một đối tượng JSON hợp lệ tuân thủ schema được yêu cầu.
-      """;
-
-      final validationResponseString = await _generativeAiService.generateContent(
-        prompt: validationPrompt,
-        imageUrl: imageUrl,
-        jsonSchema: GeneratedContentSchemas.validationSchema,
-      );
-
+      // BƯỚC 1: XÁC THỰC
+      final validationPrompt = "Dựa vào hình ảnh, hãy xác định xem nó có phải là món '$dishName' không.";
+      final validationResponseString = await _generativeAiService.generateContent(prompt: validationPrompt, imageUrl: imageUrl, jsonSchema: DishDetails.validationSchema);
       final Map<String, dynamic> validationResult = jsonDecode(validationResponseString);
 
-      // **[CẢI TIẾN 2] Cải thiện logic kiểm tra để an toàn hơn**
-      // Kiểm tra xem key 'isMatch' có tồn tại và có phải là boolean không
-      if (validationResult.containsKey('isMatch') && validationResult['isMatch'] is bool) {
-        if (validationResult['isMatch'] == true) {
-          _log.info('✅ Xác thực AI thành công. Hình ảnh và tên món ăn khớp nhau.');
-        } else {
-          // Trường hợp isMatch là false một cách rõ ràng
-          final reason = validationResult['reason'] ?? 'không rõ lý do';
-          _log.warning('Xác thực AI thất bại: Hình ảnh không khớp. Lý do từ AI: $reason');
-          return const Left(MismatchedContentFailure());
-        }
-      } else {
-        // Trường hợp AI không trả về JSON đúng như schema
-        _log.severe('Lỗi phân tích cú pháp: Phản hồi JSON từ AI không chứa key "isMatch" hoặc kiểu dữ liệu không phải boolean.');
-        return const Left(UnknownFailure());
+      if (validationResult['isMatch'] != true) {
+        final reason = validationResult['reason'] ?? 'không rõ lý do';
+        _log.warning('Xác thực AI thất bại. Lý do từ AI: $reason');
+        return const Left(MismatchedContentFailure());
       }
+      _log.info('✅ Xác thực AI thành công. Hình ảnh và tên món ăn khớp nhau.');
 
-      // --- BƯỚC 2: TẠO MÔ TẢ CHI TIẾT (Logic không đổi) ---
-      _log.info('Bắt đầu bước tạo mô tả chi tiết sử dụng JSON Schema.');
+      // BƯỚC 2: TẠO MÔ TẢ CHI TIẾT
+      _log.info('Bắt đầu bước tạo mô tả chi tiết sử dụng JSON Mode.');
+      // Sử dụng prompt chi tiết do bạn cung cấp
       final descriptionPrompt = '''
-Viết một đoạn mô tả khách quan, rõ ràng và súc tích về món ăn "$dishName", dựa trên hình ảnh đã xác nhận.
+      Viết một đoạn mô tả khách quan, rõ ràng và cô đọng về món ăn "$dishName".
 
-Yêu cầu:
-- Trình bày đặc điểm của món ăn (thành phần, hình thức, màu sắc…)
-- Tóm tắt cách chế biến hoặc nguyên liệu chính
-- Nêu rõ hương vị và đặc trưng vùng miền nếu có
-- Không dùng giọng văn quảng cáo, không cảm xúc cá nhân, không dùng từ ngữ hoa mỹ hoặc thân mật
-- Văn phong trung lập, giống cách viết trong từ điển ẩm thực hoặc sách giới thiệu món ăn
+      Ảnh đã được xác nhận chỉ dùng để nhận dạng món ăn, không phải cơ sở duy nhất để mô tả.
 
-Trả lời theo định dạng JSON được yêu cầu.
-''';
-      final descriptionResponseString = await _generativeAiService.generateContent(
-        prompt: descriptionPrompt,
-        imageUrl: imageUrl,
-        jsonSchema: GeneratedContentSchemas.descriptionSchema,
-      );
-      final Map<String, dynamic> descriptionResult = jsonDecode(descriptionResponseString);
-      final String description = descriptionResult['description']?.trim() ?? '';
+      Yêu cầu:
+      - Mô tả tổng quan về món ăn dựa trên kiến thức ẩm thực phổ quát, không chỉ dựa vào một ảnh cụ thể.
+      - Nêu rõ thành phần chính, cách chế biến phổ biến, nguồn gốc hoặc vùng miền liên quan.
+      - Trình bày hương vị đặc trưng và mục đích sử dụng (ăn chính, ăn sáng, ăn vặt…).
+      - Không dùng từ ngữ hoa mỹ hoặc cảm xúc chủ quan.
+      - Không mô tả quá chi tiết hình ảnh cụ thể.
+      - Văn phong khách quan, giống cách viết trong tài liệu hướng dẫn du lịch hoặc bách khoa ẩm thực.
 
-      if (description.isEmpty) {
-        _log.warning('AI đã trả về JSON nhưng không có nội dung mô tả.');
-        return const Left(ContentGenerationFailure(message: 'AI không thể tạo mô tả cho món ăn này.'));
-      }
+      Trả lời theo định dạng JSON được yêu cầu.
+      ''';
 
-      _log.info('🎉 Tạo mô tả thành công!');
-      return Right(GeneratedContent(generatedContent: description));
+      final descriptionResponseString = await _generativeAiService.generateContent(prompt: descriptionPrompt, imageUrl: imageUrl, jsonSchema: DishDetails.detailedDescriptionSchema);
+
+      // Giải mã JSON và tạo đối tượng DishDetails
+      final Map<String, dynamic> descriptionJson = jsonDecode(descriptionResponseString);
+      final dishDetails = DishDetails.fromJson(descriptionJson);
+
+      _log.info('🎉 Tạo mô tả chi tiết thành công và đã được phân tích!');
+      return Right(dishDetails);
     } on FormatException catch (e, stackTrace) {
       _log.severe('Lỗi giải mã JSON từ service. AI có thể đã không trả về JSON hợp lệ.', e, stackTrace);
       return const Left(UnknownFailure());
     } on GenerativeAiServiceException catch (e, stackTrace) {
-      _log.severe('Một lỗi từ service đã xảy ra trong quá trình xử lý.', e, stackTrace);
+      _log.severe('Một lỗi từ service đã xảy ra.', e, stackTrace);
       return Left(_mapServiceExceptionToFailure(e));
     } catch (e, stackTrace) {
-      _log.severe('Một lỗi không xác định đã xảy ra ở tầng repository.', e, stackTrace);
-      return const Left(UnknownFailure());
+      // Bắt lỗi từ DishDetails.fromJson (thiếu key, sai kiểu dữ liệu)
+      _log.severe('Lỗi khi chuyển đổi JSON sang model DishDetails. Schema hoặc phản hồi từ AI không khớp.', e, stackTrace);
+      return const Left(ContentGenerationFailure(message: 'Dữ liệu trả về từ AI không đúng định dạng mong muốn.'));
     }
   }
 

@@ -8,13 +8,6 @@ import 'package:dishlocal/data/services/generative_ai_service/interface/generati
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
-/// Lớp triển khai của [GenerativeAiService] sử dụng Google Gemini API.
-///
-/// Lớp này chịu trách nhiệm:
-/// 1. Tải ảnh từ một URL.
-/// 2. Gửi ảnh và prompt đến Gemini Vision API.
-/// 3. Phân tích cú pháp phản hồi để trích xuất mô tả món ăn.
-/// 4. Xử lý các lỗi tiềm ẩn như lỗi mạng, lỗi API và lỗi đầu vào.
 @LazySingleton(as: GenerativeAiService)
 class GeminiAiServiceImpl implements GenerativeAiService {
   final Logger _log;
@@ -38,7 +31,7 @@ class GeminiAiServiceImpl implements GenerativeAiService {
   }) async {
     _log.info('🚀 Bắt đầu yêu cầu tạo nội dung từ Generative AI Service.');
     if (jsonSchema != null) {
-      _log.fine('Yêu cầu này sử dụng JSON Schema để định dạng đầu ra.');
+      _log.fine('Yêu cầu này sử dụng phương thức JSON Mode chính thức với responseSchema.');
     }
 
     if (_apiKey.isEmpty) {
@@ -59,6 +52,8 @@ class GeminiAiServiceImpl implements GenerativeAiService {
         schema: jsonSchema,
       );
 
+      _log.fine('Request Body gửi đi: ${jsonEncode(requestBody)}');
+
       final response = await _dio.post(
         _geminiApiUrl,
         queryParameters: {'key': _apiKey},
@@ -73,7 +68,8 @@ class GeminiAiServiceImpl implements GenerativeAiService {
       _log.info('✅ Nhận được phản hồi từ Gemini API (Status: ${response.statusCode})');
 
       final generatedText = _parseContentFromResponse(response.data);
-       _log.fine('Nội dung thô nhận được từ AI: $generatedText');
+      _log.fine('Nội dung thô nhận được từ AI: $generatedText');
+
       _log.info('🎉 Service đã tạo nội dung thành công!');
       return generatedText;
     } on InvalidInputException {
@@ -103,14 +99,11 @@ class GeminiAiServiceImpl implements GenerativeAiService {
       });
     }
 
-    final Map<String,dynamic> generationConfig = {
-      'temperature': 0.3,
-      'maxOutputTokens': 4096,
-    };
+    final Map<String, dynamic> generationConfig = {'temperature': 0.2, 'maxOutputTokens': 4096};
 
-    // Bật JSON Mode nếu schema được cung cấp
     if (schema != null) {
-      generationConfig['response_mime_type'] = 'application/json';
+      generationConfig['responseMimeType'] = 'application/json';
+      generationConfig['responseSchema'] = schema;
     }
 
     return {

@@ -42,9 +42,9 @@ class DishDescriptionBloc extends Bloc<DishDescriptionEvent, DishDescriptionStat
         emit(DishDescriptionState.failure(errorMessage: failure.message));
       },
       // 3b. Nếu thành công (Right)
-      (content) {
+      (dishDetails) {
         _log.info('Tạo mô tả thành công!');
-        emit(DishDescriptionState.success(description: content.generatedContent));
+        emit(DishDescriptionState.success(description: dishDetails.overview));
       },
     );
   }
