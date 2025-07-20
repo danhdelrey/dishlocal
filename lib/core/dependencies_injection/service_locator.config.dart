@@ -33,6 +33,10 @@ import '../../data/categories/direction/repository/implementation/direction_repo
     as _i116;
 import '../../data/categories/direction/repository/interface/direction_repository.dart'
     as _i93;
+import '../../data/categories/generated_content/repository/implementation/generated_content_repository_impl.dart'
+    as _i964;
+import '../../data/categories/generated_content/repository/interface/generated_content_repository.dart'
+    as _i808;
 import '../../data/categories/moderation/repository/implementation/moderation_repository_impl.dart'
     as _i709;
 import '../../data/categories/moderation/repository/interface/moderation_repository.dart'
@@ -62,6 +66,10 @@ import '../../data/services/distance_service/implementation/haversine_distance_s
     as _i1015;
 import '../../data/services/distance_service/interface/distance_service.dart'
     as _i367;
+import '../../data/services/generative_ai_service/implementation/gemini_ai_service_impl.dart'
+    as _i36;
+import '../../data/services/generative_ai_service/interface/generative_ai_service.dart'
+    as _i551;
 import '../../data/services/geocoding_service/implementation/geocoding_service_nominatim_impl.dart'
     as _i3;
 import '../../data/services/geocoding_service/interface/geocoding_service.dart'
@@ -126,9 +134,9 @@ _i174.GetIt init(
   final firebaseInjectableModule = _$FirebaseInjectableModule();
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
   gh.factory<_i441.FilterSortBloc>(() => _i441.FilterSortBloc());
-  gh.factory<_i994.ReviewBloc>(() => _i994.ReviewBloc());
   gh.factory<_i755.SelectFoodCategoryBloc>(
       () => _i755.SelectFoodCategoryBloc());
+  gh.factory<_i994.ReviewBloc>(() => _i994.ReviewBloc());
   gh.lazySingleton<_i116.GoogleSignIn>(
       () => firebaseInjectableModule.googleSignIn);
   gh.lazySingleton<_i59.FirebaseAuth>(
@@ -151,6 +159,7 @@ _i174.GetIt init(
       () => _i1015.HaversineDistanceService());
   gh.lazySingleton<_i1045.StorageService>(
       () => _i1046.CloudinaryStorageServiceImpl());
+  gh.lazySingleton<_i551.GenerativeAiService>(() => _i36.GeminiAiServiceImpl());
   gh.lazySingleton<_i780.AuthenticationService>(
       () => _i103.SupabaseAuthenticationServiceImpl());
   gh.lazySingleton<_i692.ModerationService>(
@@ -168,6 +177,8 @@ _i174.GetIt init(
           ));
   gh.lazySingleton<_i473.LocationService>(() => _i437.GeolocatorServiceImpl(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
+  gh.lazySingleton<_i808.GeneratedContentRepository>(() =>
+      _i964.GeneratedContentRepositoryImpl(gh<_i551.GenerativeAiService>()));
   gh.lazySingleton<_i93.DirectionRepository>(
       () => _i116.DirectionRepositoryImpl(
             gh<_i882.DirectionService>(),

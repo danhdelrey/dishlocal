@@ -1,15 +1,15 @@
-
 abstract class GenerativeAiService {
-  /// Tạo mô tả cho một món ăn dựa trên hình ảnh và tên của nó.
+  /// Tạo nội dung văn bản dựa trên một prompt và (tùy chọn) một hình ảnh.
+  /// Nếu `jsonSchema` được cung cấp, AI sẽ được hướng dẫn trả về một chuỗi JSON tuân thủ schema đó.
   ///
-  /// Ném ra [GenerativeAiServiceException] hoặc các lớp con của nó nếu có lỗi xảy ra.
+  /// - [prompt]: Câu lệnh hoặc câu hỏi hướng dẫn cho AI.
+  /// - [imageUrl]: (Tùy chọn) URL của hình ảnh.
+  /// - [jsonSchema]: (Tùy chọn) Một Map đại diện cho JSON schema mà AI phải tuân theo.
   ///
-  /// - [imageUrl]: URL công khai của hình ảnh món ăn.
-  /// - [dishName]: Tên của món ăn.
-  ///
-  /// Trả về một [Future<String>] chứa mô tả được tạo ra.
-  Future<String> generateDishDescription({
-    required String imageUrl,
-    required String dishName,
+  /// Trả về một [Future<String>]. Nếu có schema, đây sẽ là một chuỗi JSON.
+  Future<String> generateContent({
+    required String prompt,
+    String? imageUrl,
+    Map<String, dynamic>? jsonSchema,
   });
 }
