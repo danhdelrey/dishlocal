@@ -102,6 +102,8 @@ import '../../ui/features/create_post/bloc/create_post_bloc.dart' as _i622;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
 import '../../ui/features/delete_post/bloc/delete_post_bloc.dart' as _i204;
+import '../../ui/features/dish_description/bloc/dish_description_bloc.dart'
+    as _i196;
 import '../../ui/features/filter_sort/bloc/filter_sort_bloc.dart' as _i441;
 import '../../ui/features/follow/bloc/follow_bloc.dart' as _i501;
 import '../../ui/features/map/bloc/map_bloc.dart' as _i936;
@@ -179,6 +181,8 @@ _i174.GetIt init(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
   gh.lazySingleton<_i808.GeneratedContentRepository>(() =>
       _i964.GeneratedContentRepositoryImpl(gh<_i551.GenerativeAiService>()));
+  gh.factory<_i196.DishDescriptionBloc>(
+      () => _i196.DishDescriptionBloc(gh<_i808.GeneratedContentRepository>()));
   gh.lazySingleton<_i93.DirectionRepository>(
       () => _i116.DirectionRepositoryImpl(
             gh<_i882.DirectionService>(),

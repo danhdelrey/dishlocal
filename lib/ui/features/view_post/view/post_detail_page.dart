@@ -13,6 +13,7 @@ import 'package:dishlocal/data/categories/post/model/filter_sort_model/sort_opti
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/comment/view/comment_bottom_sheet.dart';
 import 'package:dishlocal/ui/features/delete_post/bloc/delete_post_bloc.dart';
+import 'package:dishlocal/ui/features/dish_description/view/dish_description_widget.dart';
 import 'package:dishlocal/ui/features/post/view/bouncing_overlay_menu.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/reaction_bar.dart';
@@ -350,6 +351,10 @@ class _PostDetailViewState extends State<_PostDetailView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(
+          height: 20,
+        ),
+        DishDescriptionWidget(dishName: post.postId, imageUrl: post.imageUrl!),
         const SizedBox(
           height: 20,
         ),
