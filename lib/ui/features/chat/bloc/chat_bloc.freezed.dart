@@ -329,6 +329,72 @@ class __$MessageReceivedCopyWithImpl<$Res>
 }
 
 /// @nodoc
+
+class _ScreenStatusChanged implements ChatEvent {
+  const _ScreenStatusChanged({required this.isActive});
+
+  final bool isActive;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ScreenStatusChangedCopyWith<_ScreenStatusChanged> get copyWith =>
+      __$ScreenStatusChangedCopyWithImpl<_ScreenStatusChanged>(
+          this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _ScreenStatusChanged &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, isActive);
+
+  @override
+  String toString() {
+    return 'ChatEvent.screenStatusChanged(isActive: $isActive)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$ScreenStatusChangedCopyWith<$Res>
+    implements $ChatEventCopyWith<$Res> {
+  factory _$ScreenStatusChangedCopyWith(_ScreenStatusChanged value,
+          $Res Function(_ScreenStatusChanged) _then) =
+      __$ScreenStatusChangedCopyWithImpl;
+  @useResult
+  $Res call({bool isActive});
+}
+
+/// @nodoc
+class __$ScreenStatusChangedCopyWithImpl<$Res>
+    implements _$ScreenStatusChangedCopyWith<$Res> {
+  __$ScreenStatusChangedCopyWithImpl(this._self, this._then);
+
+  final _ScreenStatusChanged _self;
+  final $Res Function(_ScreenStatusChanged) _then;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? isActive = null,
+  }) {
+    return _then(_ScreenStatusChanged(
+      isActive: null == isActive
+          ? _self.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
 mixin _$ChatState {
   @override
   bool operator ==(Object other) {

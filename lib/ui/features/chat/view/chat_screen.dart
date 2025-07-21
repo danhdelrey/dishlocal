@@ -1,5 +1,6 @@
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
+import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
 import 'package:dishlocal/ui/features/chat/bloc/chat_bloc.dart';
 import 'package:dishlocal/ui/features/chat/view/message_bubble.dart';
 import 'package:dishlocal/ui/features/chat/view/message_input.dart';
@@ -20,7 +21,7 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   final ScrollController _scrollController = ScrollController();
   // Giả sử bạn có một service để lấy ID người dùng hiện tại
   late final String _currentUserId; // Lấy ID người dùng thật ở đây
@@ -28,15 +29,40 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
     _currentUserId = getIt<AppUserRepository>().getCurrentUserId()!;
+    _scrollController.addListener(_onScroll);
+    // Đăng ký observer
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
+    // Thông báo cho BLoC rằng màn hình không còn active
+    context.read<ChatBloc>().add(const ChatEvent.screenStatusChanged(isActive: false));
+    // Hủy đăng ký observer
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Khi người dùng quay lại ứng dụng
+    if (state == AppLifecycleState.resumed) {
+      context.read<ChatBloc>().add(const ChatEvent.screenStatusChanged(isActive: true));
+      // Đánh dấu đã đọc lại phòng trường hợp có tin nhắn đến khi app ở background
+      final state = context.read<ChatBloc>().state;
+      if (state is ChatLoaded) {
+        context.read<ChatRepository>().markConversationAsRead(
+              conversationId: state.conversationId,
+            );
+      }
+    } else {
+      // Khi người dùng rời khỏi ứng dụng
+      context.read<ChatBloc>().add(const ChatEvent.screenStatusChanged(isActive: false));
+    }
   }
 
   void _onScroll() {

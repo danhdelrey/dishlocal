@@ -23,35 +23,40 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   StreamSubscription<Either<ChatFailure, Message>>? _messageSubscription;
   final int _messagesPerPage = 30;
 
+  bool _isScreenActive = false;
+
   ChatBloc(this._chatRepository, this._appUserRepository) : super(const ChatState.initial()) {
     on<_Started>(_onStarted);
     on<_MoreMessagesLoaded>(_onMoreMessagesLoaded);
     on<_MessageSent>(_onMessageSent);
     on<_PostShared>(_onPostShared);
     on<_MessageReceived>(_onMessageReceived);
+    // === THAY ĐỔI: Thêm handler cho sự kiện active/inactive ===
+    on<_ScreenStatusChanged>(_onScreenStatusChanged);
   }
 
   @override
   Future<void> close() {
     _log.info('Closing ChatBloc and message subscription.');
     _messageSubscription?.cancel();
+    _isScreenActive = false; // Đảm bảo trạng thái được reset
     return super.close();
   }
 
   Future<void> _onStarted(_Started event, Emitter<ChatState> emit) async {
+    // === THAY ĐỔI: Đặt cờ active là true khi bắt đầu ===
+    _isScreenActive = true;
+
     emit(const ChatState.loading());
 
-    // Đánh dấu đã đọc (không chặn UI)
+    // Đánh dấu đã đọc lần đầu (không đổi)
     _chatRepository.markConversationAsRead(conversationId: event.conversationId);
 
-    // Lắng nghe tin nhắn mới
     _messageSubscription?.cancel();
     _messageSubscription = _chatRepository.subscribeToMessages(conversationId: event.conversationId).listen((result) {
       result.fold(
         (failure) => _log.severe('Realtime subscription error: ${failure.message}'),
         (message) {
-          // Chỉ thêm vào BLoC nếu không phải là tin nhắn của chính mình
-          // (tin nhắn của mình đã được thêm bằng optimistic UI)
           if (message.senderId != _appUserRepository.getCurrentUserId()) {
             add(ChatEvent.messageReceived(message));
           }
@@ -150,11 +155,24 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     // Có thể gộp 2 hàm này lại nếu muốn
   }
 
-  void _onMessageReceived(_MessageReceived event, Emitter<ChatState> emit) {
+ void _onMessageReceived(_MessageReceived event, Emitter<ChatState> emit) {
     if (state is! ChatLoaded) return;
     final currentState = state as ChatLoaded;
 
-    // Thêm tin nhắn mới vào đầu danh sách
+    // Thêm tin nhắn mới vào đầu danh sách (không đổi)
     emit(currentState.copyWith(messages: [event.message, ...currentState.messages]));
+
+    // === THAY ĐỔI QUAN TRỌNG ===
+    // Nếu màn hình đang active, ngay lập tức gọi lại mark as read
+    // để cập nhật last_read_at trên database.
+    if (_isScreenActive) {
+      _log.info('New message received while screen is active. Marking as read again.');
+      _chatRepository.markConversationAsRead(conversationId: currentState.conversationId);
+    }
+  }
+
+  // === THAY ĐỔI: Handler mới để xử lý trạng thái màn hình ===
+  void _onScreenStatusChanged(_ScreenStatusChanged event, Emitter<ChatState> emit) {
+    _isScreenActive = event.isActive;
   }
 }

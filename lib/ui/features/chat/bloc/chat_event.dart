@@ -23,4 +23,6 @@ sealed class ChatEvent with _$ChatEvent {
 
   /// [Sự kiện nội bộ] Được gọi khi có tin nhắn mới từ stream real-time.
   const factory ChatEvent.messageReceived(Message message) = _MessageReceived;
+
+  const factory ChatEvent.screenStatusChanged({required bool isActive}) = _ScreenStatusChanged;
 }
