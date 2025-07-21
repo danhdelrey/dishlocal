@@ -354,7 +354,9 @@ class _PostDetailViewState extends State<_PostDetailView> {
         const SizedBox(
           height: 20,
         ),
-        DishDescriptionWidget(dishName: post.dishName!, imageUrl: post.imageUrl!),
+        FadeSlideUp(
+          child: DishDescriptionWidget(dishName: post.dishName!, imageUrl: post.imageUrl!),
+        ),
         const SizedBox(
           height: 20,
         ),

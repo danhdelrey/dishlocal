@@ -4,6 +4,8 @@ import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/dish_description/bloc/dish_description_bloc.dart';
+import 'package:dishlocal/ui/widgets/animated_widgets/fade_slide_up.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -75,38 +77,52 @@ class _InfoButton extends StatelessWidget {
 
     // Chỉ hiển thị nút ở trạng thái Initial hoặc Failure
     if (state is DishDescriptionInitial || state is DishDescriptionFailure) {
-      return Ink(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          gradient: primaryGradient,
-        ),
-        padding: const EdgeInsets.all(1), // viền gradient mỏng
-        child: InkWell(
-          borderRadius: BorderRadius.circular(8),
-          onTap: () {
-            context.read<DishDescriptionBloc>().add(
-                  DishDescriptionEvent.generateRequested(
-                    imageUrl: imageUrl,
-                    dishName: dishName,
-                  ),
-                );
-          },
-          child: Ink(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: ShaderMask(
-              shaderCallback: (bounds) => primaryGradient.createShader(
-                Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-              ),
-              blendMode: BlendMode.srcIn,
-              child: Text(
-                "Thông tin món ăn",
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: Colors.white, // màu này sẽ bị gradient che phủ
+      return Material(
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            gradient: primaryGradient,
+          ),
+          padding: const EdgeInsets.all(1), // viền gradient mỏng
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () {
+              context.read<DishDescriptionBloc>().add(
+                    DishDescriptionEvent.generateRequested(
+                      imageUrl: imageUrl,
+                      dishName: dishName,
                     ),
+                  );
+            },
+            child: Ink(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    CupertinoIcons.sparkles,
+                    color: appColorScheme(context).primary,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 5),
+                  ShaderMask(
+                    shaderCallback: (bounds) => primaryGradient.createShader(
+                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                    ),
+                    blendMode: BlendMode.srcIn,
+                    child: Text(
+                      "Tìm hiểu món ăn này",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.white, // màu này sẽ bị gradient che phủ
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -133,21 +149,23 @@ class _DescriptionContent extends StatelessWidget {
       // Khi thành công: Hiển thị text với animation từng từ
       DishDescriptionSuccess(description: final desc) => Column(
           children: [
-            Row(
-              children: [
-                const Icon(Icons.info_outline, color: Colors.blue, size: 12),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    "Thông tin do AI cung cấp có thể không chính xác.",
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Colors.blue,
-                        ),
+            FadeSlideUp(
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: appColorScheme(context).outline, size: 12),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      "Nội dung được gợi ý bởi AI – chỉ mang tính tham khảo.",
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: appColorScheme(context).outline,
+                          ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 5),
             _AnimatedDescriptionText(fullText: desc),
           ],
         ),
@@ -161,7 +179,7 @@ class _DescriptionContent extends StatelessWidget {
           ),
           child: Center(
             child: Text(
-              'Đã xảy ra lỗi: $msg. Vui lòng thử lại.',
+              'Đã xảy ra lỗi. Vui lòng thử lại.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.red),
               textAlign: TextAlign.center,
             ),
@@ -180,20 +198,27 @@ class _ShimmerEffect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: Colors.white,
-      highlightColor: Colors.blueAccent.withOpacity(0.6),
-      child: ShaderMask(
-        shaderCallback: (bounds) => primaryGradient.createShader(
-          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-        ),
-        blendMode: BlendMode.srcIn,
-        child: Text(
-          "Đang lấy thông tin món ăn...",
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+    return FadeSlideUp(
+      child: Shimmer.fromColors(
+        baseColor: const Color(0xFFfc6076),
+        highlightColor: const Color(0xFFff9a44),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              CupertinoIcons.sparkles,
+              color: appColorScheme(context).onSurface,
+              size: 16,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              "Đang lấy mô tả từ AI...",
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: appColorScheme(context).onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ],
         ),
       ),
     );

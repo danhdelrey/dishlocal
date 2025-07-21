@@ -2,7 +2,7 @@ name: dishlocal
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.7.1+26
+version: 1.8.0+27
 
 environment:
   sdk: ^3.5.4
@@ -30,7 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -99,7 +98,6 @@ dependencies:
   latlong2: ^0.9.1
   turf: ^0.0.10
   flutter_rating_bar: ^4.0.1
-  
 
 dev_dependencies:
   flutter_test:
@@ -121,9 +119,6 @@ flutter_launcher_icons:
   image_path: "assets/images/logo.png"
   adaptive_icon_background: "#ffffff" # hoặc ảnh PNG như "assets/images/icon_bg.png"
   adaptive_icon_foreground: "assets/images/logo.png" # PNG trong suốt dùng làm icon chính (foreground)
-
-
-
 
 flutter_native_splash:
   color: "#1A1A1A" # Màu nền splash (Dark Mode)
@@ -187,6 +182,6 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
-  
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
