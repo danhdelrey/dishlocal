@@ -77,6 +77,26 @@ class _Refreshed implements ConversationListEvent {
 }
 
 /// @nodoc
+
+class _ListChanged implements ConversationListEvent {
+  const _ListChanged();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _ListChanged);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'ConversationListEvent.listChanged()';
+  }
+}
+
+/// @nodoc
 mixin _$ConversationListState {
   @override
   bool operator ==(Object other) {

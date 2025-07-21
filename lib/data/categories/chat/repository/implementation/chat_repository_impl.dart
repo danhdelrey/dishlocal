@@ -207,4 +207,46 @@ class ChatRepositoryImpl implements ChatRepository {
 
     return streamController.stream;
   }
+
+  @override
+  Stream<void> subscribeToConversationListChanges() {
+    _log.info('Subscribing to realtime changes for the conversation list.');
+    final streamController = StreamController<void>.broadcast();
+
+    // Tạo một channel duy nhất để lắng nghe.
+    final channel = _supabase.channel('public:conversations');
+
+    // Đăng ký lắng nghe sự kiện trên kênh.
+    // Đây là cú pháp đúng với phiên bản mới của supabase_flutter.
+    channel
+        .onPostgresChanges(
+      event: PostgresChangeEvent.all, // Lắng nghe TẤT CẢ các thay đổi: INSERT, UPDATE, DELETE
+      schema: 'public',
+      table: 'conversations',
+      // RLS policy đã thiết lập sẽ tự động lọc và chỉ gửi các thay đổi
+      // trên những cuộc trò chuyện mà người dùng hiện tại có quyền truy cập.
+      callback: (payload) {
+        _log.finer('Realtime event on "conversations" table received. Payload: ${payload.newRecord}');
+        // Khi có bất kỳ thay đổi nào, chỉ cần thông báo cho BLoC để tải lại.
+        streamController.add(null);
+      },
+    )
+        .subscribe((status, [error]) {
+      // Callback này dùng để theo dõi trạng thái của việc đăng ký kênh.
+      if (status == RealtimeSubscribeStatus.subscribed) {
+        _log.info('Successfully subscribed to conversations channel.');
+      }
+      if (status == RealtimeSubscribeStatus.channelError || status == RealtimeSubscribeStatus.closed) {
+        _log.severe('Conversations channel error or closed: $error');
+      }
+    });
+
+    // Khi stream bị hủy (ví dụ: BLoC bị đóng), hãy hủy đăng ký kênh để tránh rò rỉ bộ nhớ.
+    streamController.onCancel = () {
+      _log.info('Unsubscribing from conversations channel.');
+      _supabase.removeChannel(channel); // Hủy đăng ký kênh khi không cần nữa.
+    };
+
+    return streamController.stream;
+  }
 }

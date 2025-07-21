@@ -7,4 +7,6 @@ sealed class ConversationListEvent with _$ConversationListEvent {
 
   /// Tải lại danh sách, ví dụ khi người dùng thực hiện pull-to-refresh.
   const factory ConversationListEvent.refreshed() = _Refreshed;
+
+  const factory ConversationListEvent.listChanged() = _ListChanged;
 }

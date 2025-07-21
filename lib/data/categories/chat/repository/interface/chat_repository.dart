@@ -45,4 +45,6 @@ abstract class ChatRepository {
   Stream<Either<ChatFailure, Message>> subscribeToMessages({
     required String conversationId,
   });
+
+  Stream<void> subscribeToConversationListChanges();
 }
