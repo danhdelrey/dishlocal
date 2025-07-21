@@ -21,8 +21,7 @@ _Post _$PostFromJson(Map<String, dynamic> json) => _Post(
       distance: (json['distance'] as num?)?.toDouble(),
       price: (json['price'] as num?)?.toInt(),
       insight: json['insight'] as String?,
-      createdAt:
-          const DateTimeConverter().fromJson(json['createdAt'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
       likeCount: (json['likeCount'] as num).toInt(),
       saveCount: (json['saveCount'] as num).toInt(),
       isLiked: json['isLiked'] as bool,
@@ -50,7 +49,7 @@ Map<String, dynamic> _$PostToJson(_Post instance) => <String, dynamic>{
       'distance': instance.distance,
       'price': instance.price,
       'insight': instance.insight,
-      'createdAt': const DateTimeConverter().toJson(instance.createdAt),
+      'createdAt': instance.createdAt.toIso8601String(),
       'likeCount': instance.likeCount,
       'saveCount': instance.saveCount,
       'isLiked': instance.isLiked,

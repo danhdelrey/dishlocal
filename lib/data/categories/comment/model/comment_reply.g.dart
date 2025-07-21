@@ -15,8 +15,7 @@ _CommentReply _$CommentReplyFromJson(Map<String, dynamic> json) =>
       replyToUserId: json['replyToUserId'] as String,
       replyToUsername: json['replyToUsername'] as String,
       content: json['content'] as String,
-      createdAt:
-          const DateTimeConverter().fromJson(json['createdAt'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
       likeCount: (json['likeCount'] as num).toInt(),
       isLiked: json['isLiked'] as bool,
     );
@@ -30,7 +29,7 @@ Map<String, dynamic> _$CommentReplyToJson(_CommentReply instance) =>
       'replyToUserId': instance.replyToUserId,
       'replyToUsername': instance.replyToUsername,
       'content': instance.content,
-      'createdAt': const DateTimeConverter().toJson(instance.createdAt),
+      'createdAt': instance.createdAt.toIso8601String(),
       'likeCount': instance.likeCount,
       'isLiked': instance.isLiked,
     };

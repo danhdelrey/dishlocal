@@ -27,8 +27,7 @@ _PostEntity _$PostEntityFromJson(Map<String, dynamic> json) => _PostEntity(
               ?.map((e) => PostReviewEntity.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      createdAt:
-          const DateTimeConverter().fromJson(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$PostEntityToJson(_PostEntity instance) =>
@@ -49,5 +48,5 @@ Map<String, dynamic> _$PostEntityToJson(_PostEntity instance) =>
       'comment_count': instance.commentCount,
       'food_category':
           const FoodCategoryConverter().toJson(instance.foodCategory),
-      'created_at': const DateTimeConverter().toJson(instance.createdAt),
+      'created_at': instance.createdAt.toIso8601String(),
     };

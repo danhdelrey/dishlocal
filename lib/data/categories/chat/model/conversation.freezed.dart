@@ -16,13 +16,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Conversation {
   String get conversationId;
-  String
-      get otherParticipantId; // Username không thể null vì profile phải có username
-  String
-      get otherParticipantUsername; // Các trường này có thể null trong profile
+  String get otherParticipantId;
+  String get otherParticipantUsername;
   String? get otherParticipantDisplayName;
-  String? get otherParticipantPhotoUrl; // === THAY ĐỔI QUAN TRỌNG NHẤT ===
-// Các trường này SẼ LÀ NULL nếu chưa có tin nhắn nào
+  String? get otherParticipantPhotoUrl;
   String? get lastMessageContent;
   @DateTimeConverter()
   DateTime? get lastMessageCreatedAt;
@@ -183,7 +180,7 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _Conversation implements Conversation {
   const _Conversation(
       {required this.conversationId,
@@ -203,16 +200,12 @@ class _Conversation implements Conversation {
   final String conversationId;
   @override
   final String otherParticipantId;
-// Username không thể null vì profile phải có username
   @override
   final String otherParticipantUsername;
-// Các trường này có thể null trong profile
   @override
   final String? otherParticipantDisplayName;
   @override
   final String? otherParticipantPhotoUrl;
-// === THAY ĐỔI QUAN TRỌNG NHẤT ===
-// Các trường này SẼ LÀ NULL nếu chưa có tin nhắn nào
   @override
   final String? lastMessageContent;
   @override

@@ -17,8 +17,7 @@ _PostReviewEntity _$PostReviewEntityFromJson(Map<String, dynamic> json) =>
           ? const []
           : const ReviewChoiceListConverter()
               .fromJson(json['selected_choices'] as List),
-      createdAt:
-          const DateTimeConverter().fromJson(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$PostReviewEntityToJson(_PostReviewEntity instance) =>
@@ -29,5 +28,5 @@ Map<String, dynamic> _$PostReviewEntityToJson(_PostReviewEntity instance) =>
       'rating': instance.rating,
       'selected_choices':
           const ReviewChoiceListConverter().toJson(instance.selectedChoices),
-      'created_at': const DateTimeConverter().toJson(instance.createdAt),
+      'created_at': instance.createdAt.toIso8601String(),
     };

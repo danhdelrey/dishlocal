@@ -22,14 +22,31 @@ class ChatRepositoryImpl implements ChatRepository {
       final result = await _supabase.rpc('get_my_conversations');
       _log.finer('RPC response: $result');
 
-      final conversations = (result as List<dynamic>).map((data) => Conversation.fromJson(data as Map<String, dynamic>)).toList();
+      // Ép kiểu kết quả thành một List<dynamic>
+      final List<dynamic> dataList = result as List<dynamic>;
+
+      // Sử dụng vòng lặp for thay vì .map() để gỡ lỗi dễ hơn
+      final List<Conversation> conversations = [];
+      for (final data in dataList) {
+        try {
+          // Cố gắng parse từng object JSON
+          final conversation = Conversation.fromJson(data as Map<String, dynamic>);
+          conversations.add(conversation);
+        } catch (e, stackTrace) {
+          // NẾU CÓ LỖI, IN RA CHÍNH XÁC OBJECT GÂY LỖI
+          _log.severe('!!! LỖI PARSE JSON !!!');
+          _log.severe('Object gây lỗi: $data');
+          _log.severe('Lỗi cụ thể: $e');
+          _log.severe('Stack trace: $stackTrace');
+          // Ném lại lỗi để BLoC có thể bắt được và hiển thị thông báo lỗi
+          rethrow;
+        }
+      }
 
       return Right(conversations);
-    } on PostgrestException catch (e) {
-      _log.severe('RPC get_my_conversations failed', e);
-      return Left(ChatOperationFailure(e.message));
     } catch (e) {
-      _log.severe('An unexpected error occurred in getMyConversations', e);
+      _log.severe('An unexpected error occurred in getMyConversations');
+      _log.severe(e.toString()); // In lỗi ra log
       return Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
     }
   }

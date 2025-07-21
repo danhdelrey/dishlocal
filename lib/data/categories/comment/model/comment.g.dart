@@ -12,8 +12,7 @@ _Comment _$CommentFromJson(Map<String, dynamic> json) => _Comment(
       authorUsername: json['authorUsername'] as String,
       authorAvatarUrl: json['authorAvatarUrl'] as String?,
       content: json['content'] as String,
-      createdAt:
-          const DateTimeConverter().fromJson(json['createdAt'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
       likeCount: (json['likeCount'] as num).toInt(),
       replyCount: (json['replyCount'] as num).toInt(),
       isLiked: json['isLiked'] as bool,
@@ -25,7 +24,7 @@ Map<String, dynamic> _$CommentToJson(_Comment instance) => <String, dynamic>{
       'authorUsername': instance.authorUsername,
       'authorAvatarUrl': instance.authorAvatarUrl,
       'content': instance.content,
-      'createdAt': const DateTimeConverter().toJson(instance.createdAt),
+      'createdAt': instance.createdAt.toIso8601String(),
       'likeCount': instance.likeCount,
       'replyCount': instance.replyCount,
       'isLiked': instance.isLiked,

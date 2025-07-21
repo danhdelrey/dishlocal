@@ -8,43 +8,31 @@ part of 'conversation.dart';
 
 _Conversation _$ConversationFromJson(Map<String, dynamic> json) =>
     _Conversation(
-      conversationId: json['conversationId'] as String,
-      otherParticipantId: json['otherParticipantId'] as String,
-      otherParticipantUsername: json['otherParticipantUsername'] as String,
+      conversationId: json['conversation_id'] as String,
+      otherParticipantId: json['other_participant_id'] as String,
+      otherParticipantUsername: json['other_participant_username'] as String,
       otherParticipantDisplayName:
-          json['otherParticipantDisplayName'] as String?,
-      otherParticipantPhotoUrl: json['otherParticipantPhotoUrl'] as String?,
-      lastMessageContent: json['lastMessageContent'] as String?,
-      lastMessageCreatedAt: _$JsonConverterFromJson<String, DateTime>(
-          json['lastMessageCreatedAt'], const DateTimeConverter().fromJson),
-      lastMessageSenderId: json['lastMessageSenderId'] as String?,
-      lastMessageSharedPostId: json['lastMessageSharedPostId'] as String?,
-      unreadCount: (json['unreadCount'] as num?)?.toInt() ?? 0,
+          json['other_participant_display_name'] as String?,
+      otherParticipantPhotoUrl: json['other_participant_photo_url'] as String?,
+      lastMessageContent: json['last_message_content'] as String?,
+      lastMessageCreatedAt:
+          const DateTimeConverter().fromJson(json['last_message_created_at']),
+      lastMessageSenderId: json['last_message_sender_id'] as String?,
+      lastMessageSharedPostId: json['last_message_shared_post_id'] as String?,
+      unreadCount: (json['unread_count'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$ConversationToJson(_Conversation instance) =>
     <String, dynamic>{
-      'conversationId': instance.conversationId,
-      'otherParticipantId': instance.otherParticipantId,
-      'otherParticipantUsername': instance.otherParticipantUsername,
-      'otherParticipantDisplayName': instance.otherParticipantDisplayName,
-      'otherParticipantPhotoUrl': instance.otherParticipantPhotoUrl,
-      'lastMessageContent': instance.lastMessageContent,
-      'lastMessageCreatedAt': _$JsonConverterToJson<String, DateTime>(
-          instance.lastMessageCreatedAt, const DateTimeConverter().toJson),
-      'lastMessageSenderId': instance.lastMessageSenderId,
-      'lastMessageSharedPostId': instance.lastMessageSharedPostId,
-      'unreadCount': instance.unreadCount,
+      'conversation_id': instance.conversationId,
+      'other_participant_id': instance.otherParticipantId,
+      'other_participant_username': instance.otherParticipantUsername,
+      'other_participant_display_name': instance.otherParticipantDisplayName,
+      'other_participant_photo_url': instance.otherParticipantPhotoUrl,
+      'last_message_content': instance.lastMessageContent,
+      'last_message_created_at':
+          const DateTimeConverter().toJson(instance.lastMessageCreatedAt),
+      'last_message_sender_id': instance.lastMessageSenderId,
+      'last_message_shared_post_id': instance.lastMessageSharedPostId,
+      'unread_count': instance.unreadCount,
     };
-
-Value? _$JsonConverterFromJson<Json, Value>(
-  Object? json,
-  Value? Function(Json json) fromJson,
-) =>
-    json == null ? null : fromJson(json as Json);
-
-Json? _$JsonConverterToJson<Json, Value>(
-  Value? value,
-  Json? Function(Value value) toJson,
-) =>
-    value == null ? null : toJson(value);

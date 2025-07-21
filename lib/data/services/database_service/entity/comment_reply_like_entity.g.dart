@@ -11,8 +11,7 @@ _CommentReplyLikeEntity _$CommentReplyLikeEntityFromJson(
     _CommentReplyLikeEntity(
       replyId: json['reply_id'] as String,
       userId: json['user_id'] as String,
-      createdAt:
-          const DateTimeConverter().fromJson(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$CommentReplyLikeEntityToJson(
@@ -20,5 +19,5 @@ Map<String, dynamic> _$CommentReplyLikeEntityToJson(
     <String, dynamic>{
       'reply_id': instance.replyId,
       'user_id': instance.userId,
-      'created_at': const DateTimeConverter().toJson(instance.createdAt),
+      'created_at': instance.createdAt.toIso8601String(),
     };

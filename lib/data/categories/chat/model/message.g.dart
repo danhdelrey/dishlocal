@@ -7,21 +7,23 @@ part of 'message.dart';
 // **************************************************************************
 
 _Message _$MessageFromJson(Map<String, dynamic> json) => _Message(
-      messageId: json['messageId'] as String,
-      conversationId: json['conversationId'] as String,
-      senderId: json['senderId'] as String,
+      id: json['id'] as String,
+      conversationId: json['conversation_id'] as String,
+      senderId: json['sender_id'] as String,
       content: json['content'] as String?,
-      sharedPost: json['sharedPost'] == null
+      sharedPost: json['shared_post'] == null
           ? null
-          : Post.fromJson(json['sharedPost'] as Map<String, dynamic>),
-      createdAt: DateTime.parse(json['createdAt'] as String),
+          : Post.fromJson(json['shared_post'] as Map<String, dynamic>),
+      sharedPostId: json['shared_post_id'] as String?,
+      createdAt: DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$MessageToJson(_Message instance) => <String, dynamic>{
-      'messageId': instance.messageId,
-      'conversationId': instance.conversationId,
-      'senderId': instance.senderId,
+      'id': instance.id,
+      'conversation_id': instance.conversationId,
+      'sender_id': instance.senderId,
       'content': instance.content,
-      'sharedPost': instance.sharedPost?.toJson(),
-      'createdAt': instance.createdAt.toIso8601String(),
+      'shared_post': instance.sharedPost?.toJson(),
+      'shared_post_id': instance.sharedPostId,
+      'created_at': instance.createdAt.toIso8601String(),
     };

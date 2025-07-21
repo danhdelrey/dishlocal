@@ -6,20 +6,13 @@ part 'conversation.g.dart';
 
 @freezed
 abstract class Conversation with _$Conversation {
-  @JsonSerializable(explicitToJson: true)
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory Conversation({
     required String conversationId,
     required String otherParticipantId,
-
-    // Username không thể null vì profile phải có username
     required String otherParticipantUsername,
-
-    // Các trường này có thể null trong profile
     String? otherParticipantDisplayName,
     String? otherParticipantPhotoUrl,
-
-    // === THAY ĐỔI QUAN TRỌNG NHẤT ===
-    // Các trường này SẼ LÀ NULL nếu chưa có tin nhắn nào
     String? lastMessageContent,
     @DateTimeConverter() DateTime? lastMessageCreatedAt,
     String? lastMessageSenderId,

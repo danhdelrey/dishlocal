@@ -114,7 +114,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     // Optimistic UI: Tạo tin nhắn tạm thời và thêm vào state ngay lập tức
     final tempMessage = Message(
-      messageId: const Uuid().v4(), // ID tạm thời
+      id: const Uuid().v4(), // ID tạm thời
       conversationId: currentState.conversationId,
       senderId: _appUserRepository.getCurrentUserId()!,
       content: event.content,
@@ -133,7 +133,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     // Cập nhật state sau khi có kết quả từ server
     final latestState = state as ChatLoaded;
     final newMessages = List<Message>.from(latestState.messages);
-    final messageIndex = newMessages.indexWhere((m) => m.messageId == tempMessage.messageId);
+    final messageIndex = newMessages.indexWhere((m) => m.id == tempMessage.id);
 
     if (messageIndex != -1) {
       result.fold((failure) {

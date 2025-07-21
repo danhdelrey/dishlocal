@@ -23,23 +23,16 @@ enum MessageStatus {
 
 @freezed
 abstract class Message with _$Message {
-  @JsonSerializable(explicitToJson: true)
+  @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
   const factory Message({
-    required String messageId,
+    required String id,
     required String conversationId,
     required String senderId,
-
-    // Đã là nullable, đúng
     String? content,
-
-    // Đã là nullable, đúng
     Post? sharedPost,
-    required DateTime createdAt,
+    String? sharedPostId,
+    @DateTimeConverter() required DateTime createdAt,
     @JsonKey(includeToJson: false, includeFromJson: false) @Default(MessageStatus.sent) MessageStatus status,
-
-    // Thêm trường này để dễ dàng parse từ JSON của RPC
-    // Nó sẽ không được sử dụng trực tiếp trên UI
-    @JsonKey(includeFromJson: false, includeToJson: false) String? sharedPostId,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);

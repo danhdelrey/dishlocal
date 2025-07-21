@@ -1,11 +1,24 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class DateTimeConverter implements JsonConverter<DateTime, String> {
+// THAY ĐỔI: Chúng ta sẽ dùng một converter "thô" hơn để tránh lỗi ép kiểu của Dart.
+class DateTimeConverter implements JsonConverter<DateTime?, Object?> {
   const DateTimeConverter();
 
   @override
-  DateTime fromJson(String json) => DateTime.parse(json).toLocal();
+  DateTime? fromJson(Object? json) {
+    // Trực tiếp kiểm tra xem object có phải là String không.
+    if (json is String) {
+      return DateTime.parse(json).toLocal();
+    }
+    // Nếu nó là null hoặc kiểu khác, trả về null.
+    return null;
+  }
 
   @override
-  String toJson(DateTime object) => object.toUtc().toIso8601String();
+  String? toJson(DateTime? object) {
+    if (object == null) {
+      return null;
+    }
+    return object.toUtc().toIso8601String();
+  }
 }

@@ -14,8 +14,7 @@ _PostCommentEntity _$PostCommentEntityFromJson(Map<String, dynamic> json) =>
       content: json['content'] as String,
       likeCount: (json['like_count'] as num?)?.toInt() ?? 0,
       replyCount: (json['reply_count'] as num?)?.toInt() ?? 0,
-      createdAt:
-          const DateTimeConverter().fromJson(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$PostCommentEntityToJson(_PostCommentEntity instance) =>
@@ -26,5 +25,5 @@ Map<String, dynamic> _$PostCommentEntityToJson(_PostCommentEntity instance) =>
       'content': instance.content,
       'like_count': instance.likeCount,
       'reply_count': instance.replyCount,
-      'created_at': const DateTimeConverter().toJson(instance.createdAt),
+      'created_at': instance.createdAt.toIso8601String(),
     };
