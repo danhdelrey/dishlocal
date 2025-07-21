@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/data/categories/chat/repository/failure/chat_failure.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
@@ -14,17 +15,15 @@ part 'chat_event.dart';
 part 'chat_state.dart';
 part 'chat_bloc.freezed.dart';
 
-
-
 @injectable
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final _log = Logger('ChatBloc');
   final ChatRepository _chatRepository;
+  final AppUserRepository _appUserRepository;
   StreamSubscription<Either<ChatFailure, Message>>? _messageSubscription;
-  final String _currentUserId; // Lấy ID người dùng hiện tại, ví dụ từ một service auth
   final int _messagesPerPage = 30;
 
-  ChatBloc(this._chatRepository, this._currentUserId) : super(const ChatState.initial()) {
+  ChatBloc(this._chatRepository, this._appUserRepository) : super(const ChatState.initial()) {
     on<_Started>(_onStarted);
     on<_MoreMessagesLoaded>(_onMoreMessagesLoaded);
     on<_MessageSent>(_onMessageSent);
@@ -53,7 +52,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         (message) {
           // Chỉ thêm vào BLoC nếu không phải là tin nhắn của chính mình
           // (tin nhắn của mình đã được thêm bằng optimistic UI)
-          if (message.senderId != _currentUserId) {
+          if (message.senderId != _appUserRepository.getCurrentUserId()) {
             add(ChatEvent.messageReceived(message));
           }
         },
@@ -117,7 +116,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final tempMessage = Message(
       messageId: const Uuid().v4(), // ID tạm thời
       conversationId: currentState.conversationId,
-      senderId: _currentUserId,
+      senderId: _appUserRepository.getCurrentUserId()!,
       content: event.content,
       createdAt: DateTime.now(),
       status: MessageStatus.sending,

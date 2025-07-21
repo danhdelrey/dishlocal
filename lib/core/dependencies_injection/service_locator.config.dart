@@ -103,6 +103,8 @@ import '../../ui/features/auth/bloc/auth_bloc.dart' as _i511;
 import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
 import '../../ui/features/chat/bloc/chat_bloc.dart' as _i976;
 import '../../ui/features/comment/bloc/comment_bloc.dart' as _i510;
+import '../../ui/features/conversation_list/bloc/conversation_list_bloc.dart'
+    as _i376;
 import '../../ui/features/create_post/bloc/create_post_bloc.dart' as _i622;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
     as _i150;
@@ -187,6 +189,8 @@ _i174.GetIt init(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
   gh.lazySingleton<_i808.GeneratedContentRepository>(() =>
       _i964.GeneratedContentRepositoryImpl(gh<_i551.GenerativeAiService>()));
+  gh.factory<_i376.ConversationListBloc>(
+      () => _i376.ConversationListBloc(gh<_i720.ChatRepository>()));
   gh.factory<_i196.DishDescriptionBloc>(
       () => _i196.DishDescriptionBloc(gh<_i808.GeneratedContentRepository>()));
   gh.lazySingleton<_i93.DirectionRepository>(
@@ -231,12 +235,12 @@ _i174.GetIt init(
         gh<_i886.ModerationRepository>(),
         gh<_i19.ImageProcessor>(),
       ));
-  gh.factory<_i976.ChatBloc>(() => _i976.ChatBloc(
-        gh<_i720.ChatRepository>(),
-        gh<String>(),
-      ));
   gh.factory<_i679.SuggestionSearchBloc>(
       () => _i679.SuggestionSearchBloc(gh<_i310.SearchService>()));
+  gh.factory<_i976.ChatBloc>(() => _i976.ChatBloc(
+        gh<_i720.ChatRepository>(),
+        gh<_i749.AppUserRepository>(),
+      ));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,
