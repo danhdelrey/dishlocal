@@ -50,6 +50,7 @@ import '../../data/categories/post/repository/implementation/remote_post_reposit
     as _i181;
 import '../../data/categories/post/repository/interface/post_repository.dart'
     as _i480;
+import '../../data/global/chat_event_bus.dart' as _i429;
 import '../../data/services/authentication_service/implementation/supabase_authentication_service_impl.dart'
     as _i103;
 import '../../data/services/authentication_service/interface/authentication_service.dart'
@@ -124,6 +125,7 @@ import '../../ui/features/suggestion_search/bloc/suggestion_search_bloc.dart'
     as _i679;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
 import '../../ui/features/view_post/bloc/view_post_bloc.dart' as _i10;
+import '../../ui/global/cubits/cubit/unread_badge_cubit.dart' as _i540;
 import '../infrastructure/firebase_injectable_module.dart' as _i965;
 import '../utils/image_processor.dart' as _i19;
 import '../utils/number_formatter.dart' as _i660;
@@ -157,6 +159,7 @@ _i174.GetIt init(
   gh.lazySingleton<_i19.ImageProcessor>(() => _i19.ImageProcessor());
   gh.lazySingleton<_i660.NumberFormatter>(() => _i660.NumberFormatter());
   gh.lazySingleton<_i537.TimeFormatter>(() => _i537.TimeFormatter());
+  gh.lazySingleton<_i429.ChatEventBus>(() => _i429.ChatEventBus());
   gh.lazySingleton<_i692.ModerationService>(
     () => _i709.HiveAiModerationServiceImpl(),
     instanceName: 'hive.ai',
@@ -168,8 +171,9 @@ _i174.GetIt init(
       () => _i1015.HaversineDistanceService());
   gh.lazySingleton<_i1045.StorageService>(
       () => _i1046.CloudinaryStorageServiceImpl());
-  gh.lazySingleton<_i720.ChatRepository>(() => _i760.ChatRepositoryImpl());
   gh.lazySingleton<_i551.GenerativeAiService>(() => _i36.GeminiAiServiceImpl());
+  gh.lazySingleton<_i720.ChatRepository>(
+      () => _i760.ChatRepositoryImpl(gh<_i429.ChatEventBus>()));
   gh.lazySingleton<_i780.AuthenticationService>(
       () => _i103.SupabaseAuthenticationServiceImpl());
   gh.lazySingleton<_i692.ModerationService>(
@@ -189,8 +193,6 @@ _i174.GetIt init(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
   gh.lazySingleton<_i808.GeneratedContentRepository>(() =>
       _i964.GeneratedContentRepositoryImpl(gh<_i551.GenerativeAiService>()));
-  gh.factory<_i376.ConversationListBloc>(
-      () => _i376.ConversationListBloc(gh<_i720.ChatRepository>()));
   gh.factory<_i196.DishDescriptionBloc>(
       () => _i196.DishDescriptionBloc(gh<_i808.GeneratedContentRepository>()));
   gh.lazySingleton<_i93.DirectionRepository>(
@@ -222,6 +224,14 @@ _i174.GetIt init(
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
         gh<_i473.LocationService>(),
         gh<_i766.GeocodingService>(),
+      ));
+  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
+        gh<_i720.ChatRepository>(),
+        gh<_i429.ChatEventBus>(),
+      ));
+  gh.factory<_i540.UnreadBadgeCubit>(() => _i540.UnreadBadgeCubit(
+        gh<_i720.ChatRepository>(),
+        gh<_i429.ChatEventBus>(),
       ));
   gh.factoryParam<_i501.FollowBloc, _i640.AppUser, dynamic>((
     user,

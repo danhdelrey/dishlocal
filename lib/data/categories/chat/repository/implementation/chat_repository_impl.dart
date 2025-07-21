@@ -6,6 +6,7 @@ import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/data/categories/chat/repository/failure/chat_failure.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/data/global/chat_event_bus.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,6 +15,53 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class ChatRepositoryImpl implements ChatRepository {
   final _log = Logger('ChatRepositoryImpl');
   final _supabase = Supabase.instance.client;
+  final ChatEventBus _chatEventBus;
+
+  // Giữ lại channel để có thể hủy khi cần
+  RealtimeChannel? _conversationListChannel;
+
+  // Constructor được cập nhật
+  ChatRepositoryImpl(this._chatEventBus) {
+    // Khởi tạo việc lắng nghe ngay khi repository được tạo
+    _initializeConversationListSubscription();
+  }
+
+  // Xóa phương thức `subscribeToConversationListChanges()` cũ.
+  // Thay vào đó, chúng ta sẽ quản lý nó bên trong repository.
+
+  void _initializeConversationListSubscription() {
+    // Tránh đăng ký nhiều lần
+    if (_conversationListChannel != null) return;
+
+    _log.info('Initializing conversation list subscription via EventBus.');
+    _conversationListChannel = _supabase.channel('conversation-list-changes');
+
+    _conversationListChannel!
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'conversations',
+          callback: (payload) {
+            _log.finer('Realtime event on "conversations". Firing event bus.');
+            _chatEventBus.fireChatDataChanged(); // Phát sự kiện
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'conversation_participants',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: _supabase.auth.currentUser!.id,
+          ),
+          callback: (payload) {
+            _log.finer('Realtime event on "conversation_participants". Firing event bus.');
+            _chatEventBus.fireChatDataChanged(); // Phát sự kiện
+          },
+        )
+        .subscribe();
+  }
 
   @override
   Future<Either<ChatFailure, List<Conversation>>> getMyConversations() async {
@@ -246,56 +294,5 @@ class ChatRepositoryImpl implements ChatRepository {
     return streamController.stream;
   }
 
-  @override
-  Stream<void> subscribeToConversationListChanges() {
-    _log.info('Subscribing to realtime changes for the conversation list.');
-    final streamController = StreamController<void>.broadcast();
-
-    // Tạo một channel duy nhất có thể lắng nghe nhiều sự kiện
-    final channel = _supabase.channel('conversation-list-changes');
-
-    channel
-        // 1. Lắng nghe thay đổi trên bảng `conversations` (cho tin nhắn mới, cuộc trò chuyện mới)
-        .onPostgresChanges(
-          event: PostgresChangeEvent.all,
-          schema: 'public',
-          table: 'conversations',
-          callback: (payload) {
-            _log.finer('Realtime event on "conversations" table received.');
-            streamController.add(null);
-          },
-        )
-        // === THAY ĐỔI QUAN TRỌNG ===
-        // 2. Lắng nghe thay đổi trên bảng `conversation_participants` (cho trạng thái đã đọc)
-        .onPostgresChanges(
-          event: PostgresChangeEvent.update, // Chỉ cần lắng nghe UPDATE
-          schema: 'public',
-          table: 'conversation_participants',
-          // Lọc để chỉ nhận event của chính user này, tiết kiệm tài nguyên
-          filter: PostgresChangeFilter(
-            type: PostgresChangeFilterType.eq,
-            column: 'user_id',
-            value: _supabase.auth.currentUser!.id,
-          ),
-          callback: (payload) {
-            _log.finer('Realtime event on "conversation_participants" table received (read status changed).');
-            // Thông báo cho BLoC để tải lại
-            streamController.add(null);
-          },
-        )
-        .subscribe((status, [error]) {
-      if (status == 'SUBSCRIBED') {
-        _log.info('Successfully subscribed to conversation-list-changes channel.');
-      } else if (error != null) {
-        _log.severe('Error on conversation-list-changes channel: $error');
-      }
-    });
-
-    streamController.onCancel = () {
-      _log.info('Unsubscribing from conversation-list-changes channel.');
-      _supabase.removeChannel(channel);
-    };
-
-    return streamController.stream;
-  }
+  
 }

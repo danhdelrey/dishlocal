@@ -2,10 +2,14 @@ import 'dart:async';
 
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/ui/global/cubits/cubit/unread_badge_cubit.dart';
 import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/buttons_widgets/gradient_fab.dart';
+import 'package:dishlocal/ui/widgets/element_widgets/custom_badge.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 /// Lớp quản lý sự kiện yêu cầu làm mới các tab.
@@ -101,15 +105,19 @@ class MainShell extends StatelessWidget {
               index: 1,
             ),
 
-            _buildTabItem(
-              context: context,
-              activeIcon: AppIcons.chat3.toSvg(
-                color: Theme.of(context).colorScheme.primary,
+            Expanded(
+              child: CustomBadge(
+                child: _buildTabItem(
+                  context: context,
+                  activeIcon: AppIcons.chat3.toSvg(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  icon: AppIcons.chat3.toSvg(
+                    color: appColorScheme(context).onSurface,
+                  ),
+                  index: 2,
+                ),
               ),
-              icon: AppIcons.chat3.toSvg(
-                color: appColorScheme(context).onSurface,
-              ),
-              index: 2,
             ),
 
             // Item 4

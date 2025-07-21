@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:developer' as developer;
 
 import 'package:dishlocal/core/app_environment/app_environment.dart';
+import 'package:dishlocal/ui/global/cubits/cubit/unread_badge_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -111,8 +112,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<AuthBloc>()..add(const AuthEvent.authCheckRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<AuthBloc>()..add(const AuthEvent.authCheckRequested()),
+        ),
+        BlocProvider(
+          create: (context) => getIt<UnreadBadgeCubit>(),
+        ),
+      ],
       child: Builder(builder: (context) {
         // Sử dụng Builder để lấy context có BlocProvider
         final router = AppRouter(context.read<AuthBloc>()).router;

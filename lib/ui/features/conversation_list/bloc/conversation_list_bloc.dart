@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dishlocal/data/categories/chat/model/conversation.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
+import 'package:dishlocal/data/global/chat_event_bus.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -15,32 +16,31 @@ part 'conversation_list_bloc.freezed.dart';
 class ConversationListBloc extends Bloc<ConversationListEvent, ConversationListState> {
   final _log = Logger('ConversationListBloc');
   final ChatRepository _chatRepository;
-  StreamSubscription? _conversationChangesSubscription;
+  final ChatEventBus _chatEventBus;
+  StreamSubscription? _eventBusSubscription;
 
-  ConversationListBloc(this._chatRepository) : super(const ConversationListState.initial()) {
+  // Constructor được cập nhật
+  ConversationListBloc(this._chatRepository, this._chatEventBus) : super(const ConversationListState.initial()) {
     on<_Started>(_onStarted);
     on<_Refreshed>(_onRefreshed);
-    on<_ListChanged>(_onListChanged); // Thêm handler cho event mới
+    on<_ListChanged>(_onListChanged);
   }
 
   @override
   Future<void> close() {
-    _log.info('Closing ConversationListBloc and subscription.');
-    _conversationChangesSubscription?.cancel();
+    _eventBusSubscription?.cancel();
     return super.close();
   }
 
   Future<void> _onStarted(_Started event, Emitter<ConversationListState> emit) async {
     emit(const ConversationListState.loading());
 
-    // Bắt đầu lắng nghe thay đổi real-time
-    _conversationChangesSubscription?.cancel();
-    _conversationChangesSubscription = _chatRepository.subscribeToConversationListChanges().listen((_) {
-      // Khi có thay đổi, thêm sự kiện để tải lại danh sách
+    // === THAY ĐỔI: Lắng nghe từ EventBus ===
+    _eventBusSubscription?.cancel();
+    _eventBusSubscription = _chatEventBus.stream.listen((_) {
       add(const ConversationListEvent.listChanged());
     });
 
-    // Tải danh sách lần đầu
     await _fetchConversations(emit);
   }
 

@@ -46,5 +46,5 @@ abstract class ChatRepository {
     required String conversationId,
   });
 
-  Stream<void> subscribeToConversationListChanges();
+ 
 }
