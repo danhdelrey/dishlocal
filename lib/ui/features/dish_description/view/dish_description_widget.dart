@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/dish_description/bloc/dish_description_bloc.dart';
@@ -74,25 +75,41 @@ class _InfoButton extends StatelessWidget {
 
     // Chỉ hiển thị nút ở trạng thái Initial hoặc Failure
     if (state is DishDescriptionInitial || state is DishDescriptionFailure) {
-      return TextButton(
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          backgroundColor: Colors.blue.withOpacity(0.1),
+      return Ink(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          gradient: primaryGradient,
         ),
-        onPressed: () {
-          context.read<DishDescriptionBloc>().add(
-                DishDescriptionEvent.generateRequested(
-                  imageUrl: imageUrl,
-                  dishName: dishName,
-                ),
-              );
-        },
-        child: Text(
-          "Thông tin món ăn",
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+        padding: const EdgeInsets.all(1), // viền gradient mỏng
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () {
+            context.read<DishDescriptionBloc>().add(
+                  DishDescriptionEvent.generateRequested(
+                    imageUrl: imageUrl,
+                    dishName: dishName,
+                  ),
+                );
+          },
+          child: Ink(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: ShaderMask(
+              shaderCallback: (bounds) => primaryGradient.createShader(
+                Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+              ),
+              blendMode: BlendMode.srcIn,
+              child: Text(
+                "Thông tin món ăn",
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Colors.white, // màu này sẽ bị gradient che phủ
+                    ),
+              ),
+            ),
+          ),
         ),
       );
     }
@@ -122,7 +139,7 @@ class _DescriptionContent extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    "Nội dung do AI tạo có thể không chính xác.",
+                    "Thông tin do AI cung cấp có thể không chính xác.",
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: Colors.blue,
                         ),
@@ -164,11 +181,20 @@ class _ShimmerEffect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: appColorScheme(context).outline,
-      highlightColor: appColorScheme(context).outlineVariant,
-      child: Text(
-        "Đang tải...",
-        style: Theme.of(context).textTheme.bodyMedium,
+      baseColor: Colors.white,
+      highlightColor: Colors.blueAccent.withOpacity(0.6),
+      child: ShaderMask(
+        shaderCallback: (bounds) => primaryGradient.createShader(
+          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+        ),
+        blendMode: BlendMode.srcIn,
+        child: Text(
+          "Đang lấy thông tin món ăn...",
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
       ),
     );
   }
