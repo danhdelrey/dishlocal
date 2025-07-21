@@ -15,30 +15,36 @@ class CustomBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UnreadBadgeCubit, int>(
       builder: (context, totalUnread) {
-        return badges.Badge(
-          showBadge: totalUnread > 0,
-          badgeAnimation: const badges.BadgeAnimation.scale(),
-          badgeContent: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(1000),
-              color: Colors.red,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 5, right: 5),
-              child: Text(
-                totalUnread > 99 ? '99+' : totalUnread.toString(),
-                style: Theme.of(context).textTheme.labelSmall,
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            badges.Badge(
+              showBadge: totalUnread > 0,
+              badgeAnimation: const badges.BadgeAnimation.scale(),
+              badgeContent: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(1000),
+                  color: Colors.red,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 5, right: 5),
+                  child: Text(
+                    totalUnread > 99 ? '99+' : totalUnread.toString(),
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ),
               ),
+              position: badges.BadgePosition.topStart(
+                top: 4,
+                start: 10,
+              ),
+              badgeStyle: const badges.BadgeStyle(
+                badgeColor: Colors.transparent,
+              ),
+              child: child,
             ),
-          ),
-          position: badges.BadgePosition.topStart(
-            top: -10,
-            start: 7,
-          ),
-          badgeStyle: const badges.BadgeStyle(
-            badgeColor: Colors.transparent,
-          ),
-          child: child,
+          ],
         );
       },
     );

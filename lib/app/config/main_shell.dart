@@ -106,16 +106,32 @@ class MainShell extends StatelessWidget {
             ),
 
             Expanded(
-              child: CustomBadge(
-                child: _buildTabItem(
-                  context: context,
-                  activeIcon: AppIcons.chat3.toSvg(
-                    color: Theme.of(context).colorScheme.primary,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  _onTap(context, 2);
+                },
+                child: CustomBadge(
+                  child: AnimatedScale(
+                    // 1. Điều khiển tỷ lệ phóng to/thu nhỏ
+                    scale: navigationShell.currentIndex == 2 ? 1.25 : 1.0,
+
+                    // 2. Thời gian diễn ra animation
+                    duration: const Duration(milliseconds: 200),
+
+                    // 3. Kiểu đường cong animation (tùy chọn, để mượt hơn)
+                    curve: Curves.easeIn,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: navigationShell.currentIndex == 2
+                          ? AppIcons.chat3.toSvg(
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                          : AppIcons.chat3.toSvg(
+                              color: appColorScheme(context).onSurface,
+                            ),
+                    ),
                   ),
-                  icon: AppIcons.chat3.toSvg(
-                    color: appColorScheme(context).onSurface,
-                  ),
-                  index: 2,
                 ),
               ),
             ),
