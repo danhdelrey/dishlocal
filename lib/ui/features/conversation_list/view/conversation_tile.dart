@@ -76,7 +76,7 @@ class ConversationTile extends StatelessWidget {
       ),
       onTap: () {
         context.push(
-          '/conversation_list/chat',
+          '/chat',
           extra: {
             'conversationId': conversation.conversationId,
             'otherUserName': conversation.otherParticipantDisplayName,

@@ -185,19 +185,6 @@ class AppRouter {
               GoRoute(
                 path: '/conversation_list',
                 builder: (context, state) => const ConversationListScreen(),
-                routes: [
-                  GoRoute(
-                      path: 'chat',
-                      builder: (context, state) {
-                        final extraMap = state.extra as Map<String, dynamic>;
-                        final String conversationId = extraMap['conversationId'];
-                        final String otherUserName = extraMap['otherUserName'];
-                        return ChatScreen(
-                          conversationId: conversationId,
-                          otherUserName: otherUserName,
-                        );
-                      }),
-                ],
               ),
             ],
           ),
