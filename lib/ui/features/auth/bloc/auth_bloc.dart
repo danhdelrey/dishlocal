@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
+import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -17,9 +18,10 @@ part 'auth_bloc.freezed.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final _log = Logger('AuthBloc');
   final AppUserRepository _userRepository;
+  final ChatRepository _chatRepository;
   StreamSubscription<AppUser?>? _userSubscription;
 
-  AuthBloc(this._userRepository) : super(const AuthState.initial()) {
+  AuthBloc(this._userRepository, this._chatRepository) : super(const AuthState.initial()) {
     _log.info('✅ AuthBloc được khởi tạo.');
 
     // Đăng ký các handler cho từng event
@@ -51,6 +53,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _log.info('🚪 Thông tin về người dùng trong trạng thái hiện tại: ${user.toString()}');
       if (user.isSetupCompleted) {
         _log.info('👤 Trạng thái người dùng: Authenticated (User: ${user.userId}).');
+        _chatRepository.initializeConversationListSubscription(userId: user.userId);
         emit(AuthState.authenticated(user));
       } else {
         _log.info('✨ Trạng thái người dùng: NewUser (User: ${user.userId}).');
@@ -100,7 +103,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthState.failure(failure));
         // Nếu đăng xuất lỗi, có thể người dùng vẫn đang ở trạng thái đăng nhập.
         // Lấy lại user hiện tại để xác định trạng thái đúng.
-        final currentUser = _userRepository.latestUser; 
+        final currentUser = _userRepository.latestUser;
         add(AuthEvent.userChanged(currentUser));
       },
       (_) {

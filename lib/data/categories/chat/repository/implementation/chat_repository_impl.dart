@@ -23,13 +23,15 @@ class ChatRepositoryImpl implements ChatRepository {
   // Constructor được cập nhật
   ChatRepositoryImpl(this._chatEventBus) {
     // Khởi tạo việc lắng nghe ngay khi repository được tạo
-    _initializeConversationListSubscription();
+    //_initializeConversationListSubscription();
   }
 
   // Xóa phương thức `subscribeToConversationListChanges()` cũ.
   // Thay vào đó, chúng ta sẽ quản lý nó bên trong repository.
-
-  void _initializeConversationListSubscription() {
+  @override
+  void initializeConversationListSubscription(
+    {required String userId}
+  ) {
     // Tránh đăng ký nhiều lần
     if (_conversationListChannel != null) return;
 
@@ -53,7 +55,7 @@ class ChatRepositoryImpl implements ChatRepository {
           filter: PostgresChangeFilter(
             type: PostgresChangeFilterType.eq,
             column: 'user_id',
-            value: _supabase.auth.currentUser!.id,
+            value: userId,
           ),
           callback: (payload) {
             _log.finer('Realtime event on "conversation_participants". Firing event bus.');

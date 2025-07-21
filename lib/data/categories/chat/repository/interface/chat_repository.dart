@@ -46,5 +46,7 @@ abstract class ChatRepository {
     required String conversationId,
   });
 
- 
+  void initializeConversationListSubscription({
+    required String userId,
+  });
 }

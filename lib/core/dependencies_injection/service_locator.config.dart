@@ -245,6 +245,10 @@ _i174.GetIt init(
         gh<_i886.ModerationRepository>(),
         gh<_i19.ImageProcessor>(),
       ));
+  gh.factory<_i511.AuthBloc>(() => _i511.AuthBloc(
+        gh<_i749.AppUserRepository>(),
+        gh<_i720.ChatRepository>(),
+      ));
   gh.factory<_i679.SuggestionSearchBloc>(
       () => _i679.SuggestionSearchBloc(gh<_i310.SearchService>()));
   gh.factory<_i976.ChatBloc>(() => _i976.ChatBloc(
@@ -285,8 +289,6 @@ _i174.GetIt init(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i204.DeletePostBloc>(
       () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
-  gh.factory<_i511.AuthBloc>(
-      () => _i511.AuthBloc(gh<_i749.AppUserRepository>()));
   gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(
         gh<_i749.AppUserRepository>(),
         gh<_i557.CommentRepository>(),
