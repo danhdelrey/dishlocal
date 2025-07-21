@@ -84,10 +84,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Future<void> _onMoreMessagesLoaded(_MoreMessagesLoaded event, Emitter<ChatState> emit) async {
-    if (state is! ChatLoaded) return;
-    final currentState = state as ChatLoaded;
+    // Lấy trạng thái hiện tại, đảm bảo nó là _Loaded
+    final currentState = state;
+    if (currentState is! ChatLoaded) return;
+
+    // Ngăn việc tải nhiều lần cùng lúc hoặc khi đã hết dữ liệu
     if (currentState.isLoadingMore || currentState.hasReachedMax) return;
 
+    // 1. Phát ra trạng thái đang tải thêm
     emit(currentState.copyWith(isLoadingMore: true));
 
     final nextPage = currentState.currentPage + 1;
@@ -97,17 +101,24 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       limit: _messagesPerPage,
     );
 
+    // 2. Xử lý kết quả trả về
     result.fold(
       (failure) {
         _log.warning('Failed to load more messages: ${failure.message}');
-        emit(currentState.copyWith(isLoadingMore: false)); // Tắt loading indicator
+        // PHẢI phát ra trạng thái mới để tắt loading indicator
+        emit(currentState.copyWith(isLoadingMore: false));
       },
       (newMessages) {
+        // TẠO MỘT DANH SÁCH MỚI bằng cách kết hợp danh sách cũ và mới
+        final updatedMessages = List<Message>.from(currentState.messages)..addAll(newMessages);
+
+        // PHÁT RA TRẠNG THÁI CUỐI CÙNG
         emit(currentState.copyWith(
-          messages: currentState.messages..addAll(newMessages),
-          isLoadingMore: false,
+          messages: updatedMessages,
+          isLoadingMore: false, // Tắt loading indicator
+          // Cập nhật lại cờ hasReachedMax
           hasReachedMax: newMessages.length < _messagesPerPage,
-          currentPage: nextPage,
+          currentPage: nextPage, // Tăng số trang hiện tại
         ));
       },
     );
@@ -155,7 +166,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     // Có thể gộp 2 hàm này lại nếu muốn
   }
 
- void _onMessageReceived(_MessageReceived event, Emitter<ChatState> emit) {
+  void _onMessageReceived(_MessageReceived event, Emitter<ChatState> emit) {
     if (state is! ChatLoaded) return;
     final currentState = state as ChatLoaded;
 

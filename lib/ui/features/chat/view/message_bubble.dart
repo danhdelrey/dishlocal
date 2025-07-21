@@ -13,38 +13,33 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-        Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.7,
-          ),
-          decoration: BoxDecoration(
-            color: isMe ? Theme.of(context).primaryColor : Colors.grey[300],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          child: Column(
-            crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              // Nếu có bài post được chia sẻ, hiển thị widget preview ở đây
-              if (message.sharedPost != null) Text('Đã chia sẻ bài viết: ${message.sharedPost!.dishName}'),
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.7,
+      ),
+      decoration: BoxDecoration(
+        color: isMe ? Theme.of(context).primaryColor : Colors.grey[300],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      child: Column(
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          // Nếu có bài post được chia sẻ, hiển thị widget preview ở đây
+          if (message.sharedPost != null) Text('Đã chia sẻ bài viết: ${message.sharedPost!.dishName}'),
 
-              // Hiển thị nội dung text
-              if (message.content != null)
-                Text(
-                  message.content!,
-                  style: TextStyle(color: isMe ? Colors.white : Colors.black),
-                ),
+          // Hiển thị nội dung text
+          if (message.content != null)
+            Text(
+              message.content!,
+              style: TextStyle(color: isMe ? Colors.white : Colors.black),
+            ),
 
-              const SizedBox(height: 4),
-              _buildStatusIcon(),
-            ],
-          ),
-        ),
-      ],
+          const SizedBox(height: 4),
+          _buildStatusIcon(),
+        ],
+      ),
     );
   }
 
@@ -72,8 +67,6 @@ class MessageBubble extends StatelessWidget {
         color = Colors.lightBlueAccent;
         break;
     }
-
-    if (icon == null) return const SizedBox.shrink();
     return Icon(icon, size: size, color: color);
   }
 }
