@@ -75,7 +75,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> with TickerPro
   late final ScrollController _outerScrollController;
 
   late final StreamSubscription<int> _refreshSubscription;
-  static const int myTabIndex = 2;
+  static const int myTabIndex = 3;
 
   @override
   void initState() {

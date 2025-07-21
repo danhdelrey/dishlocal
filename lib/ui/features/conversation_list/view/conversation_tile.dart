@@ -1,7 +1,7 @@
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/chat/model/conversation.dart';
-import 'package:dishlocal/ui/features/chat/view/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ConversationTile extends StatelessWidget {
   final Conversation conversation;
@@ -27,7 +27,6 @@ class ConversationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final hasUnread = conversation.unreadCount > 0;
 
     return ListTile(
@@ -76,13 +75,13 @@ class ConversationTile extends StatelessWidget {
         ],
       ),
       onTap: () {
-        // Luồng 1: Điều hướng đến cuộc trò chuyện đã có
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => ChatScreen(
-            conversationId: conversation.conversationId,
-            otherUserName: conversation.otherParticipantDisplayName ?? 'Người dùng',
-          ),
-        ));
+        context.push(
+          '/conversation_list/chat',
+          extra: {
+            'conversationId': conversation.conversationId,
+            'otherUserName': conversation.otherParticipantDisplayName,
+          },
+        );
       },
     );
   }

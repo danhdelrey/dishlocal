@@ -88,18 +88,6 @@ class MainShell extends StatelessWidget {
               ),
               index: 0,
             ),
-            // Item 1
-            // _buildTabItem(
-            //   context: context,
-            //   activeIcon: AppIcons.search.toSvg(
-            //     color: Theme.of(context).colorScheme.primary,
-            //   ),
-            //   icon: AppIcons.search.toSvg(
-            //     color: appColorScheme(context).onSurface,
-            //   ),
-            //   index: 1,
-            // ),
-            // FAB
 
             // Item 3
             _buildTabItem(
@@ -112,6 +100,18 @@ class MainShell extends StatelessWidget {
               ),
               index: 1,
             ),
+
+            _buildTabItem(
+              context: context,
+              activeIcon: AppIcons.chat3.toSvg(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              icon: AppIcons.chat3.toSvg(
+                color: appColorScheme(context).onSurface,
+              ),
+              index: 2,
+            ),
+
             // Item 4
             _buildTabItem(
               context: context,
@@ -121,7 +121,7 @@ class MainShell extends StatelessWidget {
               icon: AppIcons.user31.toSvg(
                 color: appColorScheme(context).onSurface,
               ),
-              index: 2,
+              index: 3,
             ),
           ],
         ),

@@ -8,6 +8,8 @@ import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:dishlocal/ui/features/auth/view/login_page.dart';
 import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
+import 'package:dishlocal/ui/features/chat/view/chat_screen.dart';
+import 'package:dishlocal/ui/features/conversation_list/view/conversation_list_screen.dart';
 import 'package:dishlocal/ui/features/create_post/view/new_post_page.dart';
 import 'package:dishlocal/ui/features/explore/view/explore_page.dart';
 import 'package:dishlocal/ui/features/home/view/home_page.dart';
@@ -33,7 +35,6 @@ class AppRouter {
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: _redirect,
     routes: [
-      
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginPage(),
@@ -140,6 +141,18 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: '/chat',
+        builder: (context, state) {
+          final extraMap = state.extra as Map<String, dynamic>;
+          final String conversationId = extraMap['conversationId'];
+          final String otherUserName = extraMap['otherUserName'];
+          return ChatScreen(
+            conversationId: conversationId,
+            otherUserName: otherUserName,
+          );
+        },
+      ),
 
       // Sử dụng MainShell thay vì PersistentTabView.router
       StatefulShellRoute.indexedStack(
@@ -157,15 +170,6 @@ class AppRouter {
               ),
             ],
           ),
-          // Branch 1: Tìm kiếm
-          // StatefulShellBranch(
-          //   routes: [
-          //     GoRoute(
-          //       path: '/search', // Đặt tên route rõ ràng
-          //       builder: (context, state) => const SearchInputPage(), // Dùng page tương ứng
-          //     ),
-          //   ],
-          // ),
 
           // Branch 1: Khám phá
           StatefulShellBranch(
@@ -173,6 +177,27 @@ class AppRouter {
               GoRoute(
                 path: '/explore',
                 builder: (context, state) => const ExplorePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/conversation_list',
+                builder: (context, state) => const ConversationListScreen(),
+                routes: [
+                  GoRoute(
+                      path: 'chat',
+                      builder: (context, state) {
+                        final extraMap = state.extra as Map<String, dynamic>;
+                        final String conversationId = extraMap['conversationId'];
+                        final String otherUserName = extraMap['otherUserName'];
+                        return ChatScreen(
+                          conversationId: conversationId,
+                          otherUserName: otherUserName,
+                        );
+                      }),
+                ],
               ),
             ],
           ),
