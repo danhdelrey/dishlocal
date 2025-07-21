@@ -119,7 +119,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       ListView.builder(
                         controller: _scrollController,
                         reverse: true,
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
                         itemCount: messages.length + (isLoadingMore ? 1 : 0),
                         itemBuilder: (context, index) {
                           if (isLoadingMore && index == messages.length) {
@@ -185,6 +185,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                   MessageBubble(
                                     message: message,
                                     isMe: message.senderId == _currentUserId,
+                                    otherUser: widget.otherUser,
                                   ),
                                 ],
                               ),

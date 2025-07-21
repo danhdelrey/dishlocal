@@ -1,72 +1,115 @@
+import 'package:dishlocal/app/theme/theme.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;
   final bool isMe;
+  final AppUser otherUser;
 
   const MessageBubble({
     super.key,
     required this.message,
     required this.isMe,
+    required this.otherUser,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width * 0.7,
-      ),
-      decoration: BoxDecoration(
-        color: isMe ? Theme.of(context).primaryColor : Colors.grey[300],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      child: Column(
-        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+    final theme = Theme.of(context);
+
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Nếu có bài post được chia sẻ, hiển thị widget preview ở đây
-          if (message.sharedPost != null) Text('Đã chia sẻ bài viết: ${message.sharedPost!.dishName}'),
-
-          // Hiển thị nội dung text
-          if (message.content != null)
-            Text(
-              message.content!,
-              style: TextStyle(color: isMe ? Colors.white : Colors.black),
+          if (!isMe)
+            Padding(
+              padding: const EdgeInsets.only(right: 4.0, bottom: 10),
+              child: CachedCircleAvatar(
+                imageUrl: otherUser.photoUrl ?? '',
+                circleRadius: 15,
+              ),
             ),
-
-          const SizedBox(height: 4),
-          _buildStatusIcon(),
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: isMe
+                    ? const LinearGradient(
+                        colors: [Colors.blue, Colors.lightBlueAccent],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
+                color: isMe ? null : theme.colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+              child: Column(
+                crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  if (message.sharedPost != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        'Đã chia sẻ một bài viết', // Nội dung có thể tùy chỉnh
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: (isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface).withOpacity(0.9),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  if (message.content != null)
+                    Text(
+                      message.content!,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          if (isMe) _buildStatusIcon(context),
         ],
       ),
     );
   }
 
-  Widget _buildStatusIcon() {
+  Widget _buildStatusIcon(BuildContext context) {
     if (!isMe) return const SizedBox.shrink();
 
     IconData? icon;
-    double size = 12;
-    Color color = Colors.white70;
+    double size = 14;
+    Color color = Colors.grey.shade600;
 
     switch (message.status) {
       case MessageStatus.sending:
-        icon = Icons.access_time_filled_rounded;
+        icon = Icons.access_time;
         break;
       case MessageStatus.failed:
         icon = Icons.error;
         color = Colors.red;
         break;
       case MessageStatus.sent:
-        // Có thể thêm logic cho trạng thái "delivered" và "read" sau
         icon = Icons.done;
         break;
       case MessageStatus.read:
-        icon = Icons.done_all;
-        color = Colors.lightBlueAccent;
-        break;
+        // Thay vì dùng icon khác, ta có thể hiển thị avatar của người nhận
+        // ở trạng thái "đã xem". Đây là một cách tiếp cận hiện đại.
+        return Padding(
+          padding: const EdgeInsets.only(right: 8.0, bottom: 4.0),
+          child: CachedCircleAvatar(
+            imageUrl: otherUser.photoUrl ?? '',
+            circleRadius: 8,
+          ),
+        );
     }
+
     return Icon(icon, size: size, color: color);
   }
 }

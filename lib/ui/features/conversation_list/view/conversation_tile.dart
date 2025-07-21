@@ -69,53 +69,7 @@ class _ConversationTileState extends State<ConversationTile> {
   Widget build(BuildContext context) {
     final hasUnread = widget.conversation.unreadCount > 0;
 
-    return ListTile(
-      leading: CachedCircleAvatar(
-        imageUrl: widget.conversation.otherParticipant.photoUrl ?? '',
-        circleRadius: 25,
-      ),
-      title: Text(
-        widget.conversation.otherParticipant.displayName ?? 'Người dùng',
-        style: appTextTheme(context).labelLarge?.copyWith(
-              fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
-              color: appColorScheme(context).onSurface,
-            ),
-      ),
-      subtitle: Text(
-        _buildPreviewText(),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: appTextTheme(context).bodyMedium?.copyWith(
-              color: hasUnread ? appColorScheme(context).onSurface : appColorScheme(context).outline,
-            ),
-      ),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (widget.conversation.lastMessageCreatedAt != null)
-            Text(
-              // Bây giờ hàm format này sẽ được gọi lại mỗi phút
-              TimeFormatter.formatTimeAgo(widget.conversation.lastMessageCreatedAt!),
-              style: TextStyle(
-                color: hasUnread ? Theme.of(context).primaryColor : Colors.grey,
-                fontSize: 12,
-              ),
-            ),
-          const SizedBox(height: 4),
-          if (hasUnread)
-            CircleAvatar(
-              radius: 10,
-              backgroundColor: Theme.of(context).primaryColor,
-              child: Text(
-                widget.conversation.unreadCount.toString(),
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-              ),
-            )
-          else
-            const SizedBox(height: 20),
-        ],
-      ),
+    return InkWell(
       onTap: () {
         context.push(
           '/chat',
@@ -127,6 +81,68 @@ class _ConversationTileState extends State<ConversationTile> {
           context.read<ConversationListBloc>().add(const ConversationListEvent.refreshed());
         });
       },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+        child: Row(
+          children: [
+            CachedCircleAvatar(
+              imageUrl: widget.conversation.otherParticipant.photoUrl ?? '',
+              circleRadius: 25,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.conversation.otherParticipant.displayName ?? 'Người dùng',
+                    style: appTextTheme(context).labelLarge?.copyWith(
+                          fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
+                          color: appColorScheme(context).onSurface,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _buildPreviewText(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: appTextTheme(context).bodyMedium?.copyWith(
+                          color: hasUnread ? appColorScheme(context).onSurface : appColorScheme(context).outline,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (widget.conversation.lastMessageCreatedAt != null)
+                  Text(
+                    TimeFormatter.formatTimeAgo(widget.conversation.lastMessageCreatedAt!),
+                    style: TextStyle(
+                      color: hasUnread ? Theme.of(context).primaryColor : Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                const SizedBox(height: 4),
+                if (hasUnread)
+                  CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: Text(
+                      widget.conversation.unreadCount.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  )
+                else
+                  const SizedBox(height: 20),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
