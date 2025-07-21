@@ -25,6 +25,10 @@ import '../../data/categories/app_user/repository/implementation/sql_app_user_re
     as _i90;
 import '../../data/categories/app_user/repository/interface/app_user_repository.dart'
     as _i749;
+import '../../data/categories/chat/repository/implementation/chat_repository_impl.dart'
+    as _i760;
+import '../../data/categories/chat/repository/interface/chat_repository.dart'
+    as _i720;
 import '../../data/categories/comment/repository/implementation/remote_comment_repository_sql_impl.dart'
     as _i395;
 import '../../data/categories/comment/repository/interface/comment_repository.dart'
@@ -161,6 +165,7 @@ _i174.GetIt init(
       () => _i1015.HaversineDistanceService());
   gh.lazySingleton<_i1045.StorageService>(
       () => _i1046.CloudinaryStorageServiceImpl());
+  gh.lazySingleton<_i720.ChatRepository>(() => _i760.ChatRepositoryImpl());
   gh.lazySingleton<_i551.GenerativeAiService>(() => _i36.GeminiAiServiceImpl());
   gh.lazySingleton<_i780.AuthenticationService>(
       () => _i103.SupabaseAuthenticationServiceImpl());
