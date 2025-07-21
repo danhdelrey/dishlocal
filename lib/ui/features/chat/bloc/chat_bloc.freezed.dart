@@ -1,0 +1,589 @@
+// dart format width=80
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'chat_bloc.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// dart format off
+T _$identity<T>(T value) => value;
+
+/// @nodoc
+mixin _$ChatEvent {
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is ChatEvent);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'ChatEvent()';
+  }
+}
+
+/// @nodoc
+class $ChatEventCopyWith<$Res> {
+  $ChatEventCopyWith(ChatEvent _, $Res Function(ChatEvent) __);
+}
+
+/// @nodoc
+
+class _Started implements ChatEvent {
+  const _Started({required this.conversationId, required this.otherUserName});
+
+  final String conversationId;
+  final String otherUserName;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$StartedCopyWith<_Started> get copyWith =>
+      __$StartedCopyWithImpl<_Started>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _Started &&
+            (identical(other.conversationId, conversationId) ||
+                other.conversationId == conversationId) &&
+            (identical(other.otherUserName, otherUserName) ||
+                other.otherUserName == otherUserName));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, conversationId, otherUserName);
+
+  @override
+  String toString() {
+    return 'ChatEvent.started(conversationId: $conversationId, otherUserName: $otherUserName)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$StartedCopyWith<$Res>
+    implements $ChatEventCopyWith<$Res> {
+  factory _$StartedCopyWith(_Started value, $Res Function(_Started) _then) =
+      __$StartedCopyWithImpl;
+  @useResult
+  $Res call({String conversationId, String otherUserName});
+}
+
+/// @nodoc
+class __$StartedCopyWithImpl<$Res> implements _$StartedCopyWith<$Res> {
+  __$StartedCopyWithImpl(this._self, this._then);
+
+  final _Started _self;
+  final $Res Function(_Started) _then;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? conversationId = null,
+    Object? otherUserName = null,
+  }) {
+    return _then(_Started(
+      conversationId: null == conversationId
+          ? _self.conversationId
+          : conversationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      otherUserName: null == otherUserName
+          ? _self.otherUserName
+          : otherUserName // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _MoreMessagesLoaded implements ChatEvent {
+  const _MoreMessagesLoaded();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _MoreMessagesLoaded);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'ChatEvent.moreMessagesLoaded()';
+  }
+}
+
+/// @nodoc
+
+class _MessageSent implements ChatEvent {
+  const _MessageSent({required this.content});
+
+  final String content;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$MessageSentCopyWith<_MessageSent> get copyWith =>
+      __$MessageSentCopyWithImpl<_MessageSent>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _MessageSent &&
+            (identical(other.content, content) || other.content == content));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, content);
+
+  @override
+  String toString() {
+    return 'ChatEvent.messageSent(content: $content)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$MessageSentCopyWith<$Res>
+    implements $ChatEventCopyWith<$Res> {
+  factory _$MessageSentCopyWith(
+          _MessageSent value, $Res Function(_MessageSent) _then) =
+      __$MessageSentCopyWithImpl;
+  @useResult
+  $Res call({String content});
+}
+
+/// @nodoc
+class __$MessageSentCopyWithImpl<$Res> implements _$MessageSentCopyWith<$Res> {
+  __$MessageSentCopyWithImpl(this._self, this._then);
+
+  final _MessageSent _self;
+  final $Res Function(_MessageSent) _then;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? content = null,
+  }) {
+    return _then(_MessageSent(
+      content: null == content
+          ? _self.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _PostShared implements ChatEvent {
+  const _PostShared({required this.postId});
+
+  final String postId;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PostSharedCopyWith<_PostShared> get copyWith =>
+      __$PostSharedCopyWithImpl<_PostShared>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _PostShared &&
+            (identical(other.postId, postId) || other.postId == postId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, postId);
+
+  @override
+  String toString() {
+    return 'ChatEvent.postShared(postId: $postId)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$PostSharedCopyWith<$Res>
+    implements $ChatEventCopyWith<$Res> {
+  factory _$PostSharedCopyWith(
+          _PostShared value, $Res Function(_PostShared) _then) =
+      __$PostSharedCopyWithImpl;
+  @useResult
+  $Res call({String postId});
+}
+
+/// @nodoc
+class __$PostSharedCopyWithImpl<$Res> implements _$PostSharedCopyWith<$Res> {
+  __$PostSharedCopyWithImpl(this._self, this._then);
+
+  final _PostShared _self;
+  final $Res Function(_PostShared) _then;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? postId = null,
+  }) {
+    return _then(_PostShared(
+      postId: null == postId
+          ? _self.postId
+          : postId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _MessageReceived implements ChatEvent {
+  const _MessageReceived(this.message);
+
+  final Message message;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$MessageReceivedCopyWith<_MessageReceived> get copyWith =>
+      __$MessageReceivedCopyWithImpl<_MessageReceived>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _MessageReceived &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  @override
+  String toString() {
+    return 'ChatEvent.messageReceived(message: $message)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$MessageReceivedCopyWith<$Res>
+    implements $ChatEventCopyWith<$Res> {
+  factory _$MessageReceivedCopyWith(
+          _MessageReceived value, $Res Function(_MessageReceived) _then) =
+      __$MessageReceivedCopyWithImpl;
+  @useResult
+  $Res call({Message message});
+
+  $MessageCopyWith<$Res> get message;
+}
+
+/// @nodoc
+class __$MessageReceivedCopyWithImpl<$Res>
+    implements _$MessageReceivedCopyWith<$Res> {
+  __$MessageReceivedCopyWithImpl(this._self, this._then);
+
+  final _MessageReceived _self;
+  final $Res Function(_MessageReceived) _then;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(_MessageReceived(
+      null == message
+          ? _self.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as Message,
+    ));
+  }
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $MessageCopyWith<$Res> get message {
+    return $MessageCopyWith<$Res>(_self.message, (value) {
+      return _then(_self.copyWith(message: value));
+    });
+  }
+}
+
+/// @nodoc
+mixin _$ChatState {
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is ChatState);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'ChatState()';
+  }
+}
+
+/// @nodoc
+class $ChatStateCopyWith<$Res> {
+  $ChatStateCopyWith(ChatState _, $Res Function(ChatState) __);
+}
+
+/// @nodoc
+
+class ChatInitial implements ChatState {
+  const ChatInitial();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is ChatInitial);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'ChatState.initial()';
+  }
+}
+
+/// @nodoc
+
+class ChatLoading implements ChatState {
+  const ChatLoading();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is ChatLoading);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'ChatState.loading()';
+  }
+}
+
+/// @nodoc
+
+class ChatLoaded implements ChatState {
+  const ChatLoaded(
+      {required this.conversationId,
+      required this.otherUserName,
+      required final List<Message> messages,
+      this.isLoadingMore = false,
+      this.hasReachedMax = false,
+      this.currentPage = 1})
+      : _messages = messages;
+
+  final String conversationId;
+  final String otherUserName;
+  final List<Message> _messages;
+  List<Message> get messages {
+    if (_messages is EqualUnmodifiableListView) return _messages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_messages);
+  }
+
+  @JsonKey()
+  final bool isLoadingMore;
+// Cờ cho biết đang tải trang tiếp theo
+  @JsonKey()
+  final bool hasReachedMax;
+// Cờ cho biết đã hết tin nhắn để tải
+  @JsonKey()
+  final int currentPage;
+
+  /// Create a copy of ChatState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $ChatLoadedCopyWith<ChatLoaded> get copyWith =>
+      _$ChatLoadedCopyWithImpl<ChatLoaded>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ChatLoaded &&
+            (identical(other.conversationId, conversationId) ||
+                other.conversationId == conversationId) &&
+            (identical(other.otherUserName, otherUserName) ||
+                other.otherUserName == otherUserName) &&
+            const DeepCollectionEquality().equals(other._messages, _messages) &&
+            (identical(other.isLoadingMore, isLoadingMore) ||
+                other.isLoadingMore == isLoadingMore) &&
+            (identical(other.hasReachedMax, hasReachedMax) ||
+                other.hasReachedMax == hasReachedMax) &&
+            (identical(other.currentPage, currentPage) ||
+                other.currentPage == currentPage));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      conversationId,
+      otherUserName,
+      const DeepCollectionEquality().hash(_messages),
+      isLoadingMore,
+      hasReachedMax,
+      currentPage);
+
+  @override
+  String toString() {
+    return 'ChatState.loaded(conversationId: $conversationId, otherUserName: $otherUserName, messages: $messages, isLoadingMore: $isLoadingMore, hasReachedMax: $hasReachedMax, currentPage: $currentPage)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $ChatLoadedCopyWith<$Res>
+    implements $ChatStateCopyWith<$Res> {
+  factory $ChatLoadedCopyWith(
+          ChatLoaded value, $Res Function(ChatLoaded) _then) =
+      _$ChatLoadedCopyWithImpl;
+  @useResult
+  $Res call(
+      {String conversationId,
+      String otherUserName,
+      List<Message> messages,
+      bool isLoadingMore,
+      bool hasReachedMax,
+      int currentPage});
+}
+
+/// @nodoc
+class _$ChatLoadedCopyWithImpl<$Res> implements $ChatLoadedCopyWith<$Res> {
+  _$ChatLoadedCopyWithImpl(this._self, this._then);
+
+  final ChatLoaded _self;
+  final $Res Function(ChatLoaded) _then;
+
+  /// Create a copy of ChatState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? conversationId = null,
+    Object? otherUserName = null,
+    Object? messages = null,
+    Object? isLoadingMore = null,
+    Object? hasReachedMax = null,
+    Object? currentPage = null,
+  }) {
+    return _then(ChatLoaded(
+      conversationId: null == conversationId
+          ? _self.conversationId
+          : conversationId // ignore: cast_nullable_to_non_nullable
+              as String,
+      otherUserName: null == otherUserName
+          ? _self.otherUserName
+          : otherUserName // ignore: cast_nullable_to_non_nullable
+              as String,
+      messages: null == messages
+          ? _self._messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<Message>,
+      isLoadingMore: null == isLoadingMore
+          ? _self.isLoadingMore
+          : isLoadingMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasReachedMax: null == hasReachedMax
+          ? _self.hasReachedMax
+          : hasReachedMax // ignore: cast_nullable_to_non_nullable
+              as bool,
+      currentPage: null == currentPage
+          ? _self.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+
+class ChatError implements ChatState {
+  const ChatError({required this.message});
+
+  final String message;
+
+  /// Create a copy of ChatState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $ChatErrorCopyWith<ChatError> get copyWith =>
+      _$ChatErrorCopyWithImpl<ChatError>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ChatError &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  @override
+  String toString() {
+    return 'ChatState.error(message: $message)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $ChatErrorCopyWith<$Res>
+    implements $ChatStateCopyWith<$Res> {
+  factory $ChatErrorCopyWith(ChatError value, $Res Function(ChatError) _then) =
+      _$ChatErrorCopyWithImpl;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class _$ChatErrorCopyWithImpl<$Res> implements $ChatErrorCopyWith<$Res> {
+  _$ChatErrorCopyWithImpl(this._self, this._then);
+
+  final ChatError _self;
+  final $Res Function(ChatError) _then;
+
+  /// Create a copy of ChatState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(ChatError(
+      message: null == message
+          ? _self.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+// dart format on

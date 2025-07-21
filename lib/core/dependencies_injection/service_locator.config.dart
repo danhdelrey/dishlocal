@@ -101,6 +101,7 @@ import '../../data/services/storage_service/interface/storage_service.dart'
 import '../../ui/features/account_setup/bloc/account_setup_bloc.dart' as _i658;
 import '../../ui/features/auth/bloc/auth_bloc.dart' as _i511;
 import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
+import '../../ui/features/chat/bloc/chat_bloc.dart' as _i976;
 import '../../ui/features/comment/bloc/comment_bloc.dart' as _i510;
 import '../../ui/features/create_post/bloc/create_post_bloc.dart' as _i622;
 import '../../ui/features/current_address/bloc/current_address_bloc.dart'
@@ -229,6 +230,10 @@ _i174.GetIt init(
   gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc(
         gh<_i886.ModerationRepository>(),
         gh<_i19.ImageProcessor>(),
+      ));
+  gh.factory<_i976.ChatBloc>(() => _i976.ChatBloc(
+        gh<_i720.ChatRepository>(),
+        gh<String>(),
       ));
   gh.factory<_i679.SuggestionSearchBloc>(
       () => _i679.SuggestionSearchBloc(gh<_i310.SearchService>()));
