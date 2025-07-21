@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/chat/model/conversation.dart';
 import 'package:dishlocal/ui/features/conversation_list/bloc/conversation_list_bloc.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -68,23 +70,24 @@ class _ConversationTileState extends State<ConversationTile> {
     final hasUnread = widget.conversation.unreadCount > 0;
 
     return ListTile(
-      leading: CircleAvatar(
-        radius: 28,
-        backgroundImage: widget.conversation.otherParticipant.photoUrl != null ? NetworkImage(widget.conversation.otherParticipant.photoUrl!) : null,
-        child: widget.conversation.otherParticipant.photoUrl == null ? Text(widget.conversation.otherParticipant.displayName?[0] ?? '?') : null,
+      leading: CachedCircleAvatar(
+        imageUrl: widget.conversation.otherParticipant.photoUrl ?? '',
+        circleRadius: 25,
       ),
       title: Text(
         widget.conversation.otherParticipant.displayName ?? 'Người dùng',
-        style: TextStyle(fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal),
+        style: appTextTheme(context).labelLarge?.copyWith(
+              fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
+              color: appColorScheme(context).onSurface,
+            ),
       ),
       subtitle: Text(
         _buildPreviewText(),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: hasUnread ? Theme.of(context).textTheme.bodyLarge?.color : Colors.grey,
-          fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
-        ),
+        style: appTextTheme(context).bodyMedium?.copyWith(
+              color: hasUnread ? appColorScheme(context).onSurface : appColorScheme(context).outline,
+            ),
       ),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,

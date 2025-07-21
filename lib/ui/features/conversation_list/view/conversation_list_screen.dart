@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/conversation_list/bloc/conversation_list_bloc.dart';
 import 'package:dishlocal/ui/features/conversation_list/view/conversation_tile.dart';
@@ -14,6 +15,9 @@ class ConversationListScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Tin nhắn'),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          centerTitle: true,
+          titleTextStyle: appTextTheme(context).titleMedium,
         ),
         body: BlocBuilder<ConversationListBloc, ConversationListState>(
           builder: (context, state) {
