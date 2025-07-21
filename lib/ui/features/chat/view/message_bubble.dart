@@ -35,42 +35,45 @@ class MessageBubble extends StatelessWidget {
               ),
             ),
           Flexible(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: isMe
-                    ? const LinearGradient(
-                        colors: [Colors.blue, Colors.lightBlueAccent],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                    : null,
-                color: isMe ? null : theme.colorScheme.surfaceContainer,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              child: Column(
-                crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  if (message.sharedPost != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Text(
-                        'Đã chia sẻ một bài viết', // Nội dung có thể tùy chỉnh
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: (isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface).withOpacity(0.9),
-                          fontStyle: FontStyle.italic,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: isMe
+                      ? const LinearGradient(
+                          colors: [Colors.blue, Colors.lightBlueAccent],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : null,
+                  color: isMe ? null : theme.colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                child: Column(
+                  crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  children: [
+                    if (message.sharedPost != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Text(
+                          'Đã chia sẻ một bài viết',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: (isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface).withOpacity(0.9),
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
                       ),
-                    ),
-                  if (message.content != null)
-                    Text(
-                      message.content!,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                    if (message.content != null)
+                      Text(
+                        message.content!,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
