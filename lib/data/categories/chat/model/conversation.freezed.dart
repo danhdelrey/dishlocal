@@ -15,37 +15,19 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$Conversation {
-  /// ID của cuộc trò chuyện, lấy từ `conversations.id`.
   String get conversationId;
-
-  /// ID của người đối thoại.
-  String get otherParticipantId;
-
-  /// Tên đăng nhập của người đối thoại, lấy từ `profiles.username`.
-  String get otherParticipantUsername;
-
-  /// Tên hiển thị của người đối thoại, lấy từ `profiles.display_name`.
+  String
+      get otherParticipantId; // Username không thể null vì profile phải có username
+  String
+      get otherParticipantUsername; // Các trường này có thể null trong profile
   String? get otherParticipantDisplayName;
-
-  /// URL ảnh đại diện của người đối thoại, lấy từ `profiles.photo_url`.
-  String? get otherParticipantPhotoUrl;
-
-  /// Nội dung của tin nhắn cuối cùng để hiển thị preview.
+  String? get otherParticipantPhotoUrl; // === THAY ĐỔI QUAN TRỌNG NHẤT ===
+// Các trường này SẼ LÀ NULL nếu chưa có tin nhắn nào
   String? get lastMessageContent;
-
-  /// Thời gian của tin nhắn cuối cùng, dùng để sắp xếp và hiển thị.
   @DateTimeConverter()
   DateTime? get lastMessageCreatedAt;
-
-  /// ID của người gửi tin nhắn cuối cùng. Dùng để hiển thị "Bạn: ..."
   String? get lastMessageSenderId;
-
-  /// ID của bài post được chia sẻ trong tin nhắn cuối cùng (nếu có).
-  /// Dùng để hiển thị icon [Bài viết] hoặc tương tự.
   String? get lastMessageSharedPostId;
-
-  /// Số lượng tin nhắn chưa đọc trong cuộc trò chuyện này.
-  /// Dùng để hiển thị huy hiệu (badge).
   int get unreadCount;
 
   /// Create a copy of Conversation
@@ -217,46 +199,29 @@ class _Conversation implements Conversation {
   factory _Conversation.fromJson(Map<String, dynamic> json) =>
       _$ConversationFromJson(json);
 
-  /// ID của cuộc trò chuyện, lấy từ `conversations.id`.
   @override
   final String conversationId;
-
-  /// ID của người đối thoại.
   @override
   final String otherParticipantId;
-
-  /// Tên đăng nhập của người đối thoại, lấy từ `profiles.username`.
+// Username không thể null vì profile phải có username
   @override
   final String otherParticipantUsername;
-
-  /// Tên hiển thị của người đối thoại, lấy từ `profiles.display_name`.
+// Các trường này có thể null trong profile
   @override
   final String? otherParticipantDisplayName;
-
-  /// URL ảnh đại diện của người đối thoại, lấy từ `profiles.photo_url`.
   @override
   final String? otherParticipantPhotoUrl;
-
-  /// Nội dung của tin nhắn cuối cùng để hiển thị preview.
+// === THAY ĐỔI QUAN TRỌNG NHẤT ===
+// Các trường này SẼ LÀ NULL nếu chưa có tin nhắn nào
   @override
   final String? lastMessageContent;
-
-  /// Thời gian của tin nhắn cuối cùng, dùng để sắp xếp và hiển thị.
   @override
   @DateTimeConverter()
   final DateTime? lastMessageCreatedAt;
-
-  /// ID của người gửi tin nhắn cuối cùng. Dùng để hiển thị "Bạn: ..."
   @override
   final String? lastMessageSenderId;
-
-  /// ID của bài post được chia sẻ trong tin nhắn cuối cùng (nếu có).
-  /// Dùng để hiển thị icon [Bài viết] hoặc tương tự.
   @override
   final String? lastMessageSharedPostId;
-
-  /// Số lượng tin nhắn chưa đọc trong cuộc trò chuyện này.
-  /// Dùng để hiển thị huy hiệu (badge).
   @override
   @JsonKey()
   final int unreadCount;

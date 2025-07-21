@@ -46,21 +46,16 @@ class ChatRepositoryImpl implements ChatRepository {
 
       _log.info('Query: messages for conversation $conversationId, page: $page, limit: $limit (range: $from-$to)');
 
-      // Sử dụng join của Supabase để lấy luôn dữ liệu của post được chia sẻ
-      final result = await _supabase
-          .from('messages')
-          .select('*, shared_post:posts(*, author:profiles(*))') // Join lồng nhau để lấy cả thông tin tác giả của post
-          .eq('conversation_id', conversationId)
-          .order('created_at', ascending: false)
-          .range(from, to);
+      // THAY ĐỔI: Chỉ định rõ mối quan hệ `posts_author_id_fkey`
+      final result = await _supabase.from('messages').select('*, shared_post:posts(*, author:profiles!posts_author_id_fkey(*))').eq('conversation_id', conversationId).order('created_at', ascending: false).range(from, to);
 
       _log.finer('Query response: $result');
 
       final messages = (result as List<dynamic>).map((data) {
         final entityData = data as Map<String, dynamic>;
 
-        // Chuyển đổi post được join thành object Post
         if (entityData['shared_post'] != null) {
+          // Giả sử model Post của bạn có thể parse từ json này
           entityData['sharedPost'] = Post.fromJson(entityData['shared_post']);
         }
 
@@ -111,38 +106,42 @@ class ChatRepositoryImpl implements ChatRepository {
   }) async {
     try {
       _log.info('RPC: send_message to conversation $conversationId');
-      final result = await _supabase
-          .rpc(
-            'send_message',
-            params: {
-              'p_conversation_id': conversationId,
-              'p_content': content,
-              'p_shared_post_id': sharedPostId,
-            },
-            // Sử dụng .select() ngay sau .rpc() để join dữ liệu trả về
-          )
-          .select('*, shared_post:posts(*, author:profiles(*))')
-          .single();
+
+      // THAY ĐỔI: Chỉ gọi RPC và không cần .select() nữa
+      final result = await _supabase.rpc(
+        'send_message',
+        params: {
+          'p_conversation_id': conversationId,
+          'p_content': content,
+          'p_shared_post_id': sharedPostId,
+        },
+      );
 
       _log.finer('RPC response: $result');
 
-      final entityData = result;
+      // Kết quả trả về trực tiếp là JSON chúng ta đã xây dựng
+      final entityData = result as Map<String, dynamic>;
+
+      // logic parse JSON lồng nhau cho 'sharedPost'
       if (entityData['shared_post'] != null) {
-        entityData['sharedPost'] = Post.fromJson(entityData['shared_post']);
+        // Đổi tên key để khớp với model 'Message'
+        entityData['sharedPost'] = entityData['shared_post'];
       }
+
       final message = Message.fromJson(entityData);
 
       return Right(message);
     } on PostgrestException catch (e) {
       _log.severe('RPC send_message failed', e);
       if (e.code == 'P0001') {
-        // Exception do RLS hoặc check constraint
         return const Left(ChatPermissionDenied());
       }
       return Left(ChatOperationFailure(e.message));
     } catch (e) {
       _log.severe('An unexpected error occurred in sendMessage', e);
-      return Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
+      // In lỗi gốc để debug
+      _log.severe(e.toString());
+      return const Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn.'));
     }
   }
 
@@ -175,18 +174,30 @@ class ChatRepositoryImpl implements ChatRepository {
     _log.info('Subscribing to realtime messages for conversation $conversationId');
     final streamController = StreamController<Either<ChatFailure, Message>>();
 
-    final channel = _supabase.from('messages:conversation_id=eq.$conversationId').stream(primaryKey: ['id']);
+    // THAY ĐỔI: Tạo channel riêng biệt trước
+    final channel = _supabase.channel('public:messages:conversation_id=eq.$conversationId');
 
-    channel.listen((payload) async {
-      try {
-        _log.finer('Received realtime payload: $payload');
-        // Payload là một list, nhưng với INSERT event thường chỉ có 1 phần tử
-        if (payload.isNotEmpty) {
-          final newMessageData = payload.first;
-          // Dữ liệu từ realtime sẽ không có join, ta cần fetch lại để có đầy đủ thông tin
+    channel
+        .onPostgresChanges(
+      event: PostgresChangeEvent.insert,
+      schema: 'public',
+      table: 'messages',
+      // Bộ lọc này đã được áp dụng khi tạo channel ở trên,
+      // nhưng thêm vào đây sẽ đảm bảo tính chính xác.
+      filter: PostgresChangeFilter(
+        type: PostgresChangeFilterType.eq,
+        column: 'conversation_id',
+        value: conversationId,
+      ),
+      callback: (payload) async {
+        try {
+          _log.finer('Received realtime payload: ${payload.newRecord}');
+          final newMessageData = payload.newRecord;
+
+          // Dữ liệu từ realtime không có join, ta cần fetch lại để có đầy đủ thông tin
           final messageId = newMessageData['id'];
 
-          final result = await _supabase.from('messages').select('*, shared_post:posts(*, author:profiles(*))').eq('id', messageId).single();
+          final result = await _supabase.from('messages').select('*, shared_post:posts(*, author:profiles!posts_author_id_fkey(*))').eq('id', messageId).single();
 
           final entityData = result;
           if (entityData['shared_post'] != null) {
@@ -195,15 +206,25 @@ class ChatRepositoryImpl implements ChatRepository {
           final message = Message.fromJson(entityData);
 
           streamController.add(Right(message));
+        } catch (e) {
+          _log.severe('Error processing realtime message', e);
+          streamController.add(Left(ChatOperationFailure('Lỗi xử lý tin nhắn real-time: ${e.toString()}')));
         }
-      } catch (e) {
-        _log.severe('Error processing realtime message', e);
-        streamController.add(Left(ChatOperationFailure('Lỗi xử lý tin nhắn real-time: ${e.toString()}')));
+      },
+    )
+        .subscribe((status, [error]) {
+      if (status == 'CHANNEL_ERROR' || status == 'CLOSED') {
+        _log.severe('Realtime channel error for messages: $error');
+        streamController.add(Left(ChatOperationFailure('Kết nối real-time bị lỗi: ${error.toString()}')));
+      } else if (status == 'SUBSCRIBED') {
+        _log.info('Successfully subscribed to messages for conversation $conversationId');
       }
-    }, onError: (e) {
-      _log.severe('Realtime channel error', e);
-      streamController.add(Left(ChatOperationFailure('Kết nối real-time bị lỗi: ${e.toString()}')));
     });
+
+    streamController.onCancel = () {
+      _log.info('Unsubscribing from messages channel for $conversationId');
+      _supabase.removeChannel(channel);
+    };
 
     return streamController.stream;
   }

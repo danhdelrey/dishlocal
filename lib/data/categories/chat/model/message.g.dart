@@ -14,8 +14,7 @@ _Message _$MessageFromJson(Map<String, dynamic> json) => _Message(
       sharedPost: json['sharedPost'] == null
           ? null
           : Post.fromJson(json['sharedPost'] as Map<String, dynamic>),
-      createdAt:
-          const DateTimeConverter().fromJson(json['createdAt'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$MessageToJson(_Message instance) => <String, dynamic>{
@@ -24,5 +23,5 @@ Map<String, dynamic> _$MessageToJson(_Message instance) => <String, dynamic>{
       'senderId': instance.senderId,
       'content': instance.content,
       'sharedPost': instance.sharedPost?.toJson(),
-      'createdAt': const DateTimeConverter().toJson(instance.createdAt),
+      'createdAt': instance.createdAt.toIso8601String(),
     };

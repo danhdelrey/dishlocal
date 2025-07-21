@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/number_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
+import 'package:dishlocal/ui/features/chat/view/message_button.dart';
 import 'package:dishlocal/ui/features/follow/view/follow_button.dart';
 import 'package:dishlocal/ui/features/user_info/view/custom_rich_text.dart';
 import 'package:dishlocal/ui/features/user_info/bloc/user_info_bloc.dart';
@@ -115,8 +116,15 @@ class ProfileInfo extends StatelessWidget {
             if (!isMyProfile)
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
-                child: FollowButton(
-                  targetUser: state.appUser,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FollowButton(
+                      targetUser: state.appUser,
+                    ),
+                    const SizedBox(width: 10),
+                    MessageButton(otherUserId: state.appUser.userId, otherUserName: state.appUser.username ?? '')
+                  ],
                 ),
               ),
           ],

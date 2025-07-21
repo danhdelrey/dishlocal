@@ -25,37 +25,22 @@ enum MessageStatus {
 abstract class Message with _$Message {
   @JsonSerializable(explicitToJson: true)
   const factory Message({
-    /// ID của tin nhắn.
     required String messageId,
-
-    /// ID của cuộc trò chuyện mà tin nhắn này thuộc về.
     required String conversationId,
-
-    /// ID của người gửi. UI sẽ so sánh với ID người dùng hiện tại
-    /// để xác định tin nhắn gửi đi hay nhận được.
     required String senderId,
 
-    /// Nội dung văn bản của tin nhắn.
+    // Đã là nullable, đúng
     String? content,
 
-    /// Object Post được chia sẻ.
-    /// Repository sẽ có trách nhiệm lấy thông tin Post từ `sharedPostId`
-    /// để điền vào đây.
+    // Đã là nullable, đúng
     Post? sharedPost,
+    required DateTime createdAt,
+    @JsonKey(includeToJson: false, includeFromJson: false) @Default(MessageStatus.sent) MessageStatus status,
 
-    /// Thời điểm tin nhắn được tạo.
-    @DateTimeConverter() required DateTime createdAt,
-
-    /// Trạng thái của tin nhắn trên UI.
-    /// Trường này không có trong database, chỉ tồn tại ở client.
-    /// `includeToJson: false` để không gửi trường này lên server.
-    @JsonKey(includeToJson: false, includeFromJson: false)
-    @Default(MessageStatus.sent) MessageStatus status,
-
+    // Thêm trường này để dễ dàng parse từ JSON của RPC
+    // Nó sẽ không được sử dụng trực tiếp trên UI
+    @JsonKey(includeFromJson: false, includeToJson: false) String? sharedPostId,
   }) = _Message;
 
-  // Lưu ý: Chúng ta thường không cần fromJson cho model này vì nó
-  // được tạo ra trong Repository, không phải trực tiếp từ một API response duy nhất.
-  // Tuy nhiên, việc có nó cũng không gây hại và có thể hữu ích cho việc cache.
   factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
 }

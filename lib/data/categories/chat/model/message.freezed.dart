@@ -15,33 +15,17 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$Message {
-  /// ID của tin nhắn.
   String get messageId;
-
-  /// ID của cuộc trò chuyện mà tin nhắn này thuộc về.
   String get conversationId;
-
-  /// ID của người gửi. UI sẽ so sánh với ID người dùng hiện tại
-  /// để xác định tin nhắn gửi đi hay nhận được.
-  String get senderId;
-
-  /// Nội dung văn bản của tin nhắn.
-  String? get content;
-
-  /// Object Post được chia sẻ.
-  /// Repository sẽ có trách nhiệm lấy thông tin Post từ `sharedPostId`
-  /// để điền vào đây.
+  String get senderId; // Đã là nullable, đúng
+  String? get content; // Đã là nullable, đúng
   Post? get sharedPost;
-
-  /// Thời điểm tin nhắn được tạo.
-  @DateTimeConverter()
   DateTime get createdAt;
-
-  /// Trạng thái của tin nhắn trên UI.
-  /// Trường này không có trong database, chỉ tồn tại ở client.
-  /// `includeToJson: false` để không gửi trường này lên server.
   @JsonKey(includeToJson: false, includeFromJson: false)
-  MessageStatus get status;
+  MessageStatus get status; // Thêm trường này để dễ dàng parse từ JSON của RPC
+// Nó sẽ không được sử dụng trực tiếp trên UI
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String? get sharedPostId;
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
@@ -69,17 +53,19 @@ mixin _$Message {
                 other.sharedPost == sharedPost) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.sharedPostId, sharedPostId) ||
+                other.sharedPostId == sharedPostId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, messageId, conversationId,
-      senderId, content, sharedPost, createdAt, status);
+      senderId, content, sharedPost, createdAt, status, sharedPostId);
 
   @override
   String toString() {
-    return 'Message(messageId: $messageId, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPost: $sharedPost, createdAt: $createdAt, status: $status)';
+    return 'Message(messageId: $messageId, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPost: $sharedPost, createdAt: $createdAt, status: $status, sharedPostId: $sharedPostId)';
   }
 }
 
@@ -94,9 +80,11 @@ abstract mixin class $MessageCopyWith<$Res> {
       String senderId,
       String? content,
       Post? sharedPost,
-      @DateTimeConverter() DateTime createdAt,
+      DateTime createdAt,
       @JsonKey(includeToJson: false, includeFromJson: false)
-      MessageStatus status});
+      MessageStatus status,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      String? sharedPostId});
 
   $PostCopyWith<$Res>? get sharedPost;
 }
@@ -120,6 +108,7 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
     Object? sharedPost = freezed,
     Object? createdAt = null,
     Object? status = null,
+    Object? sharedPostId = freezed,
   }) {
     return _then(_self.copyWith(
       messageId: null == messageId
@@ -150,6 +139,10 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as MessageStatus,
+      sharedPostId: freezed == sharedPostId
+          ? _self.sharedPostId
+          : sharedPostId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 
@@ -178,46 +171,36 @@ class _Message implements Message {
       required this.senderId,
       this.content,
       this.sharedPost,
-      @DateTimeConverter() required this.createdAt,
+      required this.createdAt,
       @JsonKey(includeToJson: false, includeFromJson: false)
-      this.status = MessageStatus.sent});
+      this.status = MessageStatus.sent,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      this.sharedPostId});
   factory _Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);
 
-  /// ID của tin nhắn.
   @override
   final String messageId;
-
-  /// ID của cuộc trò chuyện mà tin nhắn này thuộc về.
   @override
   final String conversationId;
-
-  /// ID của người gửi. UI sẽ so sánh với ID người dùng hiện tại
-  /// để xác định tin nhắn gửi đi hay nhận được.
   @override
   final String senderId;
-
-  /// Nội dung văn bản của tin nhắn.
+// Đã là nullable, đúng
   @override
   final String? content;
-
-  /// Object Post được chia sẻ.
-  /// Repository sẽ có trách nhiệm lấy thông tin Post từ `sharedPostId`
-  /// để điền vào đây.
+// Đã là nullable, đúng
   @override
   final Post? sharedPost;
-
-  /// Thời điểm tin nhắn được tạo.
   @override
-  @DateTimeConverter()
   final DateTime createdAt;
-
-  /// Trạng thái của tin nhắn trên UI.
-  /// Trường này không có trong database, chỉ tồn tại ở client.
-  /// `includeToJson: false` để không gửi trường này lên server.
   @override
   @JsonKey(includeToJson: false, includeFromJson: false)
   final MessageStatus status;
+// Thêm trường này để dễ dàng parse từ JSON của RPC
+// Nó sẽ không được sử dụng trực tiếp trên UI
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final String? sharedPostId;
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
@@ -250,17 +233,19 @@ class _Message implements Message {
                 other.sharedPost == sharedPost) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.sharedPostId, sharedPostId) ||
+                other.sharedPostId == sharedPostId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, messageId, conversationId,
-      senderId, content, sharedPost, createdAt, status);
+      senderId, content, sharedPost, createdAt, status, sharedPostId);
 
   @override
   String toString() {
-    return 'Message(messageId: $messageId, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPost: $sharedPost, createdAt: $createdAt, status: $status)';
+    return 'Message(messageId: $messageId, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPost: $sharedPost, createdAt: $createdAt, status: $status, sharedPostId: $sharedPostId)';
   }
 }
 
@@ -276,9 +261,11 @@ abstract mixin class _$MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String senderId,
       String? content,
       Post? sharedPost,
-      @DateTimeConverter() DateTime createdAt,
+      DateTime createdAt,
       @JsonKey(includeToJson: false, includeFromJson: false)
-      MessageStatus status});
+      MessageStatus status,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      String? sharedPostId});
 
   @override
   $PostCopyWith<$Res>? get sharedPost;
@@ -303,6 +290,7 @@ class __$MessageCopyWithImpl<$Res> implements _$MessageCopyWith<$Res> {
     Object? sharedPost = freezed,
     Object? createdAt = null,
     Object? status = null,
+    Object? sharedPostId = freezed,
   }) {
     return _then(_Message(
       messageId: null == messageId
@@ -333,6 +321,10 @@ class __$MessageCopyWithImpl<$Res> implements _$MessageCopyWith<$Res> {
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as MessageStatus,
+      sharedPostId: freezed == sharedPostId
+          ? _self.sharedPostId
+          : sharedPostId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 
