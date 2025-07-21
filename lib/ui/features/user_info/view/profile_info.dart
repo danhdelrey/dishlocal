@@ -123,7 +123,7 @@ class ProfileInfo extends StatelessWidget {
                       targetUser: state.appUser,
                     ),
                     const SizedBox(width: 10),
-                    MessageButton(otherUserId: state.appUser.userId, otherUserName: state.appUser.username ?? '')
+                    MessageButton(otherUser: state.appUser)
                   ],
                 ),
               ),

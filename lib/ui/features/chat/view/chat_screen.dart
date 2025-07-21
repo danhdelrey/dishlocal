@@ -1,5 +1,6 @@
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
@@ -11,12 +12,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatScreen extends StatefulWidget {
   final String conversationId;
-  final String otherUserName;
+  final AppUser otherUser;
 
   const ChatScreen({
     super.key,
     required this.conversationId,
-    required this.otherUserName,
+    required this.otherUser,
   });
 
   @override
@@ -40,7 +41,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _chatBloc = getIt<ChatBloc>()
       ..add(ChatEvent.started(
         conversationId: widget.conversationId,
-        otherUserName: widget.otherUserName,
+        otherUser: widget.otherUser,
         //otherUserPhotoUrl: widget.otherUserPhotoUrl, // Truyền avatar url
       ));
 
@@ -92,7 +93,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       value: _chatBloc,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.otherUserName),
+          title: Text(widget.otherUser.displayName ?? ''),
         ),
         body: BlocBuilder<ChatBloc, ChatState>(
           builder: (context, state) {

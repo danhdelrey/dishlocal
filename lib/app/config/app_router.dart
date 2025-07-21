@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dishlocal/app/config/main_shell.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/direction/model/location_data.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
@@ -146,10 +147,10 @@ class AppRouter {
         builder: (context, state) {
           final extraMap = state.extra as Map<String, dynamic>;
           final String conversationId = extraMap['conversationId'];
-          final String otherUserName = extraMap['otherUserName'];
+          final AppUser otherUser = extraMap['otherUser'];
           return ChatScreen(
             conversationId: conversationId,
-            otherUserName: otherUserName,
+            otherUser: otherUser,
           );
         },
       ),

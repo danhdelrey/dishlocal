@@ -16,10 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Conversation {
   String get conversationId;
-  String get otherParticipantId;
-  String get otherParticipantUsername;
-  String? get otherParticipantDisplayName;
-  String? get otherParticipantPhotoUrl;
+  AppUser get otherParticipant;
   String? get lastMessageContent;
   @DateTimeConverter()
   DateTime? get lastMessageCreatedAt;
@@ -45,18 +42,8 @@ mixin _$Conversation {
             other is Conversation &&
             (identical(other.conversationId, conversationId) ||
                 other.conversationId == conversationId) &&
-            (identical(other.otherParticipantId, otherParticipantId) ||
-                other.otherParticipantId == otherParticipantId) &&
-            (identical(
-                    other.otherParticipantUsername, otherParticipantUsername) ||
-                other.otherParticipantUsername == otherParticipantUsername) &&
-            (identical(other.otherParticipantDisplayName,
-                    otherParticipantDisplayName) ||
-                other.otherParticipantDisplayName ==
-                    otherParticipantDisplayName) &&
-            (identical(
-                    other.otherParticipantPhotoUrl, otherParticipantPhotoUrl) ||
-                other.otherParticipantPhotoUrl == otherParticipantPhotoUrl) &&
+            (identical(other.otherParticipant, otherParticipant) ||
+                other.otherParticipant == otherParticipant) &&
             (identical(other.lastMessageContent, lastMessageContent) ||
                 other.lastMessageContent == lastMessageContent) &&
             (identical(other.lastMessageCreatedAt, lastMessageCreatedAt) ||
@@ -75,10 +62,7 @@ mixin _$Conversation {
   int get hashCode => Object.hash(
       runtimeType,
       conversationId,
-      otherParticipantId,
-      otherParticipantUsername,
-      otherParticipantDisplayName,
-      otherParticipantPhotoUrl,
+      otherParticipant,
       lastMessageContent,
       lastMessageCreatedAt,
       lastMessageSenderId,
@@ -87,7 +71,7 @@ mixin _$Conversation {
 
   @override
   String toString() {
-    return 'Conversation(conversationId: $conversationId, otherParticipantId: $otherParticipantId, otherParticipantUsername: $otherParticipantUsername, otherParticipantDisplayName: $otherParticipantDisplayName, otherParticipantPhotoUrl: $otherParticipantPhotoUrl, lastMessageContent: $lastMessageContent, lastMessageCreatedAt: $lastMessageCreatedAt, lastMessageSenderId: $lastMessageSenderId, lastMessageSharedPostId: $lastMessageSharedPostId, unreadCount: $unreadCount)';
+    return 'Conversation(conversationId: $conversationId, otherParticipant: $otherParticipant, lastMessageContent: $lastMessageContent, lastMessageCreatedAt: $lastMessageCreatedAt, lastMessageSenderId: $lastMessageSenderId, lastMessageSharedPostId: $lastMessageSharedPostId, unreadCount: $unreadCount)';
   }
 }
 
@@ -99,15 +83,14 @@ abstract mixin class $ConversationCopyWith<$Res> {
   @useResult
   $Res call(
       {String conversationId,
-      String otherParticipantId,
-      String otherParticipantUsername,
-      String? otherParticipantDisplayName,
-      String? otherParticipantPhotoUrl,
+      AppUser otherParticipant,
       String? lastMessageContent,
       @DateTimeConverter() DateTime? lastMessageCreatedAt,
       String? lastMessageSenderId,
       String? lastMessageSharedPostId,
       int unreadCount});
+
+  $AppUserCopyWith<$Res> get otherParticipant;
 }
 
 /// @nodoc
@@ -123,10 +106,7 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
   @override
   $Res call({
     Object? conversationId = null,
-    Object? otherParticipantId = null,
-    Object? otherParticipantUsername = null,
-    Object? otherParticipantDisplayName = freezed,
-    Object? otherParticipantPhotoUrl = freezed,
+    Object? otherParticipant = null,
     Object? lastMessageContent = freezed,
     Object? lastMessageCreatedAt = freezed,
     Object? lastMessageSenderId = freezed,
@@ -138,22 +118,10 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
           ? _self.conversationId
           : conversationId // ignore: cast_nullable_to_non_nullable
               as String,
-      otherParticipantId: null == otherParticipantId
-          ? _self.otherParticipantId
-          : otherParticipantId // ignore: cast_nullable_to_non_nullable
-              as String,
-      otherParticipantUsername: null == otherParticipantUsername
-          ? _self.otherParticipantUsername
-          : otherParticipantUsername // ignore: cast_nullable_to_non_nullable
-              as String,
-      otherParticipantDisplayName: freezed == otherParticipantDisplayName
-          ? _self.otherParticipantDisplayName
-          : otherParticipantDisplayName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      otherParticipantPhotoUrl: freezed == otherParticipantPhotoUrl
-          ? _self.otherParticipantPhotoUrl
-          : otherParticipantPhotoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
+      otherParticipant: null == otherParticipant
+          ? _self.otherParticipant
+          : otherParticipant // ignore: cast_nullable_to_non_nullable
+              as AppUser,
       lastMessageContent: freezed == lastMessageContent
           ? _self.lastMessageContent
           : lastMessageContent // ignore: cast_nullable_to_non_nullable
@@ -176,6 +144,16 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
               as int,
     ));
   }
+
+  /// Create a copy of Conversation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppUserCopyWith<$Res> get otherParticipant {
+    return $AppUserCopyWith<$Res>(_self.otherParticipant, (value) {
+      return _then(_self.copyWith(otherParticipant: value));
+    });
+  }
 }
 
 /// @nodoc
@@ -184,10 +162,7 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
 class _Conversation implements Conversation {
   const _Conversation(
       {required this.conversationId,
-      required this.otherParticipantId,
-      required this.otherParticipantUsername,
-      this.otherParticipantDisplayName,
-      this.otherParticipantPhotoUrl,
+      required this.otherParticipant,
       this.lastMessageContent,
       @DateTimeConverter() this.lastMessageCreatedAt,
       this.lastMessageSenderId,
@@ -199,13 +174,7 @@ class _Conversation implements Conversation {
   @override
   final String conversationId;
   @override
-  final String otherParticipantId;
-  @override
-  final String otherParticipantUsername;
-  @override
-  final String? otherParticipantDisplayName;
-  @override
-  final String? otherParticipantPhotoUrl;
+  final AppUser otherParticipant;
   @override
   final String? lastMessageContent;
   @override
@@ -241,18 +210,8 @@ class _Conversation implements Conversation {
             other is _Conversation &&
             (identical(other.conversationId, conversationId) ||
                 other.conversationId == conversationId) &&
-            (identical(other.otherParticipantId, otherParticipantId) ||
-                other.otherParticipantId == otherParticipantId) &&
-            (identical(
-                    other.otherParticipantUsername, otherParticipantUsername) ||
-                other.otherParticipantUsername == otherParticipantUsername) &&
-            (identical(other.otherParticipantDisplayName,
-                    otherParticipantDisplayName) ||
-                other.otherParticipantDisplayName ==
-                    otherParticipantDisplayName) &&
-            (identical(
-                    other.otherParticipantPhotoUrl, otherParticipantPhotoUrl) ||
-                other.otherParticipantPhotoUrl == otherParticipantPhotoUrl) &&
+            (identical(other.otherParticipant, otherParticipant) ||
+                other.otherParticipant == otherParticipant) &&
             (identical(other.lastMessageContent, lastMessageContent) ||
                 other.lastMessageContent == lastMessageContent) &&
             (identical(other.lastMessageCreatedAt, lastMessageCreatedAt) ||
@@ -271,10 +230,7 @@ class _Conversation implements Conversation {
   int get hashCode => Object.hash(
       runtimeType,
       conversationId,
-      otherParticipantId,
-      otherParticipantUsername,
-      otherParticipantDisplayName,
-      otherParticipantPhotoUrl,
+      otherParticipant,
       lastMessageContent,
       lastMessageCreatedAt,
       lastMessageSenderId,
@@ -283,7 +239,7 @@ class _Conversation implements Conversation {
 
   @override
   String toString() {
-    return 'Conversation(conversationId: $conversationId, otherParticipantId: $otherParticipantId, otherParticipantUsername: $otherParticipantUsername, otherParticipantDisplayName: $otherParticipantDisplayName, otherParticipantPhotoUrl: $otherParticipantPhotoUrl, lastMessageContent: $lastMessageContent, lastMessageCreatedAt: $lastMessageCreatedAt, lastMessageSenderId: $lastMessageSenderId, lastMessageSharedPostId: $lastMessageSharedPostId, unreadCount: $unreadCount)';
+    return 'Conversation(conversationId: $conversationId, otherParticipant: $otherParticipant, lastMessageContent: $lastMessageContent, lastMessageCreatedAt: $lastMessageCreatedAt, lastMessageSenderId: $lastMessageSenderId, lastMessageSharedPostId: $lastMessageSharedPostId, unreadCount: $unreadCount)';
   }
 }
 
@@ -297,15 +253,15 @@ abstract mixin class _$ConversationCopyWith<$Res>
   @useResult
   $Res call(
       {String conversationId,
-      String otherParticipantId,
-      String otherParticipantUsername,
-      String? otherParticipantDisplayName,
-      String? otherParticipantPhotoUrl,
+      AppUser otherParticipant,
       String? lastMessageContent,
       @DateTimeConverter() DateTime? lastMessageCreatedAt,
       String? lastMessageSenderId,
       String? lastMessageSharedPostId,
       int unreadCount});
+
+  @override
+  $AppUserCopyWith<$Res> get otherParticipant;
 }
 
 /// @nodoc
@@ -322,10 +278,7 @@ class __$ConversationCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? conversationId = null,
-    Object? otherParticipantId = null,
-    Object? otherParticipantUsername = null,
-    Object? otherParticipantDisplayName = freezed,
-    Object? otherParticipantPhotoUrl = freezed,
+    Object? otherParticipant = null,
     Object? lastMessageContent = freezed,
     Object? lastMessageCreatedAt = freezed,
     Object? lastMessageSenderId = freezed,
@@ -337,22 +290,10 @@ class __$ConversationCopyWithImpl<$Res>
           ? _self.conversationId
           : conversationId // ignore: cast_nullable_to_non_nullable
               as String,
-      otherParticipantId: null == otherParticipantId
-          ? _self.otherParticipantId
-          : otherParticipantId // ignore: cast_nullable_to_non_nullable
-              as String,
-      otherParticipantUsername: null == otherParticipantUsername
-          ? _self.otherParticipantUsername
-          : otherParticipantUsername // ignore: cast_nullable_to_non_nullable
-              as String,
-      otherParticipantDisplayName: freezed == otherParticipantDisplayName
-          ? _self.otherParticipantDisplayName
-          : otherParticipantDisplayName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      otherParticipantPhotoUrl: freezed == otherParticipantPhotoUrl
-          ? _self.otherParticipantPhotoUrl
-          : otherParticipantPhotoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
+      otherParticipant: null == otherParticipant
+          ? _self.otherParticipant
+          : otherParticipant // ignore: cast_nullable_to_non_nullable
+              as AppUser,
       lastMessageContent: freezed == lastMessageContent
           ? _self.lastMessageContent
           : lastMessageContent // ignore: cast_nullable_to_non_nullable
@@ -374,6 +315,16 @@ class __$ConversationCopyWithImpl<$Res>
           : unreadCount // ignore: cast_nullable_to_non_nullable
               as int,
     ));
+  }
+
+  /// Create a copy of Conversation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppUserCopyWith<$Res> get otherParticipant {
+    return $AppUserCopyWith<$Res>(_self.otherParticipant, (value) {
+      return _then(_self.copyWith(otherParticipant: value));
+    });
   }
 }
 

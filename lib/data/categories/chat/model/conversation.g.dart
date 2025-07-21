@@ -9,11 +9,8 @@ part of 'conversation.dart';
 _Conversation _$ConversationFromJson(Map<String, dynamic> json) =>
     _Conversation(
       conversationId: json['conversation_id'] as String,
-      otherParticipantId: json['other_participant_id'] as String,
-      otherParticipantUsername: json['other_participant_username'] as String,
-      otherParticipantDisplayName:
-          json['other_participant_display_name'] as String?,
-      otherParticipantPhotoUrl: json['other_participant_photo_url'] as String?,
+      otherParticipant:
+          AppUser.fromJson(json['other_participant'] as Map<String, dynamic>),
       lastMessageContent: json['last_message_content'] as String?,
       lastMessageCreatedAt:
           const DateTimeConverter().fromJson(json['last_message_created_at']),
@@ -25,10 +22,7 @@ _Conversation _$ConversationFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ConversationToJson(_Conversation instance) =>
     <String, dynamic>{
       'conversation_id': instance.conversationId,
-      'other_participant_id': instance.otherParticipantId,
-      'other_participant_username': instance.otherParticipantUsername,
-      'other_participant_display_name': instance.otherParticipantDisplayName,
-      'other_participant_photo_url': instance.otherParticipantPhotoUrl,
+      'other_participant': instance.otherParticipant,
       'last_message_content': instance.lastMessageContent,
       'last_message_created_at':
           const DateTimeConverter().toJson(instance.lastMessageCreatedAt),

@@ -11,7 +11,7 @@ sealed class ChatState with _$ChatState {
   /// Trạng thái tải thành công, chứa dữ liệu để hiển thị.
   const factory ChatState.loaded({
     required String conversationId,
-    required String otherUserName,
+    required AppUser otherUser,
     required List<Message> messages,
     @Default(false) bool isLoadingMore, // Cờ cho biết đang tải trang tiếp theo
     @Default(false) bool hasReachedMax, // Cờ cho biết đã hết tin nhắn để tải

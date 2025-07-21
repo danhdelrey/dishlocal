@@ -38,10 +38,10 @@ class $ChatEventCopyWith<$Res> {
 /// @nodoc
 
 class _Started implements ChatEvent {
-  const _Started({required this.conversationId, required this.otherUserName});
+  const _Started({required this.conversationId, required this.otherUser});
 
   final String conversationId;
-  final String otherUserName;
+  final AppUser otherUser;
 
   /// Create a copy of ChatEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -57,16 +57,16 @@ class _Started implements ChatEvent {
             other is _Started &&
             (identical(other.conversationId, conversationId) ||
                 other.conversationId == conversationId) &&
-            (identical(other.otherUserName, otherUserName) ||
-                other.otherUserName == otherUserName));
+            (identical(other.otherUser, otherUser) ||
+                other.otherUser == otherUser));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, conversationId, otherUserName);
+  int get hashCode => Object.hash(runtimeType, conversationId, otherUser);
 
   @override
   String toString() {
-    return 'ChatEvent.started(conversationId: $conversationId, otherUserName: $otherUserName)';
+    return 'ChatEvent.started(conversationId: $conversationId, otherUser: $otherUser)';
   }
 }
 
@@ -76,7 +76,9 @@ abstract mixin class _$StartedCopyWith<$Res>
   factory _$StartedCopyWith(_Started value, $Res Function(_Started) _then) =
       __$StartedCopyWithImpl;
   @useResult
-  $Res call({String conversationId, String otherUserName});
+  $Res call({String conversationId, AppUser otherUser});
+
+  $AppUserCopyWith<$Res> get otherUser;
 }
 
 /// @nodoc
@@ -91,18 +93,28 @@ class __$StartedCopyWithImpl<$Res> implements _$StartedCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   $Res call({
     Object? conversationId = null,
-    Object? otherUserName = null,
+    Object? otherUser = null,
   }) {
     return _then(_Started(
       conversationId: null == conversationId
           ? _self.conversationId
           : conversationId // ignore: cast_nullable_to_non_nullable
               as String,
-      otherUserName: null == otherUserName
-          ? _self.otherUserName
-          : otherUserName // ignore: cast_nullable_to_non_nullable
-              as String,
+      otherUser: null == otherUser
+          ? _self.otherUser
+          : otherUser // ignore: cast_nullable_to_non_nullable
+              as AppUser,
     ));
+  }
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppUserCopyWith<$Res> get otherUser {
+    return $AppUserCopyWith<$Res>(_self.otherUser, (value) {
+      return _then(_self.copyWith(otherUser: value));
+    });
   }
 }
 
@@ -461,7 +473,7 @@ class ChatLoading implements ChatState {
 class ChatLoaded implements ChatState {
   const ChatLoaded(
       {required this.conversationId,
-      required this.otherUserName,
+      required this.otherUser,
       required final List<Message> messages,
       this.isLoadingMore = false,
       this.hasReachedMax = false,
@@ -469,7 +481,7 @@ class ChatLoaded implements ChatState {
       : _messages = messages;
 
   final String conversationId;
-  final String otherUserName;
+  final AppUser otherUser;
   final List<Message> _messages;
   List<Message> get messages {
     if (_messages is EqualUnmodifiableListView) return _messages;
@@ -500,8 +512,8 @@ class ChatLoaded implements ChatState {
             other is ChatLoaded &&
             (identical(other.conversationId, conversationId) ||
                 other.conversationId == conversationId) &&
-            (identical(other.otherUserName, otherUserName) ||
-                other.otherUserName == otherUserName) &&
+            (identical(other.otherUser, otherUser) ||
+                other.otherUser == otherUser) &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
             (identical(other.isLoadingMore, isLoadingMore) ||
                 other.isLoadingMore == isLoadingMore) &&
@@ -515,7 +527,7 @@ class ChatLoaded implements ChatState {
   int get hashCode => Object.hash(
       runtimeType,
       conversationId,
-      otherUserName,
+      otherUser,
       const DeepCollectionEquality().hash(_messages),
       isLoadingMore,
       hasReachedMax,
@@ -523,7 +535,7 @@ class ChatLoaded implements ChatState {
 
   @override
   String toString() {
-    return 'ChatState.loaded(conversationId: $conversationId, otherUserName: $otherUserName, messages: $messages, isLoadingMore: $isLoadingMore, hasReachedMax: $hasReachedMax, currentPage: $currentPage)';
+    return 'ChatState.loaded(conversationId: $conversationId, otherUser: $otherUser, messages: $messages, isLoadingMore: $isLoadingMore, hasReachedMax: $hasReachedMax, currentPage: $currentPage)';
   }
 }
 
@@ -536,11 +548,13 @@ abstract mixin class $ChatLoadedCopyWith<$Res>
   @useResult
   $Res call(
       {String conversationId,
-      String otherUserName,
+      AppUser otherUser,
       List<Message> messages,
       bool isLoadingMore,
       bool hasReachedMax,
       int currentPage});
+
+  $AppUserCopyWith<$Res> get otherUser;
 }
 
 /// @nodoc
@@ -555,7 +569,7 @@ class _$ChatLoadedCopyWithImpl<$Res> implements $ChatLoadedCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   $Res call({
     Object? conversationId = null,
-    Object? otherUserName = null,
+    Object? otherUser = null,
     Object? messages = null,
     Object? isLoadingMore = null,
     Object? hasReachedMax = null,
@@ -566,10 +580,10 @@ class _$ChatLoadedCopyWithImpl<$Res> implements $ChatLoadedCopyWith<$Res> {
           ? _self.conversationId
           : conversationId // ignore: cast_nullable_to_non_nullable
               as String,
-      otherUserName: null == otherUserName
-          ? _self.otherUserName
-          : otherUserName // ignore: cast_nullable_to_non_nullable
-              as String,
+      otherUser: null == otherUser
+          ? _self.otherUser
+          : otherUser // ignore: cast_nullable_to_non_nullable
+              as AppUser,
       messages: null == messages
           ? _self._messages
           : messages // ignore: cast_nullable_to_non_nullable
@@ -587,6 +601,16 @@ class _$ChatLoadedCopyWithImpl<$Res> implements $ChatLoadedCopyWith<$Res> {
           : currentPage // ignore: cast_nullable_to_non_nullable
               as int,
     ));
+  }
+
+  /// Create a copy of ChatState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppUserCopyWith<$Res> get otherUser {
+    return $AppUserCopyWith<$Res>(_self.otherUser, (value) {
+      return _then(_self.copyWith(otherUser: value));
+    });
   }
 }
 

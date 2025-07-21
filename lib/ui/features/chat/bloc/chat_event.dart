@@ -5,7 +5,7 @@ sealed class ChatEvent with _$ChatEvent {
   /// Bắt đầu màn hình chat: tải tin nhắn đầu tiên và lắng nghe real-time.
   const factory ChatEvent.started({
     required String conversationId,
-    required String otherUserName, // Để hiển thị trên AppBar
+    required AppUser otherUser, // Để hiển thị trên AppBar
   }) = _Started;
 
   /// Tải thêm tin nhắn khi người dùng cuộn lên đầu danh sách.

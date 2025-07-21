@@ -70,11 +70,11 @@ class _ConversationTileState extends State<ConversationTile> {
     return ListTile(
       leading: CircleAvatar(
         radius: 28,
-        backgroundImage: widget.conversation.otherParticipantPhotoUrl != null ? NetworkImage(widget.conversation.otherParticipantPhotoUrl!) : null,
-        child: widget.conversation.otherParticipantPhotoUrl == null ? Text(widget.conversation.otherParticipantDisplayName?[0] ?? '?') : null,
+        backgroundImage: widget.conversation.otherParticipant.photoUrl != null ? NetworkImage(widget.conversation.otherParticipant.photoUrl!) : null,
+        child: widget.conversation.otherParticipant.photoUrl == null ? Text(widget.conversation.otherParticipant.displayName?[0] ?? '?') : null,
       ),
       title: Text(
-        widget.conversation.otherParticipantDisplayName ?? 'Người dùng',
+        widget.conversation.otherParticipant.displayName ?? 'Người dùng',
         style: TextStyle(fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal),
       ),
       subtitle: Text(
@@ -118,7 +118,7 @@ class _ConversationTileState extends State<ConversationTile> {
           '/chat',
           extra: {
             'conversationId': widget.conversation.conversationId,
-            'otherUserName': widget.conversation.otherParticipantDisplayName,
+            'otherUser': widget.conversation.otherParticipant,
           },
         ).then((_) {
           context.read<ConversationListBloc>().add(const ConversationListEvent.refreshed());

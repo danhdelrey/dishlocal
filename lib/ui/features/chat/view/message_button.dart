@@ -1,18 +1,17 @@
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class MessageButton extends StatefulWidget {
-  final String otherUserId;
-  final String otherUserName;
+  final AppUser otherUser;
   final Widget? child;
   final ButtonStyle? style;
 
   const MessageButton({
     super.key,
-    required this.otherUserId,
-    required this.otherUserName,
+    required this.otherUser,
     this.child,
     this.style,
   });
@@ -39,7 +38,7 @@ class _MessageButtonState extends State<MessageButton> {
 
       // Gọi repository để lấy hoặc tạo cuộc trò chuyện
       final result = await chatRepository.getOrCreateConversation(
-        otherUserId: widget.otherUserId,
+        otherUserId: widget.otherUser.userId,
       );
 
       // Xử lý kết quả và điều hướng
@@ -56,7 +55,7 @@ class _MessageButtonState extends State<MessageButton> {
         (conversationId) {
           context.push('/chat', extra: {
             'conversationId': conversationId,
-            'otherUserName': widget.otherUserName,
+            'otherUser': widget.otherUser,
           });
         },
       );

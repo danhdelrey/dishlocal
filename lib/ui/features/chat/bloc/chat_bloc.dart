@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/data/categories/chat/repository/failure/chat_failure.dart';
@@ -75,7 +76,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       (failure) => emit(ChatState.error(message: failure.message)),
       (messages) => emit(ChatState.loaded(
         conversationId: event.conversationId,
-        otherUserName: event.otherUserName,
+        otherUser: event.otherUser,
         messages: messages,
         hasReachedMax: messages.length < _messagesPerPage,
         currentPage: 1,
