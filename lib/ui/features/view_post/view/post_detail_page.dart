@@ -539,36 +539,41 @@ class _PostDetailViewState extends State<_PostDetailView> {
             const SizedBox(height: 10),
           ],
         ),
-        BlocProvider(
-          create: (context) => getIt<PostReactionBarBloc>(param1: post),
-          child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
-            builder: (context, state) {
-              return FadeSlideUp(
-                delay: Duration(milliseconds: 800 + (post.reviews.length * 100)),
-                child: ReactionBar(
-                  likeColor: Colors.pink,
-                  saveColor: Colors.amber,
-                  isLiked: state.isLiked,
-                  likeCount: state.likeCount,
-                  commentCount: post.commentCount,
-                  onCommentTap: () {
-                    showCommentBottomSheet(context, postId: post.postId, postAuthorId: post.authorUserId, totalCommentCount: post.commentCount);
-                  },
-                  isSaved: state.isSaved,
-                  saveCount: state.saveCount,
-                  // Khi nhấn, gửi event đến BLoC
-                  onLikeTap: () {
-                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
-                  },
-                  onSaveTap: () {
-                    context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
-                  },
-                ),
-              );
-            },
-          ),
+        Row(
+          children: [
+            BlocProvider(
+              create: (context) => getIt<PostReactionBarBloc>(param1: post),
+              child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
+                builder: (context, state) {
+                  return FadeSlideUp(
+                    delay: Duration(milliseconds: 800 + (post.reviews.length * 100)),
+                    child: ReactionBar(
+                      likeColor: Colors.pink,
+                      saveColor: Colors.amber,
+                      isLiked: state.isLiked,
+                      likeCount: state.likeCount,
+                      commentCount: post.commentCount,
+                      onCommentTap: () {
+                        showCommentBottomSheet(context, postId: post.postId, postAuthorId: post.authorUserId, totalCommentCount: post.commentCount);
+                      },
+                      isSaved: state.isSaved,
+                      saveCount: state.saveCount,
+                      // Khi nhấn, gửi event đến BLoC
+                      onLikeTap: () {
+                        context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
+                      },
+                      onSaveTap: () {
+                        context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            const Spacer(),
+            ShareButton(postId: post.postId),
+          ],
         ),
-        ShareButton(postId: post.postId),
       ],
     );
   }

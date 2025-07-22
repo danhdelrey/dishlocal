@@ -1,3 +1,4 @@
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/core/utils/time_formatter.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
@@ -7,8 +8,10 @@ import 'package:dishlocal/data/categories/chat/repository/interface/chat_reposit
 import 'package:dishlocal/ui/features/chat/bloc/chat_bloc.dart';
 import 'package:dishlocal/ui/features/chat/view/message_bubble.dart';
 import 'package:dishlocal/ui/features/chat/view/message_input.dart';
+import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatefulWidget {
   final String conversationId;
@@ -93,7 +96,29 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       value: _chatBloc,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.otherUser.displayName ?? ''),
+          titleSpacing: 0,
+          title: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              context.push('/post_detail/profile', extra: {'userId': widget.otherUser.userId});
+            },
+            child: Row(
+              children: [
+                CachedCircleAvatar(
+                  imageUrl: widget.otherUser.photoUrl ?? '',
+                  circleRadius: 15,
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  widget.otherUser.displayName ?? '',
+                  style: appTextTheme(context).titleMedium,
+                  maxLines: 1,
+                ),
+              ],
+            ),
+          ),
         ),
         body: BlocBuilder<ChatBloc, ChatState>(
           builder: (context, state) {

@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/app_icons.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/animated_icon_counter_button.dart';
+import 'package:dishlocal/ui/features/share_post/view/share_button.dart';
 import 'package:flutter/material.dart';
 
 class ReactionBar extends StatelessWidget {

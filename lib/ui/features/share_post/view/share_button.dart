@@ -1,3 +1,5 @@
+import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/ui/features/share_post/view/share_post_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -24,9 +26,16 @@ class ShareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.share),
-      onPressed: () => _showShareSheet(context),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        _showShareSheet(context);
+      },
+      child: AppIcons.shareForward.toSvg(
+        width: 20,
+        height: 20,
+        color: appColorScheme(context).onSurface,
+      ),
     );
   }
 }
