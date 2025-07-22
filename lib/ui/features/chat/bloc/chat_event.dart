@@ -22,7 +22,7 @@ sealed class ChatEvent with _$ChatEvent {
   }) = _PostShared;
 
   /// [Sự kiện nội bộ] Được gọi khi có tin nhắn mới từ stream real-time.
-  const factory ChatEvent.messageReceived(Message message) = _MessageReceived;
+  const factory ChatEvent.messageReceived(MessageEntity message) = _MessageReceived;
 
   const factory ChatEvent.screenStatusChanged({required bool isActive}) = _ScreenStatusChanged;
 }

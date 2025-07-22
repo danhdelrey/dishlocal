@@ -254,10 +254,6 @@ _i174.GetIt init(
       ));
   gh.factory<_i679.SuggestionSearchBloc>(
       () => _i679.SuggestionSearchBloc(gh<_i310.SearchService>()));
-  gh.factory<_i976.ChatBloc>(() => _i976.ChatBloc(
-        gh<_i720.ChatRepository>(),
-        gh<_i749.AppUserRepository>(),
-      ));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,
@@ -275,6 +271,11 @@ _i174.GetIt init(
             gh<_i780.AuthenticationService>(),
             gh<_i692.ModerationService>(instanceName: 'hive.ai'),
           ));
+  gh.factory<_i976.ChatBloc>(() => _i976.ChatBloc(
+        gh<_i720.ChatRepository>(),
+        gh<_i749.AppUserRepository>(),
+        gh<_i480.PostRepository>(),
+      ));
   gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),

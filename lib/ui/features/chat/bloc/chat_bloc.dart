@@ -7,6 +7,9 @@ import 'package:dishlocal/data/categories/app_user/repository/interface/app_user
 import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/data/categories/chat/repository/failure/chat_failure.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
+import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
+import 'package:dishlocal/data/services/database_service/entity/message_entity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -20,13 +23,14 @@ part 'chat_bloc.freezed.dart';
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final _log = Logger('ChatBloc');
   final ChatRepository _chatRepository;
+  final PostRepository _postRepository;
   final AppUserRepository _appUserRepository;
-  StreamSubscription<Either<ChatFailure, Message>>? _messageSubscription;
+  StreamSubscription<Either<ChatFailure, MessageEntity>>? _messageSubscription;
   final int _messagesPerPage = 30;
 
   bool _isScreenActive = false;
 
-  ChatBloc(this._chatRepository, this._appUserRepository) : super(const ChatState.initial()) {
+  ChatBloc(this._chatRepository, this._appUserRepository, this._postRepository) : super(const ChatState.initial()) {
     on<_Started>(_onStarted);
     on<_MoreMessagesLoaded>(_onMoreMessagesLoaded);
     on<_MessageSent>(_onMessageSent);
@@ -34,6 +38,25 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<_MessageReceived>(_onMessageReceived);
     // === THAY ĐỔI: Thêm handler cho sự kiện active/inactive ===
     on<_ScreenStatusChanged>(_onScreenStatusChanged);
+  }
+
+  Future<List<Message>> _enrichMessages(List<MessageEntity> entities) async {
+    final List<Message> enrichedMessages = [];
+    for (final entity in entities) {
+      Post? post;
+      if (entity.sharedPostId != null) {
+        final postResult = await _postRepository.getPostWithId(entity.sharedPostId!);
+        if (postResult.isLeft()) {
+          _log.warning('Failed to fetch post with ID ${entity.sharedPostId}');
+        } else {
+          post = (postResult as Right).value;
+        }
+      }
+      enrichedMessages.add(
+        Message.fromEntity(entity, sharedPost: post), // Cần tạo một factory constructor mới
+      );
+    }
+    return enrichedMessages;
   }
 
   @override
@@ -45,42 +68,51 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Future<void> _onStarted(_Started event, Emitter<ChatState> emit) async {
-    // === THAY ĐỔI: Đặt cờ active là true khi bắt đầu ===
-    _isScreenActive = true;
-
+    // 1. Emit loading (đã đúng)
     emit(const ChatState.loading());
 
-    // Đánh dấu đã đọc lần đầu (không đổi)
+    _isScreenActive = true;
     _chatRepository.markConversationAsRead(conversationId: event.conversationId);
 
     _messageSubscription?.cancel();
     _messageSubscription = _chatRepository.subscribeToMessages(conversationId: event.conversationId).listen((result) {
       result.fold(
         (failure) => _log.severe('Realtime subscription error: ${failure.message}'),
-        (message) {
-          if (message.senderId != _appUserRepository.getCurrentUserId()) {
-            add(ChatEvent.messageReceived(message));
+        (entity) {
+          if (entity.senderId != _appUserRepository.getCurrentUserId()) {
+            add(ChatEvent.messageReceived(entity));
           }
         },
       );
     });
 
-    // Tải trang tin nhắn đầu tiên
+    // 2. Tải dữ liệu entity
     final result = await _chatRepository.getMessages(
       conversationId: event.conversationId,
       page: 1,
       limit: _messagesPerPage,
     );
 
-    result.fold(
-      (failure) => emit(ChatState.error(message: failure.message)),
-      (messages) => emit(ChatState.loaded(
-        conversationId: event.conversationId,
-        otherUser: event.otherUser,
-        messages: messages,
-        hasReachedMax: messages.length < _messagesPerPage,
-        currentPage: 1,
-      )),
+    // 3. Xử lý kết quả
+    // === SỬA LỖI Ở ĐÂY: Sử dụng await và fold trên result ===
+    await result.fold(
+      (failure) async {
+        // Nếu có lỗi, emit trạng thái Error
+        emit(ChatState.error(message: failure.message));
+      },
+      (entities) async {
+        // 4. Nếu thành công, làm giàu dữ liệu
+        final messages = await _enrichMessages(entities);
+
+        // 5. SAU KHI làm giàu xong, emit trạng thái Loaded
+        emit(ChatState.loaded(
+          conversationId: event.conversationId,
+          otherUser: event.otherUser,
+          messages: messages,
+          hasReachedMax: entities.length < _messagesPerPage,
+          currentPage: 1,
+        ));
+      },
     );
   }
 
@@ -104,13 +136,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     // 2. Xử lý kết quả trả về
     result.fold(
-      (failure) {
-        _log.warning('Failed to load more messages: ${failure.message}');
-        // PHẢI phát ra trạng thái mới để tắt loading indicator
-        emit(currentState.copyWith(isLoadingMore: false));
-      },
-      (newMessages) {
-        // TẠO MỘT DANH SÁCH MỚI bằng cách kết hợp danh sách cũ và mới
+      (failure) => emit(currentState.copyWith(isLoadingMore: false)),
+      (newEntities) async {
+        // Làm giàu dữ liệu cho các tin nhắn mới
+        final newMessages = await _enrichMessages(newEntities);
         final updatedMessages = List<Message>.from(currentState.messages)..addAll(newMessages);
 
         // PHÁT RA TRẠNG THÁI CUỐI CÙNG
@@ -167,12 +196,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     // Có thể gộp 2 hàm này lại nếu muốn
   }
 
-  void _onMessageReceived(_MessageReceived event, Emitter<ChatState> emit) {
+  void _onMessageReceived(_MessageReceived event, Emitter<ChatState> emit) async {
     if (state is! ChatLoaded) return;
     final currentState = state as ChatLoaded;
 
-    // Thêm tin nhắn mới vào đầu danh sách (không đổi)
-    emit(currentState.copyWith(messages: [event.message, ...currentState.messages]));
+    // Làm giàu dữ liệu cho tin nhắn realtime
+    final enrichedMessages = await _enrichMessages([event.message]);
+
+    emit(currentState.copyWith(messages: [enrichedMessages.first, ...currentState.messages]));
 
     // === THAY ĐỔI QUAN TRỌNG ===
     // Nếu màn hình đang active, ngay lập tức gọi lại mark as read

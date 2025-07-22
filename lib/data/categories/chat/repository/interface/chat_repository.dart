@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dishlocal/data/categories/chat/model/conversation.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/data/categories/chat/repository/failure/chat_failure.dart';
+import 'package:dishlocal/data/services/database_service/entity/message_entity.dart';
 
 abstract class ChatRepository {
   /// Lấy danh sách các cuộc trò chuyện của người dùng hiện tại.
@@ -12,7 +13,7 @@ abstract class ChatRepository {
   /// - [conversationId]: ID của cuộc trò chuyện.
   /// - [page]: Số trang để lấy (bắt đầu từ 1).
   /// - [limit]: Số lượng tin nhắn mỗi trang.
-  Future<Either<ChatFailure, List<Message>>> getMessages({
+  Future<Either<ChatFailure, List<MessageEntity>>> getMessages({
     required String conversationId,
     required int page,
     int limit = 20, // Số lượng tin nhắn mặc định cho mỗi lần tải
@@ -41,8 +42,8 @@ abstract class ChatRepository {
   });
 
   /// Lắng nghe các tin nhắn mới trong một cuộc trò chuyện theo thời gian thực.
-  /// Trả về một Stream chứa [Message] mới.
-  Stream<Either<ChatFailure, Message>> subscribeToMessages({
+  /// Trả về một Stream chứa [MessageEntity] mới.
+  Stream<Either<ChatFailure, MessageEntity>> subscribeToMessages({
     required String conversationId,
   });
 

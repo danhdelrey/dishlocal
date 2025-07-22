@@ -269,7 +269,7 @@ class __$PostSharedCopyWithImpl<$Res> implements _$PostSharedCopyWith<$Res> {
 class _MessageReceived implements ChatEvent {
   const _MessageReceived(this.message);
 
-  final Message message;
+  final MessageEntity message;
 
   /// Create a copy of ChatEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -302,9 +302,9 @@ abstract mixin class _$MessageReceivedCopyWith<$Res>
           _MessageReceived value, $Res Function(_MessageReceived) _then) =
       __$MessageReceivedCopyWithImpl;
   @useResult
-  $Res call({Message message});
+  $Res call({MessageEntity message});
 
-  $MessageCopyWith<$Res> get message;
+  $MessageEntityCopyWith<$Res> get message;
 }
 
 /// @nodoc
@@ -325,7 +325,7 @@ class __$MessageReceivedCopyWithImpl<$Res>
       null == message
           ? _self.message
           : message // ignore: cast_nullable_to_non_nullable
-              as Message,
+              as MessageEntity,
     ));
   }
 
@@ -333,8 +333,8 @@ class __$MessageReceivedCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $MessageCopyWith<$Res> get message {
-    return $MessageCopyWith<$Res>(_self.message, (value) {
+  $MessageEntityCopyWith<$Res> get message {
+    return $MessageEntityCopyWith<$Res>(_self.message, (value) {
       return _then(_self.copyWith(message: value));
     });
   }

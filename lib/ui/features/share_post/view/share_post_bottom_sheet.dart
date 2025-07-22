@@ -7,8 +7,9 @@ import 'package:go_router/go_router.dart';
 
 class SharePostBottomSheet extends StatefulWidget {
   final String postId;
+  final BuildContext parentContext;
 
-  const SharePostBottomSheet({super.key, required this.postId});
+  const SharePostBottomSheet({super.key, required this.postId, required this.parentContext});
 
   @override
   State<SharePostBottomSheet> createState() => _SharePostBottomSheetState();
@@ -28,9 +29,11 @@ class _SharePostBottomSheetState extends State<SharePostBottomSheet> {
           switch (state) {
             case SharePostSendSuccess(conversationId: final convoId, otherUser: final otherUser):
               // Đóng bottom sheet
-              Navigator.of(context).pop();
+              if (Navigator.canPop(context)) {
+                Navigator.of(context).pop();
+              }
               // Hiện SnackBar
-              ScaffoldMessenger.of(context).showSnackBar(
+              ScaffoldMessenger.of(widget.parentContext).showSnackBar(
                 SnackBar(
                   content: Text('Đã gửi bài viết cho ${otherUser.displayName}'),
                   action: SnackBarAction(

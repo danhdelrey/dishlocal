@@ -8,10 +8,17 @@ class ShareButton extends StatelessWidget {
 
   void _showShareSheet(BuildContext context) {
     showModalBottomSheet(
+      // === THAY ĐỔI: Sử dụng context của builder ===
+      // Điều này đảm bảo context bên trong bottom sheet là context "mới"
+      // và context bên ngoài vẫn có thể được truy cập an toàn.
       context: context,
-      isScrollControlled: true, // Quan trọng cho DraggableScrollableSheet
-      backgroundColor: Colors.transparent, // Nền trong suốt để bo góc
-      builder: (_) => SharePostBottomSheet(postId: postId),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => SharePostBottomSheet(
+        postId: postId,
+        // Truyền context của màn hình cha vào
+        parentContext: context,
+      ),
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:dishlocal/data/categories/chat/repository/failure/chat_failure.d
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/global/chat_event_bus.dart';
+import 'package:dishlocal/data/services/database_service/entity/message_entity.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -100,7 +101,7 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<ChatFailure, List<Message>>> getMessages({
+  Future<Either<ChatFailure, List<MessageEntity>>> getMessages({
     required String conversationId,
     required int page,
     int limit = 20,
@@ -108,33 +109,21 @@ class ChatRepositoryImpl implements ChatRepository {
     try {
       final from = (page - 1) * limit;
       final to = from + limit - 1;
-      final currentUserId = _supabase.auth.currentUser!.id;
 
-      _log.info('Query: messages for conversation $conversationId, page: $page, limit: $limit (range: $from-$to)');
+      _log.info('Querying messages (basic) for conversation $conversationId, page: $page');
 
-      // THAY ĐỔI: Sử dụng subquery với hàm get_post_details_by_id để đảm bảo cấu trúc nhất quán
+      // === THAY ĐỔI: Query rất đơn giản, không JOIN ===
       final result = await _supabase
           .from('messages')
-          .select('*, shared_post:shared_post_id(details:get_post_details_by_id(p_post_id, p_user_id))')
-          .eq('p_user_id', currentUserId) // Truyền user_id vào hàm
+          .select('*') // Lấy tất cả các cột của bảng messages
           .eq('conversation_id', conversationId)
           .order('created_at', ascending: false)
           .range(from, to);
 
       _log.finer('Query response: $result');
 
-      final messages = (result as List<dynamic>).map((data) {
-        final entityData = data as Map<String, dynamic>;
-
-        // Xử lý để làm phẳng cấu trúc JSON lồng nhau
-        if (entityData['shared_post'] != null && entityData['shared_post']['details'] != null) {
-          entityData['sharedPost'] = entityData['shared_post']['details'];
-        } else {
-          entityData['sharedPost'] = null;
-        }
-
-        return Message.fromJson(entityData);
-      }).toList();
+      // Bây giờ chúng ta sẽ parse thành MessageEntity thay vì Message
+      final messages = (result as List<dynamic>).map((data) => MessageEntity.fromJson(data as Map<String, dynamic>)).toList();
 
       return Right(messages);
     } on PostgrestException catch (e) {
@@ -239,12 +228,11 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Stream<Either<ChatFailure, Message>> subscribeToMessages({
+  Stream<Either<ChatFailure, MessageEntity>> subscribeToMessages({
     required String conversationId,
   }) {
     _log.info('Subscribing to realtime messages for conversation $conversationId');
-    final streamController = StreamController<Either<ChatFailure, Message>>();
-    final currentUserId = _supabase.auth.currentUser!.id;
+    final streamController = StreamController<Either<ChatFailure, MessageEntity>>();
 
     final channel = _supabase.channel('public:messages:conversation_id=eq.$conversationId');
 
@@ -261,22 +249,12 @@ class ChatRepositoryImpl implements ChatRepository {
       callback: (payload) async {
         try {
           _log.finer('Received realtime payload: ${payload.newRecord}');
-          final newMessageData = payload.newRecord;
-          final messageId = newMessageData['id'];
+          // === THAY ĐỔI: Chỉ cần parse thành MessageEntity ===
+          final messageEntity = MessageEntity.fromJson(payload.newRecord);
 
-          // Dữ liệu từ realtime không có join, ta cần fetch lại để có đầy đủ thông tin
-          // THAY ĐỔI: Sử dụng cùng một query như getMessages
-          final result = await _supabase.from('messages').select('*, shared_post:shared_post_id(details:get_post_details_by_id(p_post_id, p_user_id))').eq('p_user_id', currentUserId).eq('id', messageId).single();
-
-          final entityData = result;
-          if (entityData['shared_post'] != null && entityData['shared_post']['details'] != null) {
-            entityData['sharedPost'] = entityData['shared_post']['details'];
-          } else {
-            entityData['sharedPost'] = null;
-          }
-
-          final message = Message.fromJson(entityData);
-          streamController.add(Right(message));
+          // Chúng ta sẽ không trả về Message đầy đủ ở đây nữa
+          // BLoC sẽ chịu trách nhiệm làm giàu dữ liệu
+          streamController.add(Right(messageEntity));
         } catch (e) {
           _log.severe('Error processing realtime message', e);
           streamController.add(Left(ChatOperationFailure('Lỗi xử lý tin nhắn real-time: ${e.toString()}')));
@@ -284,10 +262,10 @@ class ChatRepositoryImpl implements ChatRepository {
       },
     )
         .subscribe((status, [error]) {
-      if (status == 'CHANNEL_ERROR' || status == 'CLOSED') {
+      if (status == RealtimeSubscribeStatus.channelError || status == RealtimeSubscribeStatus.closed) {
         _log.severe('Realtime channel error for messages: $error');
         streamController.add(Left(ChatOperationFailure('Kết nối real-time bị lỗi: ${error.toString()}')));
-      } else if (status == 'SUBSCRIBED') {
+      } else if (status == RealtimeSubscribeStatus.subscribed) {
         _log.info('Successfully subscribed to messages for conversation $conversationId');
       }
     });

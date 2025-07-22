@@ -17,6 +17,7 @@ import 'package:dishlocal/ui/features/dish_description/view/dish_description_wid
 import 'package:dishlocal/ui/features/post/view/bouncing_overlay_menu.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/bloc/post_reaction_bar_bloc.dart';
 import 'package:dishlocal/ui/features/post_reaction_bar/view/reaction_bar.dart';
+import 'package:dishlocal/ui/features/share_post/view/share_button.dart';
 import 'package:dishlocal/ui/features/view_post/bloc/view_post_bloc.dart';
 import 'package:dishlocal/ui/widgets/animated_widgets/fade_slide_up.dart';
 import 'package:dishlocal/ui/widgets/element_widgets/custom_loading_indicator.dart';
@@ -567,6 +568,7 @@ class _PostDetailViewState extends State<_PostDetailView> {
             },
           ),
         ),
+        ShareButton(postId: post.postId),
       ],
     );
   }
