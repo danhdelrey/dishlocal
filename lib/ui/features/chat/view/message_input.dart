@@ -28,14 +28,6 @@ class _MessageInputState extends State<MessageInput> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            // Nút chia sẻ bài post (ví dụ)
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                // TODO: Mở màn hình chọn bài post để chia sẻ
-                // context.read<ChatBloc>().add(ChatEvent.postShared(postId: '...'));
-              },
-            ),
             Expanded(
               child: TextField(
                 controller: _textController,

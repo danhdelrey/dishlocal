@@ -55,7 +55,11 @@ class MessageBubble extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: [
-                    if (message.sharedPost != null) SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
+                    if (message.sharedPost != null)
+                      SizedBox(
+                        width: 150,
+                        child: SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
+                      ),
                     if (message.content != null)
                       Text(
                         message.content!,
