@@ -121,6 +121,7 @@ import '../../ui/features/result_search/bloc/result_search_bloc.dart' as _i531;
 import '../../ui/features/review/bloc/review_bloc.dart' as _i994;
 import '../../ui/features/select_food_category/bloc/select_food_category_bloc.dart'
     as _i755;
+import '../../ui/features/share_post/cubit/share_post_cubit.dart' as _i133;
 import '../../ui/features/suggestion_search/bloc/suggestion_search_bloc.dart'
     as _i679;
 import '../../ui/features/user_info/bloc/user_info_bloc.dart' as _i973;
@@ -193,6 +194,8 @@ _i174.GetIt init(
       geolocatorWrapper: gh<_i258.GeolocatorWrapper>()));
   gh.lazySingleton<_i808.GeneratedContentRepository>(() =>
       _i964.GeneratedContentRepositoryImpl(gh<_i551.GenerativeAiService>()));
+  gh.factory<_i133.SharePostCubit>(
+      () => _i133.SharePostCubit(gh<_i720.ChatRepository>()));
   gh.factory<_i196.DishDescriptionBloc>(
       () => _i196.DishDescriptionBloc(gh<_i808.GeneratedContentRepository>()));
   gh.lazySingleton<_i93.DirectionRepository>(
