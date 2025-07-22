@@ -117,11 +117,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Future<void> _onMoreMessagesLoaded(_MoreMessagesLoaded event, Emitter<ChatState> emit) async {
-    // Lấy trạng thái hiện tại, đảm bảo nó là _Loaded
     final currentState = state;
     if (currentState is! ChatLoaded) return;
-
-    // Ngăn việc tải nhiều lần cùng lúc hoặc khi đã hết dữ liệu
     if (currentState.isLoadingMore || currentState.hasReachedMax) return;
 
     // 1. Phát ra trạng thái đang tải thêm
@@ -135,20 +132,26 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     );
 
     // 2. Xử lý kết quả trả về
-    result.fold(
-      (failure) => emit(currentState.copyWith(isLoadingMore: false)),
+    // === SỬA LỖI Ở ĐÂY: Thêm `await` trước `result.fold` ===
+    await result.fold(
+      (failure) async {
+        _log.warning('Failed to load more messages: ${failure.message}');
+        // Phải emit để tắt loading
+        emit(currentState.copyWith(isLoadingMore: false));
+      },
       (newEntities) async {
-        // Làm giàu dữ liệu cho các tin nhắn mới
+        // 3. Nếu thành công, làm giàu dữ liệu
         final newMessages = await _enrichMessages(newEntities);
+
+        // Tạo một danh sách mới
         final updatedMessages = List<Message>.from(currentState.messages)..addAll(newMessages);
 
-        // PHÁT RA TRẠNG THÁI CUỐI CÙNG
+        // 4. Phát ra trạng thái cuối cùng
         emit(currentState.copyWith(
           messages: updatedMessages,
           isLoadingMore: false, // Tắt loading indicator
-          // Cập nhật lại cờ hasReachedMax
-          hasReachedMax: newMessages.length < _messagesPerPage,
-          currentPage: nextPage, // Tăng số trang hiện tại
+          hasReachedMax: newEntities.length < _messagesPerPage,
+          currentPage: nextPage,
         ));
       },
     );

@@ -1,6 +1,7 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
+import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 
@@ -54,17 +55,7 @@ class MessageBubble extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: [
-                    if (message.sharedPost != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 6),
-                        child: Text(
-                          'Đã chia sẻ một bài viết',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: (isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface).withOpacity(0.9),
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ),
+                    if (message.sharedPost != null) SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
                     if (message.content != null)
                       Text(
                         message.content!,
