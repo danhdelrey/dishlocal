@@ -14,8 +14,9 @@ class CustomBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UnreadBadgeCubit, int>(
-      builder: (context, totalUnread) {
+    return BlocBuilder<UnreadBadgeCubit, UnreadBadgeState>(
+      builder: (context, badgeState) {
+        final totalUnread = badgeState.totalUnreadCount;
         Logger("CustomBadge").info('[CustomBadge] BlocBuilder is rebuilding. totalUnread = $totalUnread');
         return Row(
           mainAxisSize: MainAxisSize.min,

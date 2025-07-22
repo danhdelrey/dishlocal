@@ -31,10 +31,12 @@ class ChatRepositoryImpl implements ChatRepository {
   // Thay vào đó, chúng ta sẽ quản lý nó bên trong repository.
   @override
   void initializeConversationListSubscription({required String userId}) {
-    // Tránh đăng ký nhiều lần
-    if (_conversationListChannel != null) return;
+    if (_conversationListChannel != null) {
+      _log.warning('Attempted to initialize conversation list subscription more than once. Skipping.');
+      return;
+    }
 
-    _log.info('Initializing conversation list subscription via EventBus.');
+    _log.info('>>> INITIALIZING CONVERSATION LIST SUBSCRIPTION for user $userId <<<');
     _conversationListChannel = _supabase.channel('conversation-list-changes');
 
     _conversationListChannel!
@@ -61,7 +63,13 @@ class ChatRepositoryImpl implements ChatRepository {
             _chatEventBus.fireChatDataChanged(); // Phát sự kiện
           },
         )
-        .subscribe();
+        .subscribe((status, [error]) {
+      if (status == RealtimeSubscribeStatus.subscribed) {
+        _log.info('>>> SUCCESSFULLY SUBSCRIBED to conversation-list-changes channel <<<');
+      } else if (error != null) {
+        _log.severe('>>> FAILED TO SUBSCRIBE to conversation-list-changes channel. Error: $error <<<');
+      }
+    });
   }
 
   @override
@@ -184,7 +192,7 @@ class ChatRepositoryImpl implements ChatRepository {
       _log.finer('RPC response: $result');
 
       // Parse kết quả trực tiếp thành MessageEntity
-      final messageEntity = MessageEntity.fromJson(result as Map<String, dynamic>);
+      final messageEntity = MessageEntity.fromJson(result);
 
       return Right(messageEntity);
     } on PostgrestException catch (e) {
@@ -264,7 +272,7 @@ class ChatRepositoryImpl implements ChatRepository {
       }
     });
 
-     streamController.onCancel = () {
+    streamController.onCancel = () {
       _log.info('Unsubscribing from messages channel for $conversationId');
       _supabase.removeChannel(channel);
     };
@@ -274,11 +282,9 @@ class ChatRepositoryImpl implements ChatRepository {
 
   @override
   void disposeConversationListSubscription() {
-    _log.info('Disposing and cleaning up conversation list subscription.');
+    _log.info('>>> DISPOSING CONVERSATION LIST SUBSCRIPTION <<<');
     if (_conversationListChannel != null) {
-      // Hủy đăng ký khỏi Supabase
       _supabase.removeChannel(_conversationListChannel!);
-      // Quan trọng: Đặt lại về null để lần đăng nhập sau có thể tạo lại
       _conversationListChannel = null;
     }
   }

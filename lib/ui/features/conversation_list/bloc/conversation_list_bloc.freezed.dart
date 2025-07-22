@@ -121,26 +121,6 @@ class $ConversationListStateCopyWith<$Res> {
 
 /// @nodoc
 
-class ConversationListInitial implements ConversationListState {
-  const ConversationListInitial();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is ConversationListInitial);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() {
-    return 'ConversationListState.initial()';
-  }
-}
-
-/// @nodoc
-
 class ConversationListLoading implements ConversationListState {
   const ConversationListLoading();
 
@@ -162,8 +142,7 @@ class ConversationListLoading implements ConversationListState {
 /// @nodoc
 
 class ConversationListLoaded implements ConversationListState {
-  const ConversationListLoaded(
-      {required final List<Conversation> conversations})
+  const ConversationListLoaded(final List<Conversation> conversations)
       : _conversations = conversations;
 
   final List<Conversation> _conversations;
@@ -225,75 +204,10 @@ class _$ConversationListLoadedCopyWithImpl<$Res>
     Object? conversations = null,
   }) {
     return _then(ConversationListLoaded(
-      conversations: null == conversations
+      null == conversations
           ? _self._conversations
           : conversations // ignore: cast_nullable_to_non_nullable
               as List<Conversation>,
-    ));
-  }
-}
-
-/// @nodoc
-
-class ConversationListError implements ConversationListState {
-  const ConversationListError({required this.message});
-
-  final String message;
-
-  /// Create a copy of ConversationListState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  $ConversationListErrorCopyWith<ConversationListError> get copyWith =>
-      _$ConversationListErrorCopyWithImpl<ConversationListError>(
-          this, _$identity);
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is ConversationListError &&
-            (identical(other.message, message) || other.message == message));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, message);
-
-  @override
-  String toString() {
-    return 'ConversationListState.error(message: $message)';
-  }
-}
-
-/// @nodoc
-abstract mixin class $ConversationListErrorCopyWith<$Res>
-    implements $ConversationListStateCopyWith<$Res> {
-  factory $ConversationListErrorCopyWith(ConversationListError value,
-          $Res Function(ConversationListError) _then) =
-      _$ConversationListErrorCopyWithImpl;
-  @useResult
-  $Res call({String message});
-}
-
-/// @nodoc
-class _$ConversationListErrorCopyWithImpl<$Res>
-    implements $ConversationListErrorCopyWith<$Res> {
-  _$ConversationListErrorCopyWithImpl(this._self, this._then);
-
-  final ConversationListError _self;
-  final $Res Function(ConversationListError) _then;
-
-  /// Create a copy of ConversationListState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? message = null,
-  }) {
-    return _then(ConversationListError(
-      message: null == message
-          ? _self.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }

@@ -34,9 +34,7 @@ class _ConversationTileState extends State<ConversationTile> {
       _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
         // Gọi setState để buộc widget build lại
         if (mounted) {
-          setState(() {
-            // Không cần làm gì ở đây, chỉ cần gọi setState là đủ
-          });
+          setState(() {});
         }
       });
     }
@@ -52,21 +50,13 @@ class _ConversationTileState extends State<ConversationTile> {
   String _buildPreviewText() {
     // Ưu tiên 1: Nếu tin nhắn cuối là loại 'shared_post'
     if (widget.conversation.lastMessageType == 'shared_post') {
-      // Nếu tin nhắn này do mình gửi
-      if (widget.conversation.lastMessageSenderId == _currentUserId) {
-        return 'Bạn đã gửi một bài viết';
-      }
-      // Nếu là người kia gửi
-      return 'Đã gửi một bài viết';
+      return widget.conversation.lastMessageSenderId == _currentUserId ? 'Bạn đã gửi một bài viết' : 'Đã gửi một bài viết';
     }
 
     // Ưu tiên 2: Nếu tin nhắn cuối có nội dung text
     final lastMessageText = widget.conversation.lastMessageContent;
     if (lastMessageText != null && lastMessageText.isNotEmpty) {
-      if (widget.conversation.lastMessageSenderId == _currentUserId) {
-        return 'Bạn: $lastMessageText';
-      }
-      return lastMessageText;
+      return widget.conversation.lastMessageSenderId == _currentUserId ? 'Bạn: $lastMessageText' : lastMessageText;
     }
 
     // Trường hợp mặc định: Nếu không có tin nhắn nào
@@ -79,15 +69,17 @@ class _ConversationTileState extends State<ConversationTile> {
 
     return InkWell(
       onTap: () {
+        // === THAY ĐỔI: Đơn giản hóa onTap ===
+        // Không cần gọi .then() và refresh BLoC nữa.
+        // Việc cập nhật trạng thái đã đọc sẽ trigger EventBus,
+        // sau đó UnreadBadgeCubit và ConversationListBloc sẽ tự động cập nhật.
         context.push(
           '/chat',
           extra: {
             'conversationId': widget.conversation.conversationId,
             'otherUser': widget.conversation.otherParticipant,
           },
-        ).then((_) {
-          context.read<ConversationListBloc>().add(const ConversationListEvent.refreshed());
-        });
+        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
