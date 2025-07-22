@@ -9,8 +9,9 @@ sealed class SharePostState with _$SharePostState {
 
   // Trạng thái cho việc gửi tin nhắn
   const factory SharePostState.sendSuccess({
-    required String conversationId,
-    required AppUser otherUser,
+    required AppUser recipient,
+    required int totalSent,
+    required String firstConversationId, // Để có thể điều hướng đến 1 cuộc trò chuyện
   }) = SharePostSendSuccess;
   const factory SharePostState.sendError(String message) = SharePostSendError;
 }

@@ -25,26 +25,40 @@ class _SharePostBottomSheetState extends State<SharePostBottomSheet> {
       create: (context) => getIt<SharePostCubit>()..fetchConversations(),
       child: BlocListener<SharePostCubit, SharePostState>(
         listener: (context, state) {
-          // Lắng nghe sự kiện gửi thành công/thất bại
+          // === THAY ĐỔI: Cập nhật listener ===
           switch (state) {
-            case SharePostSendSuccess(conversationId: final convoId, otherUser: final otherUser):
-              // Đóng bottom sheet
+            case SharePostSendSuccess(
+                recipient: final recipient,
+                totalSent: final total,
+                firstConversationId: final convoId,
+              ):
               if (Navigator.canPop(context)) {
                 Navigator.of(context).pop();
               }
-              // Hiện SnackBar
+
+              // Tạo thông báo tùy thuộc vào số lượng
+              final String message;
+              if (total == 1) {
+                message = 'Đã gửi bài viết cho ${recipient.displayName}';
+              } else {
+                message = 'Đã gửi bài viết cho ${recipient.displayName} và ${total - 1} người khác';
+              }
+
               ScaffoldMessenger.of(widget.parentContext).showSnackBar(
                 SnackBar(
-                  content: Text('Đã gửi bài viết cho ${otherUser.displayName}'),
-                  action: SnackBarAction(
-                    label: 'Xem',
-                    onPressed: () {
-                      widget.parentContext.push('/chat', extra: {
-                        'conversationId': convoId,
-                        'otherUser': otherUser,
-                      });
-                    },
-                  ),
+                  content: Text(message),
+                  // Chỉ hiển thị nút "Xem" nếu chỉ gửi cho 1 người
+                  action: total == 1
+                      ? SnackBarAction(
+                          label: 'Xem',
+                          onPressed: () {
+                            widget.parentContext.push('/chat', extra: {
+                              'conversationId': convoId,
+                              'otherUser': _selectedConversations.first.otherParticipant,
+                            });
+                          },
+                        )
+                      : null,
                 ),
               );
               break;
@@ -127,17 +141,13 @@ class _SharePostBottomSheetState extends State<SharePostBottomSheet> {
                       minimumSize: const Size.fromHeight(50),
                     ),
                     onPressed: _selectedConversations.isEmpty
-                        ? null // Vô hiệu hóa nút nếu chưa chọn ai
+                        ? null
                         : () {
-                            final cubit = context.read<SharePostCubit>();
-                            // Chỉ xử lý gửi cho người đầu tiên được chọn để đơn giản hóa logic snackbar
-                            // Có thể mở rộng để gửi cho nhiều người
-                            final firstSelection = _selectedConversations.first;
-                            cubit.sendPost(
-                              postId: widget.postId,
-                              conversationId: firstSelection.conversationId,
-                              otherUser: firstSelection.otherParticipant,
-                            );
+                            // === THAY ĐỔI: Gọi hàm mới ===
+                            context.read<SharePostCubit>().sendPostToMultiple(
+                                  postId: widget.postId,
+                                  conversations: _selectedConversations.toList(),
+                                );
                           },
                     child: Text('Gửi (${_selectedConversations.length})'),
                   ),

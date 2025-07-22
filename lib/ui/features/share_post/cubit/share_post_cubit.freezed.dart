@@ -215,10 +215,13 @@ class _$SharePostErrorCopyWithImpl<$Res>
 
 class SharePostSendSuccess implements SharePostState {
   const SharePostSendSuccess(
-      {required this.conversationId, required this.otherUser});
+      {required this.recipient,
+      required this.totalSent,
+      required this.firstConversationId});
 
-  final String conversationId;
-  final AppUser otherUser;
+  final AppUser recipient;
+  final int totalSent;
+  final String firstConversationId;
 
   /// Create a copy of SharePostState
   /// with the given fields replaced by the non-null parameter values.
@@ -233,18 +236,21 @@ class SharePostSendSuccess implements SharePostState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is SharePostSendSuccess &&
-            (identical(other.conversationId, conversationId) ||
-                other.conversationId == conversationId) &&
-            (identical(other.otherUser, otherUser) ||
-                other.otherUser == otherUser));
+            (identical(other.recipient, recipient) ||
+                other.recipient == recipient) &&
+            (identical(other.totalSent, totalSent) ||
+                other.totalSent == totalSent) &&
+            (identical(other.firstConversationId, firstConversationId) ||
+                other.firstConversationId == firstConversationId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, conversationId, otherUser);
+  int get hashCode =>
+      Object.hash(runtimeType, recipient, totalSent, firstConversationId);
 
   @override
   String toString() {
-    return 'SharePostState.sendSuccess(conversationId: $conversationId, otherUser: $otherUser)';
+    return 'SharePostState.sendSuccess(recipient: $recipient, totalSent: $totalSent, firstConversationId: $firstConversationId)';
   }
 }
 
@@ -255,9 +261,9 @@ abstract mixin class $SharePostSendSuccessCopyWith<$Res>
           $Res Function(SharePostSendSuccess) _then) =
       _$SharePostSendSuccessCopyWithImpl;
   @useResult
-  $Res call({String conversationId, AppUser otherUser});
+  $Res call({AppUser recipient, int totalSent, String firstConversationId});
 
-  $AppUserCopyWith<$Res> get otherUser;
+  $AppUserCopyWith<$Res> get recipient;
 }
 
 /// @nodoc
@@ -272,18 +278,23 @@ class _$SharePostSendSuccessCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? conversationId = null,
-    Object? otherUser = null,
+    Object? recipient = null,
+    Object? totalSent = null,
+    Object? firstConversationId = null,
   }) {
     return _then(SharePostSendSuccess(
-      conversationId: null == conversationId
-          ? _self.conversationId
-          : conversationId // ignore: cast_nullable_to_non_nullable
-              as String,
-      otherUser: null == otherUser
-          ? _self.otherUser
-          : otherUser // ignore: cast_nullable_to_non_nullable
+      recipient: null == recipient
+          ? _self.recipient
+          : recipient // ignore: cast_nullable_to_non_nullable
               as AppUser,
+      totalSent: null == totalSent
+          ? _self.totalSent
+          : totalSent // ignore: cast_nullable_to_non_nullable
+              as int,
+      firstConversationId: null == firstConversationId
+          ? _self.firstConversationId
+          : firstConversationId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 
@@ -291,9 +302,9 @@ class _$SharePostSendSuccessCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $AppUserCopyWith<$Res> get otherUser {
-    return $AppUserCopyWith<$Res>(_self.otherUser, (value) {
-      return _then(_self.copyWith(otherUser: value));
+  $AppUserCopyWith<$Res> get recipient {
+    return $AppUserCopyWith<$Res>(_self.recipient, (value) {
+      return _then(_self.copyWith(recipient: value));
     });
   }
 }

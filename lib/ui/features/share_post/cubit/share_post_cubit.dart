@@ -23,23 +23,42 @@ class SharePostCubit extends Cubit<SharePostState> {
     );
   }
 
-  Future<void> sendPost({
+  Future<void> sendPostToMultiple({
     required String postId,
-    required String conversationId,
-    required AppUser otherUser,
+    required List<Conversation> conversations,
   }) async {
-    // Không cần emit loading vì UI sẽ tự đóng
-    final result = await _chatRepository.sendMessage(
-      conversationId: conversationId,
-      sharedPostId: postId,
-    );
+    // Không cần emit loading vì UI sẽ tự đóng ngay lập tức
+    
+    // Sử dụng Future.wait để gửi tất cả các tin nhắn song song
+    final sendFutures = conversations.map((convo) {
+      return _chatRepository.sendMessage(
+        conversationId: convo.conversationId,
+        sharedPostId: postId,
+      );
+    }).toList();
 
-    result.fold(
-      (failure) => emit(SharePostState.sendError(failure.message)),
-      (sentMessage) => emit(SharePostState.sendSuccess(
-        conversationId: conversationId,
-        otherUser: otherUser,
-      )),
-    );
+    // Chờ tất cả các request gửi đi hoàn tất
+    final results = await Future.wait(sendFutures);
+    
+    // Kiểm tra xem có lỗi nào không
+    final bool allSuccess = results.every((result) => result.isRight());
+    
+    if (allSuccess) {
+      // Nếu tất cả đều thành công, emit trạng thái thành công
+      // Chúng ta sẽ hiển thị tên của người đầu tiên và số lượng
+      final firstRecipient = conversations.first.otherParticipant;
+      final totalRecipients = conversations.length;
+      
+      emit(SharePostState.sendSuccess(
+        recipient: firstRecipient,
+        totalSent: totalRecipients,
+        // Cung cấp conversationId của người đầu tiên để có thể điều hướng nếu cần
+        firstConversationId: conversations.first.conversationId,
+      ));
+    } else {
+      // Nếu có ít nhất một lỗi, emit trạng thái lỗi chung
+      emit(const SharePostState.sendError('Gửi tin nhắn đến một vài người đã thất bại.'));
+    }
   }
+
 }
