@@ -2,6 +2,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/ui/features/conversation_list/bloc/conversation_list_bloc.dart';
 import 'package:dishlocal/ui/features/conversation_list/view/conversation_tile.dart';
+import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,11 +11,26 @@ class ConversationListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ConnectivityAndLocationGuard(builder: (context) {
+      return const _ConversationListScreenContent();
+    });
+  }
+}
+
+class _ConversationListScreenContent extends StatelessWidget {
+  const _ConversationListScreenContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return BlocProvider(
       // BLoC này bây giờ rất nhẹ, chỉ cần tạo ra là nó sẽ tự lắng nghe UnreadBadgeCubit
       create: (context) => getIt<ConversationListBloc>(),
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          centerTitle: true,
           title: const Text('Tin nhắn'),
           // Có thể thêm các action khác ở đây nếu cần
         ),

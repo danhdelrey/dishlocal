@@ -33,6 +33,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   // === BƯỚC 1: KHAI BÁO BIẾN ĐỂ LƯU THAM CHIẾU BLOC ===
   late final ChatBloc _chatBloc;
+  late final FocusNode _chatFocusNode;
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         otherUser: widget.otherUser,
         //otherUserPhotoUrl: widget.otherUserPhotoUrl, // Truyền avatar url
       ));
+    _chatFocusNode = FocusNode();
 
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addObserver(this);
@@ -61,6 +63,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _scrollController.dispose();
     // Đừng quên đóng BLoC khi màn hình bị hủy
     _chatBloc.close();
+    _chatFocusNode.dispose();
     super.dispose();
   }
 
@@ -94,136 +97,148 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     // === BƯỚC 4: CUNG CẤP INSTANCE BLOC ĐÃ TẠO SẴN ===
     return BlocProvider.value(
       value: _chatBloc,
-      child: Scaffold(
-        appBar: AppBar(
-          titleSpacing: 0,
-          title: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              context.push('/post_detail/profile', extra: {'userId': widget.otherUser.userId});
-            },
-            child: Row(
-              children: [
-                CachedCircleAvatar(
-                  imageUrl: widget.otherUser.photoUrl ?? '',
-                  circleRadius: 15,
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  widget.otherUser.displayName ?? '',
-                  style: appTextTheme(context).titleMedium,
-                  maxLines: 1,
-                ),
-              ],
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          _chatFocusNode.unfocus();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+            titleSpacing: 0,
+            title: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                context.push('/post_detail/profile', extra: {'userId': widget.otherUser.userId});
+              },
+              child: Row(
+                children: [
+                  CachedCircleAvatar(
+                    imageUrl: widget.otherUser.photoUrl ?? '',
+                    circleRadius: 15,
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    widget.otherUser.displayName ?? '',
+                    style: appTextTheme(context).titleMedium,
+                    maxLines: 1,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        body: BlocBuilder<ChatBloc, ChatState>(
-          builder: (context, state) {
-            return Column(
-              children: [
-                Expanded(
-                  child: switch (state) {
-                    //  cho trạng thái ban đầu
-                    ChatInitial() => const SizedBox.shrink(),
+          body: BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: switch (state) {
+                      //  cho trạng thái ban đầu
+                      ChatInitial() => const SizedBox.shrink(),
 
-                    //  cho trạng thái đang tải lần đầu
-                    ChatLoading() => const Center(child: CircularProgressIndicator()),
+                      //  cho trạng thái đang tải lần đầu
+                      ChatLoading() => const Center(child: CircularProgressIndicator()),
 
-                    //  cho trạng thái lỗi
-                    ChatError(message: final message) => Center(child: Text('Lỗi: $message')),
+                      //  cho trạng thái lỗi
+                      ChatError(message: final message) => Center(child: Text('Lỗi: $message')),
 
-                    //  cho trạng thái đã tải xong, sử dụng pattern matching để trích xuất dữ liệu
-                    ChatLoaded(
-                      messages: final messages,
-                      isLoadingMore: final isLoadingMore,
-                      //otherUserPhotoUrl: final otherUserPhotoUrl,
-                    ) =>
-                      ListView.builder(
-                        controller: _scrollController,
-                        reverse: true,
-                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
-                        itemCount: messages.length + (isLoadingMore ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (isLoadingMore && index == messages.length) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
+                      //  cho trạng thái đã tải xong, sử dụng pattern matching để trích xuất dữ liệu
+                      ChatLoaded(
+                        messages: final messages,
+                        isLoadingMore: final isLoadingMore,
+                        //otherUserPhotoUrl: final otherUserPhotoUrl,
+                      ) =>
+                        ListView.builder(
+                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                          controller: _scrollController,
+                          reverse: true,
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
+                          itemCount: messages.length + (isLoadingMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (isLoadingMore && index == messages.length) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            final message = messages[index];
+
+                            // --- LOGIC HIỂN THỊ ---
+                            // Lấy tin nhắn trước đó (do list bị reverse, "trước đó" là index + 1)
+                            final Message? previousMessage = (index + 1 < messages.length) ? messages[index + 1] : null;
+
+                            // 1. Logic hiển thị Avatar
+                            // Chỉ hiển thị avatar nếu tin nhắn này là của người kia VÀ
+                            // tin nhắn trước đó không tồn tại HOẶC là của mình.
+                            //final bool shouldShowAvatar = !isMe && (previousMessage == null || previousMessage.senderId == _currentUserId);
+
+                            // 2. Logic hiển thị Label ngày
+                            // Hiển thị nếu tin nhắn này là tin nhắn cuối cùng trong list HOẶC
+                            // ngày của nó khác với ngày của tin nhắn trước đó.
+                            final bool shouldShowDateLabel;
+                            if (previousMessage == null) {
+                              shouldShowDateLabel = true; // Luôn hiển thị cho tin nhắn cũ nhất
+                            } else {
+                              final currentMessageDate = message.createdAt.toLocal();
+                              final previousMessageDate = previousMessage.createdAt.toLocal();
+                              // So sánh chỉ ngày, tháng, năm
+                              shouldShowDateLabel = currentMessageDate.year != previousMessageDate.year || currentMessageDate.month != previousMessageDate.month || currentMessageDate.day != previousMessageDate.day;
+                            }
+
+                            // 3. Logic hiển thị Label thời gian nghỉ (ví dụ: 30 phút)
+                            final bool shouldShowTimeGapLabel;
+                            if (previousMessage != null) {
+                              final timeDifference = message.createdAt.difference(previousMessage.createdAt);
+                              shouldShowTimeGapLabel = timeDifference.inMinutes > 10;
+                            } else {
+                              shouldShowTimeGapLabel = false;
+                            }
+
+                            return Column(
+                              children: [
+                                // Hiển thị label ngày nếu cần
+                                if (shouldShowDateLabel) _DateLabel(dateTime: message.createdAt),
+
+                                // Hiển thị label thời gian nghỉ nếu cần và không trùng với label ngày
+                                if (shouldShowTimeGapLabel && !shouldShowDateLabel) _DateLabel(dateTime: message.createdAt),
+
+                                // Widget MessageBubble được bọc trong Row để thêm avatar
+                                Row(
+                                  mainAxisAlignment: message.senderId == _currentUserId ? MainAxisAlignment.end : MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    // Hiển thị Avatar hoặc một khoảng trống
+                                    // if (message.senderId != _currentUserId)
+                                    //   _Avatar(
+                                    //     imageUrl: otherUserPhotoUrl,
+                                    //     isVisible: shouldShowAvatar,
+                                    //   ),
+
+                                    // MessageBubble không cần Row bên trong nữa
+                                    MessageBubble(
+                                      message: message,
+                                      isMe: message.senderId == _currentUserId,
+                                      otherUser: widget.otherUser,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             );
-                          }
-
-                          final message = messages[index];
-
-                          // --- LOGIC HIỂN THỊ ---
-                          // Lấy tin nhắn trước đó (do list bị reverse, "trước đó" là index + 1)
-                          final Message? previousMessage = (index + 1 < messages.length) ? messages[index + 1] : null;
-
-                          // 1. Logic hiển thị Avatar
-                          // Chỉ hiển thị avatar nếu tin nhắn này là của người kia VÀ
-                          // tin nhắn trước đó không tồn tại HOẶC là của mình.
-                          //final bool shouldShowAvatar = !isMe && (previousMessage == null || previousMessage.senderId == _currentUserId);
-
-                          // 2. Logic hiển thị Label ngày
-                          // Hiển thị nếu tin nhắn này là tin nhắn cuối cùng trong list HOẶC
-                          // ngày của nó khác với ngày của tin nhắn trước đó.
-                          final bool shouldShowDateLabel;
-                          if (previousMessage == null) {
-                            shouldShowDateLabel = true; // Luôn hiển thị cho tin nhắn cũ nhất
-                          } else {
-                            final currentMessageDate = message.createdAt.toLocal();
-                            final previousMessageDate = previousMessage.createdAt.toLocal();
-                            // So sánh chỉ ngày, tháng, năm
-                            shouldShowDateLabel = currentMessageDate.year != previousMessageDate.year || currentMessageDate.month != previousMessageDate.month || currentMessageDate.day != previousMessageDate.day;
-                          }
-
-                          // 3. Logic hiển thị Label thời gian nghỉ (ví dụ: 30 phút)
-                          final bool shouldShowTimeGapLabel;
-                          if (previousMessage != null) {
-                            final timeDifference = message.createdAt.difference(previousMessage.createdAt);
-                            shouldShowTimeGapLabel = timeDifference.inMinutes > 10;
-                          } else {
-                            shouldShowTimeGapLabel = false;
-                          }
-
-                          return Column(
-                            children: [
-                              // Hiển thị label ngày nếu cần
-                              if (shouldShowDateLabel) _DateLabel(dateTime: message.createdAt),
-
-                              // Hiển thị label thời gian nghỉ nếu cần và không trùng với label ngày
-                              if (shouldShowTimeGapLabel && !shouldShowDateLabel) _DateLabel(dateTime: message.createdAt),
-
-                              // Widget MessageBubble được bọc trong Row để thêm avatar
-                              Row(
-                                mainAxisAlignment: message.senderId == _currentUserId ? MainAxisAlignment.end : MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  // Hiển thị Avatar hoặc một khoảng trống
-                                  // if (message.senderId != _currentUserId)
-                                  //   _Avatar(
-                                  //     imageUrl: otherUserPhotoUrl,
-                                  //     isVisible: shouldShowAvatar,
-                                  //   ),
-
-                                  // MessageBubble không cần Row bên trong nữa
-                                  MessageBubble(
-                                    message: message,
-                                    isMe: message.senderId == _currentUserId,
-                                    otherUser: widget.otherUser,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                  },
-                ),
-                const MessageInput(),
-              ],
-            );
-          },
+                          },
+                        ),
+                    },
+                  ),
+                  MessageInput(
+                    focusNode: _chatFocusNode,
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -237,7 +252,7 @@ class _DateLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 30),
       child: Text(
         // Sử dụng intl để format đẹp hơn
         TimeFormatter.formatDateTimeFull(dateTime.toLocal()),

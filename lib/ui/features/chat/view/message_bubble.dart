@@ -40,7 +40,7 @@ class MessageBubble extends StatelessWidget {
         // === BẮT ĐẦU THAY ĐỔI LOGIC ===
 
         // Hiển thị phần chia sẻ post NẾU messageType là 'shared_post'
-        if (message.messageType == 'shared_post') _buildSharedPost(theme),
+        if (message.messageType == 'shared_post') _buildSharedPost(context, theme, isMe),
 
         // Hiển thị phần nội dung text NẾU content có giá trị
         if (message.content != null && message.content!.isNotEmpty) _buildTextContent(theme),
@@ -70,10 +70,10 @@ class MessageBubble extends StatelessWidget {
                 // === TÁI CẤU TRÚC: Đơn giản hóa các thuộc tính ===
                 decoration: BoxDecoration(
                   gradient: isMe ? primaryGradient : null,
-                  color: isMe ? null : theme.colorScheme.surfaceContainerLow,
+                  color: isMe ? null : theme.colorScheme.outlineVariant,
                   borderRadius: BorderRadius.circular(18),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 margin: EdgeInsets.symmetric(vertical: 2, horizontal: isMe ? 0 : 8),
                 child: contentColumn, // Đưa nội dung đã xây dựng vào đây
               ),
@@ -85,7 +85,7 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildSharedPost(ThemeData theme) {
+  Widget _buildSharedPost(BuildContext context, ThemeData theme, bool isMe) {
     if (message.messageType != 'shared_post') {
       return const SizedBox.shrink();
     }
@@ -111,11 +111,14 @@ class MessageBubble extends StatelessWidget {
           color: Colors.black.withOpacity(0.05),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Center(
+        child: Center(
           child: SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2),
+            width: 40,
+            height: 40,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: isMe ? Colors.white : appColorScheme(context).primary,
+            ),
           ),
         ),
       );
