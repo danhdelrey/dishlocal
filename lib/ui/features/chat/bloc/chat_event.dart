@@ -25,4 +25,10 @@ sealed class ChatEvent with _$ChatEvent {
   const factory ChatEvent.messageReceived(MessageEntity message) = _MessageReceived;
 
   const factory ChatEvent.screenStatusChanged({required bool isActive}) = _ScreenStatusChanged;
+
+  /// [Nội bộ] Kích hoạt quá trình làm giàu dữ liệu cho các tin nhắn đã tải.
+  const factory ChatEvent.enrichmentStarted(List<Message> messages) = _EnrichmentStarted;
+
+  /// [Nội bộ] Được gọi khi một tin nhắn đã được làm giàu thành công.
+  const factory ChatEvent.messageEnriched(Message updatedMessage) = _MessageEnriched;
 }

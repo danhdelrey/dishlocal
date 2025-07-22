@@ -407,6 +407,153 @@ class __$ScreenStatusChangedCopyWithImpl<$Res>
 }
 
 /// @nodoc
+
+class _EnrichmentStarted implements ChatEvent {
+  const _EnrichmentStarted(final List<Message> messages) : _messages = messages;
+
+  final List<Message> _messages;
+  List<Message> get messages {
+    if (_messages is EqualUnmodifiableListView) return _messages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_messages);
+  }
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$EnrichmentStartedCopyWith<_EnrichmentStarted> get copyWith =>
+      __$EnrichmentStartedCopyWithImpl<_EnrichmentStarted>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _EnrichmentStarted &&
+            const DeepCollectionEquality().equals(other._messages, _messages));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_messages));
+
+  @override
+  String toString() {
+    return 'ChatEvent.enrichmentStarted(messages: $messages)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$EnrichmentStartedCopyWith<$Res>
+    implements $ChatEventCopyWith<$Res> {
+  factory _$EnrichmentStartedCopyWith(
+          _EnrichmentStarted value, $Res Function(_EnrichmentStarted) _then) =
+      __$EnrichmentStartedCopyWithImpl;
+  @useResult
+  $Res call({List<Message> messages});
+}
+
+/// @nodoc
+class __$EnrichmentStartedCopyWithImpl<$Res>
+    implements _$EnrichmentStartedCopyWith<$Res> {
+  __$EnrichmentStartedCopyWithImpl(this._self, this._then);
+
+  final _EnrichmentStarted _self;
+  final $Res Function(_EnrichmentStarted) _then;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? messages = null,
+  }) {
+    return _then(_EnrichmentStarted(
+      null == messages
+          ? _self._messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<Message>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _MessageEnriched implements ChatEvent {
+  const _MessageEnriched(this.updatedMessage);
+
+  final Message updatedMessage;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$MessageEnrichedCopyWith<_MessageEnriched> get copyWith =>
+      __$MessageEnrichedCopyWithImpl<_MessageEnriched>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _MessageEnriched &&
+            (identical(other.updatedMessage, updatedMessage) ||
+                other.updatedMessage == updatedMessage));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, updatedMessage);
+
+  @override
+  String toString() {
+    return 'ChatEvent.messageEnriched(updatedMessage: $updatedMessage)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$MessageEnrichedCopyWith<$Res>
+    implements $ChatEventCopyWith<$Res> {
+  factory _$MessageEnrichedCopyWith(
+          _MessageEnriched value, $Res Function(_MessageEnriched) _then) =
+      __$MessageEnrichedCopyWithImpl;
+  @useResult
+  $Res call({Message updatedMessage});
+
+  $MessageCopyWith<$Res> get updatedMessage;
+}
+
+/// @nodoc
+class __$MessageEnrichedCopyWithImpl<$Res>
+    implements _$MessageEnrichedCopyWith<$Res> {
+  __$MessageEnrichedCopyWithImpl(this._self, this._then);
+
+  final _MessageEnriched _self;
+  final $Res Function(_MessageEnriched) _then;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? updatedMessage = null,
+  }) {
+    return _then(_MessageEnriched(
+      null == updatedMessage
+          ? _self.updatedMessage
+          : updatedMessage // ignore: cast_nullable_to_non_nullable
+              as Message,
+    ));
+  }
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $MessageCopyWith<$Res> get updatedMessage {
+    return $MessageCopyWith<$Res>(_self.updatedMessage, (value) {
+      return _then(_self.copyWith(updatedMessage: value));
+    });
+  }
+}
+
+/// @nodoc
 mixin _$ChatState {
   @override
   bool operator ==(Object other) {

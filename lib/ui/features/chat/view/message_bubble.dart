@@ -86,36 +86,55 @@ class MessageBubble extends StatelessWidget {
   }
 
   Widget _buildSharedPost(ThemeData theme) {
-    // Chỉ thực hiện logic này nếu đây là tin nhắn loại 'shared_post'
-    if (message.messageType == 'shared_post') {
-      // Nếu có object Post -> Hiển thị SmallPost
-      if (message.sharedPost != null) {
-        return SizedBox(
-          width: 200,
-          child: SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
-        );
-      }
-      // Nếu không có object Post -> Chắc chắn là đã bị xóa
-      else {
-        return Container(
-          width: 200,
-          padding: const EdgeInsets.all(12.0),
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            'Bài viết này không còn tồn tại',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        );
-      }
+    if (message.messageType != 'shared_post') {
+      return const SizedBox.shrink();
     }
-    // Nếu không phải 'shared_post', không hiển thị gì cả
-    return const SizedBox.shrink();
+
+    // === THAY ĐỔI LOGIC HIỂN THỊ ===
+
+    // 1. Nếu có object Post -> Hiển thị SmallPost
+    if (message.sharedPost != null) {
+      return SizedBox(
+        width: 200,
+        child: SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
+      );
+    }
+    // 2. Nếu có post ID nhưng chưa có object Post -> ĐANG TẢI
+    else if (message.sharedPostId != null && message.sharedPost == null) {
+      return Container(
+        width: 200,
+        height: 100, // Chiều cao tạm thời cho placeholder
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      );
+    }
+    // 3. Nếu không có cả hai -> Đã bị xóa
+    else {
+      return Container(
+        width: 200,
+        padding: const EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          'Bài viết này không còn tồn tại',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      );
+    }
   }
 
   /// Widget hiển thị nội dung văn bản
