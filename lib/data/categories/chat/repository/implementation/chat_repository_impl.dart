@@ -271,4 +271,15 @@ class ChatRepositoryImpl implements ChatRepository {
 
     return streamController.stream;
   }
+
+  @override
+  void disposeConversationListSubscription() {
+    _log.info('Disposing and cleaning up conversation list subscription.');
+    if (_conversationListChannel != null) {
+      // Hủy đăng ký khỏi Supabase
+      _supabase.removeChannel(_conversationListChannel!);
+      // Quan trọng: Đặt lại về null để lần đăng nhập sau có thể tạo lại
+      _conversationListChannel = null;
+    }
+  }
 }

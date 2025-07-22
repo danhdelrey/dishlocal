@@ -6,28 +6,34 @@ import 'package:injectable/injectable.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
 import 'package:logging/logging.dart';
 
-@injectable
+@lazySingleton
 class UnreadBadgeCubit extends Cubit<int> {
   final _log = Logger('UnreadBadgeCubit');
   final ChatRepository _chatRepository;
- final ChatEventBus _chatEventBus;
+  final ChatEventBus _chatEventBus;
   StreamSubscription? _eventBusSubscription;
 
   // Constructor được cập nhật
-  UnreadBadgeCubit(this._chatRepository, this._chatEventBus) : super(0) {
-    _initialize();
-  }
+  UnreadBadgeCubit(this._chatRepository, this._chatEventBus) : super(0);
 
-  void _initialize() {
-    _log.info('Initializing UnreadBadgeCubit.');
+   void startListening() {
+    _log.info('UnreadBadgeCubit is now starting to listen for events.');
+
+    // Bỏ độ trễ đi, kiểm tra ngay lập tức
     updateTotalUnreadCount();
 
-    // === THAY ĐỔI: Lắng nghe từ EventBus ===
     _eventBusSubscription?.cancel();
     _eventBusSubscription = _chatEventBus.stream.listen((_) {
-      _log.info('Received event from bus, updating total unread count...');
       updateTotalUnreadCount();
     });
+  }
+
+  // === THAY ĐỔI: Tạo hàm stopListening ===
+  void stopListening() {
+    _log.info('UnreadBadgeCubit is stopping listening.');
+    _eventBusSubscription?.cancel();
+    _eventBusSubscription = null;
+    emit(0); // Reset badge khi đăng xuất
   }
 
   /// Lấy danh sách cuộc trò chuyện và tính tổng số tin nhắn chưa đọc.

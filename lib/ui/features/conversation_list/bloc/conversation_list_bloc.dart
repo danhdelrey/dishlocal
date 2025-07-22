@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dishlocal/data/categories/chat/model/conversation.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
 import 'package:dishlocal/data/global/chat_event_bus.dart';
+import 'package:dishlocal/ui/global/cubits/cubit/unread_badge_cubit.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -17,43 +18,44 @@ class ConversationListBloc extends Bloc<ConversationListEvent, ConversationListS
   final _log = Logger('ConversationListBloc');
   final ChatRepository _chatRepository;
   final ChatEventBus _chatEventBus;
-  StreamSubscription? _eventBusSubscription;
+  final UnreadBadgeCubit _unreadBadgeCubit;
+  StreamSubscription? _unreadBadgeSubscription;
 
   // Constructor được cập nhật
-  ConversationListBloc(this._chatRepository, this._chatEventBus) : super(const ConversationListState.initial()) {
+  ConversationListBloc(this._chatRepository, this._chatEventBus, this._unreadBadgeCubit) : super(const ConversationListState.initial()) {
     on<_Started>(_onStarted);
     on<_Refreshed>(_onRefreshed);
-    on<_ListChanged>(_onListChanged);
   }
 
   @override
   Future<void> close() {
-    _eventBusSubscription?.cancel();
+    _unreadBadgeSubscription?.cancel();
     return super.close();
   }
 
   Future<void> _onStarted(_Started event, Emitter<ConversationListState> emit) async {
     emit(const ConversationListState.loading());
 
-    // === THAY ĐỔI: Lắng nghe từ EventBus ===
-    _eventBusSubscription?.cancel();
-    _eventBusSubscription = _chatEventBus.stream.listen((_) {
-      add(const ConversationListEvent.listChanged());
+    // === THAY ĐỔI: Lắng nghe UnreadBadgeCubit ===
+    // Mỗi khi badge thay đổi (có nghĩa là dữ liệu chat đã thay đổi),
+    // chúng ta sẽ tải lại danh sách.
+    _unreadBadgeSubscription?.cancel();
+    _unreadBadgeSubscription = _unreadBadgeCubit.stream.listen((_) {
+      // Gọi hàm fetch trực tiếp, không cần event nội bộ
+      _fetchConversations(emit);
     });
 
+    // Vẫn fetch lần đầu tiên để hiển thị dữ liệu ban đầu
     await _fetchConversations(emit);
   }
 
   Future<void> _onRefreshed(_Refreshed event, Emitter<ConversationListState> emit) async {
-    await _fetchConversations(emit);
+    // Khi người dùng tự refresh, chúng ta cũng nên cập nhật lại badge
+    await _unreadBadgeCubit.updateTotalUnreadCount();
+    // Logic fetch của _onStarted sẽ được tự động kích hoạt bởi stream listener ở trên.
   }
 
-  // Handler mới
-  Future<void> _onListChanged(_ListChanged event, Emitter<ConversationListState> emit) async {
-    _log.info('Conversation list changed via realtime, refetching...');
-    // Chỉ fetch lại, không emit loading để UI không bị giật
-    await _fetchConversations(emit);
-  }
+  
 
   Future<void> _fetchConversations(Emitter<ConversationListState> emit) async {
     final result = await _chatRepository.getMyConversations();

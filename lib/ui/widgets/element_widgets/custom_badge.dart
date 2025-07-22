@@ -2,6 +2,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:dishlocal/ui/global/cubits/cubit/unread_badge_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 class CustomBadge extends StatelessWidget {
   const CustomBadge({
@@ -15,6 +16,7 @@ class CustomBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UnreadBadgeCubit, int>(
       builder: (context, totalUnread) {
+        Logger("CustomBadge").info('[CustomBadge] BlocBuilder is rebuilding. totalUnread = $totalUnread');
         return Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

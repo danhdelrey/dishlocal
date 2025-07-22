@@ -5,6 +5,7 @@ import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
+import 'package:dishlocal/ui/global/cubits/cubit/unread_badge_cubit.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
@@ -19,9 +20,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final _log = Logger('AuthBloc');
   final AppUserRepository _userRepository;
   final ChatRepository _chatRepository;
+  final UnreadBadgeCubit _unreadBadgeCubit; 
   StreamSubscription<AppUser?>? _userSubscription;
 
-  AuthBloc(this._userRepository, this._chatRepository) : super(const AuthState.initial()) {
+  AuthBloc(this._userRepository, this._chatRepository, this._unreadBadgeCubit) : super(const AuthState.initial()) {
     _log.info('✅ AuthBloc được khởi tạo.');
 
     // Đăng ký các handler cho từng event
@@ -48,15 +50,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final user = event.user;
     if (user == null) {
       _log.info('🚪 Trạng thái người dùng: Unauthenticated.');
+      // === THAY ĐỔI: Tắt lắng nghe của badge ===
+      _unreadBadgeCubit.stopListening();
+      _chatRepository.disposeConversationListSubscription();
       emit(const AuthState.unauthenticated());
     } else {
       _log.info('🚪 Thông tin về người dùng trong trạng thái hiện tại: ${user.toString()}');
       if (user.isSetupCompleted) {
         _log.info('👤 Trạng thái người dùng: Authenticated (User: ${user.userId}).');
+        // 1. Khởi tạo subscription của Repository (như cũ)
         _chatRepository.initializeConversationListSubscription(userId: user.userId);
+        // 2. === THAY ĐỔI: Bật lắng nghe của badge ===
+        _unreadBadgeCubit.startListening();
         emit(AuthState.authenticated(user));
       } else {
         _log.info('✨ Trạng thái người dùng: NewUser (User: ${user.userId}).');
+        // Người dùng mới chưa thể có tin nhắn, nên không cần bật badge
+        _unreadBadgeCubit.stopListening();
         emit(AuthState.newUser(user));
       }
     }

@@ -146,9 +146,9 @@ _i174.GetIt init(
   final firebaseInjectableModule = _$FirebaseInjectableModule();
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
   gh.factory<_i441.FilterSortBloc>(() => _i441.FilterSortBloc());
+  gh.factory<_i994.ReviewBloc>(() => _i994.ReviewBloc());
   gh.factory<_i755.SelectFoodCategoryBloc>(
       () => _i755.SelectFoodCategoryBloc());
-  gh.factory<_i994.ReviewBloc>(() => _i994.ReviewBloc());
   gh.lazySingleton<_i116.GoogleSignIn>(
       () => firebaseInjectableModule.googleSignIn);
   gh.lazySingleton<_i59.FirebaseAuth>(
@@ -228,11 +228,7 @@ _i174.GetIt init(
         gh<_i473.LocationService>(),
         gh<_i766.GeocodingService>(),
       ));
-  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
-        gh<_i720.ChatRepository>(),
-        gh<_i429.ChatEventBus>(),
-      ));
-  gh.factory<_i540.UnreadBadgeCubit>(() => _i540.UnreadBadgeCubit(
+  gh.lazySingleton<_i540.UnreadBadgeCubit>(() => _i540.UnreadBadgeCubit(
         gh<_i720.ChatRepository>(),
         gh<_i429.ChatEventBus>(),
       ));
@@ -247,10 +243,6 @@ _i174.GetIt init(
   gh.factory<_i889.CameraBloc>(() => _i889.CameraBloc(
         gh<_i886.ModerationRepository>(),
         gh<_i19.ImageProcessor>(),
-      ));
-  gh.factory<_i511.AuthBloc>(() => _i511.AuthBloc(
-        gh<_i749.AppUserRepository>(),
-        gh<_i720.ChatRepository>(),
       ));
   gh.factory<_i679.SuggestionSearchBloc>(
       () => _i679.SuggestionSearchBloc(gh<_i310.SearchService>()));
@@ -276,10 +268,20 @@ _i174.GetIt init(
         gh<_i749.AppUserRepository>(),
         gh<_i480.PostRepository>(),
       ));
+  gh.factory<_i511.AuthBloc>(() => _i511.AuthBloc(
+        gh<_i749.AppUserRepository>(),
+        gh<_i720.ChatRepository>(),
+        gh<_i540.UnreadBadgeCubit>(),
+      ));
   gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
         gh<_i886.ModerationRepository>(),
+      ));
+  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
+        gh<_i720.ChatRepository>(),
+        gh<_i429.ChatEventBus>(),
+        gh<_i540.UnreadBadgeCubit>(),
       ));
   gh.factory<_i531.ResultSearchBloc>(() => _i531.ResultSearchBloc(
         gh<_i480.PostRepository>(),
