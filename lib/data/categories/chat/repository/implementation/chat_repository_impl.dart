@@ -29,9 +29,7 @@ class ChatRepositoryImpl implements ChatRepository {
   // Xóa phương thức `subscribeToConversationListChanges()` cũ.
   // Thay vào đó, chúng ta sẽ quản lý nó bên trong repository.
   @override
-  void initializeConversationListSubscription(
-    {required String userId}
-  ) {
+  void initializeConversationListSubscription({required String userId}) {
     // Tránh đăng ký nhiều lần
     if (_conversationListChannel != null) return;
 
@@ -110,20 +108,29 @@ class ChatRepositoryImpl implements ChatRepository {
     try {
       final from = (page - 1) * limit;
       final to = from + limit - 1;
+      final currentUserId = _supabase.auth.currentUser!.id;
 
       _log.info('Query: messages for conversation $conversationId, page: $page, limit: $limit (range: $from-$to)');
 
-      // THAY ĐỔI: Chỉ định rõ mối quan hệ `posts_author_id_fkey`
-      final result = await _supabase.from('messages').select('*, shared_post:posts(*, author:profiles!posts_author_id_fkey(*))').eq('conversation_id', conversationId).order('created_at', ascending: false).range(from, to);
+      // THAY ĐỔI: Sử dụng subquery với hàm get_post_details_by_id để đảm bảo cấu trúc nhất quán
+      final result = await _supabase
+          .from('messages')
+          .select('*, shared_post:shared_post_id(details:get_post_details_by_id(p_post_id, p_user_id))')
+          .eq('p_user_id', currentUserId) // Truyền user_id vào hàm
+          .eq('conversation_id', conversationId)
+          .order('created_at', ascending: false)
+          .range(from, to);
 
       _log.finer('Query response: $result');
 
       final messages = (result as List<dynamic>).map((data) {
         final entityData = data as Map<String, dynamic>;
 
-        if (entityData['shared_post'] != null) {
-          // Giả sử model Post của bạn có thể parse từ json này
-          entityData['sharedPost'] = Post.fromJson(entityData['shared_post']);
+        // Xử lý để làm phẳng cấu trúc JSON lồng nhau
+        if (entityData['shared_post'] != null && entityData['shared_post']['details'] != null) {
+          entityData['sharedPost'] = entityData['shared_post']['details'];
+        } else {
+          entityData['sharedPost'] = null;
         }
 
         return Message.fromJson(entityData);
@@ -174,7 +181,7 @@ class ChatRepositoryImpl implements ChatRepository {
     try {
       _log.info('RPC: send_message to conversation $conversationId');
 
-      // THAY ĐỔI: Chỉ gọi RPC và không cần .select() nữa
+      // RPC đã được sửa để trả về đúng cấu trúc, nên không cần .select() nữa
       final result = await _supabase.rpc(
         'send_message',
         params: {
@@ -186,12 +193,10 @@ class ChatRepositoryImpl implements ChatRepository {
 
       _log.finer('RPC response: $result');
 
-      // Kết quả trả về trực tiếp là JSON chúng ta đã xây dựng
       final entityData = result as Map<String, dynamic>;
 
-      // logic parse JSON lồng nhau cho 'sharedPost'
+      // Xử lý để khớp với tên thuộc tính trong model Message
       if (entityData['shared_post'] != null) {
-        // Đổi tên key để khớp với model 'Message'
         entityData['sharedPost'] = entityData['shared_post'];
       }
 
@@ -206,7 +211,6 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(ChatOperationFailure(e.message));
     } catch (e) {
       _log.severe('An unexpected error occurred in sendMessage', e);
-      // In lỗi gốc để debug
       _log.severe(e.toString());
       return const Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn.'));
     }
@@ -240,8 +244,8 @@ class ChatRepositoryImpl implements ChatRepository {
   }) {
     _log.info('Subscribing to realtime messages for conversation $conversationId');
     final streamController = StreamController<Either<ChatFailure, Message>>();
+    final currentUserId = _supabase.auth.currentUser!.id;
 
-    // THAY ĐỔI: Tạo channel riêng biệt trước
     final channel = _supabase.channel('public:messages:conversation_id=eq.$conversationId');
 
     channel
@@ -249,8 +253,6 @@ class ChatRepositoryImpl implements ChatRepository {
       event: PostgresChangeEvent.insert,
       schema: 'public',
       table: 'messages',
-      // Bộ lọc này đã được áp dụng khi tạo channel ở trên,
-      // nhưng thêm vào đây sẽ đảm bảo tính chính xác.
       filter: PostgresChangeFilter(
         type: PostgresChangeFilterType.eq,
         column: 'conversation_id',
@@ -260,18 +262,20 @@ class ChatRepositoryImpl implements ChatRepository {
         try {
           _log.finer('Received realtime payload: ${payload.newRecord}');
           final newMessageData = payload.newRecord;
-
-          // Dữ liệu từ realtime không có join, ta cần fetch lại để có đầy đủ thông tin
           final messageId = newMessageData['id'];
 
-          final result = await _supabase.from('messages').select('*, shared_post:posts(*, author:profiles!posts_author_id_fkey(*))').eq('id', messageId).single();
+          // Dữ liệu từ realtime không có join, ta cần fetch lại để có đầy đủ thông tin
+          // THAY ĐỔI: Sử dụng cùng một query như getMessages
+          final result = await _supabase.from('messages').select('*, shared_post:shared_post_id(details:get_post_details_by_id(p_post_id, p_user_id))').eq('p_user_id', currentUserId).eq('id', messageId).single();
 
           final entityData = result;
-          if (entityData['shared_post'] != null) {
-            entityData['sharedPost'] = Post.fromJson(entityData['shared_post']);
+          if (entityData['shared_post'] != null && entityData['shared_post']['details'] != null) {
+            entityData['sharedPost'] = entityData['shared_post']['details'];
+          } else {
+            entityData['sharedPost'] = null;
           }
-          final message = Message.fromJson(entityData);
 
+          final message = Message.fromJson(entityData);
           streamController.add(Right(message));
         } catch (e) {
           _log.severe('Error processing realtime message', e);
@@ -288,13 +292,11 @@ class ChatRepositoryImpl implements ChatRepository {
       }
     });
 
-    streamController.onCancel = () {
+     streamController.onCancel = () {
       _log.info('Unsubscribing from messages channel for $conversationId');
       _supabase.removeChannel(channel);
     };
 
     return streamController.stream;
   }
-
-  
 }
