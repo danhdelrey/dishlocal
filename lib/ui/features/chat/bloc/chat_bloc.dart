@@ -158,35 +158,54 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     if (state is! ChatLoaded) return;
     final currentState = state as ChatLoaded;
 
-    // Optimistic UI: Tạo tin nhắn tạm thời và thêm vào state ngay lập tức
+    // Bước 1: Optimistic UI (Không đổi)
+    // Tạo tin nhắn tạm thời và hiển thị ngay lập tức với trạng thái "sending".
     final tempMessage = Message(
-      id: const Uuid().v4(), // ID tạm thời
+      id: const Uuid().v4(),
       conversationId: currentState.conversationId,
       senderId: _appUserRepository.getCurrentUserId()!,
       content: event.content,
       createdAt: DateTime.now(),
       status: MessageStatus.sending,
     );
-
     emit(currentState.copyWith(messages: [tempMessage, ...currentState.messages]));
 
-    // Gửi tin nhắn thực tế
+    // Bước 2: Gửi tin nhắn thực tế (Không đổi)
+    // Repository sẽ trả về một MessageEntity.
     final result = await _chatRepository.sendMessage(
       conversationId: currentState.conversationId,
       content: event.content,
     );
 
-    // Cập nhật state sau khi có kết quả từ server
+    // Bước 3: Cập nhật UI sau khi có kết quả từ server (THAY ĐỔI Ở ĐÂY)
+    // Đảm bảo state không bị thay đổi trong lúc chờ đợi
+    if (state is! ChatLoaded) return;
     final latestState = state as ChatLoaded;
+
     final newMessages = List<Message>.from(latestState.messages);
     final messageIndex = newMessages.indexWhere((m) => m.id == tempMessage.id);
 
     if (messageIndex != -1) {
-      result.fold((failure) {
-        newMessages[messageIndex] = tempMessage.copyWith(status: MessageStatus.failed);
-      }, (sentMessage) {
-        newMessages[messageIndex] = sentMessage; // Thay thế tin nhắn tạm bằng tin nhắn thật
-      });
+      await result.fold(
+        (failure) async {
+          // Nếu gửi thất bại, cập nhật tin nhắn tạm thành "failed".
+          newMessages[messageIndex] = tempMessage.copyWith(status: MessageStatus.failed);
+        },
+        (sentMessageEntity) async {
+          // Nếu gửi thành công, chúng ta nhận về một MessageEntity.
+          // Ta cần làm giàu nó thành một Message đầy đủ (dù trong trường hợp này nó không có post).
+          final enrichedMessages = await _enrichMessages([sentMessageEntity]);
+          if (enrichedMessages.isNotEmpty) {
+            // Thay thế tin nhắn tạm bằng tin nhắn thật đã được làm giàu.
+            newMessages[messageIndex] = enrichedMessages.first;
+          } else {
+            // Trường hợp hiếm gặp, làm giàu thất bại, đánh dấu là lỗi.
+            newMessages[messageIndex] = tempMessage.copyWith(status: MessageStatus.failed);
+            _log.severe('Failed to enrich sent message entity: ${sentMessageEntity.id}');
+          }
+        },
+      );
+      // Emit state cuối cùng với danh sách tin nhắn đã được cập nhật.
       emit(latestState.copyWith(messages: newMessages));
     }
   }

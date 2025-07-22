@@ -28,8 +28,8 @@ abstract class ChatRepository {
 
   /// Gửi một tin nhắn mới.
   /// Tin nhắn có thể là văn bản (`content`) hoặc một bài post được chia sẻ (`sharedPostId`).
-  /// Trả về object [Message] vừa được tạo để cập nhật ngay lên UI.
-  Future<Either<ChatFailure, Message>> sendMessage({
+  /// Trả về object [MessageEntity] vừa được tạo để cập nhật ngay lên UI.
+  Future<Either<ChatFailure, MessageEntity>> sendMessage({
     required String conversationId,
     String? content,
     String? sharedPostId,

@@ -39,7 +39,7 @@ class _SharePostBottomSheetState extends State<SharePostBottomSheet> {
                   action: SnackBarAction(
                     label: 'Xem',
                     onPressed: () {
-                      context.push('/chat', extra: {
+                      widget.parentContext.push('/chat', extra: {
                         'conversationId': convoId,
                         'otherUser': otherUser,
                       });

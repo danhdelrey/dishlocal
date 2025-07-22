@@ -162,15 +162,16 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<ChatFailure, Message>> sendMessage({
+  Future<Either<ChatFailure, MessageEntity>> sendMessage({
+    // Kiểu trả về là MessageEntity
     required String conversationId,
     String? content,
     String? sharedPostId,
   }) async {
     try {
-      _log.info('RPC: send_message to conversation $conversationId');
+      _log.info('RPC: send_message (optimized) to conversation $conversationId');
 
-      // RPC đã được sửa để trả về đúng cấu trúc, nên không cần .select() nữa
+      // RPC bây giờ trả về một danh sách chứa một record
       final result = await _supabase.rpc(
         'send_message',
         params: {
@@ -178,20 +179,14 @@ class ChatRepositoryImpl implements ChatRepository {
           'p_content': content,
           'p_shared_post_id': sharedPostId,
         },
-      );
+      ).single(); // Dùng .single() để lấy record duy nhất đó
 
       _log.finer('RPC response: $result');
 
-      final entityData = result as Map<String, dynamic>;
+      // Parse kết quả trực tiếp thành MessageEntity
+      final messageEntity = MessageEntity.fromJson(result as Map<String, dynamic>);
 
-      // Xử lý để khớp với tên thuộc tính trong model Message
-      if (entityData['shared_post'] != null) {
-        entityData['sharedPost'] = entityData['shared_post'];
-      }
-
-      final message = Message.fromJson(entityData);
-
-      return Right(message);
+      return Right(messageEntity);
     } on PostgrestException catch (e) {
       _log.severe('RPC send_message failed', e);
       if (e.code == 'P0001') {
@@ -200,8 +195,7 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(ChatOperationFailure(e.message));
     } catch (e) {
       _log.severe('An unexpected error occurred in sendMessage', e);
-      _log.severe(e.toString());
-      return const Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn.'));
+      return Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
     }
   }
 
