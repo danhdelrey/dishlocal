@@ -32,6 +32,7 @@ abstract class Message with _$Message {
     String? content,
     Post? sharedPost,
     String? sharedPostId,
+    @Default('text') String messageType,
     @DateTimeConverter() required DateTime createdAt,
     @JsonKey(includeToJson: false, includeFromJson: false) @Default(MessageStatus.sent) MessageStatus status,
   }) = _Message;
@@ -44,6 +45,7 @@ abstract class Message with _$Message {
       content: entity.content,
       createdAt: entity.createdAt,
       sharedPost: sharedPost,
+      messageType: entity.messageType,
       sharedPostId: entity.sharedPostId,
     );
   }

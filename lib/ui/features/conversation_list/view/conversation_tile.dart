@@ -50,19 +50,27 @@ class _ConversationTileState extends State<ConversationTile> {
   }
 
   String _buildPreviewText() {
-    final lastMessage = widget.conversation.lastMessageContent;
-    if (lastMessage == null || lastMessage.isEmpty) {
-      if (widget.conversation.lastMessageSharedPostId != null) {
-        return "Đã chia sẻ một bài viết";
+    // Ưu tiên 1: Nếu tin nhắn cuối là loại 'shared_post'
+    if (widget.conversation.lastMessageType == 'shared_post') {
+      // Nếu tin nhắn này do mình gửi
+      if (widget.conversation.lastMessageSenderId == _currentUserId) {
+        return 'Bạn đã gửi một bài viết';
       }
-      return "Chưa có tin nhắn.";
+      // Nếu là người kia gửi
+      return 'Đã gửi một bài viết';
     }
 
-    if (widget.conversation.lastMessageSenderId == _currentUserId) {
-      return 'Bạn: $lastMessage';
+    // Ưu tiên 2: Nếu tin nhắn cuối có nội dung text
+    final lastMessageText = widget.conversation.lastMessageContent;
+    if (lastMessageText != null && lastMessageText.isNotEmpty) {
+      if (widget.conversation.lastMessageSenderId == _currentUserId) {
+        return 'Bạn: $lastMessageText';
+      }
+      return lastMessageText;
     }
 
-    return lastMessage;
+    // Trường hợp mặc định: Nếu không có tin nhắn nào
+    return "Chưa có tin nhắn.";
   }
 
   @override

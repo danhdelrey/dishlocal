@@ -27,6 +27,8 @@ abstract class MessageEntity with _$MessageEntity {
     /// Có thể là null nếu đây là tin nhắn văn bản.
     String? sharedPostId,
 
+    @Default('text') String messageType,
+
     /// Thời điểm tin nhắn được tạo.
     @DateTimeConverter() required DateTime createdAt,
   }) = _MessageEntity;

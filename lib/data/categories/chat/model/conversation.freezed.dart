@@ -23,6 +23,7 @@ mixin _$Conversation {
   String? get lastMessageSenderId;
   String? get lastMessageSharedPostId;
   int get unreadCount;
+  String? get lastMessageType;
 
   /// Create a copy of Conversation
   /// with the given fields replaced by the non-null parameter values.
@@ -54,7 +55,9 @@ mixin _$Conversation {
                     other.lastMessageSharedPostId, lastMessageSharedPostId) ||
                 other.lastMessageSharedPostId == lastMessageSharedPostId) &&
             (identical(other.unreadCount, unreadCount) ||
-                other.unreadCount == unreadCount));
+                other.unreadCount == unreadCount) &&
+            (identical(other.lastMessageType, lastMessageType) ||
+                other.lastMessageType == lastMessageType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -67,11 +70,12 @@ mixin _$Conversation {
       lastMessageCreatedAt,
       lastMessageSenderId,
       lastMessageSharedPostId,
-      unreadCount);
+      unreadCount,
+      lastMessageType);
 
   @override
   String toString() {
-    return 'Conversation(conversationId: $conversationId, otherParticipant: $otherParticipant, lastMessageContent: $lastMessageContent, lastMessageCreatedAt: $lastMessageCreatedAt, lastMessageSenderId: $lastMessageSenderId, lastMessageSharedPostId: $lastMessageSharedPostId, unreadCount: $unreadCount)';
+    return 'Conversation(conversationId: $conversationId, otherParticipant: $otherParticipant, lastMessageContent: $lastMessageContent, lastMessageCreatedAt: $lastMessageCreatedAt, lastMessageSenderId: $lastMessageSenderId, lastMessageSharedPostId: $lastMessageSharedPostId, unreadCount: $unreadCount, lastMessageType: $lastMessageType)';
   }
 }
 
@@ -88,7 +92,8 @@ abstract mixin class $ConversationCopyWith<$Res> {
       @DateTimeConverter() DateTime? lastMessageCreatedAt,
       String? lastMessageSenderId,
       String? lastMessageSharedPostId,
-      int unreadCount});
+      int unreadCount,
+      String? lastMessageType});
 
   $AppUserCopyWith<$Res> get otherParticipant;
 }
@@ -112,6 +117,7 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
     Object? lastMessageSenderId = freezed,
     Object? lastMessageSharedPostId = freezed,
     Object? unreadCount = null,
+    Object? lastMessageType = freezed,
   }) {
     return _then(_self.copyWith(
       conversationId: null == conversationId
@@ -142,6 +148,10 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
           ? _self.unreadCount
           : unreadCount // ignore: cast_nullable_to_non_nullable
               as int,
+      lastMessageType: freezed == lastMessageType
+          ? _self.lastMessageType
+          : lastMessageType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 
@@ -167,7 +177,8 @@ class _Conversation implements Conversation {
       @DateTimeConverter() this.lastMessageCreatedAt,
       this.lastMessageSenderId,
       this.lastMessageSharedPostId,
-      this.unreadCount = 0});
+      this.unreadCount = 0,
+      this.lastMessageType});
   factory _Conversation.fromJson(Map<String, dynamic> json) =>
       _$ConversationFromJson(json);
 
@@ -187,6 +198,8 @@ class _Conversation implements Conversation {
   @override
   @JsonKey()
   final int unreadCount;
+  @override
+  final String? lastMessageType;
 
   /// Create a copy of Conversation
   /// with the given fields replaced by the non-null parameter values.
@@ -222,7 +235,9 @@ class _Conversation implements Conversation {
                     other.lastMessageSharedPostId, lastMessageSharedPostId) ||
                 other.lastMessageSharedPostId == lastMessageSharedPostId) &&
             (identical(other.unreadCount, unreadCount) ||
-                other.unreadCount == unreadCount));
+                other.unreadCount == unreadCount) &&
+            (identical(other.lastMessageType, lastMessageType) ||
+                other.lastMessageType == lastMessageType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -235,11 +250,12 @@ class _Conversation implements Conversation {
       lastMessageCreatedAt,
       lastMessageSenderId,
       lastMessageSharedPostId,
-      unreadCount);
+      unreadCount,
+      lastMessageType);
 
   @override
   String toString() {
-    return 'Conversation(conversationId: $conversationId, otherParticipant: $otherParticipant, lastMessageContent: $lastMessageContent, lastMessageCreatedAt: $lastMessageCreatedAt, lastMessageSenderId: $lastMessageSenderId, lastMessageSharedPostId: $lastMessageSharedPostId, unreadCount: $unreadCount)';
+    return 'Conversation(conversationId: $conversationId, otherParticipant: $otherParticipant, lastMessageContent: $lastMessageContent, lastMessageCreatedAt: $lastMessageCreatedAt, lastMessageSenderId: $lastMessageSenderId, lastMessageSharedPostId: $lastMessageSharedPostId, unreadCount: $unreadCount, lastMessageType: $lastMessageType)';
   }
 }
 
@@ -258,7 +274,8 @@ abstract mixin class _$ConversationCopyWith<$Res>
       @DateTimeConverter() DateTime? lastMessageCreatedAt,
       String? lastMessageSenderId,
       String? lastMessageSharedPostId,
-      int unreadCount});
+      int unreadCount,
+      String? lastMessageType});
 
   @override
   $AppUserCopyWith<$Res> get otherParticipant;
@@ -284,6 +301,7 @@ class __$ConversationCopyWithImpl<$Res>
     Object? lastMessageSenderId = freezed,
     Object? lastMessageSharedPostId = freezed,
     Object? unreadCount = null,
+    Object? lastMessageType = freezed,
   }) {
     return _then(_Conversation(
       conversationId: null == conversationId
@@ -314,6 +332,10 @@ class __$ConversationCopyWithImpl<$Res>
           ? _self.unreadCount
           : unreadCount // ignore: cast_nullable_to_non_nullable
               as int,
+      lastMessageType: freezed == lastMessageType
+          ? _self.lastMessageType
+          : lastMessageType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 

@@ -1,9 +1,11 @@
+import 'package:dishlocal/app/theme/custom_colors.dart';
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;
@@ -20,6 +22,32 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    final log = Logger("MessageBubble");
+    if (message.id == '93b804ed-a838-4af1-8c87-96a67daf40c7') {
+      log.info('--- DEBUGGING MESSAGE BUBBLE ---');
+      log.info('Message ID: ${message.id}');
+      log.info('Message Type: ${message.messageType}');
+      log.info('Shared Post ID: ${message.sharedPostId}');
+      log.info('Shared Post Object is null: ${message.sharedPost == null}');
+      log.info('---------------------------------');
+    }
+
+    // === TÁI CẤU TRÚC: Xây dựng nội dung trước ===
+    final contentColumn = Column(
+      crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        // === BẮT ĐẦU THAY ĐỔI LOGIC ===
+
+        // Hiển thị phần chia sẻ post NẾU messageType là 'shared_post'
+        if (message.messageType == 'shared_post') _buildSharedPost(theme),
+
+        // Hiển thị phần nội dung text NẾU content có giá trị
+        if (message.content != null && message.content!.isNotEmpty) _buildTextContent(theme),
+
+        // === KẾT THÚC THAY ĐỔI LOGIC ===
+      ],
+    );
 
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -39,41 +67,71 @@ class MessageBubble extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
               child: Container(
+                // === TÁI CẤU TRÚC: Đơn giản hóa các thuộc tính ===
                 decoration: BoxDecoration(
-                  gradient: isMe
-                      ? const LinearGradient(
-                          colors: [Colors.blue, Colors.lightBlueAccent],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        )
-                      : null,
+                  gradient: isMe ? primaryGradient : null,
                   color: isMe ? null : theme.colorScheme.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                 margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                child: Column(
-                  crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                  children: [
-                    if (message.sharedPost != null)
-                      SizedBox(
-                        width: 150,
-                        child: SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
-                      ),
-                    if (message.content != null)
-                      Text(
-                        message.content!,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
-                        ),
-                      ),
-                  ],
-                ),
+                child: contentColumn, // Đưa nội dung đã xây dựng vào đây
               ),
             ),
           ),
           if (isMe) _buildStatusIcon(context),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSharedPost(ThemeData theme) {
+    // Chỉ thực hiện logic này nếu đây là tin nhắn loại 'shared_post'
+    if (message.messageType == 'shared_post') {
+      // Nếu có object Post -> Hiển thị SmallPost
+      if (message.sharedPost != null) {
+        return SizedBox(
+          width: 200,
+          child: SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
+        );
+      }
+      // Nếu không có object Post -> Chắc chắn là đã bị xóa
+      else {
+        return Container(
+          width: 200,
+          padding: const EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            'Bài viết này không còn tồn tại',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        );
+      }
+    }
+    // Nếu không phải 'shared_post', không hiển thị gì cả
+    return const SizedBox.shrink();
+  }
+
+  /// Widget hiển thị nội dung văn bản
+  Widget _buildTextContent(ThemeData theme) {
+    if (message.content == null || message.content!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      // Thêm khoảng cách nếu phía trên có một bài viết được chia sẻ
+      padding: EdgeInsets.only(top: message.messageType == 'shared_post' ? 8.0 : 0),
+      child: Text(
+        message.content!,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+        ),
       ),
     );
   }

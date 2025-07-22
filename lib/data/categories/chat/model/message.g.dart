@@ -15,6 +15,7 @@ _Message _$MessageFromJson(Map<String, dynamic> json) => _Message(
           ? null
           : Post.fromJson(json['shared_post'] as Map<String, dynamic>),
       sharedPostId: json['shared_post_id'] as String?,
+      messageType: json['message_type'] as String? ?? 'text',
       createdAt: DateTime.parse(json['created_at'] as String),
     );
 
@@ -25,5 +26,6 @@ Map<String, dynamic> _$MessageToJson(_Message instance) => <String, dynamic>{
       'content': instance.content,
       'shared_post': instance.sharedPost?.toJson(),
       'shared_post_id': instance.sharedPostId,
+      'message_type': instance.messageType,
       'created_at': instance.createdAt.toIso8601String(),
     };

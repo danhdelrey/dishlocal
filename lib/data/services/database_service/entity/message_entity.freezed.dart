@@ -30,6 +30,7 @@ mixin _$MessageEntity {
   /// FK: Tham chiếu đến `posts.id` của bài post được chia sẻ.
   /// Có thể là null nếu đây là tin nhắn văn bản.
   String? get sharedPostId;
+  String get messageType;
 
   /// Thời điểm tin nhắn được tạo.
   @DateTimeConverter()
@@ -59,6 +60,8 @@ mixin _$MessageEntity {
             (identical(other.content, content) || other.content == content) &&
             (identical(other.sharedPostId, sharedPostId) ||
                 other.sharedPostId == sharedPostId) &&
+            (identical(other.messageType, messageType) ||
+                other.messageType == messageType) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -66,11 +69,11 @@ mixin _$MessageEntity {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, conversationId, senderId,
-      content, sharedPostId, createdAt);
+      content, sharedPostId, messageType, createdAt);
 
   @override
   String toString() {
-    return 'MessageEntity(id: $id, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPostId: $sharedPostId, createdAt: $createdAt)';
+    return 'MessageEntity(id: $id, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPostId: $sharedPostId, messageType: $messageType, createdAt: $createdAt)';
   }
 }
 
@@ -86,6 +89,7 @@ abstract mixin class $MessageEntityCopyWith<$Res> {
       String senderId,
       String? content,
       String? sharedPostId,
+      String messageType,
       @DateTimeConverter() DateTime createdAt});
 }
 
@@ -107,6 +111,7 @@ class _$MessageEntityCopyWithImpl<$Res>
     Object? senderId = null,
     Object? content = freezed,
     Object? sharedPostId = freezed,
+    Object? messageType = null,
     Object? createdAt = null,
   }) {
     return _then(_self.copyWith(
@@ -130,6 +135,10 @@ class _$MessageEntityCopyWithImpl<$Res>
           ? _self.sharedPostId
           : sharedPostId // ignore: cast_nullable_to_non_nullable
               as String?,
+      messageType: null == messageType
+          ? _self.messageType
+          : messageType // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -148,6 +157,7 @@ class _MessageEntity implements MessageEntity {
       required this.senderId,
       this.content,
       this.sharedPostId,
+      this.messageType = 'text',
       @DateTimeConverter() required this.createdAt});
   factory _MessageEntity.fromJson(Map<String, dynamic> json) =>
       _$MessageEntityFromJson(json);
@@ -172,6 +182,9 @@ class _MessageEntity implements MessageEntity {
   /// Có thể là null nếu đây là tin nhắn văn bản.
   @override
   final String? sharedPostId;
+  @override
+  @JsonKey()
+  final String messageType;
 
   /// Thời điểm tin nhắn được tạo.
   @override
@@ -206,6 +219,8 @@ class _MessageEntity implements MessageEntity {
             (identical(other.content, content) || other.content == content) &&
             (identical(other.sharedPostId, sharedPostId) ||
                 other.sharedPostId == sharedPostId) &&
+            (identical(other.messageType, messageType) ||
+                other.messageType == messageType) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -213,11 +228,11 @@ class _MessageEntity implements MessageEntity {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, conversationId, senderId,
-      content, sharedPostId, createdAt);
+      content, sharedPostId, messageType, createdAt);
 
   @override
   String toString() {
-    return 'MessageEntity(id: $id, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPostId: $sharedPostId, createdAt: $createdAt)';
+    return 'MessageEntity(id: $id, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPostId: $sharedPostId, messageType: $messageType, createdAt: $createdAt)';
   }
 }
 
@@ -235,6 +250,7 @@ abstract mixin class _$MessageEntityCopyWith<$Res>
       String senderId,
       String? content,
       String? sharedPostId,
+      String messageType,
       @DateTimeConverter() DateTime createdAt});
 }
 
@@ -256,6 +272,7 @@ class __$MessageEntityCopyWithImpl<$Res>
     Object? senderId = null,
     Object? content = freezed,
     Object? sharedPostId = freezed,
+    Object? messageType = null,
     Object? createdAt = null,
   }) {
     return _then(_MessageEntity(
@@ -279,6 +296,10 @@ class __$MessageEntityCopyWithImpl<$Res>
           ? _self.sharedPostId
           : sharedPostId // ignore: cast_nullable_to_non_nullable
               as String?,
+      messageType: null == messageType
+          ? _self.messageType
+          : messageType // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable

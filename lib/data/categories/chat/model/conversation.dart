@@ -16,6 +16,7 @@ abstract class Conversation with _$Conversation {
     String? lastMessageSenderId,
     String? lastMessageSharedPostId,
     @Default(0) int unreadCount,
+    String? lastMessageType,
   }) = _Conversation;
 
   factory Conversation.fromJson(Map<String, dynamic> json) => _$ConversationFromJson(json);

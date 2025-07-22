@@ -17,6 +17,7 @@ _Conversation _$ConversationFromJson(Map<String, dynamic> json) =>
       lastMessageSenderId: json['last_message_sender_id'] as String?,
       lastMessageSharedPostId: json['last_message_shared_post_id'] as String?,
       unreadCount: (json['unread_count'] as num?)?.toInt() ?? 0,
+      lastMessageType: json['last_message_type'] as String?,
     );
 
 Map<String, dynamic> _$ConversationToJson(_Conversation instance) =>
@@ -29,4 +30,5 @@ Map<String, dynamic> _$ConversationToJson(_Conversation instance) =>
       'last_message_sender_id': instance.lastMessageSenderId,
       'last_message_shared_post_id': instance.lastMessageSharedPostId,
       'unread_count': instance.unreadCount,
+      'last_message_type': instance.lastMessageType,
     };

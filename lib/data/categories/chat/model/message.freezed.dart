@@ -21,6 +21,7 @@ mixin _$Message {
   String? get content;
   Post? get sharedPost;
   String? get sharedPostId;
+  String get messageType;
   @DateTimeConverter()
   DateTime get createdAt;
   @JsonKey(includeToJson: false, includeFromJson: false)
@@ -51,6 +52,8 @@ mixin _$Message {
                 other.sharedPost == sharedPost) &&
             (identical(other.sharedPostId, sharedPostId) ||
                 other.sharedPostId == sharedPostId) &&
+            (identical(other.messageType, messageType) ||
+                other.messageType == messageType) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.status, status) || other.status == status));
@@ -59,11 +62,11 @@ mixin _$Message {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, conversationId, senderId,
-      content, sharedPost, sharedPostId, createdAt, status);
+      content, sharedPost, sharedPostId, messageType, createdAt, status);
 
   @override
   String toString() {
-    return 'Message(id: $id, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPost: $sharedPost, sharedPostId: $sharedPostId, createdAt: $createdAt, status: $status)';
+    return 'Message(id: $id, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPost: $sharedPost, sharedPostId: $sharedPostId, messageType: $messageType, createdAt: $createdAt, status: $status)';
   }
 }
 
@@ -79,6 +82,7 @@ abstract mixin class $MessageCopyWith<$Res> {
       String? content,
       Post? sharedPost,
       String? sharedPostId,
+      String messageType,
       @DateTimeConverter() DateTime createdAt,
       @JsonKey(includeToJson: false, includeFromJson: false)
       MessageStatus status});
@@ -104,6 +108,7 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
     Object? content = freezed,
     Object? sharedPost = freezed,
     Object? sharedPostId = freezed,
+    Object? messageType = null,
     Object? createdAt = null,
     Object? status = null,
   }) {
@@ -132,6 +137,10 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
           ? _self.sharedPostId
           : sharedPostId // ignore: cast_nullable_to_non_nullable
               as String?,
+      messageType: null == messageType
+          ? _self.messageType
+          : messageType // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -169,6 +178,7 @@ class _Message implements Message {
       this.content,
       this.sharedPost,
       this.sharedPostId,
+      this.messageType = 'text',
       @DateTimeConverter() required this.createdAt,
       @JsonKey(includeToJson: false, includeFromJson: false)
       this.status = MessageStatus.sent});
@@ -187,6 +197,9 @@ class _Message implements Message {
   final Post? sharedPost;
   @override
   final String? sharedPostId;
+  @override
+  @JsonKey()
+  final String messageType;
   @override
   @DateTimeConverter()
   final DateTime createdAt;
@@ -224,6 +237,8 @@ class _Message implements Message {
                 other.sharedPost == sharedPost) &&
             (identical(other.sharedPostId, sharedPostId) ||
                 other.sharedPostId == sharedPostId) &&
+            (identical(other.messageType, messageType) ||
+                other.messageType == messageType) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.status, status) || other.status == status));
@@ -232,11 +247,11 @@ class _Message implements Message {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, conversationId, senderId,
-      content, sharedPost, sharedPostId, createdAt, status);
+      content, sharedPost, sharedPostId, messageType, createdAt, status);
 
   @override
   String toString() {
-    return 'Message(id: $id, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPost: $sharedPost, sharedPostId: $sharedPostId, createdAt: $createdAt, status: $status)';
+    return 'Message(id: $id, conversationId: $conversationId, senderId: $senderId, content: $content, sharedPost: $sharedPost, sharedPostId: $sharedPostId, messageType: $messageType, createdAt: $createdAt, status: $status)';
   }
 }
 
@@ -253,6 +268,7 @@ abstract mixin class _$MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String? content,
       Post? sharedPost,
       String? sharedPostId,
+      String messageType,
       @DateTimeConverter() DateTime createdAt,
       @JsonKey(includeToJson: false, includeFromJson: false)
       MessageStatus status});
@@ -279,6 +295,7 @@ class __$MessageCopyWithImpl<$Res> implements _$MessageCopyWith<$Res> {
     Object? content = freezed,
     Object? sharedPost = freezed,
     Object? sharedPostId = freezed,
+    Object? messageType = null,
     Object? createdAt = null,
     Object? status = null,
   }) {
@@ -307,6 +324,10 @@ class __$MessageCopyWithImpl<$Res> implements _$MessageCopyWith<$Res> {
           ? _self.sharedPostId
           : sharedPostId // ignore: cast_nullable_to_non_nullable
               as String?,
+      messageType: null == messageType
+          ? _self.messageType
+          : messageType // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: null == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
