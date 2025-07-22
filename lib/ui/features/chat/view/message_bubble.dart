@@ -71,15 +71,15 @@ class MessageBubble extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: isMe ? primaryGradient : null,
                   color: isMe ? null : theme.colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(18),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                margin: EdgeInsets.symmetric(vertical: 2, horizontal: isMe ? 0 : 8),
                 child: contentColumn, // Đưa nội dung đã xây dựng vào đây
               ),
             ),
           ),
-          if (isMe) _buildStatusIcon(context),
+          //if (isMe) _buildStatusIcon(context),
         ],
       ),
     );
@@ -95,15 +95,18 @@ class MessageBubble extends StatelessWidget {
     // 1. Nếu có object Post -> Hiển thị SmallPost
     if (message.sharedPost != null) {
       return SizedBox(
-        width: 200,
-        child: SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
+        width: 150,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
+        ),
       );
     }
     // 2. Nếu có post ID nhưng chưa có object Post -> ĐANG TẢI
     else if (message.sharedPostId != null && message.sharedPost == null) {
       return Container(
-        width: 200,
-        height: 100, // Chiều cao tạm thời cho placeholder
+        width: 150,
+        height: 200, // Chiều cao tạm thời cho placeholder
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.05),
           borderRadius: BorderRadius.circular(12),
@@ -120,7 +123,7 @@ class MessageBubble extends StatelessWidget {
     // 3. Nếu không có cả hai -> Đã bị xóa
     else {
       return Container(
-        width: 200,
+        width: 150,
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.05),
