@@ -5,6 +5,7 @@ import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -57,10 +58,16 @@ class MessageBubble extends StatelessWidget {
         children: [
           if (!isMe)
             Padding(
-              padding: const EdgeInsets.only(right: 4.0, bottom: 10),
-              child: CachedCircleAvatar(
-                imageUrl: otherUser.photoUrl ?? '',
-                circleRadius: 15,
+              padding: const EdgeInsets.only(right: 4.0),
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  context.push('/post_detail/profile', extra: {'userId': otherUser.userId});
+                },
+                child: CachedCircleAvatar(
+                  imageUrl: otherUser.photoUrl ?? '',
+                  circleRadius: 15,
+                ),
               ),
             ),
           Flexible(
@@ -74,7 +81,7 @@ class MessageBubble extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                margin: EdgeInsets.symmetric(vertical: 2, horizontal: isMe ? 0 : 8),
+                margin: const EdgeInsets.symmetric(vertical: 2),
                 child: contentColumn, // Đưa nội dung đã xây dựng vào đây
               ),
             ),

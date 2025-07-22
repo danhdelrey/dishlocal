@@ -1,3 +1,6 @@
+import 'package:dishlocal/app/theme/app_icons.dart';
+import 'package:dishlocal/app/theme/custom_colors.dart';
+import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
@@ -71,24 +74,53 @@ class _MessageButtonState extends State<MessageButton> {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      style: widget.style,
-      // Vô hiệu hóa nút khi đang loading
-      onPressed: _isLoading ? null : _handleOnPressed,
-      icon: _isLoading
-          // Hiển thị vòng quay tải khi đang loading
-          ? Container(
-              width: 20,
-              height: 20,
-              padding: const EdgeInsets.all(2.0),
-              child: const CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
+    return Material(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: _isLoading ? null : _handleOnPressed,
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: appColorScheme(context).outlineVariant,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _isLoading
+                  // Hiển thị vòng quay tải khi đang loading
+                  ? Container(
+                      width: 18,
+                      height: 18,
+                      padding: const EdgeInsets.all(2.0),
+                      child: CircularProgressIndicator(
+                        color: appColorScheme(context).primary,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : AppIcons.chat3.toSvg(
+                      width: 18,
+                      height: 18,
+                      color: appColorScheme(context).primary,
+                    ),
+              const SizedBox(width: 8),
+              ShaderMask(
+                shaderCallback: (bounds) => primaryGradient.createShader(
+                  Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                ),
+                blendMode: BlendMode.srcIn,
+                child: Text(
+                  "Nhắn tin",
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
               ),
-            )
-          : const Icon(Icons.message_rounded),
-      // Sử dụng child được truyền vào, hoặc mặc định là "Nhắn tin"
-      label: widget.child ?? const Text('Nhắn tin'),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
