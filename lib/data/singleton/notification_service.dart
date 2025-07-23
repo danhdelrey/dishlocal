@@ -60,6 +60,8 @@ class NotificationService {
       // Gửi token lên server để lưu vào bảng profiles
       // Giả sử AppUserRepository có phương thức này
       await _userRepository.updateFcmToken(fcmToken);
+    }else{
+      _log.warning("❗ FCM Token is null. Please check your Firebase configuration.");
     }
 
     _firebaseMessaging.onTokenRefresh.listen((newToken) {
