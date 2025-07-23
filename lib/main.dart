@@ -2,7 +2,9 @@ import 'dart:developer';
 import 'dart:developer' as developer;
 
 import 'package:dishlocal/core/app_environment/app_environment.dart';
+import 'package:dishlocal/data/singleton/notification_service.dart';
 import 'package:dishlocal/ui/global/cubits/cubit/unread_badge_cubit.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -34,10 +36,12 @@ Future<void> main() async {
     anonKey: AppEnvironment.supabaseAnonKey,
   );
 
-  // await Firebase.initializeApp(
-  //   options: AppEnvironment.firebaseOption,
-  // );
+  await Firebase.initializeApp(
+    options: AppEnvironment.firebaseOption,
+  );
   MapboxOptions.setAccessToken(AppEnvironment.mapboxAccessToken);
+
+  await getIt<NotificationService>().initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());

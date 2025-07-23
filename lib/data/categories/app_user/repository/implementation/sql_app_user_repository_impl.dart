@@ -419,4 +419,29 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
       return const Left(AppUserFailure.unknown());
     }
   }
+
+  @override
+  Future<Either<AppUserFailure, void>> updateFcmToken(String token) {
+    // Tái sử dụng helper _handleErrors để xử lý lỗi nhất quán
+    return _handleErrors(() async {
+      _log.info('🔄 Đang cập nhật FCM token...');
+
+      // Kiểm tra xem người dùng đã đăng nhập chưa
+      final userId = getCurrentUserId();
+      if (userId == null) {
+        _log.warning('⚠️ Không thể cập nhật FCM token: người dùng chưa đăng nhập.');
+        // Không cần throw lỗi, chỉ đơn giản là không làm gì cả
+        return;
+      }
+
+      // Gọi RPC 'add_fcm_token' đã tạo trên Supabase
+      await _dbService.rpc(
+        'add_fcm_token',
+        params: {'p_token': token},
+      );
+
+      _log.info('✅ Cập nhật FCM token thành công.');
+    });
+  }
+
 }

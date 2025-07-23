@@ -30,6 +30,7 @@ abstract class AppUser with _$AppUser {
     @Default(0) int followerCount,
     @Default(0) int followingCount,
     bool? isFollowing,
+    List<String>? fcmTokens,
     @Default(false) bool isSetupCompleted,
   }) = _AppUser;
 

@@ -38,6 +38,7 @@ mixin _$ProfileEntity {
 
   /// Thời điểm hồ sơ được cập nhật lần cuối.
   DateTime get updatedAt;
+  List<String>? get fcmTokens;
   bool get isSetupCompleted;
 
   /// Create a copy of ProfileEntity
@@ -70,6 +71,7 @@ mixin _$ProfileEntity {
                 other.followingCount == followingCount) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
+            const DeepCollectionEquality().equals(other.fcmTokens, fcmTokens) &&
             (identical(other.isSetupCompleted, isSetupCompleted) ||
                 other.isSetupCompleted == isSetupCompleted));
   }
@@ -86,11 +88,12 @@ mixin _$ProfileEntity {
       followerCount,
       followingCount,
       updatedAt,
+      const DeepCollectionEquality().hash(fcmTokens),
       isSetupCompleted);
 
   @override
   String toString() {
-    return 'ProfileEntity(id: $id, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, updatedAt: $updatedAt, isSetupCompleted: $isSetupCompleted)';
+    return 'ProfileEntity(id: $id, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, updatedAt: $updatedAt, fcmTokens: $fcmTokens, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -109,6 +112,7 @@ abstract mixin class $ProfileEntityCopyWith<$Res> {
       int followerCount,
       int followingCount,
       DateTime updatedAt,
+      List<String>? fcmTokens,
       bool isSetupCompleted});
 }
 
@@ -133,6 +137,7 @@ class _$ProfileEntityCopyWithImpl<$Res>
     Object? followerCount = null,
     Object? followingCount = null,
     Object? updatedAt = null,
+    Object? fcmTokens = freezed,
     Object? isSetupCompleted = null,
   }) {
     return _then(_self.copyWith(
@@ -168,6 +173,10 @@ class _$ProfileEntityCopyWithImpl<$Res>
           ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      fcmTokens: freezed == fcmTokens
+          ? _self.fcmTokens
+          : fcmTokens // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       isSetupCompleted: null == isSetupCompleted
           ? _self.isSetupCompleted
           : isSetupCompleted // ignore: cast_nullable_to_non_nullable
@@ -189,7 +198,9 @@ class _ProfileEntity implements ProfileEntity {
       this.followerCount = 0,
       this.followingCount = 0,
       required this.updatedAt,
-      this.isSetupCompleted = false});
+      final List<String>? fcmTokens,
+      this.isSetupCompleted = false})
+      : _fcmTokens = fcmTokens;
   factory _ProfileEntity.fromJson(Map<String, dynamic> json) =>
       _$ProfileEntityFromJson(json);
 
@@ -226,6 +237,16 @@ class _ProfileEntity implements ProfileEntity {
   /// Thời điểm hồ sơ được cập nhật lần cuối.
   @override
   final DateTime updatedAt;
+  final List<String>? _fcmTokens;
+  @override
+  List<String>? get fcmTokens {
+    final value = _fcmTokens;
+    if (value == null) return null;
+    if (_fcmTokens is EqualUnmodifiableListView) return _fcmTokens;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey()
   final bool isSetupCompleted;
@@ -264,6 +285,8 @@ class _ProfileEntity implements ProfileEntity {
                 other.followingCount == followingCount) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
+            const DeepCollectionEquality()
+                .equals(other._fcmTokens, _fcmTokens) &&
             (identical(other.isSetupCompleted, isSetupCompleted) ||
                 other.isSetupCompleted == isSetupCompleted));
   }
@@ -280,11 +303,12 @@ class _ProfileEntity implements ProfileEntity {
       followerCount,
       followingCount,
       updatedAt,
+      const DeepCollectionEquality().hash(_fcmTokens),
       isSetupCompleted);
 
   @override
   String toString() {
-    return 'ProfileEntity(id: $id, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, updatedAt: $updatedAt, isSetupCompleted: $isSetupCompleted)';
+    return 'ProfileEntity(id: $id, username: $username, displayName: $displayName, photoUrl: $photoUrl, bio: $bio, followerCount: $followerCount, followingCount: $followingCount, updatedAt: $updatedAt, fcmTokens: $fcmTokens, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -305,6 +329,7 @@ abstract mixin class _$ProfileEntityCopyWith<$Res>
       int followerCount,
       int followingCount,
       DateTime updatedAt,
+      List<String>? fcmTokens,
       bool isSetupCompleted});
 }
 
@@ -329,6 +354,7 @@ class __$ProfileEntityCopyWithImpl<$Res>
     Object? followerCount = null,
     Object? followingCount = null,
     Object? updatedAt = null,
+    Object? fcmTokens = freezed,
     Object? isSetupCompleted = null,
   }) {
     return _then(_ProfileEntity(
@@ -364,6 +390,10 @@ class __$ProfileEntityCopyWithImpl<$Res>
           ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      fcmTokens: freezed == fcmTokens
+          ? _self._fcmTokens
+          : fcmTokens // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       isSetupCompleted: null == isSetupCompleted
           ? _self.isSetupCompleted
           : isSetupCompleted // ignore: cast_nullable_to_non_nullable

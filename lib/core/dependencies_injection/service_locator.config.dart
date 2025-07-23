@@ -99,6 +99,7 @@ import '../../data/services/storage_service/implementation/cloudinary_storage_se
     as _i1046;
 import '../../data/services/storage_service/interface/storage_service.dart'
     as _i1045;
+import '../../data/singleton/notification_service.dart' as _i463;
 import '../../ui/features/account_setup/bloc/account_setup_bloc.dart' as _i658;
 import '../../ui/features/auth/bloc/auth_bloc.dart' as _i511;
 import '../../ui/features/camera/bloc/camera_bloc.dart' as _i889;
@@ -292,6 +293,8 @@ _i174.GetIt init(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i204.DeletePostBloc>(
       () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
+  gh.lazySingleton<_i463.NotificationService>(
+      () => _i463.NotificationService(gh<_i749.AppUserRepository>()));
   gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(
         gh<_i749.AppUserRepository>(),
         gh<_i557.CommentRepository>(),

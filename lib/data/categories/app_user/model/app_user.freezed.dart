@@ -39,6 +39,7 @@ mixin _$AppUser {
   int get followerCount;
   int get followingCount;
   bool? get isFollowing;
+  List<String>? get fcmTokens;
   bool get isSetupCompleted;
 
   /// Create a copy of AppUser
@@ -77,6 +78,7 @@ mixin _$AppUser {
                 other.followingCount == followingCount) &&
             (identical(other.isFollowing, isFollowing) ||
                 other.isFollowing == isFollowing) &&
+            const DeepCollectionEquality().equals(other.fcmTokens, fcmTokens) &&
             (identical(other.isSetupCompleted, isSetupCompleted) ||
                 other.isSetupCompleted == isSetupCompleted));
   }
@@ -97,11 +99,12 @@ mixin _$AppUser {
       followerCount,
       followingCount,
       isFollowing,
+      const DeepCollectionEquality().hash(fcmTokens),
       isSetupCompleted);
 
   @override
   String toString() {
-    return 'AppUser(userId: $userId, email: $email, username: $username, displayName: $displayName, originalDisplayname: $originalDisplayname, photoUrl: $photoUrl, bio: $bio, postCount: $postCount, likeCount: $likeCount, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, isSetupCompleted: $isSetupCompleted)';
+    return 'AppUser(userId: $userId, email: $email, username: $username, displayName: $displayName, originalDisplayname: $originalDisplayname, photoUrl: $photoUrl, bio: $bio, postCount: $postCount, likeCount: $likeCount, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, fcmTokens: $fcmTokens, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -123,6 +126,7 @@ abstract mixin class $AppUserCopyWith<$Res> {
       int followerCount,
       int followingCount,
       bool? isFollowing,
+      List<String>? fcmTokens,
       bool isSetupCompleted});
 }
 
@@ -150,6 +154,7 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
     Object? followerCount = null,
     Object? followingCount = null,
     Object? isFollowing = freezed,
+    Object? fcmTokens = freezed,
     Object? isSetupCompleted = null,
   }) {
     return _then(_self.copyWith(
@@ -201,6 +206,10 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
           ? _self.isFollowing
           : isFollowing // ignore: cast_nullable_to_non_nullable
               as bool?,
+      fcmTokens: freezed == fcmTokens
+          ? _self.fcmTokens
+          : fcmTokens // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       isSetupCompleted: null == isSetupCompleted
           ? _self.isSetupCompleted
           : isSetupCompleted // ignore: cast_nullable_to_non_nullable
@@ -226,7 +235,9 @@ class _AppUser implements AppUser {
       this.followerCount = 0,
       this.followingCount = 0,
       this.isFollowing,
-      this.isSetupCompleted = false});
+      final List<String>? fcmTokens,
+      this.isSetupCompleted = false})
+      : _fcmTokens = fcmTokens;
   factory _AppUser.fromJson(Map<String, dynamic> json) =>
       _$AppUserFromJson(json);
 
@@ -270,6 +281,16 @@ class _AppUser implements AppUser {
   final int followingCount;
   @override
   final bool? isFollowing;
+  final List<String>? _fcmTokens;
+  @override
+  List<String>? get fcmTokens {
+    final value = _fcmTokens;
+    if (value == null) return null;
+    if (_fcmTokens is EqualUnmodifiableListView) return _fcmTokens;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey()
   final bool isSetupCompleted;
@@ -315,6 +336,8 @@ class _AppUser implements AppUser {
                 other.followingCount == followingCount) &&
             (identical(other.isFollowing, isFollowing) ||
                 other.isFollowing == isFollowing) &&
+            const DeepCollectionEquality()
+                .equals(other._fcmTokens, _fcmTokens) &&
             (identical(other.isSetupCompleted, isSetupCompleted) ||
                 other.isSetupCompleted == isSetupCompleted));
   }
@@ -335,11 +358,12 @@ class _AppUser implements AppUser {
       followerCount,
       followingCount,
       isFollowing,
+      const DeepCollectionEquality().hash(_fcmTokens),
       isSetupCompleted);
 
   @override
   String toString() {
-    return 'AppUser(userId: $userId, email: $email, username: $username, displayName: $displayName, originalDisplayname: $originalDisplayname, photoUrl: $photoUrl, bio: $bio, postCount: $postCount, likeCount: $likeCount, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, isSetupCompleted: $isSetupCompleted)';
+    return 'AppUser(userId: $userId, email: $email, username: $username, displayName: $displayName, originalDisplayname: $originalDisplayname, photoUrl: $photoUrl, bio: $bio, postCount: $postCount, likeCount: $likeCount, followerCount: $followerCount, followingCount: $followingCount, isFollowing: $isFollowing, fcmTokens: $fcmTokens, isSetupCompleted: $isSetupCompleted)';
   }
 }
 
@@ -362,6 +386,7 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
       int followerCount,
       int followingCount,
       bool? isFollowing,
+      List<String>? fcmTokens,
       bool isSetupCompleted});
 }
 
@@ -389,6 +414,7 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
     Object? followerCount = null,
     Object? followingCount = null,
     Object? isFollowing = freezed,
+    Object? fcmTokens = freezed,
     Object? isSetupCompleted = null,
   }) {
     return _then(_AppUser(
@@ -440,6 +466,10 @@ class __$AppUserCopyWithImpl<$Res> implements _$AppUserCopyWith<$Res> {
           ? _self.isFollowing
           : isFollowing // ignore: cast_nullable_to_non_nullable
               as bool?,
+      fcmTokens: freezed == fcmTokens
+          ? _self._fcmTokens
+          : fcmTokens // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       isSetupCompleted: null == isSetupCompleted
           ? _self.isSetupCompleted
           : isSetupCompleted // ignore: cast_nullable_to_non_nullable

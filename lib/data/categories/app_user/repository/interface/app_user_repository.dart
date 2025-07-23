@@ -68,4 +68,8 @@ abstract class AppUserRepository {
     int page = 0,
     int hitsPerPage = 20,
   });
+
+  /// Cập nhật hoặc thêm một FCM token mới cho người dùng hiện tại.
+  /// Dùng cho việc đẩy thông báo.
+  Future<Either<AppUserFailure, void>> updateFcmToken(String token);
 }

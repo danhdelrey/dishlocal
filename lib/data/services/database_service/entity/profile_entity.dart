@@ -35,6 +35,8 @@ abstract class ProfileEntity with _$ProfileEntity {
     /// Thời điểm hồ sơ được cập nhật lần cuối.
     required DateTime updatedAt,
 
+    List<String>? fcmTokens,
+
     @Default(false) bool isSetupCompleted,
   }) = _ProfileEntity;
 
