@@ -21,7 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final _log = Logger('AuthBloc');
   final AppUserRepository _userRepository;
   final ChatRepository _chatRepository;
-  final UnreadBadgeCubit _unreadBadgeCubit; 
+  final UnreadBadgeCubit _unreadBadgeCubit;
   StreamSubscription<AppUser?>? _userSubscription;
   final NotificationService _notificationService;
 
@@ -55,7 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // === THAY ĐỔI: Tắt lắng nghe của badge ===
       _unreadBadgeCubit.stopListening();
       _chatRepository.disposeConversationListSubscription();
-      _notificationService.disposeUserLevelSetup();
+
       emit(const AuthState.unauthenticated());
     } else {
       _log.info('🚪 Thông tin về người dùng trong trạng thái hiện tại: ${user.toString()}');
@@ -106,6 +106,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onSignedOut(SignedOut event, Emitter<AuthState> emit) async {
     _log.info('⏳ Bắt đầu quá trình đăng xuất...');
     emit(const AuthState.inProgress());
+
+    await _notificationService.disposeUserLevelSetup();
 
     final result = await _userRepository.signOut();
 
