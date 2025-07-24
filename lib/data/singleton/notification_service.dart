@@ -193,7 +193,6 @@ class NotificationService {
     final String? type = data['type'] as String?;
     _log.info('Handling notification tap with type: $type');
 
-    // Sử dụng context từ GlobalKey để đảm bảo an toàn
     final context = AppRouter.rootNavigatorKey.currentContext;
     if (context == null) {
       _log.severe('Cannot handle notification tap: root navigator context is null.');
@@ -203,9 +202,36 @@ class NotificationService {
     if (type == 'chat') {
       final conversationId = data['conversationId'] as String?;
       final otherUserId = data['otherUserId'] as String?;
+      final otherUserName = data['otherUserName'] as String?;
+      final otherUserPhotoUrl = data['otherUserPhotoUrl'] as String?;
+      // Thêm các trường khác nếu có, ví dụ username
+      final otherUsername = data['otherUsername'] as String?;
+
       if (conversationId != null && otherUserId != null) {
-        final otherUser = AppUser.fromJson(Map<String, dynamic>.from(data)); // Giả sử data chứa đủ trường
+        _log.info('Navigating to chat with conversationId: $conversationId');
+
+        // === THAY ĐỔI QUAN TRỌNG: Tạo AppUser thủ công ===
+        // Thay vì dùng AppUser.fromJson, chúng ta sẽ tự tạo object
+        // để đảm bảo không bị lỗi thiếu trường.
+        final AppUser otherUser = AppUser(
+          userId: otherUserId,
+          displayName: otherUserName,
+          photoUrl: otherUserPhotoUrl,
+          // Cung cấp các giá trị mặc định hợp lý cho các trường bắt buộc
+          username: otherUsername ?? '',
+          email: '', // Không có email trong payload
+          originalDisplayname: otherUserName ?? '',
+          isSetupCompleted: true, // Giả định người dùng đã setup
+          // Các trường số có thể để là 0
+          postCount: 0,
+          likeCount: 0,
+          followerCount: 0,
+          followingCount: 0,
+        );
+
         context.push('/chat', extra: {'conversationId': conversationId, 'otherUser': otherUser});
+      } else {
+        _log.warning('Missing conversationId or otherUserId in chat notification payload.');
       }
     } else if (type == 'new_post') {
       final postId = data['postId'] as String?;
