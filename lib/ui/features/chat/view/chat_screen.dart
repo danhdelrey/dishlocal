@@ -55,7 +55,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     getIt<NotificationService>().clearAllChatNotifications();
 
     getIt<AppRouteObserver>().enterChatScreen(widget.conversationId);
-    
 
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addObserver(this);
@@ -64,7 +63,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     // === BƯỚC 3: SỬ DỤNG THAM CHIẾU _chatBloc ===
-     getIt<AppRouteObserver>().exitChatScreen();
+    getIt<AppRouteObserver>().exitChatScreen();
     _chatBloc.add(const ChatEvent.screenStatusChanged(isActive: false));
     WidgetsBinding.instance.removeObserver(this);
     _scrollController.removeListener(_onScroll);
@@ -263,7 +262,7 @@ class _DateLabel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 30),
       child: Text(
         // Sử dụng intl để format đẹp hơn
-        TimeFormatter.formatDateTimeFull(dateTime.toLocal()),
+        TimeFormatter.formatDateTime(dateTime.toLocal()),
         style: const TextStyle(
           color: Colors.grey,
           fontSize: 12,

@@ -24,6 +24,21 @@ class TimeFormatter {
     final formatter = DateFormat('HH:mm dd/MM/yyyy');
     return formatter.format(time);
   }
+
+  static String formatDateTime(DateTime time) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final timeToFormat = DateTime(time.year, time.month, time.day);
+
+    if (timeToFormat == today) {
+      return DateFormat('HH:mm').format(time);
+    } else if (timeToFormat == yesterday) {
+      return 'Hôm qua ${DateFormat('HH:mm').format(time)}';
+    } else {
+      return DateFormat('HH:mm dd/MM/yyyy').format(time);
+    }
+  }
 }
 
 // Lớp ShortViMessages của bạn giữ nguyên
