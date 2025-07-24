@@ -571,7 +571,10 @@ class _PostDetailViewState extends State<_PostDetailView> {
               ),
             ),
             const Spacer(),
-            ShareButton(postId: post.postId),
+            FadeSlideUp(
+              delay: Duration(milliseconds: 800 + (post.reviews.length * 100)),
+              child: ShareButton(postId: post.postId),
+            ),
           ],
         ),
       ],

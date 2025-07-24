@@ -21,7 +21,6 @@ class _MessageInputState extends State<MessageInput> {
     if (text.isNotEmpty) {
       context.read<ChatBloc>().add(ChatEvent.messageSent(content: text));
       _textController.clear();
-      FocusScope.of(context).unfocus();
     }
   }
 
