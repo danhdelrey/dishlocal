@@ -72,6 +72,7 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
         followingCount: profile.followingCount,
         originalDisplayname: credential.displayName ?? '',
         isSetupCompleted: profile.isSetupCompleted,
+        fcmTokens: profile.fcmTokens,
       );
       _log.info('AppUser được trả về từ _onAuthChanged(AppUserCredential? credential) trong SqlAppUserRepositoryImpl là: ${appUser.toString()}');
       return appUser;
