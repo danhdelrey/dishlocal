@@ -6,37 +6,39 @@ import 'package:timeago/timeago.dart' as timeago;
 class TimeFormatter {
   static String formatTimeAgo(DateTime time) {
     final now = DateTime.now();
+    final localTime = time.toLocal();
 
     // CHỈ CHUYỂN SANG ĐỊNH DẠNG NGÀY/THÁNG KHI THỜI GIAN VƯỢT QUÁ ~1 NĂM
     // Ngưỡng 360 ngày sẽ cho phép timeago hiển thị "1 tháng", "2 tháng", v.v.
-    if (now.difference(time).inDays > 360) {
+    if (now.difference(localTime).inDays > 360) {
       // Nếu đã hơn 1 năm, chắc chắn nó không nằm trong năm hiện tại.
       // Vì vậy, ta luôn hiển thị đầy đủ dd/MM/yyyy.
-      return DateFormat('dd/MM/yyyy').format(time);
+      return DateFormat('dd/MM/yyyy').format(localTime);
     }
 
     // Nếu trong vòng 1 năm, hãy để timeago xử lý.
     // Nó sẽ tự chuyển "45 ngày" thành "1 tháng".
-    return timeago.format(time, locale: 'vi');
+    return timeago.format(localTime, locale: 'vi');
   }
 
   static String formatDateTimeFull(DateTime time) {
     final formatter = DateFormat('HH:mm dd/MM/yyyy');
-    return formatter.format(time);
+    return formatter.format(time.toLocal());
   }
 
   static String formatDateTime(DateTime time) {
+    final localTime = time.toLocal();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = DateTime(now.year, now.month, now.day - 1);
-    final timeToFormat = DateTime(time.year, time.month, time.day);
+    final timeToFormat = DateTime(localTime.year, localTime.month, localTime.day);
 
     if (timeToFormat == today) {
-      return DateFormat('HH:mm').format(time);
+      return DateFormat('HH:mm').format(localTime);
     } else if (timeToFormat == yesterday) {
-      return 'Hôm qua ${DateFormat('HH:mm').format(time)}';
+      return 'Hôm qua ${DateFormat('HH:mm').format(localTime)}';
     } else {
-      return DateFormat('HH:mm dd/MM/yyyy').format(time);
+      return DateFormat('HH:mm dd/MM/yyyy').format(localTime);
     }
   }
 }
