@@ -38,11 +38,13 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
     required T Function(Map<String, dynamic> json) fromJson,
   }) {
     final operationName = 'CREATE in "$tableName"';
+    _log.info('create(): ➡️ $operationName: Bắt đầu tạo bản ghi mới với dữ liệu: $data');
     return _wrapDbOperation(operationName, () async {
       _log.info('create(): ➡️ $operationName: Bắt đầu tạo bản ghi mới.');
       final result = await _supabase.from(tableName).insert(data).select().single();
 
       _log.info('create(): ✅ $operationName: Tạo bản ghi thành công!');
+      _log.info('Nội dung của bản ghi là: $result');
       return fromJson(result);
     });
   }
@@ -208,7 +210,7 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
   Future<void> rpc(String functionName, {Map<String, dynamic>? params}) async {
     await _supabase.rpc(functionName, params: params);
   }
-  
+
   @override
   Future<List<T>> upsert<T>({
     required String tableName,
@@ -218,10 +220,8 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
   }) {
     final operationName = 'UPSERT into "$tableName"';
     return _wrapDbOperation(operationName, () async {
-      _log.info(
-          'upsert(): ➡️ $operationName: Bắt đầu thực hiện upsert ${data.length} bản ghi.');
-      _log.finer(
-          'upsert(): 📝 Payload: $data, OnConflict: ${onConflict.join(',')}');
+      _log.info('upsert(): ➡️ $operationName: Bắt đầu thực hiện upsert ${data.length} bản ghi.');
+      _log.finer('upsert(): 📝 Payload: $data, OnConflict: ${onConflict.join(',')}');
 
       // 1. Thực hiện lệnh upsert và yêu cầu trả về dữ liệu mới.
       final result = await _supabase
@@ -234,12 +234,10 @@ class SqlSupabaseServiceImpl implements SqlDatabaseService {
           )
           .select(); // .select() để lấy lại tất cả các dòng đã được chèn/cập nhật.
 
-      _log.info(
-          'upsert(): ✅ $operationName: Upsert thành công, xử lý ${result.length} bản ghi.');
+      _log.info('upsert(): ✅ $operationName: Upsert thành công, xử lý ${result.length} bản ghi.');
 
       // 2. Chuyển đổi kết quả JSON thành danh sách các đối tượng <T>.
       return result.map((json) => fromJson(json)).toList();
     });
   }
-
 }

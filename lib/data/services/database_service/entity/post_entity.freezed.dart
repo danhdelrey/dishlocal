@@ -65,8 +65,9 @@ mixin _$PostEntity {
   List<PostReviewEntity> get reviews;
 
   /// Thời điểm bài post được tạo.
+  @JsonKey(includeToJson: false)
   @DateTimeConverter()
-  DateTime get createdAt;
+  DateTime? get createdAt;
 
   /// Create a copy of PostEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -166,7 +167,7 @@ abstract mixin class $PostEntityCopyWith<$Res> {
       int commentCount,
       @FoodCategoryConverter() FoodCategory? foodCategory,
       @JsonKey(includeToJson: false) List<PostReviewEntity> reviews,
-      @DateTimeConverter() DateTime createdAt});
+      @JsonKey(includeToJson: false) @DateTimeConverter() DateTime? createdAt});
 }
 
 /// @nodoc
@@ -197,7 +198,7 @@ class _$PostEntityCopyWithImpl<$Res> implements $PostEntityCopyWith<$Res> {
     Object? commentCount = null,
     Object? foodCategory = freezed,
     Object? reviews = null,
-    Object? createdAt = null,
+    Object? createdAt = freezed,
   }) {
     return _then(_self.copyWith(
       id: null == id
@@ -264,10 +265,10 @@ class _$PostEntityCopyWithImpl<$Res> implements $PostEntityCopyWith<$Res> {
           ? _self.reviews
           : reviews // ignore: cast_nullable_to_non_nullable
               as List<PostReviewEntity>,
-      createdAt: null == createdAt
+      createdAt: freezed == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
     ));
   }
 }
@@ -294,7 +295,7 @@ class _PostEntity implements PostEntity {
       @FoodCategoryConverter() this.foodCategory,
       @JsonKey(includeToJson: false)
       final List<PostReviewEntity> reviews = const [],
-      @DateTimeConverter() required this.createdAt})
+      @JsonKey(includeToJson: false) @DateTimeConverter() this.createdAt})
       : _reviews = reviews;
   factory _PostEntity.fromJson(Map<String, dynamic> json) =>
       _$PostEntityFromJson(json);
@@ -379,8 +380,9 @@ class _PostEntity implements PostEntity {
 
   /// Thời điểm bài post được tạo.
   @override
+  @JsonKey(includeToJson: false)
   @DateTimeConverter()
-  final DateTime createdAt;
+  final DateTime? createdAt;
 
   /// Create a copy of PostEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -487,7 +489,7 @@ abstract mixin class _$PostEntityCopyWith<$Res>
       int commentCount,
       @FoodCategoryConverter() FoodCategory? foodCategory,
       @JsonKey(includeToJson: false) List<PostReviewEntity> reviews,
-      @DateTimeConverter() DateTime createdAt});
+      @JsonKey(includeToJson: false) @DateTimeConverter() DateTime? createdAt});
 }
 
 /// @nodoc
@@ -518,7 +520,7 @@ class __$PostEntityCopyWithImpl<$Res> implements _$PostEntityCopyWith<$Res> {
     Object? commentCount = null,
     Object? foodCategory = freezed,
     Object? reviews = null,
-    Object? createdAt = null,
+    Object? createdAt = freezed,
   }) {
     return _then(_PostEntity(
       id: null == id
@@ -585,10 +587,10 @@ class __$PostEntityCopyWithImpl<$Res> implements _$PostEntityCopyWith<$Res> {
           ? _self._reviews
           : reviews // ignore: cast_nullable_to_non_nullable
               as List<PostReviewEntity>,
-      createdAt: null == createdAt
+      createdAt: freezed == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
     ));
   }
 }

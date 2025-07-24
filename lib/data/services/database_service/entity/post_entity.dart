@@ -65,7 +65,7 @@ abstract class PostEntity with _$PostEntity {
     @JsonKey(includeToJson: false) @Default([]) List<PostReviewEntity> reviews,
 
     /// Thời điểm bài post được tạo.
-    @DateTimeConverter() required DateTime createdAt,
+    @JsonKey(includeToJson: false) @DateTimeConverter() DateTime? createdAt,
   }) = _PostEntity;
 
   factory PostEntity.fromJson(Map<String, dynamic> json) => _$PostEntityFromJson(json);

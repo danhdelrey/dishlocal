@@ -132,6 +132,12 @@ class RemotePostRepositorySqlImpl implements PostRepository {
       );
       _log.fine('✅ Tải ảnh thành công. URL: $imageUrl');
 
+      final dateTime = post.createdAt;
+      _log.info('--- FLUTTER LOG ---');
+      _log.info('1. Thời gian được tạo tại Client (Local Time): $dateTime');
+      _log.info('2. Thời gian sẽ được gửi đi (UTC Time): ${dateTime.toUtc().toIso8601String()}');
+      _log.info('---------------------');
+
       // --- BƯỚC 2: TẠO BẢN GHI CHÍNH TRONG BẢNG "posts" ---
       final postEntity = PostEntity(
         id: post.postId,
@@ -145,7 +151,6 @@ class RemotePostRepositorySqlImpl implements PostRepository {
         longitude: post.address?.longitude,
         price: post.price,
         insight: post.insight,
-        createdAt: post.createdAt,
         foodCategory: post.foodCategory,
       );
 
