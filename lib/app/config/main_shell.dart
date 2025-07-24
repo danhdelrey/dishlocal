@@ -79,7 +79,7 @@ class MainShell extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
               icon: AppIcons.home41.toSvg(
-                color: appColorScheme(context).onSurface,
+                color: appColorScheme(context).outline,
               ),
               index: 0,
             ),
@@ -91,7 +91,7 @@ class MainShell extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
               icon: AppIcons.rocketLine.toSvg(
-                color: appColorScheme(context).onSurface,
+                color: appColorScheme(context).outline,
               ),
               index: 1,
             ),
@@ -125,7 +125,7 @@ class MainShell extends StatelessWidget {
                               color: Theme.of(context).colorScheme.primary,
                             )
                           : AppIcons.chat3.toSvg(
-                              color: appColorScheme(context).onSurface,
+                              color: appColorScheme(context).outline,
                             ),
                     ),
                   ),
@@ -140,7 +140,7 @@ class MainShell extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
               icon: AppIcons.user31.toSvg(
-                color: appColorScheme(context).onSurface,
+                color: appColorScheme(context).outline,
               ),
               index: 3,
             ),
