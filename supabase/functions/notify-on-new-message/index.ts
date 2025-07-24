@@ -7,10 +7,23 @@ import { create, getNumericDate, type Header } from "djwt";
 async function importKey(pem: string) {
   const pemHeader = "-----BEGIN PRIVATE KEY-----";
   const pemFooter = "-----END PRIVATE KEY-----";
-  const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length).replace(/\s/g, '');
+  
+  // === THAY ĐỔI QUAN TRỌNG ===
+  // 1. Thay thế các chuỗi "\\n" thành "" để loại bỏ các ký tự escape
+  // 2. Sau đó, thay thế tất cả các khoảng trắng còn lại thành ""
+  const pemContents = pem
+    .replace(pemHeader, "")
+    .replace(pemFooter, "")
+    .replace(/\\n/g, "") // Loại bỏ các ký tự xuống dòng đã bị escape
+    .replace(/\s/g, "");  // Loại bỏ các khoảng trắng/xuống dòng còn lại
+
+  // Giải mã Base64
   const binaryDer = atob(pemContents);
+  
+  // Chuyển đổi thành Uint8Array
   const keyData = new Uint8Array(binaryDer.length).map((_, i) => binaryDer.charCodeAt(i));
   
+  // Import khóa
   return await crypto.subtle.importKey(
     "pkcs8",
     keyData,

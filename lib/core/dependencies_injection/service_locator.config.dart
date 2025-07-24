@@ -264,8 +264,6 @@ _i174.GetIt init(
             gh<_i780.AuthenticationService>(),
             gh<_i692.ModerationService>(instanceName: 'hive.ai'),
           ));
-  gh.factory<_i376.ConversationListBloc>(
-      () => _i376.ConversationListBloc(gh<_i540.UnreadBadgeCubit>()));
   gh.factory<_i976.ChatBloc>(() => _i976.ChatBloc(
         gh<_i720.ChatRepository>(),
         gh<_i749.AppUserRepository>(),
@@ -298,6 +296,10 @@ _i174.GetIt init(
   gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(
         gh<_i749.AppUserRepository>(),
         gh<_i557.CommentRepository>(),
+      ));
+  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
+        gh<_i540.UnreadBadgeCubit>(),
+        gh<_i463.NotificationService>(),
       ));
   return getIt;
 }
