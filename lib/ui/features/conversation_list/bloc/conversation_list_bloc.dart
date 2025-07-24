@@ -38,7 +38,7 @@ class ConversationListBloc extends Cubit<ConversationListState> {
       emit(ConversationListState.loaded(initialBadgeState.conversations));
     }
 
-    await _notificationService.initialize();
+    await _notificationService.requestPermission();
   }
 
   // Khi người dùng pull-to-refresh

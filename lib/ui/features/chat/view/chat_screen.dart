@@ -5,6 +5,7 @@ import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
+import 'package:dishlocal/data/singleton/app_route_observer.dart';
 import 'package:dishlocal/ui/features/chat/bloc/chat_bloc.dart';
 import 'package:dishlocal/ui/features/chat/view/message_bubble.dart';
 import 'package:dishlocal/ui/features/chat/view/message_input.dart';
@@ -50,6 +51,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       ));
     _chatFocusNode = FocusNode();
 
+    getIt<AppRouteObserver>().enterChatScreen(widget.conversationId);
+
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addObserver(this);
   }
@@ -57,6 +60,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     // === BƯỚC 3: SỬ DỤNG THAM CHIẾU _chatBloc ===
+     getIt<AppRouteObserver>().exitChatScreen();
     _chatBloc.add(const ChatEvent.screenStatusChanged(isActive: false));
     WidgetsBinding.instance.removeObserver(this);
     _scrollController.removeListener(_onScroll);

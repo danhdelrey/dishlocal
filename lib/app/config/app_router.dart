@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:dishlocal/app/config/main_shell.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/address/model/address.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/direction/model/location_data.dart';
 import 'package:dishlocal/data/categories/post/model/filter_sort_model/filter_sort_params.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
+import 'package:dishlocal/data/singleton/app_route_observer.dart';
 import 'package:dishlocal/ui/features/auth/bloc/auth_bloc.dart';
 import 'package:dishlocal/ui/features/auth/view/login_page.dart';
 import 'package:dishlocal/ui/features/camera/view/camera_page.dart';
@@ -22,17 +24,35 @@ import 'package:dishlocal/ui/features/account_setup/view/account_setup_page.dart
 import 'package:dishlocal/ui/features/view_post/view/post_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:uuid/uuid.dart';
+
+@module
+abstract class ThirdPartyModule {
+  // === ĐĂNG KÝ GOROUTER Ở ĐÂY ===
+
+  // Sử dụng @lazySingleton để đảm bảo chỉ có một instance của GoRouter
+  // trong toàn bộ ứng dụng.
+  @lazySingleton
+  GoRouter get router {
+    // getIt<AuthBloc>() sẽ lấy instance AuthBloc đã được đăng ký trước đó.
+    final authBloc = getIt<AuthBloc>();
+    // Tạo và trả về instance GoRouter
+    return AppRouter(authBloc).router;
+  }
+}
 
 class AppRouter {
   final AuthBloc authBloc;
   AppRouter(this.authBloc);
 
   final _log = Logger('AppRouter');
+  static final rootNavigatorKey = GlobalKey<NavigatorState>();
 
   late final router = GoRouter(
     initialLocation: '/home',
+    navigatorKey: rootNavigatorKey,
     refreshListenable: GoRouterRefreshStream(authBloc.stream), // Lắng nghe BLoC
     redirect: _redirect,
     routes: [
@@ -144,6 +164,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/chat',
+        parentNavigatorKey: rootNavigatorKey, 
         builder: (context, state) {
           final extraMap = state.extra as Map<String, dynamic>;
           final String conversationId = extraMap['conversationId'];

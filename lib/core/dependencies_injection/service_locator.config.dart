@@ -13,9 +13,11 @@ import 'package:cloud_firestore/cloud_firestore.dart' as _i974;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:firebase_storage/firebase_storage.dart' as _i457;
 import 'package:get_it/get_it.dart' as _i174;
+import 'package:go_router/go_router.dart' as _i583;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../app/config/app_router.dart' as _i584;
 import '../../data/categories/address/repository/implementation/address_repository_impl.dart'
     as _i437;
 import '../../data/categories/address/repository/interface/address_repository.dart'
@@ -99,6 +101,7 @@ import '../../data/services/storage_service/implementation/cloudinary_storage_se
     as _i1046;
 import '../../data/services/storage_service/interface/storage_service.dart'
     as _i1045;
+import '../../data/singleton/app_route_observer.dart' as _i251;
 import '../../data/singleton/notification_service.dart' as _i463;
 import '../../ui/features/account_setup/bloc/account_setup_bloc.dart' as _i658;
 import '../../ui/features/auth/bloc/auth_bloc.dart' as _i511;
@@ -144,12 +147,14 @@ _i174.GetIt init(
     environment,
     environmentFilter,
   );
+  final thirdPartyModule = _$ThirdPartyModule();
   final firebaseInjectableModule = _$FirebaseInjectableModule();
   gh.factory<_i258.GeolocatorWrapper>(() => _i258.GeolocatorWrapper());
   gh.factory<_i441.FilterSortBloc>(() => _i441.FilterSortBloc());
   gh.factory<_i994.ReviewBloc>(() => _i994.ReviewBloc());
   gh.factory<_i755.SelectFoodCategoryBloc>(
       () => _i755.SelectFoodCategoryBloc());
+  gh.lazySingleton<_i583.GoRouter>(() => thirdPartyModule.router);
   gh.lazySingleton<_i116.GoogleSignIn>(
       () => firebaseInjectableModule.googleSignIn);
   gh.lazySingleton<_i59.FirebaseAuth>(
@@ -162,6 +167,7 @@ _i174.GetIt init(
   gh.lazySingleton<_i660.NumberFormatter>(() => _i660.NumberFormatter());
   gh.lazySingleton<_i537.TimeFormatter>(() => _i537.TimeFormatter());
   gh.lazySingleton<_i429.ChatEventBus>(() => _i429.ChatEventBus());
+  gh.lazySingleton<_i251.AppRouteObserver>(() => _i251.AppRouteObserver());
   gh.lazySingleton<_i692.ModerationService>(
     () => _i709.HiveAiModerationServiceImpl(),
     instanceName: 'hive.ai',
@@ -247,6 +253,15 @@ _i174.GetIt init(
       ));
   gh.factory<_i679.SuggestionSearchBloc>(
       () => _i679.SuggestionSearchBloc(gh<_i310.SearchService>()));
+  gh.lazySingleton<_i463.NotificationService>(() => _i463.NotificationService(
+        gh<_i749.AppUserRepository>(),
+        gh<_i251.AppRouteObserver>(),
+        gh<_i583.GoRouter>(),
+      ));
+  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
+        gh<_i540.UnreadBadgeCubit>(),
+        gh<_i463.NotificationService>(),
+      ));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,
@@ -291,17 +306,13 @@ _i174.GetIt init(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i204.DeletePostBloc>(
       () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
-  gh.lazySingleton<_i463.NotificationService>(
-      () => _i463.NotificationService(gh<_i749.AppUserRepository>()));
   gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(
         gh<_i749.AppUserRepository>(),
         gh<_i557.CommentRepository>(),
       ));
-  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
-        gh<_i540.UnreadBadgeCubit>(),
-        gh<_i463.NotificationService>(),
-      ));
   return getIt;
 }
+
+class _$ThirdPartyModule extends _i584.ThirdPartyModule {}
 
 class _$FirebaseInjectableModule extends _i965.FirebaseInjectableModule {}

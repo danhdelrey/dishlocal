@@ -41,6 +41,7 @@ Future<void> main() async {
   );
   MapboxOptions.setAccessToken(AppEnvironment.mapboxAccessToken);
 
+  await getIt<NotificationService>().initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());

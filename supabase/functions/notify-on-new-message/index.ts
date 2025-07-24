@@ -102,9 +102,30 @@ serve(async (req) => {
     const fcmPayloads = fcmTokens.map((token: string) => ({
       message: {
         token: token,
-        notification: { title: notificationTitle, body: notificationBody },
-        android: { notification: { sound: 'default' } },
-        apns: { payload: { aps: { sound: 'default' } } },
+        notification: {
+          title: notificationTitle,
+          body: notificationBody,
+        },
+        // Cấu hình riêng cho Android để hiển thị avatar
+        android: {
+          notification: {
+            sound: 'default',
+            image: senderProfile.photo_url, // <-- Gửi URL avatar ở đây
+          }
+        },
+        // Cấu hình riêng cho Apple (APNS) để hiển thị avatar
+        apns: {
+          payload: {
+            aps: {
+              sound: 'default',
+              'mutable-content': 1, // <-- Bật nội dung có thể thay đổi
+            }
+          },
+          fcm_options: {
+            image: senderProfile.photo_url, // <-- Gửi URL avatar ở đây
+          }
+        },
+        // Dữ liệu không đổi
         data: {
           type: 'chat',
           conversationId: message.conversation_id,
