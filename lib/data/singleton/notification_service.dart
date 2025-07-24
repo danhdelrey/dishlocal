@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:developer';
 
 import 'package:dishlocal/app/config/app_router.dart';
 import 'package:dishlocal/core/app_environment/app_environment.dart';
@@ -11,8 +13,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
-import 'package:logging/logging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 
 @pragma('vm:entry-point')
@@ -20,9 +22,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(
     options: AppEnvironment.firebaseOption,
   );
-  Logger("_firebaseMessagingBackgroundHandler").info("Handling a background message: ${message.messageId}");
+  // Sử dụng log thay vì print để có định dạng tốt hơn
+  log("Handling a background message: ${message.messageId}", name: "_firebaseMessagingBackgroundHandler");
 }
-
 
 @lazySingleton
 class NotificationService {
@@ -31,57 +33,91 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
   final AppUserRepository _userRepository;
   final AppRouteObserver _routeObserver;
-  final GoRouter _router;
 
-  NotificationService(this._userRepository, this._routeObserver, this._router);
+  // Giữ lại các subscription để có thể hủy khi cần
+  StreamSubscription? _onMessageSubscription;
+  StreamSubscription? _onMessageOpenedAppSubscription;
+  StreamSubscription? _onTokenRefreshSubscription;
 
-  /// Khởi tạo toàn bộ dịch vụ thông báo.
-  /// Gọi hàm này trong main.dart sau khi khởi tạo Firebase.
-  Future<void> initialize() async {
-    // 1. Yêu cầu quyền
+  NotificationService(this._userRepository, this._routeObserver);
 
-    // 2. Lấy và quản lý FCM token
-    await _handleFcmToken();
+  // === CÁC PHƯƠNG THỨC QUẢN LÝ VÒNG ĐỜI ===
 
-    // 3. Thiết lập thông báo Local (cho Android khi app đang mở)
+  /// 1. Khởi tạo các thành phần chỉ cần chạy một lần khi app khởi động.
+  /// Gọi hàm này trong main.dart.
+  Future<void> initAppLevelSetup() async {
+    _log.info('🔔 Initializing App-Level Notification Setup...');
+    // Lắng nghe thông báo ở background trước tiên
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // Thiết lập kênh thông báo local
     await _setupLocalNotifications();
+  }
 
-    // 4. Lắng nghe các sự kiện thông báo
+  /// 2. Khởi tạo các thành phần phụ thuộc vào người dùng (sau khi đăng nhập).
+  /// Sẽ được gọi bởi AuthBloc.
+  Future<void> initUserLevelSetup() async {
+    _log.info('🚀 Initializing User-Level Notification Setup...');
+    // Yêu cầu quyền
+    await _firebaseMessaging.requestPermission();
+    // Lấy và cập nhật FCM token
+    await _handleFcmToken();
+    // Thiết lập các listener cho trạng thái foreground và background
     _setupMessageListeners();
   }
 
-  /// Yêu cầu quyền gửi thông báo từ người dùng.
-  Future<void> requestPermission() async {
-    await _firebaseMessaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-  }
+  /// 3. Dọn dẹp các tài nguyên liên quan đến người dùng khi đăng xuất.
+  /// Sẽ được gọi bởi AuthBloc.
+  Future<void> disposeUserLevelSetup() async {
+    _log.info('🧹 Disposing User-Level Notification Setup...');
+    // Hủy tất cả các listener
+    await _onMessageSubscription?.cancel();
+    await _onMessageOpenedAppSubscription?.cancel();
+    await _onTokenRefreshSubscription?.cancel();
+    _onMessageSubscription = null;
+    _onMessageOpenedAppSubscription = null;
+    _onTokenRefreshSubscription = null;
 
-  /// Lấy FCM token và gửi lên server nếu cần.
-  Future<void> _handleFcmToken() async {
+    // (Tùy chọn) Xóa token trên server để không gửi thông báo đến thiết bị đã đăng xuất
     final fcmToken = await _firebaseMessaging.getToken();
-    if (fcmToken != null) {
-      _log.info("📱 FCM Token: $fcmToken");
-      // Gửi token lên server để lưu vào bảng profiles
-      // Giả sử AppUserRepository có phương thức này
-      await _userRepository.updateFcmToken(fcmToken);
-    }else{
-      _log.warning("❗ FCM Token is null. Please check your Firebase configuration.");
-    }
-
-    _firebaseMessaging.onTokenRefresh.listen((newToken) {
-      _log.info("🔄 FCM Token Refreshed: $newToken");
-      _userRepository.updateFcmToken(newToken);
-    });
+    if (fcmToken != null) await _userRepository.removeFcmToken(fcmToken);
   }
 
-  /// Thiết lập cho thông báo local (hiển thị khi app đang chạy ở foreground).
+  /// 4. Xử lý thông báo đã mở ứng dụng từ trạng thái bị đóng.
+  /// Gọi trong initState của widget App chính.
+  Future<void> handleInitialMessage() async {
+    final RemoteMessage? initialMessage = await _firebaseMessaging.getInitialMessage();
+    if (initialMessage != null) {
+      _log.info('📱 Handling initial message from terminated state: ${initialMessage.data}');
+      // Thêm độ trễ nhỏ để đảm bảo GoRouter đã sẵn sàng
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _handleNotificationTap(initialMessage.data);
+      });
+    }
+  }
+
+  // === CÁC PHƯƠNG THỨC PRIVATE HELPER ===
+
+  Future<void> _handleFcmToken() async {
+    try {
+      final fcmToken = await _firebaseMessaging.getToken();
+      if (fcmToken != null) {
+        _log.info("📱 FCM Token: $fcmToken");
+        await _userRepository.updateFcmToken(fcmToken);
+      } else {
+        _log.warning("❗ FCM Token is null.");
+      }
+
+      // Hủy listener cũ trước khi tạo mới
+      await _onTokenRefreshSubscription?.cancel();
+      _onTokenRefreshSubscription = _firebaseMessaging.onTokenRefresh.listen((newToken) {
+        _log.info("🔄 FCM Token Refreshed: $newToken");
+        _userRepository.updateFcmToken(newToken);
+      });
+    } catch (e) {
+      _log.severe("Error handling FCM token: $e");
+    }
+  }
+
   Future<void> _setupLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
@@ -89,59 +125,42 @@ class NotificationService {
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         if (response.payload != null && response.payload!.isNotEmpty) {
-          // Thêm kiểm tra isNotEmpty
           try {
-            // === THAY ĐỔI QUAN TRỌNG ===
-            // Bây giờ chúng ta có thể decode trực tiếp
             final Map<String, dynamic> data = json.decode(response.payload!);
             _handleNotificationTap(data);
           } catch (e) {
-            _log.info("Error parsing local notification payload: $e");
-            _log.info("Payload content: ${response.payload}"); // In ra payload để gỡ lỗi
+            _log.severe("Error parsing local notification payload: $e", response.payload);
           }
         }
       },
     );
 
-    // Tạo một Notification Channel cho Android
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'High Importance Notifications', // title
+      'high_importance_channel',
+      'High Importance Notifications',
       description: 'This channel is used for important notifications.',
       importance: Importance.max,
     );
     await _localNotifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
   }
 
-  Future<String> _downloadAndSaveFile(String url, String fileName) async {
-    final Directory directory = await getTemporaryDirectory();
-    final String filePath = '${directory.path}/$fileName';
-    final http.Response response = await http.get(Uri.parse(url));
-    final File file = File(filePath);
-    await file.writeAsBytes(response.bodyBytes);
-    return filePath;
-  }
-
-  /// Lắng nghe các loại thông báo khác nhau từ FCM.
   void _setupMessageListeners() {
-    // 1. Khi ứng dụng đang mở (Foreground)
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      // <-- Thêm async
-      _log.info('🔔 Message received in foreground: ${message.data}');
+    // Hủy các listener cũ để đảm bảo không bị nhân đôi
+    _onMessageSubscription?.cancel();
+    _onMessageOpenedAppSubscription?.cancel();
+
+    _onMessageSubscription = FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      _log.info('Foreground message received: ${message.notification?.title}');
 
       final conversationId = message.data['conversationId'];
-
-      // === YÊU CẦU: Nếu đang trong route chat thì không hiện thông báo ===
       if (conversationId != null && _routeObserver.isInsideChatScreen(conversationId)) {
-        _log.info("User is already in the target chat screen. Suppressing notification.");
-        return; // Không làm gì cả
+        _log.info("User is in the target chat screen. Suppressing notification.");
+        return;
       }
 
       final notification = message.notification;
       if (notification != null) {
-        // === YÊU CẦU: Hiển thị avatar của người gửi ===
         String? largeIconPath;
-        // Lấy URL ảnh từ payload của Android/APNS
         final imageUrl = message.notification?.android?.imageUrl ?? message.notification?.apple?.imageUrl;
         if (imageUrl != null) {
           largeIconPath = await _downloadAndSaveFile(imageUrl, 'largeIcon');
@@ -156,96 +175,57 @@ class NotificationService {
               'high_importance_channel',
               'High Importance Notifications',
               icon: '@mipmap/ic_launcher',
-              // Thêm avatar vào đây
               largeIcon: largeIconPath != null ? FilePathAndroidBitmap(largeIconPath) : null,
             ),
           ),
-          payload: json.encode(message.data), // Gửi data dưới dạng chuỗi JSON
+          payload: json.encode(message.data),
         );
       }
     });
 
-
-    // 2. Khi người dùng nhấn vào thông báo (App ở background nhưng chưa bị đóng)
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _log.info('🔔 Notification tapped (app in background): ${message.data}');
+    _onMessageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _log.info('Notification tapped (app in background): ${message.data}');
       _handleNotificationTap(message.data);
     });
-
-    // 3. Xử lý thông báo đã mở ứng dụng từ trạng thái bị đóng (Terminated)
-    _firebaseMessaging.getInitialMessage().then((RemoteMessage? message) {
-      if (message != null) {
-        _log.info('🔔 Notification tapped (app was terminated): ${message.data}');
-        _handleNotificationTap(message.data);
-      }
-    });
-
-    // 4. Lắng nghe thông báo ở background
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
   void _handleNotificationTap(Map<String, dynamic> data) {
-    // Ép kiểu an toàn
     final String? type = data['type'] as String?;
     _log.info('Handling notification tap with type: $type');
 
-    // Xử lý thông báo CHAT
+    // Sử dụng context từ GlobalKey để đảm bảo an toàn
+    final context = AppRouter.rootNavigatorKey.currentContext;
+    if (context == null) {
+      _log.severe('Cannot handle notification tap: root navigator context is null.');
+      return;
+    }
+
     if (type == 'chat') {
-      final String? conversationId = data['conversationId'] as String?;
-      final String? otherUserId = data['otherUserId'] as String?;
-      final String? otherUserName = data['otherUserName'] as String?;
-      final String? otherUserPhotoUrl = data['otherUserPhotoUrl'] as String?;
-
+      final conversationId = data['conversationId'] as String?;
+      final otherUserId = data['otherUserId'] as String?;
       if (conversationId != null && otherUserId != null) {
-        _log.info('Navigating to chat with conversationId: $conversationId');
-
-        // Tạo một object AppUser từ dữ liệu trong thông báo.
-        // Cung cấp các giá trị mặc định cho các trường không có trong payload.
-        final AppUser otherUser = AppUser(
-          userId: otherUserId,
-          displayName: otherUserName,
-          photoUrl: otherUserPhotoUrl,
-          username: data['otherUsername'] as String? ?? '', // Giả sử có thể có username
-          isSetupCompleted: true, // Giả định người dùng đã hoàn tất setup
-        );
-
-        final context = AppRouter.rootNavigatorKey.currentContext;
-        if (context != null) {
-          context.push(
-            '/chat',
-            extra: {
-              'conversationId': conversationId,
-              'otherUser': otherUser,
-            },
-          );
-        } else {
-          _log.info('Error: rootNavigatorKey.currentContext is null. Cannot navigate.');
-        }
-      } else {
-        _log.info('Warning: Missing conversationId or otherUserId in chat notification payload.');
+        final otherUser = AppUser.fromJson(Map<String, dynamic>.from(data)); // Giả sử data chứa đủ trường
+        context.push('/chat', extra: {'conversationId': conversationId, 'otherUser': otherUser});
       }
+    } else if (type == 'new_post') {
+      final postId = data['postId'] as String?;
+      if (postId != null) context.push('/post/$postId');
+    } else {
+      context.go('/home');
     }
+  }
 
-    // Xử lý thông báo BÀI VIẾT (trong tương lai)
-    else if (type == 'new_post') {
-      final String? postId = data['postId'] as String?;
+  Future<String> _downloadAndSaveFile(String url, String fileName) async {
+    final Directory directory = await getTemporaryDirectory();
+    final String filePath = '${directory.path}/$fileName';
+    final http.Response response = await http.get(Uri.parse(url));
+    final File file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+    return filePath;
+  }
 
-      if (postId != null) {
-        _log.info('Navigating to post with postId: $postId');
-
-        // Điều hướng đến màn hình chi tiết bài viết.
-        // Giả sử route của bạn có dạng /post/:postId
-        
-      } else {
-        _log.info('Warning: Missing postId in new_post notification payload.');
-      }
-    }
-
-    // Xử lý các loại thông báo khác
-    else {
-      _log.info('Warning: Received notification tap with unknown or missing type: $type');
-      // Có thể điều hướng về trang chủ như một giải pháp dự phòng
-      _router.go('/home');
-    }
+  void clearAllChatNotifications() {
+    _log.info("Clearing all app notifications...");
+    _localNotifications.cancelAll();
   }
 }

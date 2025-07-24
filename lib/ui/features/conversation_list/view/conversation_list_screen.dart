@@ -1,5 +1,6 @@
 import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
+import 'package:dishlocal/data/singleton/notification_service.dart';
 import 'package:dishlocal/ui/features/conversation_list/bloc/conversation_list_bloc.dart';
 import 'package:dishlocal/ui/features/conversation_list/view/conversation_tile.dart';
 import 'package:dishlocal/ui/widgets/guard_widgets/connectivity_and_location_guard.dart';
@@ -17,9 +18,20 @@ class ConversationListScreen extends StatelessWidget {
   }
 }
 
-class _ConversationListScreenContent extends StatelessWidget {
+class _ConversationListScreenContent extends StatefulWidget {
   const _ConversationListScreenContent({super.key});
 
+  @override
+  State<_ConversationListScreenContent> createState() => _ConversationListScreenContentState();
+}
+
+class _ConversationListScreenContentState extends State<_ConversationListScreenContent> {
+  @override
+  void initState() {
+    super.initState();
+    
+  }
+  
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

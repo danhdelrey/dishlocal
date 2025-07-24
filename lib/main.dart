@@ -41,7 +41,7 @@ Future<void> main() async {
   );
   MapboxOptions.setAccessToken(AppEnvironment.mapboxAccessToken);
 
-  await getIt<NotificationService>().initialize();
+  await getIt<NotificationService>().initAppLevelSetup();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(const MyApp());
@@ -69,6 +69,7 @@ class _MyAppState extends State<MyApp> {
       _checkForUpdate();
       _isUpdateChecked = true;
     }
+    getIt<NotificationService>().handleInitialMessage();
   }
 
   // Hàm kiểm tra và kích hoạt cập nhật

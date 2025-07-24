@@ -72,4 +72,7 @@ abstract class AppUserRepository {
   /// Cập nhật hoặc thêm một FCM token mới cho người dùng hiện tại.
   /// Dùng cho việc đẩy thông báo.
   Future<Either<AppUserFailure, void>> updateFcmToken(String token);
+
+  /// Xóa FCM token của người dùng hiện tại.
+  Future<Either<AppUserFailure, void>> removeFcmToken(String token);
 }

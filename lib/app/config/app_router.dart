@@ -229,7 +229,7 @@ class AppRouter {
     final currentLocation = state.matchedLocation;
 
     // Các đường dẫn được bảo vệ (yêu cầu đăng nhập)
-    final protectedRoutes = ['/home', '/profile', '/camera', '/edit_post', '/explore', '/conversation_list'];
+    final protectedRoutes = ['/home', '/profile', '/camera', '/edit_post', '/explore', '/conversation_list', '/chat'];
 
     _log.info('🔁 [REDIRECT] Đang xử lý điều hướng...');
     _log.info('📍 Vị trí hiện tại: $currentLocation');

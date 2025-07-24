@@ -5,6 +5,7 @@ import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/failure/app_user_failure.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
+import 'package:dishlocal/data/singleton/notification_service.dart';
 import 'package:dishlocal/ui/global/cubits/cubit/unread_badge_cubit.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -22,8 +23,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ChatRepository _chatRepository;
   final UnreadBadgeCubit _unreadBadgeCubit; 
   StreamSubscription<AppUser?>? _userSubscription;
+  final NotificationService _notificationService;
 
-  AuthBloc(this._userRepository, this._chatRepository, this._unreadBadgeCubit) : super(const AuthState.initial()) {
+  AuthBloc(this._userRepository, this._chatRepository, this._unreadBadgeCubit, this._notificationService) : super(const AuthState.initial()) {
     _log.info('✅ AuthBloc được khởi tạo.');
 
     // Đăng ký các handler cho từng event
@@ -53,6 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // === THAY ĐỔI: Tắt lắng nghe của badge ===
       _unreadBadgeCubit.stopListening();
       _chatRepository.disposeConversationListSubscription();
+      _notificationService.disposeUserLevelSetup();
       emit(const AuthState.unauthenticated());
     } else {
       _log.info('🚪 Thông tin về người dùng trong trạng thái hiện tại: ${user.toString()}');
@@ -62,6 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _chatRepository.initializeConversationListSubscription(userId: user.userId);
         // 2. === THAY ĐỔI: Bật lắng nghe của badge ===
         _unreadBadgeCubit.startListening();
+        _notificationService.initUserLevelSetup();
         emit(AuthState.authenticated(user));
       } else {
         _log.info('✨ Trạng thái người dùng: NewUser (User: ${user.userId}).');

@@ -253,15 +253,6 @@ _i174.GetIt init(
       ));
   gh.factory<_i679.SuggestionSearchBloc>(
       () => _i679.SuggestionSearchBloc(gh<_i310.SearchService>()));
-  gh.lazySingleton<_i463.NotificationService>(() => _i463.NotificationService(
-        gh<_i749.AppUserRepository>(),
-        gh<_i251.AppRouteObserver>(),
-        gh<_i583.GoRouter>(),
-      ));
-  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
-        gh<_i540.UnreadBadgeCubit>(),
-        gh<_i463.NotificationService>(),
-      ));
   gh.factoryParam<_i144.PostReactionBarBloc, _i1028.Post, dynamic>((
     post,
     _,
@@ -270,6 +261,10 @@ _i174.GetIt init(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
         post,
+      ));
+  gh.lazySingleton<_i463.NotificationService>(() => _i463.NotificationService(
+        gh<_i749.AppUserRepository>(),
+        gh<_i251.AppRouteObserver>(),
       ));
   gh.factory<_i973.UserInfoBloc>(
       () => _i973.UserInfoBloc(gh<_i749.AppUserRepository>()));
@@ -283,11 +278,6 @@ _i174.GetIt init(
         gh<_i720.ChatRepository>(),
         gh<_i749.AppUserRepository>(),
         gh<_i480.PostRepository>(),
-      ));
-  gh.factory<_i511.AuthBloc>(() => _i511.AuthBloc(
-        gh<_i749.AppUserRepository>(),
-        gh<_i720.ChatRepository>(),
-        gh<_i540.UnreadBadgeCubit>(),
       ));
   gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
         gh<_i480.PostRepository>(),
@@ -306,9 +296,19 @@ _i174.GetIt init(
       addressRepository: gh<_i344.AddressRepository>()));
   gh.factory<_i204.DeletePostBloc>(
       () => _i204.DeletePostBloc(gh<_i480.PostRepository>()));
+  gh.factory<_i511.AuthBloc>(() => _i511.AuthBloc(
+        gh<_i749.AppUserRepository>(),
+        gh<_i720.ChatRepository>(),
+        gh<_i540.UnreadBadgeCubit>(),
+        gh<_i463.NotificationService>(),
+      ));
   gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(
         gh<_i749.AppUserRepository>(),
         gh<_i557.CommentRepository>(),
+      ));
+  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
+        gh<_i540.UnreadBadgeCubit>(),
+        gh<_i463.NotificationService>(),
       ));
   return getIt;
 }

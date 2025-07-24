@@ -6,6 +6,7 @@ import 'package:dishlocal/data/categories/app_user/repository/interface/app_user
 import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
 import 'package:dishlocal/data/singleton/app_route_observer.dart';
+import 'package:dishlocal/data/singleton/notification_service.dart';
 import 'package:dishlocal/ui/features/chat/bloc/chat_bloc.dart';
 import 'package:dishlocal/ui/features/chat/view/message_bubble.dart';
 import 'package:dishlocal/ui/features/chat/view/message_input.dart';
@@ -51,7 +52,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       ));
     _chatFocusNode = FocusNode();
 
+    getIt<NotificationService>().clearAllChatNotifications();
+
     getIt<AppRouteObserver>().enterChatScreen(widget.conversationId);
+    
 
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addObserver(this);

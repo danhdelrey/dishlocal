@@ -444,5 +444,29 @@ class SqlAppUserRepositoryImpl implements AppUserRepository {
       _log.info('✅ Cập nhật FCM token thành công.');
     });
   }
+  
+  @override
+  Future<Either<AppUserFailure, void>> removeFcmToken(String token) {
+    // Tái sử dụng helper _handleErrors để xử lý lỗi nhất quán
+    return _handleErrors(() async {
+      _log.info('🔄 Đang xóa FCM token...');
+
+      // Kiểm tra xem người dùng đã đăng nhập chưa
+      final userId = getCurrentUserId();
+      if (userId == null) {
+        _log.warning('⚠️ Không thể xóa FCM token: người dùng chưa đăng nhập.');
+        // Không cần throw lỗi, chỉ đơn giản là không làm gì cả
+        return;
+      }
+
+      // Gọi RPC 'remove_fcm_token' đã tạo trên Supabase
+      await _dbService.rpc(
+        'remove_fcm_token',
+        params: {'p_token': token},
+      );
+
+      _log.info('✅ Xóa FCM token thành công.');
+    });
+  }
 
 }
