@@ -63,18 +63,7 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 1. Nội dung của các tab được hiển thị ở đây
       body: navigationShell,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push("/camera"),
-        shape: const CircleBorder(),
-        backgroundColor: appColorScheme(context).primary,
-        child: const Icon(
-          CupertinoIcons.camera,
-        ),
-      ),
-
-      // 3. BottomAppBar thay thế cho PersistentTabView
       bottomNavigationBar: BottomAppBar(
         padding: const EdgeInsets.all(0),
         height: kBottomNavigationBarHeight,
@@ -105,6 +94,12 @@ class MainShell extends StatelessWidget {
                 color: appColorScheme(context).onSurface,
               ),
               index: 1,
+            ),
+
+            GradientFab(
+              onTap: () => context.push("/camera"),
+              size: 40,
+              iconSize: 20,
             ),
 
             Expanded(
