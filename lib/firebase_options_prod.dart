@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '413476207561',
     projectId: 'dishlocal-prod',
     storageBucket: 'dishlocal-prod.firebasestorage.app',
-    androidClientId: '413476207561-q7affla1klt4fj8co9374uo0dmh9nmu7.apps.googleusercontent.com',
+    androidClientId: '413476207561-8l32v0u7bj5nalen2alr7pmh8b82htl5.apps.googleusercontent.com',
     iosClientId: '413476207561-rien86thp193hsh3mc89ku6sb3euavfc.apps.googleusercontent.com',
     iosBundleId: 'com.example.dishlocal',
   );
