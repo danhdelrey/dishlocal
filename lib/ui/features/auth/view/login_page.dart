@@ -51,106 +51,149 @@ class LoginPage extends StatelessWidget {
 
             return Container(
               width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: const [0.0, 1.0],
-                  colors: [
-                    appColorScheme(context).primary.withValues(alpha: 0.5),
-                    const Color(0x00000000),
-                  ],
+              height: double.infinity,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/bg_image.png'),
+                  fit: BoxFit.cover,
+                  opacity: 0.6,
                 ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              child: Stack(
                 children: [
-                  const SizedBox(
-                    height: 200,
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        padding: const EdgeInsets.all(15),
-                        decoration: const BoxDecoration(
-                          gradient: primaryGradient,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(28),
-                          ),
-                        ),
-                        child: AppIcons.app.toSvg(),
-                      ),
-                      const SizedBox(height: 10),
-                      ShaderMask(
-                        shaderCallback: (bounds) => primaryGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                        child: Text(
-                          'DishLocal',
-                          style: appTextTheme(context).titleLarge?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Chia sẻ & Khám phá trực tiếp',
-                        style: Theme.of(context).textTheme.titleMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        'ẩm thực quanh bạn',
-                        style: Theme.of(context).textTheme.titleMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                  const Expanded(child: SizedBox()),
-
-                  // Nút Đăng nhập
-                  if (isLoading)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12.0),
-                      child: CustomLoadingIndicator(indicatorSize: 40),
-                    )
-                  else
-                    FilledButton.icon(
-                      onPressed: () {
-                        // Gửi event đến BLoC
-                        context.read<AuthBloc>().add(const SignInWithGoogleRequested());
-                      },
-                      label: Text(
-                        'Đăng nhập bằng tài khoản Google',
-                        style: appTextTheme(context).labelLarge!.copyWith(
-                              color: Colors.black,
-                            ),
-                      ),
-                      icon: AppIcons.google.toSvg(
-                        width: 20,
-                      ),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        padding: const EdgeInsetsDirectional.only(
-                          top: 10,
-                          bottom: 10,
-                          start: 12,
-                          end: 12,
-                        ),
-                      ),
+                  Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: _buildLogo(context),
                     ),
-
-                  const SizedBox(height: 15),
-                  Text(
-                    'Đăng nhập để tiếp tục...',
-                    style: Theme.of(context).textTheme.labelMedium,
                   ),
-                  const SizedBox(height: 20),
+                  Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: _buildLoginButton(isLoading, context),
+                    ),
+                  ),
                 ],
               ),
             );
           },
         ),
       ),
+    );
+  }
+
+  Column _buildLogo(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 100,
+          height: 100,
+          padding: const EdgeInsets.all(15),
+          decoration: const BoxDecoration(
+            gradient: primaryGradient,
+            borderRadius: BorderRadius.all(
+              Radius.circular(28),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10,
+                offset: Offset(0, 4), // Đổ bóng xuống dưới
+              ),
+            ],
+          ),
+          child: AppIcons.app.toSvg(),
+        ),
+        const SizedBox(height: 30),
+        Text(
+          'Chia sẻ & Khám phá',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+          textAlign: TextAlign.center,
+        ),
+        Text(
+          'ẩm thực quanh bạn',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Column _buildLoginButton(bool isLoading, BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (isLoading)
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  offset: Offset(0, 4), // Đổ bóng xuống dưới
+                ),
+              ],
+            ),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 15),
+              child: CustomLoadingIndicator(indicatorSize: 24),
+            ),
+          )
+        else
+          Container(
+            decoration: const BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  offset: Offset(0, 4), // Đổ bóng xuống dưới
+                ),
+              ],
+            ),
+            child: FilledButton.icon(
+              onPressed: () {
+                // Gửi event đến BLoC
+                context.read<AuthBloc>().add(const SignInWithGoogleRequested());
+              },
+              label: Text(
+                'Đăng nhập bằng tài khoản Google',
+                style: appTextTheme(context).labelLarge!.copyWith(
+                      color: Colors.black,
+                    ),
+              ),
+              icon: AppIcons.google.toSvg(
+                width: 20,
+              ),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.white,
+                padding: const EdgeInsetsDirectional.only(
+                  top: 10,
+                  bottom: 10,
+                  start: 12,
+                  end: 12,
+                ),
+              ),
+            ),
+          ),
+        const SizedBox(height: 15),
+        Text(
+          'Đăng nhập để tiếp tục...',
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+        ),
+        const SizedBox(height: 40),
+      ],
     );
   }
 }
