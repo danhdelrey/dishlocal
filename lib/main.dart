@@ -69,7 +69,14 @@ class _MyAppState extends State<MyApp> {
       _checkForUpdate();
       _isUpdateChecked = true;
     }
-    getIt<NotificationService>().handleInitialMessage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Callback này sẽ chạy sau khi frame đầu tiên được render xong,
+      // đảm bảo GoRouter đã sẵn sàng.
+      if (mounted) {
+        // Luôn kiểm tra `mounted` trong các callback bất đồng bộ
+        getIt<NotificationService>().handleInitialMessage();
+      }
+    });
   }
 
   // Hàm kiểm tra và kích hoạt cập nhật
