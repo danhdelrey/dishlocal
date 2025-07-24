@@ -69,7 +69,9 @@ class MainShell extends StatelessWidget {
         onPressed: () => context.push("/camera"),
         shape: const CircleBorder(),
         backgroundColor: appColorScheme(context).primary,
-        child: const Icon(CupertinoIcons.add),
+        child: const Icon(
+          CupertinoIcons.camera,
+        ),
       ),
 
       // 3. BottomAppBar thay thế cho PersistentTabView
@@ -124,7 +126,7 @@ class MainShell extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.center,
                       child: navigationShell.currentIndex == 2
-                          ? AppIcons.chat3.toSvg(
+                          ? AppIcons.chatFilled.toSvg(
                               color: Theme.of(context).colorScheme.primary,
                             )
                           : AppIcons.chat3.toSvg(

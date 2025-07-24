@@ -57,6 +57,7 @@ enum AppIcons {
   gridLine('gridLine'),
   gridFilled('gridFilled'),
   wifiOffFilled('wifi_off_filled'), // Gốc: wifi_off_filled.svg
+  chatFilled('chat-fill'), 
   locationOffFilled('location_off_filled'); // Gốc: location_off_filled.svg
 
   const AppIcons(this.fileName);
