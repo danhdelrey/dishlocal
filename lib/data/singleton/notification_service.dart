@@ -10,6 +10,7 @@ import 'package:dishlocal/data/categories/app_user/repository/interface/app_user
 import 'package:dishlocal/data/singleton/app_route_observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
@@ -174,7 +175,7 @@ class NotificationService {
             android: AndroidNotificationDetails(
               'high_importance_channel',
               'High Importance Notifications',
-              icon: '@mipmap/ic_launcher',
+              color: const Color(0xFFfc6076),
               largeIcon: largeIconPath != null ? FilePathAndroidBitmap(largeIconPath) : null,
             ),
           ),

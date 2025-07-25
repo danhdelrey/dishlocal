@@ -115,12 +115,12 @@ dev_dependencies:
   build_runner: ^2.4.15
 
 flutter_launcher_icons:
-  android: "ic_launcher"
+  android: "launcher_icon"
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/logo.png"
-  adaptive_icon_background: "#ffffff" # hoặc ảnh PNG như "assets/images/icon_bg.png"
-  adaptive_icon_foreground: "assets/images/logo.png" # PNG trong suốt dùng làm icon chính (foreground)
+  image_path: "assets/images/icon_with_bg.png"
+  adaptive_icon_background: "assets/images/icon_bg.png"
+  adaptive_icon_foreground: "assets/images/icon.png"
 
 flutter_native_splash:
   color: "#1A1A1A" # Màu nền splash (Dark Mode)
