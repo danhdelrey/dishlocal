@@ -76,8 +76,7 @@ class MessageBubble extends StatelessWidget {
               child: Container(
                 // === TÁI CẤU TRÚC: Đơn giản hóa các thuộc tính ===
                 decoration: BoxDecoration(
-                  gradient: isMe ? primaryGradient : null,
-                  color: isMe ? null : theme.colorScheme.outlineVariant,
+                  color: isMe ? theme.colorScheme.primary : theme.colorScheme.outlineVariant,
                   borderRadius: BorderRadius.circular(18),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),

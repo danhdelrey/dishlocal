@@ -15,18 +15,49 @@ class MessageInput extends StatefulWidget {
 
 class _MessageInputState extends State<MessageInput> {
   final TextEditingController _textController = TextEditingController();
+  bool _canSend = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Lắng nghe sự thay đổi của text để cập nhật trạng thái nút gửi
+    _textController.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    // Hủy controller khi widget bị xóa khỏi cây widget
+    _textController.removeListener(_onTextChanged);
+    _textController.dispose();
+    super.dispose();
+  }
 
   void _sendMessage() {
+    if (!_canSend) return; // Không làm gì nếu không thể gửi
+
     final text = _textController.text.trim();
     if (text.isNotEmpty) {
       context.read<ChatBloc>().add(ChatEvent.messageSent(content: text));
       _textController.clear();
+      // Reset lại trạng thái của nút gửi
+      setState(() {
+        _canSend = false;
+      });
+    }
+  }
+
+  void _onTextChanged() {
+    // Cập nhật trạng thái của nút gửi
+    final isTextEmpty = _textController.text.trim().isEmpty;
+    if (_canSend == isTextEmpty) {
+      setState(() {
+        _canSend = !isTextEmpty;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var canSend = _textController.text.trim().isNotEmpty;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -42,6 +73,9 @@ class _MessageInputState extends State<MessageInput> {
                   autofocus: true,
                   focusNode: widget.focusNode,
                   controller: _textController,
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: 5,
                   decoration: InputDecoration(
                     focusColor: Colors.transparent,
                     hintText: 'Nhắn tin...',
@@ -52,12 +86,9 @@ class _MessageInputState extends State<MessageInput> {
                       borderRadius: BorderRadius.all(Radius.circular(24.0)),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
                   ),
                   onSubmitted: (_) => _sendMessage(),
-                  onChanged: (value) {
-                    setState(() {});
-                  },
                   style: appTextTheme(context).bodyMedium,
                 ),
               ),
@@ -67,11 +98,11 @@ class _MessageInputState extends State<MessageInput> {
             ),
             InkWell(
               borderRadius: BorderRadius.circular(1000),
-              onTap: canSend == true ? _sendMessage : null,
+              onTap: _canSend == true ? _sendMessage : null,
               child: Icon(
                 CupertinoIcons.arrow_up_circle_fill,
                 size: 40,
-                color: canSend ? appColorScheme(context).primary : appColorScheme(context).outlineVariant,
+                color: _canSend ? appColorScheme(context).primary : appColorScheme(context).outlineVariant,
               ),
             ),
           ],

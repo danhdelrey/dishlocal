@@ -176,6 +176,7 @@ class NotificationService {
               'high_importance_channel',
               'High Importance Notifications',
               color: const Color(0xFFfc6076),
+              icon: '@mipmap/ic_launcher',
               largeIcon: largeIconPath != null ? FilePathAndroidBitmap(largeIconPath) : null,
             ),
           ),
