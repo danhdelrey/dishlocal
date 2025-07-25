@@ -7,9 +7,9 @@ ColorScheme appColorScheme(context) => Theme.of(context).colorScheme;
 
 final darkTheme = ThemeData.dark().copyWith(
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color(0xFFFD735A),
+    seedColor: const Color(0xFFff9a44),
     brightness: Brightness.dark,
-    primary: const Color(0xFFFD735A),
+    primary: const Color(0xFFff9a44),
     outlineVariant: CupertinoColors.systemFill,
   ),
   pageTransitionsTheme: const PageTransitionsTheme(

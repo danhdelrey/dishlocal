@@ -72,11 +72,11 @@ class MessageBubble extends StatelessWidget {
             ),
           Flexible(
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
               child: Container(
                 // === TÁI CẤU TRÚC: Đơn giản hóa các thuộc tính ===
                 decoration: BoxDecoration(
-                  color: isMe ? theme.colorScheme.primary : theme.colorScheme.outlineVariant,
+                  color: isMe ? const Color(0xFFff9a44) : theme.colorScheme.outlineVariant,
                   borderRadius: BorderRadius.circular(18),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
