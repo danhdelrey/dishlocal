@@ -3,6 +3,7 @@ import 'package:dishlocal/app/theme/theme.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
 import 'package:dishlocal/ui/features/post/view/small_post.dart';
+import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -50,43 +51,48 @@ class MessageBubble extends StatelessWidget {
       ],
     );
 
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (!isMe)
-            Padding(
-              padding: const EdgeInsets.only(right: 4.0),
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  context.push('/post_detail/profile', extra: {'userId': otherUser.userId});
-                },
-                child: CachedCircleAvatar(
-                  imageUrl: otherUser.photoUrl ?? '',
-                  circleRadius: 15,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Align(
+        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (!isMe)
+              Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    context.push('/post_detail/profile', extra: {'userId': otherUser.userId});
+                  },
+                  child: CachedCircleAvatar(
+                    imageUrl: otherUser.photoUrl ?? '',
+                    circleRadius: 15,
+                  ),
+                ),
+              ),
+            Flexible(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+                child: GlassContainer(
+                  horizontalPadding: 10,
+                  verticalPadding: 6,
+                  backgroundColor: isMe ? const Color(0xFFff9a44) : theme.colorScheme.outlineVariant,
+                  backgroundAlpha: isMe ? 0.9 : 0.1,
+                  borderRadius: 18,
+                  borderTop: true,
+                  borderLeft: true,
+                  borderRight: true,
+                  borderBottom: true,
+                  child: contentColumn, // Đưa nội dung đã xây dựng vào đây
                 ),
               ),
             ),
-          Flexible(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
-              child: Container(
-                // === TÁI CẤU TRÚC: Đơn giản hóa các thuộc tính ===
-                decoration: BoxDecoration(
-                  color: isMe ? const Color(0xFFff9a44) : theme.colorScheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                margin: const EdgeInsets.symmetric(vertical: 2),
-                child: contentColumn, // Đưa nội dung đã xây dựng vào đây
-              ),
-            ),
-          ),
-          //if (isMe) _buildStatusIcon(context),
-        ],
+            //if (isMe) _buildStatusIcon(context),
+          ],
+        ),
       ),
     );
   }
