@@ -77,11 +77,11 @@ class MessageBubble extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
                 child: GlassContainer(
-                  horizontalPadding: 10,
-                  verticalPadding: 6,
-                  backgroundColor: isMe ? const Color(0xFFff9a44) : theme.colorScheme.outlineVariant,
-                  backgroundAlpha: isMe ? 0.9 : 0.1,
-                  borderRadius: 18,
+                  horizontalPadding: message.sharedPostId != null ? 0 : 10,
+                  verticalPadding: message.sharedPostId != null ? 0 : 6,
+                  backgroundColor: message.sharedPostId != null ? theme.colorScheme.outlineVariant : (isMe ? const Color(0xFFff9a44) : theme.colorScheme.outlineVariant),
+                  backgroundAlpha: message.sharedPostId != null ? 0.1 : (isMe ? 0.9 : 0.1),
+                  borderRadius: 20,
                   borderTop: true,
                   borderLeft: true,
                   borderRight: true,
@@ -116,13 +116,9 @@ class MessageBubble extends StatelessWidget {
     }
     // 2. Nếu có post ID nhưng chưa có object Post -> ĐANG TẢI
     else if (message.sharedPostId != null && message.sharedPost == null) {
-      return Container(
+      return SizedBox(
         width: 150,
         height: 200, // Chiều cao tạm thời cho placeholder
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(12),
-        ),
         child: Center(
           child: SizedBox(
             width: 40,
@@ -140,15 +136,12 @@ class MessageBubble extends StatelessWidget {
       return Container(
         width: 150,
         padding: const EdgeInsets.all(12.0),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(12),
-        ),
         child: Text(
           'Bài viết này không còn tồn tại',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.6),
             fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.bold,
           ),
         ),
       );
