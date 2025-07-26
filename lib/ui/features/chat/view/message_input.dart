@@ -70,42 +70,29 @@ class _MessageInputState extends State<MessageInput> {
                   color: appColorScheme(context).outlineVariant,
                   borderRadius: BorderRadius.circular(24),
                 ),
-                child: TextField(
-                  autofocus: true,
+                child: AppTextField(
+                  borderRadius: 20,
+                  autoFocus: true,
                   focusNode: widget.focusNode,
                   controller: _textController,
-                  keyboardType: TextInputType.multiline,
-                  minLines: 1,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    focusColor: Colors.transparent,
-                    hintText: 'Nhắn tin...',
-                    hintStyle: appTextTheme(context).bodyMedium?.copyWith(
-                          color: appColorScheme(context).outline,
-                        ),
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(24.0)),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-                  ),
-                  onSubmitted: (_) => _sendMessage(),
-                  style: appTextTheme(context).bodyMedium,
+                  hintText: 'Nhắn tin...',
                 ),
               ),
             ),
-            const SizedBox(
-              width: 5,
-            ),
-            InkWell(
-              borderRadius: BorderRadius.circular(1000),
-              onTap: _canSend == true ? _sendMessage : null,
-              child: Icon(
-                CupertinoIcons.arrow_up_circle_fill,
-                size: 40,
-                color: _canSend ? appColorScheme(context).primary : appColorScheme(context).outlineVariant,
+            if (_canSend)
+              const SizedBox(
+                width: 5,
               ),
-            ),
+            if (_canSend)
+              InkWell(
+                borderRadius: BorderRadius.circular(1000),
+                onTap: _canSend == true ? _sendMessage : null,
+                child: Icon(
+                  CupertinoIcons.arrow_up_circle_fill,
+                  size: 40,
+                  color: _canSend ? appColorScheme(context).primary : appColorScheme(context).outlineVariant,
+                ),
+              ),
           ],
         ),
       ),
