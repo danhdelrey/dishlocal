@@ -52,9 +52,11 @@ class UnreadBadgeCubit extends Cubit<UnreadBadgeState> {
       (conversations) {
         final totalUnread = conversations.fold(0, (prev, convo) => prev + convo.unreadCount);
         _log.info('Conversations updated. Total unread: $totalUnread');
+        final conversationList = conversations;
+        conversationList.removeWhere((c) => c.lastMessageContent == null);
         emit(UnreadBadgeState(
           totalUnreadCount: totalUnread,
-          conversations: conversations,
+          conversations: conversationList,
           isLoading: false,
         ));
       },

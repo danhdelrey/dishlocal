@@ -29,9 +29,8 @@ class _ConversationListScreenContentState extends State<_ConversationListScreenC
   @override
   void initState() {
     super.initState();
-    
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

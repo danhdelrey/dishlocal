@@ -62,6 +62,7 @@ class _MessageInputState extends State<MessageInput> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Expanded(
               child: Container(

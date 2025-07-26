@@ -54,7 +54,7 @@ class _ConversationTileState extends State<ConversationTile> {
     }
 
     // Ưu tiên 2: Nếu tin nhắn cuối có nội dung text
-    final lastMessageText = widget.conversation.lastMessageContent;
+    final lastMessageText = widget.conversation.lastMessageContent?.replaceAll('\n', ' ');
     if (lastMessageText != null && lastMessageText.isNotEmpty) {
       return widget.conversation.lastMessageSenderId == _currentUserId ? 'Bạn: $lastMessageText' : lastMessageText;
     }
