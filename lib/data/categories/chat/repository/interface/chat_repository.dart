@@ -52,4 +52,6 @@ abstract class ChatRepository {
   });
 
   void disposeConversationListSubscription();
+
+  Future<Either<ChatFailure, void>> deleteConversation({required String conversationId});
 }

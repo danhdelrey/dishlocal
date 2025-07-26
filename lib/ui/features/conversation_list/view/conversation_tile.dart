@@ -63,11 +63,33 @@ class _ConversationTileState extends State<ConversationTile> {
     return "Chưa có tin nhắn.";
   }
 
+  Future<bool?> _showConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Xác nhận xóa'),
+          content: const Text('Bạn có chắc chắn muốn xóa cuộc trò chuyện này không? Hành động này không thể hoàn tác.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Hủy'),
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+            ),
+            TextButton(
+              child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasUnread = widget.conversation.unreadCount > 0;
 
-    return InkWell(
+    final tileContent = InkWell(
       onTap: () {
         // === THAY ĐỔI: Đơn giản hóa onTap ===
         // Không cần gọi .then() và refresh BLoC nữa.
@@ -143,6 +165,46 @@ class _ConversationTileState extends State<ConversationTile> {
           ],
         ),
       ),
+    );
+
+    return Dismissible(
+      // Key là bắt buộc để Flutter xác định đúng widget cần xóa
+      key: ValueKey(widget.conversation.conversationId),
+
+      // Chỉ cho phép vuốt từ phải sang trái
+      direction: DismissDirection.endToStart,
+
+      // Nền sẽ hiển thị phía sau khi vuốt
+      background: Container(
+        color: Colors.red,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        alignment: Alignment.centerRight,
+        child: const Icon(Icons.delete, color: Colors.white),
+      ),
+
+      // Hàm confirmDismiss sẽ được gọi TRƯỚC KHI widget bị xóa khỏi cây
+      confirmDismiss: (direction) async {
+        // Hiển thị dialog và chờ kết quả
+        final bool? confirmed = await _showConfirmationDialog(context);
+        // Trả về kết quả (true để cho phép xóa, false để hủy)
+        return confirmed ?? false;
+      },
+
+      // Hàm onDismissed sẽ được gọi SAU KHI widget đã được xóa (nếu confirmDismiss trả về true)
+      onDismissed: (direction) {
+        // Gọi BLoC để thực hiện logic xóa trên server
+        context.read<ConversationListBloc>().deleteConversation(widget.conversation.conversationId);
+
+        // (Tùy chọn) Hiển thị SnackBar để có thể hoàn tác
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Đã xóa cuộc trò chuyện với ${widget.conversation.otherParticipant.displayName}'),
+          ),
+        );
+      },
+
+      // Widget con chính là tile của chúng ta
+      child: tileContent,
     );
   }
 }

@@ -288,4 +288,27 @@ class ChatRepositoryImpl implements ChatRepository {
       _conversationListChannel = null;
     }
   }
+
+  @override
+  Future<Either<ChatFailure, void>> deleteConversation({required String conversationId}) async {
+    try {
+      _log.info('RPC: delete_conversation for ID: $conversationId');
+      await _supabase.rpc(
+        'delete_conversation',
+        params: {'p_conversation_id': conversationId},
+      );
+      _log.info('✅ Conversation deleted successfully.');
+      return const Right(null);
+    } on PostgrestException catch (e) {
+      _log.severe('RPC delete_conversation failed', e);
+      // Lỗi permission denied có thể có mã 'P0001' nếu chúng ta tự raise exception
+      if (e.code == 'P0001' || e.code == '42501') {
+        return const Left(ChatPermissionDenied());
+      }
+      return Left(ChatOperationFailure(e.message));
+    } catch (e) {
+      _log.severe('An unexpected error occurred in deleteConversation', e);
+      return Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
+    }
+  }
 }

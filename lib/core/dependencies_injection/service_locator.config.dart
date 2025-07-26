@@ -279,6 +279,11 @@ _i174.GetIt init(
         gh<_i749.AppUserRepository>(),
         gh<_i480.PostRepository>(),
       ));
+  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
+        gh<_i540.UnreadBadgeCubit>(),
+        gh<_i463.NotificationService>(),
+        gh<_i720.ChatRepository>(),
+      ));
   gh.factory<_i622.CreatePostBloc>(() => _i622.CreatePostBloc(
         gh<_i480.PostRepository>(),
         gh<_i749.AppUserRepository>(),
@@ -305,10 +310,6 @@ _i174.GetIt init(
   gh.factory<_i510.CommentBloc>(() => _i510.CommentBloc(
         gh<_i749.AppUserRepository>(),
         gh<_i557.CommentRepository>(),
-      ));
-  gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
-        gh<_i540.UnreadBadgeCubit>(),
-        gh<_i463.NotificationService>(),
       ));
   return getIt;
 }
