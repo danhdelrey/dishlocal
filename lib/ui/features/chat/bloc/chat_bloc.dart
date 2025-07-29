@@ -27,13 +27,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ChatRepository _chatRepository;
   final PostRepository _postRepository;
   final AppUserRepository _appUserRepository;
-  StreamSubscription<Either<ChatFailure, MessageEntity>>? _messageSubscription;
-  final int _messagesPerPage = 30;
+  final ChatEventBus _chatEventBus;
 
+  StreamSubscription<Either<ChatFailure, MessageEntity>>? _messageSubscription;
   StreamSubscription? _eventBusSubscription;
+  final int _messagesPerPage = 30;
   bool _isScreenActive = false;
 
-  ChatBloc(this._chatRepository, this._appUserRepository, this._postRepository) : super(const ChatState.initial()) {
+  ChatBloc(
+    this._chatRepository,
+    this._appUserRepository,
+    this._postRepository,
+    this._chatEventBus,
+  ) : super(const ChatState.initial()) {
     on<_Started>(_onStarted);
     on<_MoreMessagesLoaded>(_onMoreMessagesLoaded);
     on<_MessageSent>(_onMessageSent);
@@ -41,32 +47,28 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<_MessageReceived>(_onMessageReceived);
     on<_EnrichmentStarted>(_onEnrichmentStarted);
     on<_MessageEnriched>(_onMessageEnriched);
-    // === THAY ĐỔI: Thêm handler cho sự kiện active/inactive ===
     on<_ScreenStatusChanged>(_onScreenStatusChanged);
     on<_ReadStatusCheckRequested>(_onReadStatusCheckRequested);
   }
 
-
   @override
   Future<void> close() {
-    _log.info('Closing ChatBloc and message subscription.');
+    _log.info('Closing ChatBloc and subscriptions.');
     _messageSubscription?.cancel();
-    _isScreenActive = false; // Đảm bảo trạng thái được reset
     _eventBusSubscription?.cancel();
+    _isScreenActive = false;
     return super.close();
   }
 
   Future<void> _onStarted(_Started event, Emitter<ChatState> emit) async {
-    // 1. Emit loading (đã đúng)
     emit(const ChatState.loading());
-
     _isScreenActive = true;
-    _chatRepository.markConversationAsRead(conversationId: event.conversationId);
 
-    // === THAY ĐỔI: Lắng nghe EventBus để cập nhật trạng thái đã đọc ===
+    // === THAY ĐỔI: Gọi RPC mới ===
+    _chatRepository.markConversationAsReadAndTouch(conversationId: event.conversationId);
+
     _eventBusSubscription?.cancel();
-    _eventBusSubscription = getIt<ChatEventBus>().stream.listen((_) {
-      // Khi có thay đổi, thêm event mới để xử lý
+    _eventBusSubscription = _chatEventBus.stream.listen((_) {
       add(ChatEvent.readStatusCheckRequested(event.conversationId));
     });
 
@@ -91,11 +93,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     await result.fold(
       (failure) async => emit(ChatState.error(message: failure.message)),
       (entities) async {
-        // === THAY ĐỔI LỚN ===
-        // 1. Chuyển đổi entities thành Messages "chưa hoàn chỉnh"
         final initialMessages = entities.map((e) => Message.fromEntity(e)).toList();
-
-        // === THÊM MỚI: Lấy trạng thái đã đọc ban đầu ===
         final statusResult = await _chatRepository.getReadStatuses(conversationId: event.conversationId);
         DateTime? otherUserLastReadAt;
         statusResult.fold(
@@ -108,10 +106,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             if (otherStatus['last_read_at'] != null) {
               otherUserLastReadAt = DateTime.parse(otherStatus['last_read_at']);
             }
-          }
+          },
         );
-
-        // 2. Emit trạng thái Loaded NGAY LẬP TỨC
         emit(ChatState.loaded(
           conversationId: event.conversationId,
           otherUser: event.otherUser,
@@ -120,8 +116,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           currentPage: 1,
           otherUserLastReadAt: otherUserLastReadAt,
         ));
-
-        // 3. Kích hoạt quá trình làm giàu dữ liệu ở background
         add(ChatEvent.enrichmentStarted(initialMessages));
       },
     );
@@ -284,16 +278,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   void _onMessageReceived(_MessageReceived event, Emitter<ChatState> emit) async {
     if (state is! ChatLoaded) return;
     final currentState = state as ChatLoaded;
-
-    // Chuyển đổi và emit tin nhắn chưa hoàn chỉnh ngay lập tức
     final newMessage = Message.fromEntity(event.message);
     emit(currentState.copyWith(messages: [newMessage, ...currentState.messages]));
-
-    // Kích hoạt làm giàu dữ liệu cho tin nhắn mới này
     add(ChatEvent.enrichmentStarted([newMessage]));
 
     if (_isScreenActive) {
-      _chatRepository.markConversationAsRead(conversationId: currentState.conversationId);
+      _log.info('New message received while screen is active. Marking as read again.');
+      // === THAY ĐỔI: Gọi RPC mới ===
+      _chatRepository.markConversationAsReadAndTouch(conversationId: currentState.conversationId);
     }
   }
 

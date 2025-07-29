@@ -35,11 +35,7 @@ abstract class ChatRepository {
     String? sharedPostId,
   });
 
-  /// Đánh dấu một cuộc trò chuyện là đã đọc.
-  /// Hàm này không trả về gì nếu thành công.
-  Future<Either<ChatFailure, void>> markConversationAsRead({
-    required String conversationId,
-  });
+  Future<Either<ChatFailure, void>> markConversationAsReadAndTouch({required String conversationId});
 
   /// Lắng nghe các tin nhắn mới trong một cuộc trò chuyện theo thời gian thực.
   /// Trả về một Stream chứa [MessageEntity] mới.

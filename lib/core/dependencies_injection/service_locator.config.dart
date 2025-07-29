@@ -231,6 +231,12 @@ _i174.GetIt init(
             gh<_i766.GeocodingService>(),
             gh<_i310.SearchService>(),
           ));
+  gh.factory<_i976.ChatBloc>(() => _i976.ChatBloc(
+        gh<_i720.ChatRepository>(),
+        gh<_i749.AppUserRepository>(),
+        gh<_i480.PostRepository>(),
+        gh<_i429.ChatEventBus>(),
+      ));
   gh.lazySingleton<_i344.AddressRepository>(() => _i437.AddressRepositoryImpl(
         gh<_i473.LocationService>(),
         gh<_i766.GeocodingService>(),
@@ -274,11 +280,6 @@ _i174.GetIt init(
             gh<_i780.AuthenticationService>(),
             gh<_i692.ModerationService>(instanceName: 'hive.ai'),
           ));
-  gh.factory<_i976.ChatBloc>(() => _i976.ChatBloc(
-        gh<_i720.ChatRepository>(),
-        gh<_i749.AppUserRepository>(),
-        gh<_i480.PostRepository>(),
-      ));
   gh.factory<_i376.ConversationListBloc>(() => _i376.ConversationListBloc(
         gh<_i540.UnreadBadgeCubit>(),
         gh<_i463.NotificationService>(),

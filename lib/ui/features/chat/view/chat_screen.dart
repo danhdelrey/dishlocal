@@ -83,7 +83,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       _chatBloc.add(const ChatEvent.screenStatusChanged(isActive: true));
       final currentState = _chatBloc.state;
       if (currentState is ChatLoaded) {
-        getIt<ChatRepository>().markConversationAsRead(
+        getIt<ChatRepository>().markConversationAsReadAndTouch(
           conversationId: currentState.conversationId,
         );
       }

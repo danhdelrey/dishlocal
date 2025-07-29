@@ -18,18 +18,12 @@ class ChatRepositoryImpl implements ChatRepository {
   final _supabase = Supabase.instance.client;
   final ChatEventBus _chatEventBus;
 
-  // Giữ lại channel để có thể hủy khi cần
   RealtimeChannel? _conversationListChannel;
 
-  // Constructor được cập nhật
-  ChatRepositoryImpl(this._chatEventBus) {
-    // Khởi tạo việc lắng nghe ngay khi repository được tạo
-    //_initializeConversationListSubscription();
-  }
+  ChatRepositoryImpl(this._chatEventBus);
 
-  // Xóa phương thức `subscribeToConversationListChanges()` cũ.
-  // Thay vào đó, chúng ta sẽ quản lý nó bên trong repository.
-  @override
+
+   @override
   void initializeConversationListSubscription({required String userId}) {
     if (_conversationListChannel != null) {
       _log.warning('Attempted to initialize conversation list subscription more than once. Skipping.');
@@ -41,28 +35,15 @@ class ChatRepositoryImpl implements ChatRepository {
 
     _conversationListChannel!
         .onPostgresChanges(
-          event: PostgresChangeEvent.all,
-          schema: 'public',
-          table: 'conversations',
-          callback: (payload) {
-            _log.finer('Realtime event on "conversations". Firing event bus.');
-            _chatEventBus.fireChatDataChanged(); // Phát sự kiện
-          },
-        )
-        .onPostgresChanges(
-          event: PostgresChangeEvent.update,
-          schema: 'public',
-          table: 'conversation_participants',
-          filter: PostgresChangeFilter(
-            type: PostgresChangeFilterType.eq,
-            column: 'user_id',
-            value: userId,
-          ),
-          callback: (payload) {
-            _log.finer('Realtime event on "conversation_participants". Firing event bus.');
-            _chatEventBus.fireChatDataChanged(); // Phát sự kiện
-          },
-        )
+      event: PostgresChangeEvent.all,
+      schema: 'public',
+      table: 'conversations',
+      callback: (payload) {
+        _log.finer('Realtime event on "conversations". Firing event bus.');
+        _chatEventBus.fireChatDataChanged();
+      },
+    )
+        // Bỏ listener trên conversation_participants vì nó không đáng tin cậy
         .subscribe((status, [error]) {
       if (status == RealtimeSubscribeStatus.subscribed) {
         _log.info('>>> SUCCESSFULLY SUBSCRIBED to conversation-list-changes channel <<<');
@@ -208,23 +189,22 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<ChatFailure, void>> markConversationAsRead({
+  Future<Either<ChatFailure, void>> markConversationAsReadAndTouch({
     required String conversationId,
   }) async {
     try {
-      _log.info('RPC: mark_conversation_as_read for conversation $conversationId');
+      _log.info('RPC: mark_as_read_and_touch for conversation $conversationId');
       await _supabase.rpc(
-        'mark_conversation_as_read',
+        'mark_as_read_and_touch',
         params: {'p_conversation_id': conversationId},
       );
       _log.finer('RPC call successful');
-
       return const Right(null);
     } on PostgrestException catch (e) {
-      _log.severe('RPC mark_conversation_as_read failed', e);
+      _log.severe('RPC mark_as_read_and_touch failed', e);
       return Left(ChatOperationFailure(e.message));
     } catch (e) {
-      _log.severe('An unexpected error occurred in markConversationAsRead', e);
+      _log.severe('An unexpected error occurred in markConversationAsReadAndTouch', e);
       return Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
     }
   }
