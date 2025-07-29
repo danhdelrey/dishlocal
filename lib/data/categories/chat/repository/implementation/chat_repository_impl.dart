@@ -311,4 +311,24 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn: ${e.toString()}'));
     }
   }
+
+  @override
+  Future<Either<ChatFailure, List<Map<String, dynamic>>>> getReadStatuses({required String conversationId}) async {
+    try {
+      _log.info('RPC: get_conversation_read_status for ID: $conversationId');
+      final result = await _supabase.rpc(
+        'get_conversation_read_status',
+        params: {'p_conversation_id': conversationId},
+      );
+      // Supabase RPC trả về List<dynamic>, ép kiểu an toàn
+      final statuses = List<Map<String, dynamic>>.from(result as List);
+      return Right(statuses);
+    } on PostgrestException catch (e) {
+      _log.severe('RPC get_conversation_read_status failed', e);
+      return Left(ChatOperationFailure(e.message));
+    } catch (e) {
+      _log.severe('Unexpected error in getReadStatuses', e);
+      return const Left(ChatOperationFailure('Đã xảy ra lỗi không mong muốn.'));
+    }
+  }
 }

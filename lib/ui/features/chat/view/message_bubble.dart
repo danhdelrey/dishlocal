@@ -13,12 +13,13 @@ class MessageBubble extends StatelessWidget {
   final Message message;
   final bool isMe;
   final AppUser otherUser;
+  final DateTime? otherUserLastReadAt;
 
   const MessageBubble({
     super.key,
     required this.message,
     required this.isMe,
-    required this.otherUser,
+    required this.otherUser, this.otherUserLastReadAt,
   });
 
   @override
@@ -90,7 +91,7 @@ class MessageBubble extends StatelessWidget {
                 ),
               ),
             ),
-            //if (isMe) _buildStatusIcon(context),
+            if (isMe) _buildStatusIcon(context),
           ],
         ),
       ),
@@ -168,6 +169,18 @@ class MessageBubble extends StatelessWidget {
 
   Widget _buildStatusIcon(BuildContext context) {
     if (!isMe) return const SizedBox.shrink();
+
+    // === LOGIC "ĐÃ XEM" NẰM Ở ĐÂY ===
+    if (otherUserLastReadAt != null && (message.createdAt.isBefore(otherUserLastReadAt!) || message.createdAt.isAtSameMomentAs(otherUserLastReadAt!))) {
+      // Nếu tin nhắn đã được đọc -> Hiển thị avatar nhỏ của người kia
+      return Padding(
+        padding: const EdgeInsets.only(right: 8.0, bottom: 4.0),
+        child: CachedCircleAvatar(
+          imageUrl: otherUser.photoUrl ?? '',
+          circleRadius: 8,
+        ),
+      );
+    }
 
     IconData? icon;
     double size = 14;

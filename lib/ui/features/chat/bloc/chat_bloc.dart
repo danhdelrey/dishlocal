@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dishlocal/core/dependencies_injection/service_locator.dart';
 import 'package:dishlocal/data/categories/app_user/model/app_user.dart';
 import 'package:dishlocal/data/categories/app_user/repository/interface/app_user_repository.dart';
 import 'package:dishlocal/data/categories/chat/model/message.dart';
@@ -9,6 +10,7 @@ import 'package:dishlocal/data/categories/chat/repository/failure/chat_failure.d
 import 'package:dishlocal/data/categories/chat/repository/interface/chat_repository.dart';
 import 'package:dishlocal/data/categories/post/model/post.dart';
 import 'package:dishlocal/data/categories/post/repository/interface/post_repository.dart';
+import 'package:dishlocal/data/global/chat_event_bus.dart';
 import 'package:dishlocal/data/services/database_service/entity/message_entity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -28,6 +30,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   StreamSubscription<Either<ChatFailure, MessageEntity>>? _messageSubscription;
   final int _messagesPerPage = 30;
 
+  StreamSubscription? _eventBusSubscription;
   bool _isScreenActive = false;
 
   ChatBloc(this._chatRepository, this._appUserRepository, this._postRepository) : super(const ChatState.initial()) {
@@ -40,6 +43,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<_MessageEnriched>(_onMessageEnriched);
     // === THAY ĐỔI: Thêm handler cho sự kiện active/inactive ===
     on<_ScreenStatusChanged>(_onScreenStatusChanged);
+    on<_ReadStatusCheckRequested>(_onReadStatusCheckRequested);
   }
 
 
@@ -48,6 +52,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     _log.info('Closing ChatBloc and message subscription.');
     _messageSubscription?.cancel();
     _isScreenActive = false; // Đảm bảo trạng thái được reset
+    _eventBusSubscription?.cancel();
     return super.close();
   }
 
@@ -57,6 +62,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     _isScreenActive = true;
     _chatRepository.markConversationAsRead(conversationId: event.conversationId);
+
+    // === THAY ĐỔI: Lắng nghe EventBus để cập nhật trạng thái đã đọc ===
+    _eventBusSubscription?.cancel();
+    _eventBusSubscription = getIt<ChatEventBus>().stream.listen((_) {
+      // Khi có thay đổi, thêm event mới để xử lý
+      add(ChatEvent.readStatusCheckRequested(event.conversationId));
+    });
 
     _messageSubscription?.cancel();
     _messageSubscription = _chatRepository.subscribeToMessages(conversationId: event.conversationId).listen((result) {
@@ -83,6 +95,22 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         // 1. Chuyển đổi entities thành Messages "chưa hoàn chỉnh"
         final initialMessages = entities.map((e) => Message.fromEntity(e)).toList();
 
+        // === THÊM MỚI: Lấy trạng thái đã đọc ban đầu ===
+        final statusResult = await _chatRepository.getReadStatuses(conversationId: event.conversationId);
+        DateTime? otherUserLastReadAt;
+        statusResult.fold(
+          (l) => _log.warning("Could not fetch initial read statuses."),
+          (statuses) {
+            final otherStatus = statuses.firstWhere(
+              (s) => s['user_id'] == event.otherUser.userId,
+              orElse: () => {},
+            );
+            if (otherStatus['last_read_at'] != null) {
+              otherUserLastReadAt = DateTime.parse(otherStatus['last_read_at']);
+            }
+          }
+        );
+
         // 2. Emit trạng thái Loaded NGAY LẬP TỨC
         emit(ChatState.loaded(
           conversationId: event.conversationId,
@@ -90,11 +118,39 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           messages: initialMessages,
           hasReachedMax: entities.length < _messagesPerPage,
           currentPage: 1,
+          otherUserLastReadAt: otherUserLastReadAt,
         ));
 
         // 3. Kích hoạt quá trình làm giàu dữ liệu ở background
         add(ChatEvent.enrichmentStarted(initialMessages));
       },
+    );
+  }
+
+  Future<void> _onReadStatusCheckRequested(_ReadStatusCheckRequested event, Emitter<ChatState> emit) async {
+    if (state is! ChatLoaded) return;
+    final currentState = state as ChatLoaded;
+    
+    _log.info("Read status check requested for conversation ${event.conversationId}");
+    final statusResult = await _chatRepository.getReadStatuses(conversationId: event.conversationId);
+    
+    statusResult.fold(
+      (l) => _log.warning("Could not fetch updated read statuses."),
+      (statuses) {
+        final otherStatus = statuses.firstWhere(
+          (s) => s['user_id'] == currentState.otherUser.userId,
+          orElse: () => {},
+        );
+        DateTime? newLastReadAt;
+        if (otherStatus['last_read_at'] != null) {
+          newLastReadAt = DateTime.parse(otherStatus['last_read_at']);
+        }
+        
+        // Chỉ emit nếu có thay đổi
+        if (currentState.otherUserLastReadAt != newLastReadAt) {
+          emit(currentState.copyWith(otherUserLastReadAt: newLastReadAt));
+        }
+      }
     );
   }
 

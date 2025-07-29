@@ -16,6 +16,7 @@ sealed class ChatState with _$ChatState {
     @Default(false) bool isLoadingMore, // Cờ cho biết đang tải trang tiếp theo
     @Default(false) bool hasReachedMax, // Cờ cho biết đã hết tin nhắn để tải
     @Default(1) int currentPage, // Trang hiện tại
+    DateTime? otherUserLastReadAt,
   }) = ChatLoaded;
 
   /// Trạng thái lỗi.

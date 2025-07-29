@@ -31,4 +31,6 @@ sealed class ChatEvent with _$ChatEvent {
 
   /// [Nội bộ] Được gọi khi một tin nhắn đã được làm giàu thành công.
   const factory ChatEvent.messageEnriched(Message updatedMessage) = _MessageEnriched;
+
+  const factory ChatEvent.readStatusCheckRequested(String conversationId) = _ReadStatusCheckRequested;
 }

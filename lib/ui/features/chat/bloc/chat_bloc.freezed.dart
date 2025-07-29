@@ -554,6 +554,72 @@ class __$MessageEnrichedCopyWithImpl<$Res>
 }
 
 /// @nodoc
+
+class _ReadStatusCheckRequested implements ChatEvent {
+  const _ReadStatusCheckRequested(this.conversationId);
+
+  final String conversationId;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ReadStatusCheckRequestedCopyWith<_ReadStatusCheckRequested> get copyWith =>
+      __$ReadStatusCheckRequestedCopyWithImpl<_ReadStatusCheckRequested>(
+          this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _ReadStatusCheckRequested &&
+            (identical(other.conversationId, conversationId) ||
+                other.conversationId == conversationId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, conversationId);
+
+  @override
+  String toString() {
+    return 'ChatEvent.readStatusCheckRequested(conversationId: $conversationId)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$ReadStatusCheckRequestedCopyWith<$Res>
+    implements $ChatEventCopyWith<$Res> {
+  factory _$ReadStatusCheckRequestedCopyWith(_ReadStatusCheckRequested value,
+          $Res Function(_ReadStatusCheckRequested) _then) =
+      __$ReadStatusCheckRequestedCopyWithImpl;
+  @useResult
+  $Res call({String conversationId});
+}
+
+/// @nodoc
+class __$ReadStatusCheckRequestedCopyWithImpl<$Res>
+    implements _$ReadStatusCheckRequestedCopyWith<$Res> {
+  __$ReadStatusCheckRequestedCopyWithImpl(this._self, this._then);
+
+  final _ReadStatusCheckRequested _self;
+  final $Res Function(_ReadStatusCheckRequested) _then;
+
+  /// Create a copy of ChatEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? conversationId = null,
+  }) {
+    return _then(_ReadStatusCheckRequested(
+      null == conversationId
+          ? _self.conversationId
+          : conversationId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
 mixin _$ChatState {
   @override
   bool operator ==(Object other) {
@@ -624,7 +690,8 @@ class ChatLoaded implements ChatState {
       required final List<Message> messages,
       this.isLoadingMore = false,
       this.hasReachedMax = false,
-      this.currentPage = 1})
+      this.currentPage = 1,
+      this.otherUserLastReadAt})
       : _messages = messages;
 
   final String conversationId;
@@ -644,6 +711,8 @@ class ChatLoaded implements ChatState {
 // Cờ cho biết đã hết tin nhắn để tải
   @JsonKey()
   final int currentPage;
+// Trang hiện tại
+  final DateTime? otherUserLastReadAt;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -667,7 +736,9 @@ class ChatLoaded implements ChatState {
             (identical(other.hasReachedMax, hasReachedMax) ||
                 other.hasReachedMax == hasReachedMax) &&
             (identical(other.currentPage, currentPage) ||
-                other.currentPage == currentPage));
+                other.currentPage == currentPage) &&
+            (identical(other.otherUserLastReadAt, otherUserLastReadAt) ||
+                other.otherUserLastReadAt == otherUserLastReadAt));
   }
 
   @override
@@ -678,11 +749,12 @@ class ChatLoaded implements ChatState {
       const DeepCollectionEquality().hash(_messages),
       isLoadingMore,
       hasReachedMax,
-      currentPage);
+      currentPage,
+      otherUserLastReadAt);
 
   @override
   String toString() {
-    return 'ChatState.loaded(conversationId: $conversationId, otherUser: $otherUser, messages: $messages, isLoadingMore: $isLoadingMore, hasReachedMax: $hasReachedMax, currentPage: $currentPage)';
+    return 'ChatState.loaded(conversationId: $conversationId, otherUser: $otherUser, messages: $messages, isLoadingMore: $isLoadingMore, hasReachedMax: $hasReachedMax, currentPage: $currentPage, otherUserLastReadAt: $otherUserLastReadAt)';
   }
 }
 
@@ -699,7 +771,8 @@ abstract mixin class $ChatLoadedCopyWith<$Res>
       List<Message> messages,
       bool isLoadingMore,
       bool hasReachedMax,
-      int currentPage});
+      int currentPage,
+      DateTime? otherUserLastReadAt});
 
   $AppUserCopyWith<$Res> get otherUser;
 }
@@ -721,6 +794,7 @@ class _$ChatLoadedCopyWithImpl<$Res> implements $ChatLoadedCopyWith<$Res> {
     Object? isLoadingMore = null,
     Object? hasReachedMax = null,
     Object? currentPage = null,
+    Object? otherUserLastReadAt = freezed,
   }) {
     return _then(ChatLoaded(
       conversationId: null == conversationId
@@ -747,6 +821,10 @@ class _$ChatLoadedCopyWithImpl<$Res> implements $ChatLoadedCopyWith<$Res> {
           ? _self.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
               as int,
+      otherUserLastReadAt: freezed == otherUserLastReadAt
+          ? _self.otherUserLastReadAt
+          : otherUserLastReadAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 

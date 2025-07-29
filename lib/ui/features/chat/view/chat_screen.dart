@@ -157,7 +157,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       ChatLoaded(
                         messages: final messages,
                         isLoadingMore: final isLoadingMore,
-                        //otherUserPhotoUrl: final otherUserPhotoUrl,
+                        otherUserLastReadAt: final otherUserLastReadAt,
                       ) =>
                         ListView.builder(
                           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -230,6 +230,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                       message: message,
                                       isMe: message.senderId == _currentUserId,
                                       otherUser: widget.otherUser,
+                                      otherUserLastReadAt: otherUserLastReadAt,
                                     ),
                                   ],
                                 ),

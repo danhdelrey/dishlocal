@@ -54,4 +54,7 @@ abstract class ChatRepository {
   void disposeConversationListSubscription();
 
   Future<Either<ChatFailure, void>> deleteConversation({required String conversationId});
+
+  /// Lấy trạng thái đã đọc ban đầu cho tất cả người tham gia.
+  Future<Either<ChatFailure, List<Map<String, dynamic>>>> getReadStatuses({required String conversationId});
 }
