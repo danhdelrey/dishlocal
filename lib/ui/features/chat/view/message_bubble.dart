@@ -7,7 +7,6 @@ import 'package:dishlocal/ui/widgets/containers_widgets/glass_container.dart';
 import 'package:dishlocal/ui/widgets/image_widgets/cached_circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logging/logging.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;
@@ -15,138 +14,113 @@ class MessageBubble extends StatelessWidget {
   final AppUser otherUser;
   final DateTime? otherUserLastReadAt;
 
+  // Cờ điều khiển hiển thị, được tính toán từ ChatScreen
+  final bool shouldShowAvatar;
+  final bool shouldShowStatus;
+
   const MessageBubble({
     super.key,
     required this.message,
     required this.isMe,
-    required this.otherUser, this.otherUserLastReadAt,
+    required this.otherUser,
+    this.otherUserLastReadAt,
+    this.shouldShowAvatar = false,
+    this.shouldShowStatus = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final log = Logger("MessageBubble");
-    if (message.id == '93b804ed-a838-4af1-8c87-96a67daf40c7') {
-      log.info('--- DEBUGGING MESSAGE BUBBLE ---');
-      log.info('Message ID: ${message.id}');
-      log.info('Message Type: ${message.messageType}');
-      log.info('Shared Post ID: ${message.sharedPostId}');
-      log.info('Shared Post Object is null: ${message.sharedPost == null}');
-      log.info('---------------------------------');
-    }
-
-    // === TÁI CẤU TRÚC: Xây dựng nội dung trước ===
+    // Xây dựng phần nội dung chính của bubble
     final contentColumn = Column(
-      crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start, // Luôn là start để text không bị tràn
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // === BẮT ĐẦU THAY ĐỔI LOGIC ===
-
-        // Hiển thị phần chia sẻ post NẾU messageType là 'shared_post'
-        if (message.messageType == 'shared_post') _buildSharedPost(context, theme, isMe),
-
-        // Hiển thị phần nội dung text NẾU content có giá trị
-        if (message.content != null && message.content!.isNotEmpty) _buildTextContent(theme),
-
-        // === KẾT THÚC THAY ĐỔI LOGIC ===
+        _buildSharedPost(context, theme),
+        _buildTextContent(theme),
       ],
     );
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Align(
-        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            if (!isMe)
-              Padding(
-                padding: const EdgeInsets.only(right: 4.0),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    context.push('/post_detail/profile', extra: {'userId': otherUser.userId});
-                  },
-                  child: CachedCircleAvatar(
-                    imageUrl: otherUser.photoUrl ?? '',
-                    circleRadius: 15,
-                  ),
-                ),
-              ),
-            Flexible(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
-                child: GlassContainer(
-                  horizontalPadding: message.sharedPostId != null ? 0 : 10,
-                  verticalPadding: message.sharedPostId != null ? 0 : 6,
-                  backgroundColor: message.sharedPostId != null ? theme.colorScheme.outlineVariant : (isMe ? const Color(0xFFff9a44) : theme.colorScheme.outlineVariant),
-                  backgroundAlpha: message.sharedPostId != null ? 0.1 : (isMe ? 0.9 : 0.1),
-                  borderRadius: 20,
-                  borderTop: true,
-                  borderLeft: true,
-                  borderRight: true,
-                  borderBottom: true,
-                  child: contentColumn, // Đưa nội dung đã xây dựng vào đây
-                ),
+      // Thêm padding dưới nếu đây là tin nhắn cuối trong một chuỗi
+      padding: EdgeInsets.only(bottom: (shouldShowAvatar || shouldShowStatus) ? 10.0 : 4.0),
+      child: Row(
+        // Căn chỉnh toàn bộ (avatar + bubble) sang trái hoặc phải
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // Widget cho avatar hoặc một khoảng trống để căn lề
+          _buildAvatarSpace(context),
+
+          Flexible(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+              child: GlassContainer(
+                horizontalPadding: message.sharedPostId != null ? 0 : 10,
+                verticalPadding: message.sharedPostId != null ? 0 : 6,
+                backgroundColor: message.sharedPostId != null ? theme.colorScheme.outlineVariant : (isMe ? const Color(0xFFff9a44) : theme.colorScheme.outlineVariant),
+                backgroundAlpha: message.sharedPostId != null ? 0.1 : (isMe ? 0.9 : 0.1),
+                borderRadius: 20,
+                borderTop: true,
+                borderLeft: true,
+                borderRight: true,
+                borderBottom: true,
+                child: contentColumn,
               ),
             ),
-            if (isMe) _buildStatusIcon(context),
-          ],
-        ),
+          ),
+
+          // Hiển thị status icon nếu cần
+          if (shouldShowStatus) _buildStatusIcon(context),
+        ],
       ),
     );
   }
 
-  Widget _buildSharedPost(BuildContext context, ThemeData theme, bool isMe) {
+  /// Widget hiển thị bài viết được chia sẻ, placeholder loading, hoặc thông báo đã xóa
+  Widget _buildSharedPost(BuildContext context, ThemeData theme) {
     if (message.messageType != 'shared_post') {
       return const SizedBox.shrink();
     }
 
-    // === THAY ĐỔI LOGIC HIỂN THỊ ===
-
-    // 1. Nếu có object Post -> Hiển thị SmallPost
+    Widget sharedPostContent;
     if (message.sharedPost != null) {
-      return SizedBox(
-        width: 150,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {}),
-        ),
-      );
-    }
-    // 2. Nếu có post ID nhưng chưa có object Post -> ĐANG TẢI
-    else if (message.sharedPostId != null && message.sharedPost == null) {
-      return SizedBox(
-        width: 150,
-        height: 200, // Chiều cao tạm thời cho placeholder
+      // Trường hợp 1: Có object Post -> Hiển thị SmallPost
+      sharedPostContent = SmallPost(post: message.sharedPost!, onDeletePostPopBack: () {});
+    } else if (message.sharedPostId != null) {
+      // Trường hợp 2: Có post ID nhưng chưa có object Post -> ĐANG TẢI
+      sharedPostContent = SizedBox(
+        height: 150,
         child: Center(
           child: SizedBox(
-            width: 40,
-            height: 40,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: isMe ? Colors.white : appColorScheme(context).primary,
-            ),
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(strokeWidth: 2, color: isMe ? Colors.white : appColorScheme(context).primary),
           ),
         ),
       );
-    }
-    // 3. Nếu không có cả hai -> Đã bị xóa
-    else {
-      return Container(
-        width: 150,
+    } else {
+      // Trường hợp 3: Không có cả hai -> Đã bị xóa
+      sharedPostContent = Padding(
         padding: const EdgeInsets.all(12.0),
         child: Text(
           'Bài viết này không còn tồn tại',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: isMe ? theme.colorScheme.onPrimary.withOpacity(0.8) : theme.colorScheme.onSurface.withOpacity(0.7),
             fontStyle: FontStyle.italic,
-            fontWeight: FontWeight.bold,
           ),
         ),
       );
     }
+
+    return SizedBox(
+      width: 200, // Đặt chiều rộng cố định cho các tin nhắn chia sẻ
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: sharedPostContent,
+      ),
+    );
   }
 
   /// Widget hiển thị nội dung văn bản
@@ -167,14 +141,38 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
+  /// Xây dựng avatar hoặc một khoảng trống có cùng chiều rộng để căn lề
+  Widget _buildAvatarSpace(BuildContext context) {
+    // Tin nhắn của mình không có avatar bên trái
+    if (isMe) return const SizedBox.shrink();
+
+    // Chiều rộng cố định để các bubble phía trên thẳng hàng
+    return SizedBox(
+      width: 38, // Bán kính (15) * 2 + padding (4) * 2
+      child: shouldShowAvatar
+          ? Align(
+              alignment: Alignment.bottomLeft,
+              child: GestureDetector(
+                onTap: () => context.push('/post_detail/profile', extra: {'userId': otherUser.userId}),
+                child: CachedCircleAvatar(
+                  imageUrl: otherUser.photoUrl ?? '',
+                  circleRadius: 15,
+                ),
+              ),
+            )
+          : null, // Để trống khi không cần hiển thị avatar
+    );
+  }
+
+  /// Widget hiển thị trạng thái tin nhắn (sending, sent, read)
   Widget _buildStatusIcon(BuildContext context) {
+    // Chỉ hiển thị cho tin nhắn của mình
     if (!isMe) return const SizedBox.shrink();
 
-    // === LOGIC "ĐÃ XEM" NẰM Ở ĐÂY ===
-    if (otherUserLastReadAt != null && (message.createdAt.isBefore(otherUserLastReadAt!) || message.createdAt.isAtSameMomentAs(otherUserLastReadAt!))) {
-      // Nếu tin nhắn đã được đọc -> Hiển thị avatar nhỏ của người kia
+    // Ưu tiên 1: Trạng thái "Đã xem"
+    if (otherUserLastReadAt != null && message.createdAt.toUtc().isBefore(otherUserLastReadAt!.toUtc())) {
       return Padding(
-        padding: const EdgeInsets.only(right: 8.0, bottom: 4.0),
+        padding: const EdgeInsets.only(left: 8.0),
         child: CachedCircleAvatar(
           imageUrl: otherUser.photoUrl ?? '',
           circleRadius: 8,
@@ -182,8 +180,8 @@ class MessageBubble extends StatelessWidget {
       );
     }
 
+    // Ưu tiên 2: Các trạng thái khác (sending, sent, failed)
     IconData? icon;
-    double size = 14;
     Color color = Colors.grey.shade600;
 
     switch (message.status) {
@@ -197,18 +195,13 @@ class MessageBubble extends StatelessWidget {
       case MessageStatus.sent:
         icon = Icons.done;
         break;
-      case MessageStatus.read:
-        // Thay vì dùng icon khác, ta có thể hiển thị avatar của người nhận
-        // ở trạng thái "đã xem". Đây là một cách tiếp cận hiện đại.
-        return Padding(
-          padding: const EdgeInsets.only(right: 8.0, bottom: 4.0),
-          child: CachedCircleAvatar(
-            imageUrl: otherUser.photoUrl ?? '',
-            circleRadius: 8,
-          ),
-        );
+      default:
+        return const SizedBox(width: 22); // Giữ khoảng trống nếu không có status
     }
 
-    return Icon(icon, size: size, color: color);
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0),
+      child: Icon(icon, size: 16, color: color),
+    );
   }
 }

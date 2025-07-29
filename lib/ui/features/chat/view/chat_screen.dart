@@ -205,34 +205,34 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               shouldShowTimeGapLabel = false;
                             }
 
+                            // Lấy tin nhắn tiếp theo (do list bị reverse, "tiếp theo" là index - 1)
+                            final Message? nextMessage = (index > 0) ? messages[index - 1] : null;
+
+// 1. Logic hiển thị Avatar (của người kia)
+// Hiển thị avatar nếu đây là tin nhắn cuối cùng của người đó trong một chuỗi.
+// (Tức là tin nhắn tiếp theo không tồn tại HOẶC là của mình)
+                            final bool isMe = message.senderId == _currentUserId;
+                            final bool shouldShowAvatar = !isMe && (nextMessage == null || nextMessage.senderId == _currentUserId);
+
+// 2. Logic hiển thị Status Icon (của mình)
+// Hiển thị status icon nếu đây là tin nhắn cuối cùng của mình trong một chuỗi.
+// (Tức là tin nhắn tiếp theo không tồn tại HOẶC là của người kia)
+                            final bool shouldShowStatus = isMe && (nextMessage == null || nextMessage.senderId != _currentUserId);
+
                             return Column(
                               children: [
-                                // Hiển thị label ngày nếu cần
                                 if (shouldShowDateLabel) _DateLabel(dateTime: message.createdAt),
-
-                                // Hiển thị label thời gian nghỉ nếu cần và không trùng với label ngày
                                 if (shouldShowTimeGapLabel && !shouldShowDateLabel) _DateLabel(dateTime: message.createdAt),
 
-                                // Widget MessageBubble được bọc trong Row để thêm avatar
-                                Row(
-                                  mainAxisAlignment: message.senderId == _currentUserId ? MainAxisAlignment.end : MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    // Hiển thị Avatar hoặc một khoảng trống
-                                    // if (message.senderId != _currentUserId)
-                                    //   _Avatar(
-                                    //     imageUrl: otherUserPhotoUrl,
-                                    //     isVisible: shouldShowAvatar,
-                                    //   ),
-
-                                    // MessageBubble không cần Row bên trong nữa
-                                    MessageBubble(
-                                      message: message,
-                                      isMe: message.senderId == _currentUserId,
-                                      otherUser: widget.otherUser,
-                                      otherUserLastReadAt: otherUserLastReadAt,
-                                    ),
-                                  ],
+                                // MessageBubble giờ đây không cần Row bên ngoài nữa, nó tự xử lý
+                                MessageBubble(
+                                  message: message,
+                                  isMe: isMe,
+                                  otherUser: widget.otherUser,
+                                  otherUserLastReadAt: otherUserLastReadAt,
+                                  // === TRUYỀN CÁC CỜ MỚI XUỐNG ===
+                                  shouldShowAvatar: shouldShowAvatar,
+                                  shouldShowStatus: shouldShowStatus,
                                 ),
                               ],
                             );
