@@ -30,50 +30,58 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    // Xây dựng phần nội dung chính của bubble
-    final contentColumn = Column(
-      crossAxisAlignment: CrossAxisAlignment.start, // Luôn là start để text không bị tràn
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildSharedPost(context, theme),
-        _buildTextContent(theme),
-      ],
-    );
-
+    // === CẤU TRÚC MỚI: Bọc mọi thứ trong một Row lớn ===
     return Padding(
-      // Thêm padding dưới nếu đây là tin nhắn cuối trong một chuỗi
-      padding: EdgeInsets.only(bottom: (shouldShowAvatar || shouldShowStatus) ? 10.0 : 4.0),
+      padding: EdgeInsets.only(bottom: shouldShowAvatar ? 10.0 : 4.0),
       child: Row(
-        // Căn chỉnh toàn bộ (avatar + bubble) sang trái hoặc phải
         mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Widget cho avatar hoặc một khoảng trống để căn lề
-          _buildAvatarSpace(context),
+          // 1. Avatar (hoặc khoảng trống) cho tin nhắn của người kia
+          if (!isMe) _buildAvatarSpace(context),
 
+          // 2. Cột chứa Bubble và Status Text
           Flexible(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
-              child: GlassContainer(
-                horizontalPadding: message.sharedPostId != null ? 0 : 10,
-                verticalPadding: message.sharedPostId != null ? 0 : 6,
-                backgroundColor: message.sharedPostId != null ? theme.colorScheme.outlineVariant : (isMe ? const Color(0xFFff9a44) : theme.colorScheme.outlineVariant),
-                backgroundAlpha: message.sharedPostId != null ? 0.1 : (isMe ? 0.9 : 0.1),
-                borderRadius: 20,
-                borderTop: true,
-                borderLeft: true,
-                borderRight: true,
-                borderBottom: true,
-                child: contentColumn,
-              ),
+            child: Column(
+              crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                _buildBubbleContent(context),
+                if (shouldShowStatus) _buildStatusText(context), // <--- WIDGET STATUS MỚI
+              ],
             ),
           ),
-
-          // Hiển thị status icon nếu cần
-          if (shouldShowStatus) _buildStatusIcon(context),
         ],
+      ),
+    );
+  }
+
+  /// Xây dựng nội dung chính của bubble (text và/hoặc post)
+  Widget _buildBubbleContent(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final contentColumn = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (message.messageType == 'shared_post') _buildSharedPost(context, theme),
+        if (message.content != null && message.content!.isNotEmpty) _buildTextContent(theme),
+      ],
+    );
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+      child: GlassContainer(
+        horizontalPadding: message.sharedPostId != null ? 0 : 10,
+        verticalPadding: message.sharedPostId != null ? 0 : 6,
+        backgroundColor: message.sharedPostId != null ? theme.colorScheme.outlineVariant : (isMe ? const Color(0xFFff9a44) : theme.colorScheme.outlineVariant),
+        backgroundAlpha: message.sharedPostId != null ? 0.1 : (isMe ? 0.9 : 0.1),
+        borderRadius: 20,
+        borderTop: true,
+        borderLeft: true,
+        borderRight: true,
+        borderBottom: true,
+        blur: 0,
+        child: contentColumn,
       ),
     );
   }
@@ -96,7 +104,7 @@ class MessageBubble extends StatelessWidget {
           child: SizedBox(
             width: 24,
             height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2, color: isMe ? Colors.white : appColorScheme(context).primary),
+            child: CircularProgressIndicator(strokeWidth: 2, color: appColorScheme(context).primary),
           ),
         ),
       );
@@ -164,44 +172,69 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  /// Widget hiển thị trạng thái tin nhắn (sending, sent, read)
-  Widget _buildStatusIcon(BuildContext context) {
-    // Chỉ hiển thị cho tin nhắn của mình
+  Widget _buildStatusText(BuildContext context) {
+    // Chỉ hiển thị status cho tin nhắn của mình
     if (!isMe) return const SizedBox.shrink();
+
+    Widget statusWidget;
+    final theme = Theme.of(context);
+    final style = theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant);
 
     // Ưu tiên 1: Trạng thái "Đã xem"
     if (otherUserLastReadAt != null && message.createdAt.toUtc().isBefore(otherUserLastReadAt!.toUtc())) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: CachedCircleAvatar(
-          imageUrl: otherUser.photoUrl ?? '',
-          circleRadius: 8,
-        ),
+      statusWidget = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CachedCircleAvatar(
+            imageUrl: otherUser.photoUrl ?? '',
+            circleRadius: 7,
+          ),
+          const SizedBox(width: 4),
+          Text('Đã xem', style: style),
+        ],
       );
     }
-
-    // Ưu tiên 2: Các trạng thái khác (sending, sent, failed)
-    IconData? icon;
-    Color color = Colors.grey.shade600;
-
-    switch (message.status) {
-      case MessageStatus.sending:
-        icon = Icons.access_time;
-        break;
-      case MessageStatus.failed:
-        icon = Icons.error;
-        color = Colors.red;
-        break;
-      case MessageStatus.sent:
-        icon = Icons.done;
-        break;
-      default:
-        return const SizedBox(width: 22); // Giữ khoảng trống nếu không có status
+    // Ưu tiên 2: Các trạng thái khác
+    else {
+      switch (message.status) {
+        case MessageStatus.sending:
+          statusWidget = Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.access_time, size: 14, color: style?.color),
+              const SizedBox(width: 4),
+              Text('Đang gửi...', style: style),
+            ],
+          );
+          break;
+        case MessageStatus.failed:
+          statusWidget = Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error, size: 14, color: theme.colorScheme.error),
+              const SizedBox(width: 4),
+              Text('Gửi lỗi', style: style?.copyWith(color: theme.colorScheme.error)),
+            ],
+          );
+          break;
+        case MessageStatus.sent:
+          statusWidget = Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.done, size: 14, color: style?.color),
+              const SizedBox(width: 4),
+              Text('Đã gửi', style: style),
+            ],
+          );
+          break;
+        default:
+          statusWidget = const SizedBox.shrink();
+      }
     }
 
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0),
-      child: Icon(icon, size: 16, color: color),
+      padding: const EdgeInsets.only(top: 4.0, right: 8.0),
+      child: statusWidget,
     );
   }
 }
