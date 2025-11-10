@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -33,6 +32,203 @@ mixin _$ReviewEvent {
 /// @nodoc
 class $ReviewEventCopyWith<$Res> {
   $ReviewEventCopyWith(ReviewEvent _, $Res Function(ReviewEvent) __);
+}
+
+/// Adds pattern-matching-related methods to [ReviewEvent].
+extension ReviewEventPatterns on ReviewEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initialized value)? initialized,
+    TResult Function(_RatingChanged value)? ratingChanged,
+    TResult Function(_ChoiceToggled value)? choiceToggled,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that);
+      case _RatingChanged() when ratingChanged != null:
+        return ratingChanged(_that);
+      case _ChoiceToggled() when choiceToggled != null:
+        return choiceToggled(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initialized value) initialized,
+    required TResult Function(_RatingChanged value) ratingChanged,
+    required TResult Function(_ChoiceToggled value) choiceToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized():
+        return initialized(_that);
+      case _RatingChanged():
+        return ratingChanged(_that);
+      case _ChoiceToggled():
+        return choiceToggled(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initialized value)? initialized,
+    TResult? Function(_RatingChanged value)? ratingChanged,
+    TResult? Function(_ChoiceToggled value)? choiceToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that);
+      case _RatingChanged() when ratingChanged != null:
+        return ratingChanged(_that);
+      case _ChoiceToggled() when choiceToggled != null:
+        return choiceToggled(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(List<ReviewItem> initialReviews)? initialized,
+    TResult Function(ReviewCategory category, double newRating)? ratingChanged,
+    TResult Function(ReviewCategory category, ReviewChoice choice)?
+        choiceToggled,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that.initialReviews);
+      case _RatingChanged() when ratingChanged != null:
+        return ratingChanged(_that.category, _that.newRating);
+      case _ChoiceToggled() when choiceToggled != null:
+        return choiceToggled(_that.category, _that.choice);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(List<ReviewItem> initialReviews) initialized,
+    required TResult Function(ReviewCategory category, double newRating)
+        ratingChanged,
+    required TResult Function(ReviewCategory category, ReviewChoice choice)
+        choiceToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized():
+        return initialized(_that.initialReviews);
+      case _RatingChanged():
+        return ratingChanged(_that.category, _that.newRating);
+      case _ChoiceToggled():
+        return choiceToggled(_that.category, _that.choice);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(List<ReviewItem> initialReviews)? initialized,
+    TResult? Function(ReviewCategory category, double newRating)? ratingChanged,
+    TResult? Function(ReviewCategory category, ReviewChoice choice)?
+        choiceToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that.initialReviews);
+      case _RatingChanged() when ratingChanged != null:
+        return ratingChanged(_that.category, _that.newRating);
+      case _ChoiceToggled() when choiceToggled != null:
+        return choiceToggled(_that.category, _that.choice);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -272,6 +468,187 @@ mixin _$ReviewState {
 /// @nodoc
 class $ReviewStateCopyWith<$Res> {
   $ReviewStateCopyWith(ReviewState _, $Res Function(ReviewState) __);
+}
+
+/// Adds pattern-matching-related methods to [ReviewState].
+extension ReviewStatePatterns on ReviewState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initial value)? initial,
+    TResult Function(Ready value)? ready,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial() when initial != null:
+        return initial(_that);
+      case Ready() when ready != null:
+        return ready(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initial value) initial,
+    required TResult Function(Ready value) ready,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial():
+        return initial(_that);
+      case Ready():
+        return ready(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initial value)? initial,
+    TResult? Function(Ready value)? ready,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial() when initial != null:
+        return initial(_that);
+      case Ready() when ready != null:
+        return ready(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function(
+            Map<ReviewCategory, ReviewItem> reviewData, bool isSubmittable)?
+        ready,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial() when initial != null:
+        return initial();
+      case Ready() when ready != null:
+        return ready(_that.reviewData, _that.isSubmittable);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function(
+            Map<ReviewCategory, ReviewItem> reviewData, bool isSubmittable)
+        ready,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial():
+        return initial();
+      case Ready():
+        return ready(_that.reviewData, _that.isSubmittable);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function(
+            Map<ReviewCategory, ReviewItem> reviewData, bool isSubmittable)?
+        ready,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial() when initial != null:
+        return initial();
+      case Ready() when ready != null:
+        return ready(_that.reviewData, _that.isSubmittable);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc

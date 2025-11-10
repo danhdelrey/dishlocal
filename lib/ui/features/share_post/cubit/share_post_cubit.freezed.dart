@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -33,6 +32,258 @@ mixin _$SharePostState {
 /// @nodoc
 class $SharePostStateCopyWith<$Res> {
   $SharePostStateCopyWith(SharePostState _, $Res Function(SharePostState) __);
+}
+
+/// Adds pattern-matching-related methods to [SharePostState].
+extension SharePostStatePatterns on SharePostState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SharePostInitial value)? initial,
+    TResult Function(SharePostLoading value)? loading,
+    TResult Function(SharePostLoaded value)? loaded,
+    TResult Function(SharePostError value)? error,
+    TResult Function(SharePostSendSuccess value)? sendSuccess,
+    TResult Function(SharePostSendError value)? sendError,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SharePostInitial() when initial != null:
+        return initial(_that);
+      case SharePostLoading() when loading != null:
+        return loading(_that);
+      case SharePostLoaded() when loaded != null:
+        return loaded(_that);
+      case SharePostError() when error != null:
+        return error(_that);
+      case SharePostSendSuccess() when sendSuccess != null:
+        return sendSuccess(_that);
+      case SharePostSendError() when sendError != null:
+        return sendError(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(SharePostInitial value) initial,
+    required TResult Function(SharePostLoading value) loading,
+    required TResult Function(SharePostLoaded value) loaded,
+    required TResult Function(SharePostError value) error,
+    required TResult Function(SharePostSendSuccess value) sendSuccess,
+    required TResult Function(SharePostSendError value) sendError,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SharePostInitial():
+        return initial(_that);
+      case SharePostLoading():
+        return loading(_that);
+      case SharePostLoaded():
+        return loaded(_that);
+      case SharePostError():
+        return error(_that);
+      case SharePostSendSuccess():
+        return sendSuccess(_that);
+      case SharePostSendError():
+        return sendError(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(SharePostInitial value)? initial,
+    TResult? Function(SharePostLoading value)? loading,
+    TResult? Function(SharePostLoaded value)? loaded,
+    TResult? Function(SharePostError value)? error,
+    TResult? Function(SharePostSendSuccess value)? sendSuccess,
+    TResult? Function(SharePostSendError value)? sendError,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SharePostInitial() when initial != null:
+        return initial(_that);
+      case SharePostLoading() when loading != null:
+        return loading(_that);
+      case SharePostLoaded() when loaded != null:
+        return loaded(_that);
+      case SharePostError() when error != null:
+        return error(_that);
+      case SharePostSendSuccess() when sendSuccess != null:
+        return sendSuccess(_that);
+      case SharePostSendError() when sendError != null:
+        return sendError(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<Conversation> conversations)? loaded,
+    TResult Function(String message)? error,
+    TResult Function(
+            AppUser recipient, int totalSent, String firstConversationId)?
+        sendSuccess,
+    TResult Function(String message)? sendError,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SharePostInitial() when initial != null:
+        return initial();
+      case SharePostLoading() when loading != null:
+        return loading();
+      case SharePostLoaded() when loaded != null:
+        return loaded(_that.conversations);
+      case SharePostError() when error != null:
+        return error(_that.message);
+      case SharePostSendSuccess() when sendSuccess != null:
+        return sendSuccess(
+            _that.recipient, _that.totalSent, _that.firstConversationId);
+      case SharePostSendError() when sendError != null:
+        return sendError(_that.message);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<Conversation> conversations) loaded,
+    required TResult Function(String message) error,
+    required TResult Function(
+            AppUser recipient, int totalSent, String firstConversationId)
+        sendSuccess,
+    required TResult Function(String message) sendError,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SharePostInitial():
+        return initial();
+      case SharePostLoading():
+        return loading();
+      case SharePostLoaded():
+        return loaded(_that.conversations);
+      case SharePostError():
+        return error(_that.message);
+      case SharePostSendSuccess():
+        return sendSuccess(
+            _that.recipient, _that.totalSent, _that.firstConversationId);
+      case SharePostSendError():
+        return sendError(_that.message);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<Conversation> conversations)? loaded,
+    TResult? Function(String message)? error,
+    TResult? Function(
+            AppUser recipient, int totalSent, String firstConversationId)?
+        sendSuccess,
+    TResult? Function(String message)? sendError,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SharePostInitial() when initial != null:
+        return initial();
+      case SharePostLoading() when loading != null:
+        return loading();
+      case SharePostLoaded() when loaded != null:
+        return loaded(_that.conversations);
+      case SharePostError() when error != null:
+        return error(_that.message);
+      case SharePostSendSuccess() when sendSuccess != null:
+        return sendSuccess(
+            _that.recipient, _that.totalSent, _that.firstConversationId);
+      case SharePostSendError() when sendError != null:
+        return sendError(_that.message);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc

@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -34,6 +33,181 @@ mixin _$PostReactionBarEvent {
 class $PostReactionBarEventCopyWith<$Res> {
   $PostReactionBarEventCopyWith(
       PostReactionBarEvent _, $Res Function(PostReactionBarEvent) __);
+}
+
+/// Adds pattern-matching-related methods to [PostReactionBarEvent].
+extension PostReactionBarEventPatterns on PostReactionBarEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LikeToggled value)? likeToggled,
+    TResult Function(_SaveToggled value)? saveToggled,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LikeToggled() when likeToggled != null:
+        return likeToggled(_that);
+      case _SaveToggled() when saveToggled != null:
+        return saveToggled(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LikeToggled value) likeToggled,
+    required TResult Function(_SaveToggled value) saveToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LikeToggled():
+        return likeToggled(_that);
+      case _SaveToggled():
+        return saveToggled(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LikeToggled value)? likeToggled,
+    TResult? Function(_SaveToggled value)? saveToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LikeToggled() when likeToggled != null:
+        return likeToggled(_that);
+      case _SaveToggled() when saveToggled != null:
+        return saveToggled(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? likeToggled,
+    TResult Function()? saveToggled,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LikeToggled() when likeToggled != null:
+        return likeToggled();
+      case _SaveToggled() when saveToggled != null:
+        return saveToggled();
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() likeToggled,
+    required TResult Function() saveToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LikeToggled():
+        return likeToggled();
+      case _SaveToggled():
+        return saveToggled();
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? likeToggled,
+    TResult? Function()? saveToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _LikeToggled() when likeToggled != null:
+        return likeToggled();
+      case _SaveToggled() when saveToggled != null:
+        return saveToggled();
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -160,6 +334,165 @@ class _$PostReactionBarStateCopyWithImpl<$Res>
           : isSaved // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [PostReactionBarState].
+extension PostReactionBarStatePatterns on PostReactionBarState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PostReactionBarState value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PostReactionBarState() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PostReactionBarState value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PostReactionBarState():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PostReactionBarState value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PostReactionBarState() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(int likeCount, bool isLiked, int saveCount, bool isSaved)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PostReactionBarState() when $default != null:
+        return $default(
+            _that.likeCount, _that.isLiked, _that.saveCount, _that.isSaved);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(int likeCount, bool isLiked, int saveCount, bool isSaved)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PostReactionBarState():
+        return $default(
+            _that.likeCount, _that.isLiked, _that.saveCount, _that.isSaved);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(int likeCount, bool isLiked, int saveCount, bool isSaved)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PostReactionBarState() when $default != null:
+        return $default(
+            _that.likeCount, _that.isLiked, _that.saveCount, _that.isSaved);
+      case _:
+        return null;
+    }
   }
 }
 

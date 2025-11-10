@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -33,6 +32,230 @@ mixin _$MapEvent {
 /// @nodoc
 class $MapEventCopyWith<$Res> {
   $MapEventCopyWith(MapEvent _, $Res Function(MapEvent) __);
+}
+
+/// Adds pattern-matching-related methods to [MapEvent].
+extension MapEventPatterns on MapEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_RouteRequested value)? routeRequested,
+    TResult Function(_NavigationStarted value)? navigationStarted,
+    TResult Function(_NavigationStopped value)? navigationStopped,
+    TResult Function(_LocationUpdated value)? locationUpdated,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _RouteRequested() when routeRequested != null:
+        return routeRequested(_that);
+      case _NavigationStarted() when navigationStarted != null:
+        return navigationStarted(_that);
+      case _NavigationStopped() when navigationStopped != null:
+        return navigationStopped(_that);
+      case _LocationUpdated() when locationUpdated != null:
+        return locationUpdated(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_RouteRequested value) routeRequested,
+    required TResult Function(_NavigationStarted value) navigationStarted,
+    required TResult Function(_NavigationStopped value) navigationStopped,
+    required TResult Function(_LocationUpdated value) locationUpdated,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _RouteRequested():
+        return routeRequested(_that);
+      case _NavigationStarted():
+        return navigationStarted(_that);
+      case _NavigationStopped():
+        return navigationStopped(_that);
+      case _LocationUpdated():
+        return locationUpdated(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_RouteRequested value)? routeRequested,
+    TResult? Function(_NavigationStarted value)? navigationStarted,
+    TResult? Function(_NavigationStopped value)? navigationStopped,
+    TResult? Function(_LocationUpdated value)? locationUpdated,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _RouteRequested() when routeRequested != null:
+        return routeRequested(_that);
+      case _NavigationStarted() when navigationStarted != null:
+        return navigationStarted(_that);
+      case _NavigationStopped() when navigationStopped != null:
+        return navigationStopped(_that);
+      case _LocationUpdated() when locationUpdated != null:
+        return locationUpdated(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(
+            List<List<double>> coordinates, String? profile, bool optimized)?
+        routeRequested,
+    TResult Function()? navigationStarted,
+    TResult Function()? navigationStopped,
+    TResult Function(Either<DirectionFailure, LocationData> locationUpdate)?
+        locationUpdated,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _RouteRequested() when routeRequested != null:
+        return routeRequested(
+            _that.coordinates, _that.profile, _that.optimized);
+      case _NavigationStarted() when navigationStarted != null:
+        return navigationStarted();
+      case _NavigationStopped() when navigationStopped != null:
+        return navigationStopped();
+      case _LocationUpdated() when locationUpdated != null:
+        return locationUpdated(_that.locationUpdate);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(
+            List<List<double>> coordinates, String? profile, bool optimized)
+        routeRequested,
+    required TResult Function() navigationStarted,
+    required TResult Function() navigationStopped,
+    required TResult Function(
+            Either<DirectionFailure, LocationData> locationUpdate)
+        locationUpdated,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _RouteRequested():
+        return routeRequested(
+            _that.coordinates, _that.profile, _that.optimized);
+      case _NavigationStarted():
+        return navigationStarted();
+      case _NavigationStopped():
+        return navigationStopped();
+      case _LocationUpdated():
+        return locationUpdated(_that.locationUpdate);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(
+            List<List<double>> coordinates, String? profile, bool optimized)?
+        routeRequested,
+    TResult? Function()? navigationStarted,
+    TResult? Function()? navigationStopped,
+    TResult? Function(Either<DirectionFailure, LocationData> locationUpdate)?
+        locationUpdated,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _RouteRequested() when routeRequested != null:
+        return routeRequested(
+            _that.coordinates, _that.profile, _that.optimized);
+      case _NavigationStarted() when navigationStarted != null:
+        return navigationStarted();
+      case _NavigationStopped() when navigationStopped != null:
+        return navigationStopped();
+      case _LocationUpdated() when locationUpdated != null:
+        return locationUpdated(_that.locationUpdate);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -252,6 +475,238 @@ mixin _$MapState {
 /// @nodoc
 class $MapStateCopyWith<$Res> {
   $MapStateCopyWith(MapState _, $Res Function(MapState) __);
+}
+
+/// Adds pattern-matching-related methods to [MapState].
+extension MapStatePatterns on MapState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initial value)? initial,
+    TResult Function(LoadInProgress value)? loadInProgress,
+    TResult Function(LoadFailure value)? loadFailure,
+    TResult Function(Preview value)? preview,
+    TResult Function(Navigating value)? navigating,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial() when initial != null:
+        return initial(_that);
+      case LoadInProgress() when loadInProgress != null:
+        return loadInProgress(_that);
+      case LoadFailure() when loadFailure != null:
+        return loadFailure(_that);
+      case Preview() when preview != null:
+        return preview(_that);
+      case Navigating() when navigating != null:
+        return navigating(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initial value) initial,
+    required TResult Function(LoadInProgress value) loadInProgress,
+    required TResult Function(LoadFailure value) loadFailure,
+    required TResult Function(Preview value) preview,
+    required TResult Function(Navigating value) navigating,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial():
+        return initial(_that);
+      case LoadInProgress():
+        return loadInProgress(_that);
+      case LoadFailure():
+        return loadFailure(_that);
+      case Preview():
+        return preview(_that);
+      case Navigating():
+        return navigating(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initial value)? initial,
+    TResult? Function(LoadInProgress value)? loadInProgress,
+    TResult? Function(LoadFailure value)? loadFailure,
+    TResult? Function(Preview value)? preview,
+    TResult? Function(Navigating value)? navigating,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial() when initial != null:
+        return initial(_that);
+      case LoadInProgress() when loadInProgress != null:
+        return loadInProgress(_that);
+      case LoadFailure() when loadFailure != null:
+        return loadFailure(_that);
+      case Preview() when preview != null:
+        return preview(_that);
+      case Navigating() when navigating != null:
+        return navigating(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loadInProgress,
+    TResult Function(DirectionFailure failure)? loadFailure,
+    TResult Function(Direction direction)? preview,
+    TResult Function(Direction direction, LocationData currentLocation)?
+        navigating,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial() when initial != null:
+        return initial();
+      case LoadInProgress() when loadInProgress != null:
+        return loadInProgress();
+      case LoadFailure() when loadFailure != null:
+        return loadFailure(_that.failure);
+      case Preview() when preview != null:
+        return preview(_that.direction);
+      case Navigating() when navigating != null:
+        return navigating(_that.direction, _that.currentLocation);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loadInProgress,
+    required TResult Function(DirectionFailure failure) loadFailure,
+    required TResult Function(Direction direction) preview,
+    required TResult Function(Direction direction, LocationData currentLocation)
+        navigating,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial():
+        return initial();
+      case LoadInProgress():
+        return loadInProgress();
+      case LoadFailure():
+        return loadFailure(_that.failure);
+      case Preview():
+        return preview(_that.direction);
+      case Navigating():
+        return navigating(_that.direction, _that.currentLocation);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loadInProgress,
+    TResult? Function(DirectionFailure failure)? loadFailure,
+    TResult? Function(Direction direction)? preview,
+    TResult? Function(Direction direction, LocationData currentLocation)?
+        navigating,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case Initial() when initial != null:
+        return initial();
+      case LoadInProgress() when loadInProgress != null:
+        return loadInProgress();
+      case LoadFailure() when loadFailure != null:
+        return loadFailure(_that.failure);
+      case Preview() when preview != null:
+        return preview(_that.direction);
+      case Navigating() when navigating != null:
+        return navigating(_that.direction, _that.currentLocation);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc

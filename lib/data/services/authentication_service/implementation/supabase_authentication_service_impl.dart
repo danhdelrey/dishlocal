@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dishlocal/core/app_environment/app_environment.dart';
 import 'package:dishlocal/data/services/authentication_service/exception/authentication_service_exception.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart' hide GoogleSignInException;
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -13,7 +13,7 @@ import 'package:dishlocal/data/services/authentication_service/model/app_user_cr
 class SupabaseAuthenticationServiceImpl implements AuthenticationService {
   final _log = Logger('SupabaseAuthenticationServiceImpl');
   final _supabase = Supabase.instance.client;
-  final _googleSignIn = GoogleSignIn(serverClientId: AppEnvironment.googleWebClientId);
+  
 
   // Helper private để map từ Supabase User sang AppUserCredential
   /// Helper private để map từ Supabase User sang AppUserCredential đầy đủ.
@@ -86,7 +86,7 @@ class SupabaseAuthenticationServiceImpl implements AuthenticationService {
     _log.info('Bắt đầu quá trình đăng nhập với Google...');
 
     try {
-      final googleUser = await _googleSignIn.signIn();
+      final googleUser = await GoogleSignIn.instance.authenticate();
 
       if (googleUser == null) {
         _log.warning('Người dùng đã hủy quá trình đăng nhập Google.');
@@ -94,8 +94,8 @@ class SupabaseAuthenticationServiceImpl implements AuthenticationService {
       }
 
       _log.info('Đã lấy được thông tin người dùng từ Google.');
-      final googleAuth = await googleUser.authentication;
-      final accessToken = googleAuth.accessToken;
+      final googleAuth = googleUser.authentication;
+      final accessToken = googleAuth.idToken;
       final idToken = googleAuth.idToken;
 
       if (idToken == null) {
@@ -142,7 +142,7 @@ class SupabaseAuthenticationServiceImpl implements AuthenticationService {
     _log.info('Bắt đầu quá trình đăng xuất...');
     try {
       await _supabase.auth.signOut();
-      await _googleSignIn.signOut();
+      await GoogleSignIn.instance.signOut();
       _log.info('Đăng xuất khỏi Supabase thành công.');
     } catch (e, st) {
       _log.severe('Lỗi khi đăng xuất khỏi Supabase', e, st);

@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -34,6 +33,289 @@ mixin _$FilterSortEvent {
 class $FilterSortEventCopyWith<$Res> {
   $FilterSortEventCopyWith(
       FilterSortEvent _, $Res Function(FilterSortEvent) __);
+}
+
+/// Adds pattern-matching-related methods to [FilterSortEvent].
+extension FilterSortEventPatterns on FilterSortEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initialized value)? initialized,
+    TResult Function(_CategoryToggled value)? categoryToggled,
+    TResult Function(_PriceRangeToggled value)? priceRangeToggled,
+    TResult Function(_SortOptionSelected value)? sortOptionSelected,
+    TResult Function(_SortDirectionToggled value)? sortDirectionToggled,
+    TResult Function(_DistanceRangeToggled value)? distanceRangeToggled,
+    TResult Function(_FiltersCleared value)? filtersCleared,
+    TResult Function(_FiltersSubmitted value)? filtersSubmitted,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that);
+      case _CategoryToggled() when categoryToggled != null:
+        return categoryToggled(_that);
+      case _PriceRangeToggled() when priceRangeToggled != null:
+        return priceRangeToggled(_that);
+      case _SortOptionSelected() when sortOptionSelected != null:
+        return sortOptionSelected(_that);
+      case _SortDirectionToggled() when sortDirectionToggled != null:
+        return sortDirectionToggled(_that);
+      case _DistanceRangeToggled() when distanceRangeToggled != null:
+        return distanceRangeToggled(_that);
+      case _FiltersCleared() when filtersCleared != null:
+        return filtersCleared(_that);
+      case _FiltersSubmitted() when filtersSubmitted != null:
+        return filtersSubmitted(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initialized value) initialized,
+    required TResult Function(_CategoryToggled value) categoryToggled,
+    required TResult Function(_PriceRangeToggled value) priceRangeToggled,
+    required TResult Function(_SortOptionSelected value) sortOptionSelected,
+    required TResult Function(_SortDirectionToggled value) sortDirectionToggled,
+    required TResult Function(_DistanceRangeToggled value) distanceRangeToggled,
+    required TResult Function(_FiltersCleared value) filtersCleared,
+    required TResult Function(_FiltersSubmitted value) filtersSubmitted,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized():
+        return initialized(_that);
+      case _CategoryToggled():
+        return categoryToggled(_that);
+      case _PriceRangeToggled():
+        return priceRangeToggled(_that);
+      case _SortOptionSelected():
+        return sortOptionSelected(_that);
+      case _SortDirectionToggled():
+        return sortDirectionToggled(_that);
+      case _DistanceRangeToggled():
+        return distanceRangeToggled(_that);
+      case _FiltersCleared():
+        return filtersCleared(_that);
+      case _FiltersSubmitted():
+        return filtersSubmitted(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initialized value)? initialized,
+    TResult? Function(_CategoryToggled value)? categoryToggled,
+    TResult? Function(_PriceRangeToggled value)? priceRangeToggled,
+    TResult? Function(_SortOptionSelected value)? sortOptionSelected,
+    TResult? Function(_SortDirectionToggled value)? sortDirectionToggled,
+    TResult? Function(_DistanceRangeToggled value)? distanceRangeToggled,
+    TResult? Function(_FiltersCleared value)? filtersCleared,
+    TResult? Function(_FiltersSubmitted value)? filtersSubmitted,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that);
+      case _CategoryToggled() when categoryToggled != null:
+        return categoryToggled(_that);
+      case _PriceRangeToggled() when priceRangeToggled != null:
+        return priceRangeToggled(_that);
+      case _SortOptionSelected() when sortOptionSelected != null:
+        return sortOptionSelected(_that);
+      case _SortDirectionToggled() when sortDirectionToggled != null:
+        return sortDirectionToggled(_that);
+      case _DistanceRangeToggled() when distanceRangeToggled != null:
+        return distanceRangeToggled(_that);
+      case _FiltersCleared() when filtersCleared != null:
+        return filtersCleared(_that);
+      case _FiltersSubmitted() when filtersSubmitted != null:
+        return filtersSubmitted(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(FilterSortParams? initialParams)? initialized,
+    TResult Function(FoodCategory category)? categoryToggled,
+    TResult Function(PriceRange range)? priceRangeToggled,
+    TResult Function(SortOption option)? sortOptionSelected,
+    TResult Function()? sortDirectionToggled,
+    TResult Function(DistanceRange distance)? distanceRangeToggled,
+    TResult Function()? filtersCleared,
+    TResult Function()? filtersSubmitted,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that.initialParams);
+      case _CategoryToggled() when categoryToggled != null:
+        return categoryToggled(_that.category);
+      case _PriceRangeToggled() when priceRangeToggled != null:
+        return priceRangeToggled(_that.range);
+      case _SortOptionSelected() when sortOptionSelected != null:
+        return sortOptionSelected(_that.option);
+      case _SortDirectionToggled() when sortDirectionToggled != null:
+        return sortDirectionToggled();
+      case _DistanceRangeToggled() when distanceRangeToggled != null:
+        return distanceRangeToggled(_that.distance);
+      case _FiltersCleared() when filtersCleared != null:
+        return filtersCleared();
+      case _FiltersSubmitted() when filtersSubmitted != null:
+        return filtersSubmitted();
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(FilterSortParams? initialParams) initialized,
+    required TResult Function(FoodCategory category) categoryToggled,
+    required TResult Function(PriceRange range) priceRangeToggled,
+    required TResult Function(SortOption option) sortOptionSelected,
+    required TResult Function() sortDirectionToggled,
+    required TResult Function(DistanceRange distance) distanceRangeToggled,
+    required TResult Function() filtersCleared,
+    required TResult Function() filtersSubmitted,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized():
+        return initialized(_that.initialParams);
+      case _CategoryToggled():
+        return categoryToggled(_that.category);
+      case _PriceRangeToggled():
+        return priceRangeToggled(_that.range);
+      case _SortOptionSelected():
+        return sortOptionSelected(_that.option);
+      case _SortDirectionToggled():
+        return sortDirectionToggled();
+      case _DistanceRangeToggled():
+        return distanceRangeToggled(_that.distance);
+      case _FiltersCleared():
+        return filtersCleared();
+      case _FiltersSubmitted():
+        return filtersSubmitted();
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(FilterSortParams? initialParams)? initialized,
+    TResult? Function(FoodCategory category)? categoryToggled,
+    TResult? Function(PriceRange range)? priceRangeToggled,
+    TResult? Function(SortOption option)? sortOptionSelected,
+    TResult? Function()? sortDirectionToggled,
+    TResult? Function(DistanceRange distance)? distanceRangeToggled,
+    TResult? Function()? filtersCleared,
+    TResult? Function()? filtersSubmitted,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that.initialParams);
+      case _CategoryToggled() when categoryToggled != null:
+        return categoryToggled(_that.category);
+      case _PriceRangeToggled() when priceRangeToggled != null:
+        return priceRangeToggled(_that.range);
+      case _SortOptionSelected() when sortOptionSelected != null:
+        return sortOptionSelected(_that.option);
+      case _SortDirectionToggled() when sortDirectionToggled != null:
+        return sortDirectionToggled();
+      case _DistanceRangeToggled() when distanceRangeToggled != null:
+        return distanceRangeToggled(_that.distance);
+      case _FiltersCleared() when filtersCleared != null:
+        return filtersCleared();
+      case _FiltersSubmitted() when filtersSubmitted != null:
+        return filtersSubmitted();
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -468,6 +750,202 @@ mixin _$FilterSortState {
 class $FilterSortStateCopyWith<$Res> {
   $FilterSortStateCopyWith(
       FilterSortState _, $Res Function(FilterSortState) __);
+}
+
+/// Adds pattern-matching-related methods to [FilterSortState].
+extension FilterSortStatePatterns on FilterSortState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(FilterSortInitial value)? initial,
+    TResult Function(FilterSortLoaded value)? loaded,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case FilterSortInitial() when initial != null:
+        return initial(_that);
+      case FilterSortLoaded() when loaded != null:
+        return loaded(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(FilterSortInitial value) initial,
+    required TResult Function(FilterSortLoaded value) loaded,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case FilterSortInitial():
+        return initial(_that);
+      case FilterSortLoaded():
+        return loaded(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(FilterSortInitial value)? initial,
+    TResult? Function(FilterSortLoaded value)? loaded,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case FilterSortInitial() when initial != null:
+        return initial(_that);
+      case FilterSortLoaded() when loaded != null:
+        return loaded(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function(
+            List<FoodCategory> allCategories,
+            List<PriceRange> allRanges,
+            List<SortOption> allSortOptions,
+            List<DistanceRange> allDistances,
+            FilterSortParams currentParams)?
+        loaded,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case FilterSortInitial() when initial != null:
+        return initial();
+      case FilterSortLoaded() when loaded != null:
+        return loaded(_that.allCategories, _that.allRanges,
+            _that.allSortOptions, _that.allDistances, _that.currentParams);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function(
+            List<FoodCategory> allCategories,
+            List<PriceRange> allRanges,
+            List<SortOption> allSortOptions,
+            List<DistanceRange> allDistances,
+            FilterSortParams currentParams)
+        loaded,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case FilterSortInitial():
+        return initial();
+      case FilterSortLoaded():
+        return loaded(_that.allCategories, _that.allRanges,
+            _that.allSortOptions, _that.allDistances, _that.currentParams);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function(
+            List<FoodCategory> allCategories,
+            List<PriceRange> allRanges,
+            List<SortOption> allSortOptions,
+            List<DistanceRange> allDistances,
+            FilterSortParams currentParams)?
+        loaded,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case FilterSortInitial() when initial != null:
+        return initial();
+      case FilterSortLoaded() when loaded != null:
+        return loaded(_that.allCategories, _that.allRanges,
+            _that.allSortOptions, _that.allDistances, _that.currentParams);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc

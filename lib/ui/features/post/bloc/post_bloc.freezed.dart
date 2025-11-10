@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -33,6 +32,221 @@ mixin _$PostEvent {
 /// @nodoc
 class $PostEventCopyWith<$Res> {
   $PostEventCopyWith(PostEvent _, $Res Function(PostEvent) __);
+}
+
+/// Adds pattern-matching-related methods to [PostEvent].
+extension PostEventPatterns on PostEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_FetchNextPageRequested value)? fetchNextPageRequested,
+    TResult Function(_RefreshRequested value)? refreshRequested,
+    TResult Function(_FiltersChanged value)? filtersChanged,
+    TResult Function(_FallbackToTrendingFeedRequested value)?
+        fallbackToTrendingFeedRequested,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _FetchNextPageRequested() when fetchNextPageRequested != null:
+        return fetchNextPageRequested(_that);
+      case _RefreshRequested() when refreshRequested != null:
+        return refreshRequested(_that);
+      case _FiltersChanged() when filtersChanged != null:
+        return filtersChanged(_that);
+      case _FallbackToTrendingFeedRequested()
+          when fallbackToTrendingFeedRequested != null:
+        return fallbackToTrendingFeedRequested(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_FetchNextPageRequested value)
+        fetchNextPageRequested,
+    required TResult Function(_RefreshRequested value) refreshRequested,
+    required TResult Function(_FiltersChanged value) filtersChanged,
+    required TResult Function(_FallbackToTrendingFeedRequested value)
+        fallbackToTrendingFeedRequested,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _FetchNextPageRequested():
+        return fetchNextPageRequested(_that);
+      case _RefreshRequested():
+        return refreshRequested(_that);
+      case _FiltersChanged():
+        return filtersChanged(_that);
+      case _FallbackToTrendingFeedRequested():
+        return fallbackToTrendingFeedRequested(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_FetchNextPageRequested value)? fetchNextPageRequested,
+    TResult? Function(_RefreshRequested value)? refreshRequested,
+    TResult? Function(_FiltersChanged value)? filtersChanged,
+    TResult? Function(_FallbackToTrendingFeedRequested value)?
+        fallbackToTrendingFeedRequested,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _FetchNextPageRequested() when fetchNextPageRequested != null:
+        return fetchNextPageRequested(_that);
+      case _RefreshRequested() when refreshRequested != null:
+        return refreshRequested(_that);
+      case _FiltersChanged() when filtersChanged != null:
+        return filtersChanged(_that);
+      case _FallbackToTrendingFeedRequested()
+          when fallbackToTrendingFeedRequested != null:
+        return fallbackToTrendingFeedRequested(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? fetchNextPageRequested,
+    TResult Function()? refreshRequested,
+    TResult Function(FilterSortParams newFilters)? filtersChanged,
+    TResult Function()? fallbackToTrendingFeedRequested,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _FetchNextPageRequested() when fetchNextPageRequested != null:
+        return fetchNextPageRequested();
+      case _RefreshRequested() when refreshRequested != null:
+        return refreshRequested();
+      case _FiltersChanged() when filtersChanged != null:
+        return filtersChanged(_that.newFilters);
+      case _FallbackToTrendingFeedRequested()
+          when fallbackToTrendingFeedRequested != null:
+        return fallbackToTrendingFeedRequested();
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() fetchNextPageRequested,
+    required TResult Function() refreshRequested,
+    required TResult Function(FilterSortParams newFilters) filtersChanged,
+    required TResult Function() fallbackToTrendingFeedRequested,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _FetchNextPageRequested():
+        return fetchNextPageRequested();
+      case _RefreshRequested():
+        return refreshRequested();
+      case _FiltersChanged():
+        return filtersChanged(_that.newFilters);
+      case _FallbackToTrendingFeedRequested():
+        return fallbackToTrendingFeedRequested();
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? fetchNextPageRequested,
+    TResult? Function()? refreshRequested,
+    TResult? Function(FilterSortParams newFilters)? filtersChanged,
+    TResult? Function()? fallbackToTrendingFeedRequested,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _FetchNextPageRequested() when fetchNextPageRequested != null:
+        return fetchNextPageRequested();
+      case _RefreshRequested() when refreshRequested != null:
+        return refreshRequested();
+      case _FiltersChanged() when filtersChanged != null:
+        return filtersChanged(_that.newFilters);
+      case _FallbackToTrendingFeedRequested()
+          when fallbackToTrendingFeedRequested != null:
+        return fallbackToTrendingFeedRequested();
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -295,6 +509,183 @@ class _$PostStateCopyWithImpl<$Res> implements $PostStateCopyWith<$Res> {
     return $FilterSortParamsCopyWith<$Res>(_self.filterSortParams, (value) {
       return _then(_self.copyWith(filterSortParams: value));
     });
+  }
+}
+
+/// Adds pattern-matching-related methods to [PostState].
+extension PostStatePatterns on PostState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PostState value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PostState() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PostState value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PostState():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PostState value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PostState() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            PostStatus status,
+            List<Post> posts,
+            bool hasNextPage,
+            FilterSortParams filterSortParams,
+            bool isFallback,
+            post_failure.PostFailure? failure)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PostState() when $default != null:
+        return $default(_that.status, _that.posts, _that.hasNextPage,
+            _that.filterSortParams, _that.isFallback, _that.failure);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            PostStatus status,
+            List<Post> posts,
+            bool hasNextPage,
+            FilterSortParams filterSortParams,
+            bool isFallback,
+            post_failure.PostFailure? failure)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PostState():
+        return $default(_that.status, _that.posts, _that.hasNextPage,
+            _that.filterSortParams, _that.isFallback, _that.failure);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            PostStatus status,
+            List<Post> posts,
+            bool hasNextPage,
+            FilterSortParams filterSortParams,
+            bool isFallback,
+            post_failure.PostFailure? failure)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PostState() when $default != null:
+        return $default(_that.status, _that.posts, _that.hasNextPage,
+            _that.filterSortParams, _that.isFallback, _that.failure);
+      case _:
+        return null;
+    }
   }
 }
 

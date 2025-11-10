@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -34,6 +33,208 @@ mixin _$SelectFoodCategoryEvent {
 class $SelectFoodCategoryEventCopyWith<$Res> {
   $SelectFoodCategoryEventCopyWith(
       SelectFoodCategoryEvent _, $Res Function(SelectFoodCategoryEvent) __);
+}
+
+/// Adds pattern-matching-related methods to [SelectFoodCategoryEvent].
+extension SelectFoodCategoryEventPatterns on SelectFoodCategoryEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initialized value)? initialized,
+    TResult Function(_CategoryToggled value)? categoryToggled,
+    TResult Function(_AllToggled value)? allToggled,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that);
+      case _CategoryToggled() when categoryToggled != null:
+        return categoryToggled(_that);
+      case _AllToggled() when allToggled != null:
+        return allToggled(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initialized value) initialized,
+    required TResult Function(_CategoryToggled value) categoryToggled,
+    required TResult Function(_AllToggled value) allToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized():
+        return initialized(_that);
+      case _CategoryToggled():
+        return categoryToggled(_that);
+      case _AllToggled():
+        return allToggled(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initialized value)? initialized,
+    TResult? Function(_CategoryToggled value)? categoryToggled,
+    TResult? Function(_AllToggled value)? allToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that);
+      case _CategoryToggled() when categoryToggled != null:
+        return categoryToggled(_that);
+      case _AllToggled() when allToggled != null:
+        return allToggled(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(List<FoodCategory> allCategories, bool allowMultiSelect,
+            Set<FoodCategory> initialSelection)?
+        initialized,
+    TResult Function(FoodCategory category)? categoryToggled,
+    TResult Function()? allToggled,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that.allCategories, _that.allowMultiSelect,
+            _that.initialSelection);
+      case _CategoryToggled() when categoryToggled != null:
+        return categoryToggled(_that.category);
+      case _AllToggled() when allToggled != null:
+        return allToggled();
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(List<FoodCategory> allCategories,
+            bool allowMultiSelect, Set<FoodCategory> initialSelection)
+        initialized,
+    required TResult Function(FoodCategory category) categoryToggled,
+    required TResult Function() allToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized():
+        return initialized(_that.allCategories, _that.allowMultiSelect,
+            _that.initialSelection);
+      case _CategoryToggled():
+        return categoryToggled(_that.category);
+      case _AllToggled():
+        return allToggled();
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(List<FoodCategory> allCategories, bool allowMultiSelect,
+            Set<FoodCategory> initialSelection)?
+        initialized,
+    TResult? Function(FoodCategory category)? categoryToggled,
+    TResult? Function()? allToggled,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that.allCategories, _that.allowMultiSelect,
+            _that.initialSelection);
+      case _CategoryToggled() when categoryToggled != null:
+        return categoryToggled(_that.category);
+      case _AllToggled() when allToggled != null:
+        return allToggled();
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -248,6 +449,190 @@ mixin _$SelectFoodCategoryState {
 class $SelectFoodCategoryStateCopyWith<$Res> {
   $SelectFoodCategoryStateCopyWith(
       SelectFoodCategoryState _, $Res Function(SelectFoodCategoryState) __);
+}
+
+/// Adds pattern-matching-related methods to [SelectFoodCategoryState].
+extension SelectFoodCategoryStatePatterns on SelectFoodCategoryState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SelectFoodCategoryInitial value)? initial,
+    TResult Function(SelectFoodCategoryLoaded value)? loaded,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SelectFoodCategoryInitial() when initial != null:
+        return initial(_that);
+      case SelectFoodCategoryLoaded() when loaded != null:
+        return loaded(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(SelectFoodCategoryInitial value) initial,
+    required TResult Function(SelectFoodCategoryLoaded value) loaded,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SelectFoodCategoryInitial():
+        return initial(_that);
+      case SelectFoodCategoryLoaded():
+        return loaded(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(SelectFoodCategoryInitial value)? initial,
+    TResult? Function(SelectFoodCategoryLoaded value)? loaded,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SelectFoodCategoryInitial() when initial != null:
+        return initial(_that);
+      case SelectFoodCategoryLoaded() when loaded != null:
+        return loaded(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function(List<FoodCategory> allCategories,
+            Set<FoodCategory> selectedCategories, bool allowMultiSelect)?
+        loaded,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SelectFoodCategoryInitial() when initial != null:
+        return initial();
+      case SelectFoodCategoryLoaded() when loaded != null:
+        return loaded(_that.allCategories, _that.selectedCategories,
+            _that.allowMultiSelect);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function(List<FoodCategory> allCategories,
+            Set<FoodCategory> selectedCategories, bool allowMultiSelect)
+        loaded,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SelectFoodCategoryInitial():
+        return initial();
+      case SelectFoodCategoryLoaded():
+        return loaded(_that.allCategories, _that.selectedCategories,
+            _that.allowMultiSelect);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function(List<FoodCategory> allCategories,
+            Set<FoodCategory> selectedCategories, bool allowMultiSelect)?
+        loaded,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SelectFoodCategoryInitial() when initial != null:
+        return initial();
+      case SelectFoodCategoryLoaded() when loaded != null:
+        return loaded(_that.allCategories, _that.selectedCategories,
+            _that.allowMultiSelect);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc

@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -33,6 +32,367 @@ mixin _$CommentEvent {
 /// @nodoc
 class $CommentEventCopyWith<$Res> {
   $CommentEventCopyWith(CommentEvent _, $Res Function(CommentEvent) __);
+}
+
+/// Adds pattern-matching-related methods to [CommentEvent].
+extension CommentEventPatterns on CommentEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initialized value)? initialized,
+    TResult Function(_MoreCommentsRequested value)? moreCommentsRequested,
+    TResult Function(_RepliesRequested value)? repliesRequested,
+    TResult Function(_CommentSubmitted value)? commentSubmitted,
+    TResult Function(_ReplySubmitted value)? replySubmitted,
+    TResult Function(_ReplyTargetSet value)? replyTargetSet,
+    TResult Function(_ReplyTargetCleared value)? replyTargetCleared,
+    TResult Function(_CommentLiked value)? commentLiked,
+    TResult Function(_ReplyLiked value)? replyLiked,
+    TResult Function(_CommentDeleted value)? commentDeleted,
+    TResult Function(_ReplyDeleted value)? replyDeleted,
+    TResult Function(_ErrorCleared value)? errorCleared,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that);
+      case _MoreCommentsRequested() when moreCommentsRequested != null:
+        return moreCommentsRequested(_that);
+      case _RepliesRequested() when repliesRequested != null:
+        return repliesRequested(_that);
+      case _CommentSubmitted() when commentSubmitted != null:
+        return commentSubmitted(_that);
+      case _ReplySubmitted() when replySubmitted != null:
+        return replySubmitted(_that);
+      case _ReplyTargetSet() when replyTargetSet != null:
+        return replyTargetSet(_that);
+      case _ReplyTargetCleared() when replyTargetCleared != null:
+        return replyTargetCleared(_that);
+      case _CommentLiked() when commentLiked != null:
+        return commentLiked(_that);
+      case _ReplyLiked() when replyLiked != null:
+        return replyLiked(_that);
+      case _CommentDeleted() when commentDeleted != null:
+        return commentDeleted(_that);
+      case _ReplyDeleted() when replyDeleted != null:
+        return replyDeleted(_that);
+      case _ErrorCleared() when errorCleared != null:
+        return errorCleared(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initialized value) initialized,
+    required TResult Function(_MoreCommentsRequested value)
+        moreCommentsRequested,
+    required TResult Function(_RepliesRequested value) repliesRequested,
+    required TResult Function(_CommentSubmitted value) commentSubmitted,
+    required TResult Function(_ReplySubmitted value) replySubmitted,
+    required TResult Function(_ReplyTargetSet value) replyTargetSet,
+    required TResult Function(_ReplyTargetCleared value) replyTargetCleared,
+    required TResult Function(_CommentLiked value) commentLiked,
+    required TResult Function(_ReplyLiked value) replyLiked,
+    required TResult Function(_CommentDeleted value) commentDeleted,
+    required TResult Function(_ReplyDeleted value) replyDeleted,
+    required TResult Function(_ErrorCleared value) errorCleared,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized():
+        return initialized(_that);
+      case _MoreCommentsRequested():
+        return moreCommentsRequested(_that);
+      case _RepliesRequested():
+        return repliesRequested(_that);
+      case _CommentSubmitted():
+        return commentSubmitted(_that);
+      case _ReplySubmitted():
+        return replySubmitted(_that);
+      case _ReplyTargetSet():
+        return replyTargetSet(_that);
+      case _ReplyTargetCleared():
+        return replyTargetCleared(_that);
+      case _CommentLiked():
+        return commentLiked(_that);
+      case _ReplyLiked():
+        return replyLiked(_that);
+      case _CommentDeleted():
+        return commentDeleted(_that);
+      case _ReplyDeleted():
+        return replyDeleted(_that);
+      case _ErrorCleared():
+        return errorCleared(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initialized value)? initialized,
+    TResult? Function(_MoreCommentsRequested value)? moreCommentsRequested,
+    TResult? Function(_RepliesRequested value)? repliesRequested,
+    TResult? Function(_CommentSubmitted value)? commentSubmitted,
+    TResult? Function(_ReplySubmitted value)? replySubmitted,
+    TResult? Function(_ReplyTargetSet value)? replyTargetSet,
+    TResult? Function(_ReplyTargetCleared value)? replyTargetCleared,
+    TResult? Function(_CommentLiked value)? commentLiked,
+    TResult? Function(_ReplyLiked value)? replyLiked,
+    TResult? Function(_CommentDeleted value)? commentDeleted,
+    TResult? Function(_ReplyDeleted value)? replyDeleted,
+    TResult? Function(_ErrorCleared value)? errorCleared,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that);
+      case _MoreCommentsRequested() when moreCommentsRequested != null:
+        return moreCommentsRequested(_that);
+      case _RepliesRequested() when repliesRequested != null:
+        return repliesRequested(_that);
+      case _CommentSubmitted() when commentSubmitted != null:
+        return commentSubmitted(_that);
+      case _ReplySubmitted() when replySubmitted != null:
+        return replySubmitted(_that);
+      case _ReplyTargetSet() when replyTargetSet != null:
+        return replyTargetSet(_that);
+      case _ReplyTargetCleared() when replyTargetCleared != null:
+        return replyTargetCleared(_that);
+      case _CommentLiked() when commentLiked != null:
+        return commentLiked(_that);
+      case _ReplyLiked() when replyLiked != null:
+        return replyLiked(_that);
+      case _CommentDeleted() when commentDeleted != null:
+        return commentDeleted(_that);
+      case _ReplyDeleted() when replyDeleted != null:
+        return replyDeleted(_that);
+      case _ErrorCleared() when errorCleared != null:
+        return errorCleared(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String postId, int totalCommentCount)? initialized,
+    TResult Function()? moreCommentsRequested,
+    TResult Function(String parentCommentId)? repliesRequested,
+    TResult Function(String content)? commentSubmitted,
+    TResult Function(String content)? replySubmitted,
+    TResult Function(ReplyTarget target)? replyTargetSet,
+    TResult Function()? replyTargetCleared,
+    TResult Function(String commentId, bool isLiked)? commentLiked,
+    TResult Function(String replyId, String parentCommentId, bool isLiked)?
+        replyLiked,
+    TResult Function(String commentId)? commentDeleted,
+    TResult Function(String replyId, String parentCommentId)? replyDeleted,
+    TResult Function()? errorCleared,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that.postId, _that.totalCommentCount);
+      case _MoreCommentsRequested() when moreCommentsRequested != null:
+        return moreCommentsRequested();
+      case _RepliesRequested() when repliesRequested != null:
+        return repliesRequested(_that.parentCommentId);
+      case _CommentSubmitted() when commentSubmitted != null:
+        return commentSubmitted(_that.content);
+      case _ReplySubmitted() when replySubmitted != null:
+        return replySubmitted(_that.content);
+      case _ReplyTargetSet() when replyTargetSet != null:
+        return replyTargetSet(_that.target);
+      case _ReplyTargetCleared() when replyTargetCleared != null:
+        return replyTargetCleared();
+      case _CommentLiked() when commentLiked != null:
+        return commentLiked(_that.commentId, _that.isLiked);
+      case _ReplyLiked() when replyLiked != null:
+        return replyLiked(_that.replyId, _that.parentCommentId, _that.isLiked);
+      case _CommentDeleted() when commentDeleted != null:
+        return commentDeleted(_that.commentId);
+      case _ReplyDeleted() when replyDeleted != null:
+        return replyDeleted(_that.replyId, _that.parentCommentId);
+      case _ErrorCleared() when errorCleared != null:
+        return errorCleared();
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String postId, int totalCommentCount) initialized,
+    required TResult Function() moreCommentsRequested,
+    required TResult Function(String parentCommentId) repliesRequested,
+    required TResult Function(String content) commentSubmitted,
+    required TResult Function(String content) replySubmitted,
+    required TResult Function(ReplyTarget target) replyTargetSet,
+    required TResult Function() replyTargetCleared,
+    required TResult Function(String commentId, bool isLiked) commentLiked,
+    required TResult Function(
+            String replyId, String parentCommentId, bool isLiked)
+        replyLiked,
+    required TResult Function(String commentId) commentDeleted,
+    required TResult Function(String replyId, String parentCommentId)
+        replyDeleted,
+    required TResult Function() errorCleared,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized():
+        return initialized(_that.postId, _that.totalCommentCount);
+      case _MoreCommentsRequested():
+        return moreCommentsRequested();
+      case _RepliesRequested():
+        return repliesRequested(_that.parentCommentId);
+      case _CommentSubmitted():
+        return commentSubmitted(_that.content);
+      case _ReplySubmitted():
+        return replySubmitted(_that.content);
+      case _ReplyTargetSet():
+        return replyTargetSet(_that.target);
+      case _ReplyTargetCleared():
+        return replyTargetCleared();
+      case _CommentLiked():
+        return commentLiked(_that.commentId, _that.isLiked);
+      case _ReplyLiked():
+        return replyLiked(_that.replyId, _that.parentCommentId, _that.isLiked);
+      case _CommentDeleted():
+        return commentDeleted(_that.commentId);
+      case _ReplyDeleted():
+        return replyDeleted(_that.replyId, _that.parentCommentId);
+      case _ErrorCleared():
+        return errorCleared();
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String postId, int totalCommentCount)? initialized,
+    TResult? Function()? moreCommentsRequested,
+    TResult? Function(String parentCommentId)? repliesRequested,
+    TResult? Function(String content)? commentSubmitted,
+    TResult? Function(String content)? replySubmitted,
+    TResult? Function(ReplyTarget target)? replyTargetSet,
+    TResult? Function()? replyTargetCleared,
+    TResult? Function(String commentId, bool isLiked)? commentLiked,
+    TResult? Function(String replyId, String parentCommentId, bool isLiked)?
+        replyLiked,
+    TResult? Function(String commentId)? commentDeleted,
+    TResult? Function(String replyId, String parentCommentId)? replyDeleted,
+    TResult? Function()? errorCleared,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initialized() when initialized != null:
+        return initialized(_that.postId, _that.totalCommentCount);
+      case _MoreCommentsRequested() when moreCommentsRequested != null:
+        return moreCommentsRequested();
+      case _RepliesRequested() when repliesRequested != null:
+        return repliesRequested(_that.parentCommentId);
+      case _CommentSubmitted() when commentSubmitted != null:
+        return commentSubmitted(_that.content);
+      case _ReplySubmitted() when replySubmitted != null:
+        return replySubmitted(_that.content);
+      case _ReplyTargetSet() when replyTargetSet != null:
+        return replyTargetSet(_that.target);
+      case _ReplyTargetCleared() when replyTargetCleared != null:
+        return replyTargetCleared();
+      case _CommentLiked() when commentLiked != null:
+        return commentLiked(_that.commentId, _that.isLiked);
+      case _ReplyLiked() when replyLiked != null:
+        return replyLiked(_that.replyId, _that.parentCommentId, _that.isLiked);
+      case _CommentDeleted() when commentDeleted != null:
+        return commentDeleted(_that.commentId);
+      case _ReplyDeleted() when replyDeleted != null:
+        return replyDeleted(_that.replyId, _that.parentCommentId);
+      case _ErrorCleared() when errorCleared != null:
+        return errorCleared();
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -811,6 +1171,168 @@ class _$ReplyTargetCopyWithImpl<$Res> implements $ReplyTargetCopyWith<$Res> {
   }
 }
 
+/// Adds pattern-matching-related methods to [ReplyTarget].
+extension ReplyTargetPatterns on ReplyTarget {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ReplyTarget value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ReplyTarget() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ReplyTarget value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ReplyTarget():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ReplyTarget value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ReplyTarget() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String parentCommentId, String replyToUserId,
+            String replyToUsername)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ReplyTarget() when $default != null:
+        return $default(
+            _that.parentCommentId, _that.replyToUserId, _that.replyToUsername);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String parentCommentId, String replyToUserId,
+            String replyToUsername)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ReplyTarget():
+        return $default(
+            _that.parentCommentId, _that.replyToUserId, _that.replyToUsername);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String parentCommentId, String replyToUserId,
+            String replyToUsername)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ReplyTarget() when $default != null:
+        return $default(
+            _that.parentCommentId, _that.replyToUserId, _that.replyToUsername);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 
 class _ReplyTarget implements ReplyTarget {
@@ -1103,6 +1625,228 @@ class _$CommentStateCopyWithImpl<$Res> implements $CommentStateCopyWith<$Res> {
     return $AppUserCopyWith<$Res>(_self.currentUser!, (value) {
       return _then(_self.copyWith(currentUser: value));
     });
+  }
+}
+
+/// Adds pattern-matching-related methods to [CommentState].
+extension CommentStatePatterns on CommentState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_CommentState value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _CommentState() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_CommentState value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _CommentState():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_CommentState value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _CommentState() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String postId,
+            CommentStatus status,
+            CommentFailure? failure,
+            List<Comment> comments,
+            bool hasMoreComments,
+            int totalCommentCount,
+            Map<String, List<CommentReply>> replies,
+            Map<String, bool> hasMoreReplies,
+            Map<String, CommentStatus> replyLoadStatus,
+            ReplyTarget? replyTarget,
+            AppUser? currentUser)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _CommentState() when $default != null:
+        return $default(
+            _that.postId,
+            _that.status,
+            _that.failure,
+            _that.comments,
+            _that.hasMoreComments,
+            _that.totalCommentCount,
+            _that.replies,
+            _that.hasMoreReplies,
+            _that.replyLoadStatus,
+            _that.replyTarget,
+            _that.currentUser);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String postId,
+            CommentStatus status,
+            CommentFailure? failure,
+            List<Comment> comments,
+            bool hasMoreComments,
+            int totalCommentCount,
+            Map<String, List<CommentReply>> replies,
+            Map<String, bool> hasMoreReplies,
+            Map<String, CommentStatus> replyLoadStatus,
+            ReplyTarget? replyTarget,
+            AppUser? currentUser)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _CommentState():
+        return $default(
+            _that.postId,
+            _that.status,
+            _that.failure,
+            _that.comments,
+            _that.hasMoreComments,
+            _that.totalCommentCount,
+            _that.replies,
+            _that.hasMoreReplies,
+            _that.replyLoadStatus,
+            _that.replyTarget,
+            _that.currentUser);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String postId,
+            CommentStatus status,
+            CommentFailure? failure,
+            List<Comment> comments,
+            bool hasMoreComments,
+            int totalCommentCount,
+            Map<String, List<CommentReply>> replies,
+            Map<String, bool> hasMoreReplies,
+            Map<String, CommentStatus> replyLoadStatus,
+            ReplyTarget? replyTarget,
+            AppUser? currentUser)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _CommentState() when $default != null:
+        return $default(
+            _that.postId,
+            _that.status,
+            _that.failure,
+            _that.comments,
+            _that.hasMoreComments,
+            _that.totalCommentCount,
+            _that.replies,
+            _that.hasMoreReplies,
+            _that.replyLoadStatus,
+            _that.replyTarget,
+            _that.currentUser);
+      case _:
+        return null;
+    }
   }
 }
 

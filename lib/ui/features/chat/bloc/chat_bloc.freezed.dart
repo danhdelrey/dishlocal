@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -33,6 +32,305 @@ mixin _$ChatEvent {
 /// @nodoc
 class $ChatEventCopyWith<$Res> {
   $ChatEventCopyWith(ChatEvent _, $Res Function(ChatEvent) __);
+}
+
+/// Adds pattern-matching-related methods to [ChatEvent].
+extension ChatEventPatterns on ChatEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(_MoreMessagesLoaded value)? moreMessagesLoaded,
+    TResult Function(_MessageSent value)? messageSent,
+    TResult Function(_PostShared value)? postShared,
+    TResult Function(_MessageReceived value)? messageReceived,
+    TResult Function(_ScreenStatusChanged value)? screenStatusChanged,
+    TResult Function(_EnrichmentStarted value)? enrichmentStarted,
+    TResult Function(_MessageEnriched value)? messageEnriched,
+    TResult Function(_ReadStatusCheckRequested value)? readStatusCheckRequested,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Started() when started != null:
+        return started(_that);
+      case _MoreMessagesLoaded() when moreMessagesLoaded != null:
+        return moreMessagesLoaded(_that);
+      case _MessageSent() when messageSent != null:
+        return messageSent(_that);
+      case _PostShared() when postShared != null:
+        return postShared(_that);
+      case _MessageReceived() when messageReceived != null:
+        return messageReceived(_that);
+      case _ScreenStatusChanged() when screenStatusChanged != null:
+        return screenStatusChanged(_that);
+      case _EnrichmentStarted() when enrichmentStarted != null:
+        return enrichmentStarted(_that);
+      case _MessageEnriched() when messageEnriched != null:
+        return messageEnriched(_that);
+      case _ReadStatusCheckRequested() when readStatusCheckRequested != null:
+        return readStatusCheckRequested(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(_MoreMessagesLoaded value) moreMessagesLoaded,
+    required TResult Function(_MessageSent value) messageSent,
+    required TResult Function(_PostShared value) postShared,
+    required TResult Function(_MessageReceived value) messageReceived,
+    required TResult Function(_ScreenStatusChanged value) screenStatusChanged,
+    required TResult Function(_EnrichmentStarted value) enrichmentStarted,
+    required TResult Function(_MessageEnriched value) messageEnriched,
+    required TResult Function(_ReadStatusCheckRequested value)
+        readStatusCheckRequested,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Started():
+        return started(_that);
+      case _MoreMessagesLoaded():
+        return moreMessagesLoaded(_that);
+      case _MessageSent():
+        return messageSent(_that);
+      case _PostShared():
+        return postShared(_that);
+      case _MessageReceived():
+        return messageReceived(_that);
+      case _ScreenStatusChanged():
+        return screenStatusChanged(_that);
+      case _EnrichmentStarted():
+        return enrichmentStarted(_that);
+      case _MessageEnriched():
+        return messageEnriched(_that);
+      case _ReadStatusCheckRequested():
+        return readStatusCheckRequested(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(_MoreMessagesLoaded value)? moreMessagesLoaded,
+    TResult? Function(_MessageSent value)? messageSent,
+    TResult? Function(_PostShared value)? postShared,
+    TResult? Function(_MessageReceived value)? messageReceived,
+    TResult? Function(_ScreenStatusChanged value)? screenStatusChanged,
+    TResult? Function(_EnrichmentStarted value)? enrichmentStarted,
+    TResult? Function(_MessageEnriched value)? messageEnriched,
+    TResult? Function(_ReadStatusCheckRequested value)?
+        readStatusCheckRequested,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Started() when started != null:
+        return started(_that);
+      case _MoreMessagesLoaded() when moreMessagesLoaded != null:
+        return moreMessagesLoaded(_that);
+      case _MessageSent() when messageSent != null:
+        return messageSent(_that);
+      case _PostShared() when postShared != null:
+        return postShared(_that);
+      case _MessageReceived() when messageReceived != null:
+        return messageReceived(_that);
+      case _ScreenStatusChanged() when screenStatusChanged != null:
+        return screenStatusChanged(_that);
+      case _EnrichmentStarted() when enrichmentStarted != null:
+        return enrichmentStarted(_that);
+      case _MessageEnriched() when messageEnriched != null:
+        return messageEnriched(_that);
+      case _ReadStatusCheckRequested() when readStatusCheckRequested != null:
+        return readStatusCheckRequested(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String conversationId, AppUser otherUser)? started,
+    TResult Function()? moreMessagesLoaded,
+    TResult Function(String content)? messageSent,
+    TResult Function(String postId)? postShared,
+    TResult Function(MessageEntity message)? messageReceived,
+    TResult Function(bool isActive)? screenStatusChanged,
+    TResult Function(List<Message> messages)? enrichmentStarted,
+    TResult Function(Message updatedMessage)? messageEnriched,
+    TResult Function(String conversationId)? readStatusCheckRequested,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Started() when started != null:
+        return started(_that.conversationId, _that.otherUser);
+      case _MoreMessagesLoaded() when moreMessagesLoaded != null:
+        return moreMessagesLoaded();
+      case _MessageSent() when messageSent != null:
+        return messageSent(_that.content);
+      case _PostShared() when postShared != null:
+        return postShared(_that.postId);
+      case _MessageReceived() when messageReceived != null:
+        return messageReceived(_that.message);
+      case _ScreenStatusChanged() when screenStatusChanged != null:
+        return screenStatusChanged(_that.isActive);
+      case _EnrichmentStarted() when enrichmentStarted != null:
+        return enrichmentStarted(_that.messages);
+      case _MessageEnriched() when messageEnriched != null:
+        return messageEnriched(_that.updatedMessage);
+      case _ReadStatusCheckRequested() when readStatusCheckRequested != null:
+        return readStatusCheckRequested(_that.conversationId);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String conversationId, AppUser otherUser) started,
+    required TResult Function() moreMessagesLoaded,
+    required TResult Function(String content) messageSent,
+    required TResult Function(String postId) postShared,
+    required TResult Function(MessageEntity message) messageReceived,
+    required TResult Function(bool isActive) screenStatusChanged,
+    required TResult Function(List<Message> messages) enrichmentStarted,
+    required TResult Function(Message updatedMessage) messageEnriched,
+    required TResult Function(String conversationId) readStatusCheckRequested,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Started():
+        return started(_that.conversationId, _that.otherUser);
+      case _MoreMessagesLoaded():
+        return moreMessagesLoaded();
+      case _MessageSent():
+        return messageSent(_that.content);
+      case _PostShared():
+        return postShared(_that.postId);
+      case _MessageReceived():
+        return messageReceived(_that.message);
+      case _ScreenStatusChanged():
+        return screenStatusChanged(_that.isActive);
+      case _EnrichmentStarted():
+        return enrichmentStarted(_that.messages);
+      case _MessageEnriched():
+        return messageEnriched(_that.updatedMessage);
+      case _ReadStatusCheckRequested():
+        return readStatusCheckRequested(_that.conversationId);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String conversationId, AppUser otherUser)? started,
+    TResult? Function()? moreMessagesLoaded,
+    TResult? Function(String content)? messageSent,
+    TResult? Function(String postId)? postShared,
+    TResult? Function(MessageEntity message)? messageReceived,
+    TResult? Function(bool isActive)? screenStatusChanged,
+    TResult? Function(List<Message> messages)? enrichmentStarted,
+    TResult? Function(Message updatedMessage)? messageEnriched,
+    TResult? Function(String conversationId)? readStatusCheckRequested,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Started() when started != null:
+        return started(_that.conversationId, _that.otherUser);
+      case _MoreMessagesLoaded() when moreMessagesLoaded != null:
+        return moreMessagesLoaded();
+      case _MessageSent() when messageSent != null:
+        return messageSent(_that.content);
+      case _PostShared() when postShared != null:
+        return postShared(_that.postId);
+      case _MessageReceived() when messageReceived != null:
+        return messageReceived(_that.message);
+      case _ScreenStatusChanged() when screenStatusChanged != null:
+        return screenStatusChanged(_that.isActive);
+      case _EnrichmentStarted() when enrichmentStarted != null:
+        return enrichmentStarted(_that.messages);
+      case _MessageEnriched() when messageEnriched != null:
+        return messageEnriched(_that.updatedMessage);
+      case _ReadStatusCheckRequested() when readStatusCheckRequested != null:
+        return readStatusCheckRequested(_that.conversationId);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -639,6 +937,258 @@ mixin _$ChatState {
 /// @nodoc
 class $ChatStateCopyWith<$Res> {
   $ChatStateCopyWith(ChatState _, $Res Function(ChatState) __);
+}
+
+/// Adds pattern-matching-related methods to [ChatState].
+extension ChatStatePatterns on ChatState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ChatInitial value)? initial,
+    TResult Function(ChatLoading value)? loading,
+    TResult Function(ChatLoaded value)? loaded,
+    TResult Function(ChatError value)? error,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case ChatInitial() when initial != null:
+        return initial(_that);
+      case ChatLoading() when loading != null:
+        return loading(_that);
+      case ChatLoaded() when loaded != null:
+        return loaded(_that);
+      case ChatError() when error != null:
+        return error(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(ChatInitial value) initial,
+    required TResult Function(ChatLoading value) loading,
+    required TResult Function(ChatLoaded value) loaded,
+    required TResult Function(ChatError value) error,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case ChatInitial():
+        return initial(_that);
+      case ChatLoading():
+        return loading(_that);
+      case ChatLoaded():
+        return loaded(_that);
+      case ChatError():
+        return error(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(ChatInitial value)? initial,
+    TResult? Function(ChatLoading value)? loading,
+    TResult? Function(ChatLoaded value)? loaded,
+    TResult? Function(ChatError value)? error,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case ChatInitial() when initial != null:
+        return initial(_that);
+      case ChatLoading() when loading != null:
+        return loading(_that);
+      case ChatLoaded() when loaded != null:
+        return loaded(_that);
+      case ChatError() when error != null:
+        return error(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(
+            String conversationId,
+            AppUser otherUser,
+            List<Message> messages,
+            bool isLoadingMore,
+            bool hasReachedMax,
+            int currentPage,
+            DateTime? otherUserLastReadAt)?
+        loaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case ChatInitial() when initial != null:
+        return initial();
+      case ChatLoading() when loading != null:
+        return loading();
+      case ChatLoaded() when loaded != null:
+        return loaded(
+            _that.conversationId,
+            _that.otherUser,
+            _that.messages,
+            _that.isLoadingMore,
+            _that.hasReachedMax,
+            _that.currentPage,
+            _that.otherUserLastReadAt);
+      case ChatError() when error != null:
+        return error(_that.message);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            String conversationId,
+            AppUser otherUser,
+            List<Message> messages,
+            bool isLoadingMore,
+            bool hasReachedMax,
+            int currentPage,
+            DateTime? otherUserLastReadAt)
+        loaded,
+    required TResult Function(String message) error,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case ChatInitial():
+        return initial();
+      case ChatLoading():
+        return loading();
+      case ChatLoaded():
+        return loaded(
+            _that.conversationId,
+            _that.otherUser,
+            _that.messages,
+            _that.isLoadingMore,
+            _that.hasReachedMax,
+            _that.currentPage,
+            _that.otherUserLastReadAt);
+      case ChatError():
+        return error(_that.message);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(
+            String conversationId,
+            AppUser otherUser,
+            List<Message> messages,
+            bool isLoadingMore,
+            bool hasReachedMax,
+            int currentPage,
+            DateTime? otherUserLastReadAt)?
+        loaded,
+    TResult? Function(String message)? error,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case ChatInitial() when initial != null:
+        return initial();
+      case ChatLoading() when loading != null:
+        return loading();
+      case ChatLoaded() when loaded != null:
+        return loaded(
+            _that.conversationId,
+            _that.otherUser,
+            _that.messages,
+            _that.isLoadingMore,
+            _that.hasReachedMax,
+            _that.currentPage,
+            _that.otherUserLastReadAt);
+      case ChatError() when error != null:
+        return error(_that.message);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc

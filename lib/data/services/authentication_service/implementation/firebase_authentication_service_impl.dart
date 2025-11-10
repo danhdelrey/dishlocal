@@ -6,7 +6,7 @@ import 'package:dishlocal/data/services/authentication_service/exception/authent
 import 'package:dishlocal/data/services/authentication_service/model/app_user_credential.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart'; // Cần cho PlatformException
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart' hide GoogleSignInException;
 import 'package:logging/logging.dart';
 
 class FirebaseAuthenticationService implements AuthenticationService {
@@ -77,7 +77,7 @@ class FirebaseAuthenticationService implements AuthenticationService {
     _log.info('Bắt đầu quá trình đăng nhập với Google.');
     try {
       _log.fine('Đang yêu cầu đăng nhập tài khoản Google...');
-      final googleUser = await _googleSignIn.signIn();
+      final googleUser = await _googleSignIn.authenticate();
 
       if (googleUser == null) {
         _log.warning('Người dùng đã hủy quá trình đăng nhập Google.');
@@ -87,11 +87,11 @@ class FirebaseAuthenticationService implements AuthenticationService {
 
       _log.info('Đăng nhập Google thành công cho người dùng: ${googleUser.email}.');
       _log.fine('Đang lấy token xác thực từ Google...');
-      final googleAuth = await googleUser.authentication;
+      final googleAuth = googleUser.authentication;
 
       _log.fine('Đang tạo thông tin xác thực (credential) cho Firebase từ token của Google.');
       final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
+        accessToken: googleAuth.idToken,
         idToken: googleAuth.idToken,
       );
 

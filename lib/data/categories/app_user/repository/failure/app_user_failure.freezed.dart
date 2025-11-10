@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -33,6 +32,288 @@ mixin _$AppUserFailure {
 /// @nodoc
 class $AppUserFailureCopyWith<$Res> {
   $AppUserFailureCopyWith(AppUserFailure _, $Res Function(AppUserFailure) __);
+}
+
+/// Adds pattern-matching-related methods to [AppUserFailure].
+extension AppUserFailurePatterns on AppUserFailure {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SignInCancelledFailure value)? signInCancelled,
+    TResult Function(SignInServiceFailure value)? signInServiceFailure,
+    TResult Function(SignOutFailure value)? signOutFailure,
+    TResult Function(UserNotFoundFailure value)? userNotFound,
+    TResult Function(UpdatePermissionDeniedFailure value)?
+        updatePermissionDenied,
+    TResult Function(DatabaseFailure value)? databaseFailure,
+    TResult Function(NotAuthenticatedFailure value)? notAuthenticated,
+    TResult Function(UnknownFailure value)? unknown,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SignInCancelledFailure() when signInCancelled != null:
+        return signInCancelled(_that);
+      case SignInServiceFailure() when signInServiceFailure != null:
+        return signInServiceFailure(_that);
+      case SignOutFailure() when signOutFailure != null:
+        return signOutFailure(_that);
+      case UserNotFoundFailure() when userNotFound != null:
+        return userNotFound(_that);
+      case UpdatePermissionDeniedFailure() when updatePermissionDenied != null:
+        return updatePermissionDenied(_that);
+      case DatabaseFailure() when databaseFailure != null:
+        return databaseFailure(_that);
+      case NotAuthenticatedFailure() when notAuthenticated != null:
+        return notAuthenticated(_that);
+      case UnknownFailure() when unknown != null:
+        return unknown(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(SignInCancelledFailure value) signInCancelled,
+    required TResult Function(SignInServiceFailure value) signInServiceFailure,
+    required TResult Function(SignOutFailure value) signOutFailure,
+    required TResult Function(UserNotFoundFailure value) userNotFound,
+    required TResult Function(UpdatePermissionDeniedFailure value)
+        updatePermissionDenied,
+    required TResult Function(DatabaseFailure value) databaseFailure,
+    required TResult Function(NotAuthenticatedFailure value) notAuthenticated,
+    required TResult Function(UnknownFailure value) unknown,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SignInCancelledFailure():
+        return signInCancelled(_that);
+      case SignInServiceFailure():
+        return signInServiceFailure(_that);
+      case SignOutFailure():
+        return signOutFailure(_that);
+      case UserNotFoundFailure():
+        return userNotFound(_that);
+      case UpdatePermissionDeniedFailure():
+        return updatePermissionDenied(_that);
+      case DatabaseFailure():
+        return databaseFailure(_that);
+      case NotAuthenticatedFailure():
+        return notAuthenticated(_that);
+      case UnknownFailure():
+        return unknown(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(SignInCancelledFailure value)? signInCancelled,
+    TResult? Function(SignInServiceFailure value)? signInServiceFailure,
+    TResult? Function(SignOutFailure value)? signOutFailure,
+    TResult? Function(UserNotFoundFailure value)? userNotFound,
+    TResult? Function(UpdatePermissionDeniedFailure value)?
+        updatePermissionDenied,
+    TResult? Function(DatabaseFailure value)? databaseFailure,
+    TResult? Function(NotAuthenticatedFailure value)? notAuthenticated,
+    TResult? Function(UnknownFailure value)? unknown,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SignInCancelledFailure() when signInCancelled != null:
+        return signInCancelled(_that);
+      case SignInServiceFailure() when signInServiceFailure != null:
+        return signInServiceFailure(_that);
+      case SignOutFailure() when signOutFailure != null:
+        return signOutFailure(_that);
+      case UserNotFoundFailure() when userNotFound != null:
+        return userNotFound(_that);
+      case UpdatePermissionDeniedFailure() when updatePermissionDenied != null:
+        return updatePermissionDenied(_that);
+      case DatabaseFailure() when databaseFailure != null:
+        return databaseFailure(_that);
+      case NotAuthenticatedFailure() when notAuthenticated != null:
+        return notAuthenticated(_that);
+      case UnknownFailure() when unknown != null:
+        return unknown(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? signInCancelled,
+    TResult Function(String message)? signInServiceFailure,
+    TResult Function(String message)? signOutFailure,
+    TResult Function()? userNotFound,
+    TResult Function()? updatePermissionDenied,
+    TResult Function(String message)? databaseFailure,
+    TResult Function()? notAuthenticated,
+    TResult Function()? unknown,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SignInCancelledFailure() when signInCancelled != null:
+        return signInCancelled();
+      case SignInServiceFailure() when signInServiceFailure != null:
+        return signInServiceFailure(_that.message);
+      case SignOutFailure() when signOutFailure != null:
+        return signOutFailure(_that.message);
+      case UserNotFoundFailure() when userNotFound != null:
+        return userNotFound();
+      case UpdatePermissionDeniedFailure() when updatePermissionDenied != null:
+        return updatePermissionDenied();
+      case DatabaseFailure() when databaseFailure != null:
+        return databaseFailure(_that.message);
+      case NotAuthenticatedFailure() when notAuthenticated != null:
+        return notAuthenticated();
+      case UnknownFailure() when unknown != null:
+        return unknown();
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() signInCancelled,
+    required TResult Function(String message) signInServiceFailure,
+    required TResult Function(String message) signOutFailure,
+    required TResult Function() userNotFound,
+    required TResult Function() updatePermissionDenied,
+    required TResult Function(String message) databaseFailure,
+    required TResult Function() notAuthenticated,
+    required TResult Function() unknown,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SignInCancelledFailure():
+        return signInCancelled();
+      case SignInServiceFailure():
+        return signInServiceFailure(_that.message);
+      case SignOutFailure():
+        return signOutFailure(_that.message);
+      case UserNotFoundFailure():
+        return userNotFound();
+      case UpdatePermissionDeniedFailure():
+        return updatePermissionDenied();
+      case DatabaseFailure():
+        return databaseFailure(_that.message);
+      case NotAuthenticatedFailure():
+        return notAuthenticated();
+      case UnknownFailure():
+        return unknown();
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? signInCancelled,
+    TResult? Function(String message)? signInServiceFailure,
+    TResult? Function(String message)? signOutFailure,
+    TResult? Function()? userNotFound,
+    TResult? Function()? updatePermissionDenied,
+    TResult? Function(String message)? databaseFailure,
+    TResult? Function()? notAuthenticated,
+    TResult? Function()? unknown,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SignInCancelledFailure() when signInCancelled != null:
+        return signInCancelled();
+      case SignInServiceFailure() when signInServiceFailure != null:
+        return signInServiceFailure(_that.message);
+      case SignOutFailure() when signOutFailure != null:
+        return signOutFailure(_that.message);
+      case UserNotFoundFailure() when userNotFound != null:
+        return userNotFound();
+      case UpdatePermissionDeniedFailure() when updatePermissionDenied != null:
+        return updatePermissionDenied();
+      case DatabaseFailure() when databaseFailure != null:
+        return databaseFailure(_that.message);
+      case NotAuthenticatedFailure() when notAuthenticated != null:
+        return notAuthenticated();
+      case UnknownFailure() when unknown != null:
+        return unknown();
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc

@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -34,6 +33,213 @@ mixin _$ResultSearchEvent {
 class $ResultSearchEventCopyWith<$Res> {
   $ResultSearchEventCopyWith(
       ResultSearchEvent _, $Res Function(ResultSearchEvent) __);
+}
+
+/// Adds pattern-matching-related methods to [ResultSearchEvent].
+extension ResultSearchEventPatterns on ResultSearchEvent {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_SearchStarted value)? searchStarted,
+    TResult Function(_NextPageRequested value)? nextPageRequested,
+    TResult Function(_SearchTypeChanged value)? searchTypeChanged,
+    TResult Function(_FiltersChanged value)? filtersChanged,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SearchStarted() when searchStarted != null:
+        return searchStarted(_that);
+      case _NextPageRequested() when nextPageRequested != null:
+        return nextPageRequested(_that);
+      case _SearchTypeChanged() when searchTypeChanged != null:
+        return searchTypeChanged(_that);
+      case _FiltersChanged() when filtersChanged != null:
+        return filtersChanged(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_SearchStarted value) searchStarted,
+    required TResult Function(_NextPageRequested value) nextPageRequested,
+    required TResult Function(_SearchTypeChanged value) searchTypeChanged,
+    required TResult Function(_FiltersChanged value) filtersChanged,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SearchStarted():
+        return searchStarted(_that);
+      case _NextPageRequested():
+        return nextPageRequested(_that);
+      case _SearchTypeChanged():
+        return searchTypeChanged(_that);
+      case _FiltersChanged():
+        return filtersChanged(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_SearchStarted value)? searchStarted,
+    TResult? Function(_NextPageRequested value)? nextPageRequested,
+    TResult? Function(_SearchTypeChanged value)? searchTypeChanged,
+    TResult? Function(_FiltersChanged value)? filtersChanged,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SearchStarted() when searchStarted != null:
+        return searchStarted(_that);
+      case _NextPageRequested() when nextPageRequested != null:
+        return nextPageRequested(_that);
+      case _SearchTypeChanged() when searchTypeChanged != null:
+        return searchTypeChanged(_that);
+      case _FiltersChanged() when filtersChanged != null:
+        return filtersChanged(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String query)? searchStarted,
+    TResult Function()? nextPageRequested,
+    TResult Function(SearchType searchType)? searchTypeChanged,
+    TResult Function(FilterSortParams newFilters)? filtersChanged,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SearchStarted() when searchStarted != null:
+        return searchStarted(_that.query);
+      case _NextPageRequested() when nextPageRequested != null:
+        return nextPageRequested();
+      case _SearchTypeChanged() when searchTypeChanged != null:
+        return searchTypeChanged(_that.searchType);
+      case _FiltersChanged() when filtersChanged != null:
+        return filtersChanged(_that.newFilters);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String query) searchStarted,
+    required TResult Function() nextPageRequested,
+    required TResult Function(SearchType searchType) searchTypeChanged,
+    required TResult Function(FilterSortParams newFilters) filtersChanged,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SearchStarted():
+        return searchStarted(_that.query);
+      case _NextPageRequested():
+        return nextPageRequested();
+      case _SearchTypeChanged():
+        return searchTypeChanged(_that.searchType);
+      case _FiltersChanged():
+        return filtersChanged(_that.newFilters);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String query)? searchStarted,
+    TResult? Function()? nextPageRequested,
+    TResult? Function(SearchType searchType)? searchTypeChanged,
+    TResult? Function(FilterSortParams newFilters)? filtersChanged,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _SearchStarted() when searchStarted != null:
+        return searchStarted(_that.query);
+      case _NextPageRequested() when nextPageRequested != null:
+        return nextPageRequested();
+      case _SearchTypeChanged() when searchTypeChanged != null:
+        return searchTypeChanged(_that.searchType);
+      case _FiltersChanged() when filtersChanged != null:
+        return filtersChanged(_that.newFilters);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -400,6 +606,210 @@ class _$ResultSearchStateCopyWithImpl<$Res>
     return $FilterSortParamsCopyWith<$Res>(_self.filterParams, (value) {
       return _then(_self.copyWith(filterParams: value));
     });
+  }
+}
+
+/// Adds pattern-matching-related methods to [ResultSearchState].
+extension ResultSearchStatePatterns on ResultSearchState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ResultSearchState value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ResultSearchState() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ResultSearchState value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ResultSearchState():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ResultSearchState value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ResultSearchState() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            SearchStatus status,
+            SearchType searchType,
+            String query,
+            List<dynamic> results,
+            int currentPage,
+            bool hasNextPage,
+            FilterSortParams filterParams,
+            Object? failure)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ResultSearchState() when $default != null:
+        return $default(
+            _that.status,
+            _that.searchType,
+            _that.query,
+            _that.results,
+            _that.currentPage,
+            _that.hasNextPage,
+            _that.filterParams,
+            _that.failure);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            SearchStatus status,
+            SearchType searchType,
+            String query,
+            List<dynamic> results,
+            int currentPage,
+            bool hasNextPage,
+            FilterSortParams filterParams,
+            Object? failure)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ResultSearchState():
+        return $default(
+            _that.status,
+            _that.searchType,
+            _that.query,
+            _that.results,
+            _that.currentPage,
+            _that.hasNextPage,
+            _that.filterParams,
+            _that.failure);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            SearchStatus status,
+            SearchType searchType,
+            String query,
+            List<dynamic> results,
+            int currentPage,
+            bool hasNextPage,
+            FilterSortParams filterParams,
+            Object? failure)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _ResultSearchState() when $default != null:
+        return $default(
+            _that.status,
+            _that.searchType,
+            _that.query,
+            _that.results,
+            _that.currentPage,
+            _that.hasNextPage,
+            _that.filterParams,
+            _that.failure);
+      case _:
+        return null;
+    }
   }
 }
 
