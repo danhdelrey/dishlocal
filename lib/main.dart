@@ -40,7 +40,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: AppEnvironment.firebaseOption,
   );
-  MapboxOptions.setAccessToken(AppEnvironment.mapboxAccessToken);
+  //MapboxOptions.setAccessToken(AppEnvironment.mapboxAccessToken);
 
   GoogleSignIn.instance.initialize(
     serverClientId: AppEnvironment.googleWebClientId,

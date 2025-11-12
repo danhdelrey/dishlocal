@@ -47,7 +47,8 @@ class PostDetailPage extends StatelessWidget {
       providers: [
         BlocProvider(
           // Logic tạo BLoC và add event `started` được đặt ở đây.
-          create: (context) => getIt<ViewPostBloc>()..add(ViewPostEvent.started(post)),
+          create: (context) =>
+              getIt<ViewPostBloc>()..add(ViewPostEvent.started(post)),
         ),
         BlocProvider(
           create: (context) => getIt<DeletePostBloc>(),
@@ -150,19 +151,22 @@ class _PostDetailViewState extends State<_PostDetailView> {
                     ),
                     child: NotificationListener<ScrollStartNotification>(
                       onNotification: (notification) {
-                        _menuController.hideIfVisible(); // 👈 Ẩn ngay khi bắt đầu chạm kéo
+                        _menuController
+                            .hideIfVisible(); // 👈 Ẩn ngay khi bắt đầu chạm kéo
                         return false; // không chặn event
                       },
                       child: CustomScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
                         slivers: [
                           BlocBuilder<ViewPostBloc, ViewPostState>(
                             builder: (context, state) {
                               if (state is ViewPostSuccess) {
                                 return SliverAppBar(
                                   centerTitle: true,
-                                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                  backgroundColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
                                   surfaceTintColor: Colors.transparent,
                                   floating: true,
                                   pinned: true,
@@ -171,41 +175,58 @@ class _PostDetailViewState extends State<_PostDetailView> {
                                       context.pop();
                                     },
                                     icon: AppIcons.left.toSvg(
-                                      color: Theme.of(context).colorScheme.onSurface,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
                                     ),
                                   ),
                                   actions: [
-                                    if (state.currentUserId == widget.post.authorUserId)
+                                    if (state.currentUserId ==
+                                        widget.post.authorUserId)
                                       BouncingOverlayMenu(
                                         controller: _menuController,
                                         menuItems: [
-                                          if (state.currentUserId == widget.post.authorUserId)
+                                          if (state.currentUserId ==
+                                              widget.post.authorUserId)
                                             MenuActionItem(
                                               icon: Icons.edit,
                                               label: 'Chỉnh sửa bài viết',
                                               onTap: () async {
-                                                final result = await context.push('/edit_post', extra: state.post);
+                                                final result = await context
+                                                    .push('/edit_post',
+                                                        extra: state.post);
                                                 if (result == true) {
                                                   if (!context.mounted) {
                                                     return;
                                                   }
-                                                  context.read<ViewPostBloc>().add(
-                                                        ViewPostEvent.started(state.post),
+                                                  context
+                                                      .read<ViewPostBloc>()
+                                                      .add(
+                                                        ViewPostEvent.started(
+                                                            state.post),
                                                       );
                                                 }
                                               },
                                             ),
-                                          if (state.currentUserId == widget.post.authorUserId)
+                                          if (state.currentUserId ==
+                                              widget.post.authorUserId)
                                             MenuActionItem(
                                               icon: Icons.delete,
                                               label: 'Xóa bài viết',
                                               onTap: () async {
-                                                final bool? confirmed = await _showDeleteConfirmationDialog(context);
+                                                final bool? confirmed =
+                                                    await _showDeleteConfirmationDialog(
+                                                        context);
 
                                                 if (confirmed == true) {
                                                   if (context.mounted) {
-                                                    context.read<DeletePostBloc>().add(
-                                                          DeletePostEvent.deletePostRequested(post: widget.post),
+                                                    context
+                                                        .read<DeletePostBloc>()
+                                                        .add(
+                                                          DeletePostEvent
+                                                              .deletePostRequested(
+                                                                  post: widget
+                                                                      .post),
                                                         );
                                                   }
                                                 }
@@ -230,7 +251,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
                                 );
                               }
                               return SliverAppBar(
-                                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                backgroundColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
                                 surfaceTintColor: Colors.transparent,
                                 floating: true,
                                 pinned: true,
@@ -239,7 +261,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
                                     context.pop();
                                   },
                                   icon: AppIcons.left.toSvg(
-                                    color: Theme.of(context).colorScheme.onSurface,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                               );
@@ -247,7 +270,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
                           ),
                           SliverToBoxAdapter(
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 10, bottom: 30),
+                              padding:
+                                  const EdgeInsets.only(top: 10, bottom: 30),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -255,8 +279,12 @@ class _PostDetailViewState extends State<_PostDetailView> {
                                     height: 10,
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                                    child: CachedImage(borderRadius: 30, blurHash: widget.post.blurHash ?? '', imageUrl: widget.post.imageUrl ?? ''),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15),
+                                    child: CachedImage(
+                                        borderRadius: 30,
+                                        blurHash: widget.post.blurHash ?? '',
+                                        imageUrl: widget.post.imageUrl ?? ''),
                                   ),
                                   BlocBuilder<ViewPostBloc, ViewPostState>(
                                     builder: (context, state) {
@@ -270,13 +298,19 @@ class _PostDetailViewState extends State<_PostDetailView> {
                                               Center(
                                                   child: CustomLoadingIndicator(
                                                 indicatorSize: 40,
-                                                indicatorText: 'Đang tải nội dung bài viết...',
+                                                indicatorText:
+                                                    'Đang tải nội dung bài viết...',
                                               )),
                                             ],
                                           ),
                                         ViewPostSuccess() => Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                                            child: _buildMainContent(context, state.post, state.currentUserId, state.author),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15),
+                                            child: _buildMainContent(
+                                                context,
+                                                state.post,
+                                                state.currentUserId,
+                                                state.author),
                                           ),
                                         ViewPostFailure() => const Column(
                                             mainAxisSize: MainAxisSize.min,
@@ -284,7 +318,9 @@ class _PostDetailViewState extends State<_PostDetailView> {
                                               SizedBox(
                                                 height: 50,
                                               ),
-                                              Center(child: Text('Có lỗi xảy ra khi tải bài viết!')),
+                                              Center(
+                                                  child: Text(
+                                                      'Có lỗi xảy ra khi tải bài viết!')),
                                             ],
                                           ),
                                       };
@@ -321,7 +357,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Xác nhận xóa'),
-          content: const Text('Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.'),
+          content: const Text(
+              'Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.'),
           actions: <Widget>[
             // Nút "Hủy"
             TextButton(
@@ -348,7 +385,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
     );
   }
 
-  Column _buildMainContent(BuildContext context, Post post, String currentUserId, AppUser author) {
+  Column _buildMainContent(
+      BuildContext context, Post post, String currentUserId, AppUser author) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -356,7 +394,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
           height: 20,
         ),
         FadeSlideUp(
-          child: DishDescriptionWidget(dishName: post.dishName!, imageUrl: post.imageUrl!),
+          child: DishDescriptionWidget(
+              dishName: post.dishName!, imageUrl: post.imageUrl!),
         ),
         const SizedBox(
           height: 20,
@@ -373,7 +412,10 @@ class _PostDetailViewState extends State<_PostDetailView> {
                   itemColor: post.foodCategory?.color ?? Colors.transparent,
                   onSelected: (selected) {
                     context.push('/post_detail/explore', extra: {
-                      'filterSortParams': FilterSortParams.defaultParamsForContext(FilterContext.explore).copyWith(
+                      'filterSortParams':
+                          FilterSortParams.defaultParamsForContext(
+                                  FilterContext.explore)
+                              .copyWith(
                         categories: {post.foodCategory!},
                       )
                     });
@@ -385,21 +427,30 @@ class _PostDetailViewState extends State<_PostDetailView> {
                 itemColor: post.foodCategory?.color ?? Colors.transparent,
                 onSelected: (selected) {
                   context.push('/post_detail/explore', extra: {
-                    'filterSortParams': FilterSortParams.defaultParamsForContext(FilterContext.explore).copyWith(
-                      range: PriceRange.fromPrice(post.price?.toDouble() ?? 9999999),
+                    'filterSortParams':
+                        FilterSortParams.defaultParamsForContext(
+                                FilterContext.explore)
+                            .copyWith(
+                      range: PriceRange.fromPrice(
+                          post.price?.toDouble() ?? 9999999),
                     )
                   });
                 },
               ),
               if (post.distance != null)
                 CustomChoiceChip(
-                  label: '📍 ${NumberFormatter.formatDistance(post.distance)} - ${DurationFormatter.formatEstimatedTime(post.distance!)}',
+                  label:
+                      '📍 ${NumberFormatter.formatDistance(post.distance)} - ${DurationFormatter.formatEstimatedTime(post.distance!)}',
                   isSelected: false,
                   itemColor: post.foodCategory?.color ?? Colors.transparent,
                   onSelected: (selected) {
                     context.push('/post_detail/explore', extra: {
-                      'filterSortParams': FilterSortParams.defaultParamsForContext(FilterContext.explore).copyWith(
-                        distance: DistanceRange.fromDistance(post.distance ?? 999),
+                      'filterSortParams':
+                          FilterSortParams.defaultParamsForContext(
+                                  FilterContext.explore)
+                              .copyWith(
+                        distance:
+                            DistanceRange.fromDistance(post.distance ?? 999),
                       )
                     });
                   },
@@ -410,7 +461,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
         const SizedBox(
           height: 20,
         ),
-        if (post.diningLocationName != null && post.diningLocationName!.trim().isNotEmpty)
+        if (post.diningLocationName != null &&
+            post.diningLocationName!.trim().isNotEmpty)
           FadeSlideUp(
             delay: const Duration(milliseconds: 200),
             child: Padding(
@@ -429,14 +481,17 @@ class _PostDetailViewState extends State<_PostDetailView> {
             text: TextSpan(
               style: Theme.of(context).textTheme.bodyMedium,
               children: [
-                if (post.address?.exactAddress != null && post.address!.exactAddress!.isNotEmpty)
+                if (post.address?.exactAddress != null &&
+                    post.address!.exactAddress!.isNotEmpty)
                   TextSpan(
                     text: '(${post.address!.exactAddress!}) ',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontStyle: FontStyle.italic,
                         ),
                   ),
-                if (post.address?.displayName != null && post.address!.displayName!.isNotEmpty) TextSpan(text: post.address!.displayName!),
+                if (post.address?.displayName != null &&
+                    post.address!.displayName!.isNotEmpty)
+                  TextSpan(text: post.address!.displayName!),
               ],
             ),
           ),
@@ -458,12 +513,10 @@ class _PostDetailViewState extends State<_PostDetailView> {
               label: 'Xem trên bản đồ',
               onTap: () {
                 if (post.address != null) {
-                  context.push(
-                    '/map',
-                    extra: {
-                      'destination': LocationData(latitude: post.address!.latitude, longitude: post.address!.longitude),
-                      'destinationName': post.diningLocationName,
-                    },
+                  MapsLauncher.launchCoordinates(
+                    post.address!.latitude,
+                    post.address!.longitude,
+                    post.diningLocationName ?? '',
                   );
                 }
               },
@@ -515,7 +568,9 @@ class _PostDetailViewState extends State<_PostDetailView> {
                           Row(
                             children: List.generate(5, (index) {
                               return Icon(
-                                index < review.rating ? CupertinoIcons.star_fill : CupertinoIcons.star,
+                                index < review.rating
+                                    ? CupertinoIcons.star_fill
+                                    : CupertinoIcons.star,
                                 color: Colors.amber,
                                 size: 16,
                               );
@@ -525,7 +580,9 @@ class _PostDetailViewState extends State<_PostDetailView> {
                       ),
                       if (review.selectedChoices.isNotEmpty) ...[
                         Text(
-                          review.selectedChoices.map((choice) => choice.label).join(', '),
+                          review.selectedChoices
+                              .map((choice) => choice.label)
+                              .join(', '),
                           style: appTextTheme(context).bodyMedium?.copyWith(
                                 color: appColorScheme(context).outline,
                               ),
@@ -546,7 +603,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
               child: BlocBuilder<PostReactionBarBloc, PostReactionBarState>(
                 builder: (context, state) {
                   return FadeSlideUp(
-                    delay: Duration(milliseconds: 800 + (post.reviews.length * 100)),
+                    delay: Duration(
+                        milliseconds: 800 + (post.reviews.length * 100)),
                     child: ReactionBar(
                       likeColor: Colors.pink,
                       saveColor: Colors.amber,
@@ -554,16 +612,23 @@ class _PostDetailViewState extends State<_PostDetailView> {
                       likeCount: state.likeCount,
                       commentCount: post.commentCount,
                       onCommentTap: () {
-                        showCommentBottomSheet(context, postId: post.postId, postAuthorId: post.authorUserId, totalCommentCount: post.commentCount);
+                        showCommentBottomSheet(context,
+                            postId: post.postId,
+                            postAuthorId: post.authorUserId,
+                            totalCommentCount: post.commentCount);
                       },
                       isSaved: state.isSaved,
                       saveCount: state.saveCount,
                       // Khi nhấn, gửi event đến BLoC
                       onLikeTap: () {
-                        context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.likeToggled());
+                        context
+                            .read<PostReactionBarBloc>()
+                            .add(const PostReactionBarEvent.likeToggled());
                       },
                       onSaveTap: () {
-                        context.read<PostReactionBarBloc>().add(const PostReactionBarEvent.saveToggled());
+                        context
+                            .read<PostReactionBarBloc>()
+                            .add(const PostReactionBarEvent.saveToggled());
                       },
                     ),
                   );
@@ -581,7 +646,8 @@ class _PostDetailViewState extends State<_PostDetailView> {
     );
   }
 
-  Widget _buildAuthorInfo(Post post, BuildContext context, String currentUserId, AppUser author) {
+  Widget _buildAuthorInfo(
+      Post post, BuildContext context, String currentUserId, AppUser author) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -604,13 +670,15 @@ class _PostDetailViewState extends State<_PostDetailView> {
                     style: Theme.of(context).textTheme.labelLarge,
                     children: [
                       TextSpan(text: post.authorUsername),
-                      if (post.authorUserId != currentUserId && author.isFollowing == true)
+                      if (post.authorUserId != currentUserId &&
+                          author.isFollowing == true)
                         TextSpan(
                           text: ' • Đang theo dõi',
-                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                color: appColorScheme(context).outline,
-                                fontStyle: FontStyle.italic,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: appColorScheme(context).outline,
+                                    fontStyle: FontStyle.italic,
+                                  ),
                         ),
                     ],
                   ),
